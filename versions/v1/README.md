@@ -54,19 +54,9 @@ GET /v1/textures/{id1,id2,id3}/{attribute?}
   "name": "apple",
   "id": "1305",
   "tags": ["Java", "Bedrock", "Item"],
-  "uses": {
-    "1305a": {...},
-    "1305b": {...}
-  },
-  "contributions": {
-    "60f2210f83571": {...},
-    "617c72698490e": {...}
-  },
-  "paths": {
-    "6096bcd98b0d3": {...},
-    "6096bcd98b110": {...},
-    "6096bcd9ad3e3": {...}
-  }
+  "uses": {...},
+  "contributions": {...},
+  "paths": {...}
 }
 ```
 ```jsonc
@@ -150,5 +140,91 @@ GET /v1/contribution/{id}
   "texture": 1305,
   "contributors": ["369259215996583936"],
   "id": "60f2210f83571"
+}
+```
+
+### 3. Firestorm Addons
+
+Get basic information about a unique addon:
+
+```get
+GET /v1/addon/{id}/{attribute?}
+```
+
+#### Parameters:
+
+| Name      | Type    | In   | Description     | Values         |
+|-----------|---------|------|-----------------|----------------|
+| id        | integer | path | Addon ID        | `>= 0`         |
+| attribute | string  | path | Addon attribute | `all`, `files` |
+
+#### Response
+```jsonc
+// GET /v1/addon/0
+{
+  "name": "2D Bed Icons",
+  "description": "Replaces beds in the inventory with their Bedrock Edition counterpart.",
+  "authors": ["285902386701271050"],
+  "slug": "2d-bed-icons",
+  "options": {
+    "comments": true,
+    "optifine": false,
+    "tags": [
+      "Java",
+      "32x"
+    ]
+  },
+  "approval": {
+    "status": "approved",
+    "author": null,
+    "reason": null
+  },
+  "id": "0"
+}
+```
+```jsonc
+// GET /v1/addon/0/all
+{
+  "name": "2D Bed Icons",
+  "description": "Replaces beds in the inventory with their Bedrock Edition counterpart.",
+  "authors": ["285902386701271050"],
+  "slug": "2d-bed-icons",
+  "options": {
+    "comments": true,
+    "optifine": false,
+    "tags": ["Java","32x"]
+  },
+  "approval": {
+    "status": "approved",
+    "author": null,
+    "reason": null
+  },
+  "id": "0",
+  "files": {...}
+}
+```
+```jsonc
+// GET /v1/addon/0/files
+{
+  "0": {
+    "name": null,
+    "use": "header",
+    "type": "url",
+    "parent": {
+      "type": "addons",
+      "id": 0
+    },
+    "source": "https://database.compliancepack.net/images/addons/2d-bed-icons/header"
+  },
+  "1": {
+    "name": "GitHub",
+    "use": "download",
+    "type": "url",
+    "parent": {
+      "type": "addons",
+      "id": 0
+    },
+    "source": "https://github.com/Compliance-Addons/Addons/raw/master/32x/2D%20Bed%20Icons/2D%20Bed%20Icons%2032x.zip"
+  }
 }
 ```
