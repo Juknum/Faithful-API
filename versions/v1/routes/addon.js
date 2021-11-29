@@ -3,7 +3,7 @@ const success = require('../../../tools/success')
 const failed = require('../../../tools/failed')
 const router = express.Router()
 
-const f = require('../functions/texture')
+const f = require('../functions/addon')
 
 router.get('/:id', (req, res) => {
   const id = req.params.id
@@ -23,18 +23,8 @@ router.get('/:id/:type', (req, res) => {
         .then(success(res))
         .catch(failed(res))
       break;
-    case 'uses':
-      f.uses(id)
-        .then(success(res))
-        .catch(failed(res))
-      break;
-    case 'paths':
-      f.paths(id)
-        .then(success(res))
-        .catch(failed(res))
-      break;
-    case 'contributions':
-      f.contributions(id)
+    case 'files':
+      f.files(id)
         .then(success(res))
         .catch(failed(res))
       break;

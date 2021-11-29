@@ -1,4 +1,5 @@
 const firestorm = require('firestorm-db')
+const files = require('./files')
 
 require('./firestorm_config')()
 
@@ -18,4 +19,15 @@ require('./firestorm_config')()
  * @property {Object} downloads download_name: [link1, link2, ...] (how should I explain that?)
  */
 
-module.exports = firestorm.collection('addons')
+module.exports = firestorm.collection('addons', el => {
+  /** @returns {Promise<import('./files').File>} */
+  el.files = function (id) {
+    return files.search([{
+      field: "parent.id",
+      criteria: "==",
+      value: id
+    }])
+  }
+
+  return el
+})

@@ -7,6 +7,7 @@ module.exports = {
     return textures.get(id)
   },
   uses: function (id, parsed = true) {
+    if (isNaN(id) || id < 0) return Promise.reject(new Error('Texture IDs are integer greater than 0'))
     return this.get(id)
       .then(texture => {
         return texture.uses()
@@ -17,6 +18,7 @@ module.exports = {
       })
   },
   paths: function (id) {
+    if (isNaN(id) || id < 0) return Promise.reject(new Error('Texture IDs are integer greater than 0'))
     return this.uses(id, false)
       .then(uses => {
         return Promise.all(uses.map(use => use.paths()))
@@ -26,6 +28,7 @@ module.exports = {
       })
   },
   contributions: function (id) {
+    if (isNaN(id) || id < 0) return Promise.reject(new Error('Texture IDs are integer greater than 0'))
     return contributions.search([{
       field: 'textureID',
       criteria: '==',
@@ -36,6 +39,7 @@ module.exports = {
       })
   },
   all: function (id) {
+    if (isNaN(id) || id < 0) return Promise.reject(new Error('Texture IDs are integer greater than 0'))
     let output
 
     return this.get(id)

@@ -10,5 +10,6 @@ module.exports = {
   mods: require('./mods'),
   modpacks: require('./modpacks'),
   settings: require('./settings'),
-  langs: require('./langs')
+  langs: require('./langs'),
+  files: require('./files')
 }
