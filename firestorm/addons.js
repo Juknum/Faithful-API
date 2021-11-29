@@ -26,6 +26,11 @@ module.exports = firestorm.collection('addons', el => {
       field: "parent.id",
       criteria: "==",
       value: id
+    },
+    {
+      field: "parent.type",
+      criteria: "==",
+      value: "addons"
     }])
   }
 
