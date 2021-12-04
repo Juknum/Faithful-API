@@ -7,7 +7,7 @@
 Fetch the entire content of a firestorm-db collection:
 
 ```get
-GET /v1/raw/{collection}
+GET  /v1/raw/{collection} HTTP/1.1
 ```
 
 #### Parameters:
@@ -17,16 +17,16 @@ GET /v1/raw/{collection}
 
 ### 2. Firestorm Textures
 
-Get basic information about a unique texture:
+Get  basic information about a unique texture: HTTP/1.1
 
 ```get
-GET /v1/texture/{id}/{attribute?}
+GET  /v1/texture/{id}/{attribute?} HTTP/1.1
 ```
 
-Get info about one or more texture at once:
+Get  info about one or more texture at once: HTTP/1.1
 
 ```get
-GET /v1/textures/{id1,id2,id3}/{attribute?}
+GET  /v1/textures/{id1,id2,id3}/{attribute?} HTTP/1.1
 ```
 
 #### Parameters:
@@ -119,10 +119,10 @@ GET /v1/textures/{id1,id2,id3}/{attribute?}
 
 ### 3. Firestorm Contributions
 
-Get basic information about a unique contribution:
+Get  basic information about a unique contribution: HTTP/1.1
 
 ```get
-GET /v1/contribution/{id}
+GET  /v1/contribution/{id} HTTP/1.1
 ```
 
 #### Parameters:
@@ -145,10 +145,10 @@ GET /v1/contribution/{id}
 
 ### 3. Firestorm Addons
 
-Get basic information about a unique addon:
+Get  basic information about a unique addon: HTTP/1.1
 
 ```get
-GET /v1/addon/{id}/{attribute?}
+GET  /v1/addon/{id}/{attribute?} HTTP/1.1
 ```
 
 #### Parameters:
@@ -228,3 +228,16 @@ GET /v1/addon/{id}/{attribute?}
   }
 }
 ```
+
+## II. Purge cache
+
+API allows website cache refresh with the given url:
+
+```get
+GET  /v1/purge/{secret} HTTP/1.1
+```
+
+#### Parameters:
+| Name       | Type   | In   | Description                          | Values             |
+|------------|--------|------|--------------------------------------|--------------------|
+| secret     | string | path | Secret password to authorize refresh | value in .env file |

@@ -66,18 +66,31 @@ td, th {
   display: flex;
   flex-direction: row;
 
-  width: 1000px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto
 }
 
 .menu {
   width: 300px;
-  background-color: rgba(0,0,0,.3);
+  background-color: #171717;
   padding: 20px;
+  position: fixed;
+  bottom: 0rem;
+  top: 0rem
+}
+.menu + * {
+  margin-left: 300px;
+}
+
+.markdown pre {
+  overflow: auto;
 }
 
 .markdown {
   padding-left: 40px;
+  padding-right: 20px;
+  overflow: auto;
 }
 
 @media (max-width: 1030px) {
