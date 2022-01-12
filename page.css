@@ -6,7 +6,7 @@ html,
 body {
   margin: 0;
   background-color: #212121;
-  color: #eeeeee;
+  color: #eee;
   font-size: 16px;
   font-family: system-ui, sans-serif;
   line-height: 1.5;
@@ -24,7 +24,7 @@ a {
 }
 
 a:hover {
-  color: #6488c4
+  color: #6488c4;
 }
 
 ol, ul {
@@ -36,7 +36,7 @@ ul > li > ol {
 }
 
 h1 {
-  border-bottom: 5px solid #82b1ff; 
+  border-bottom: 1px solid #82b1ff;
 }
 
 pre {
@@ -45,6 +45,7 @@ pre {
   background-color: #1e1e1e;
   border-radius: 5px;
 }
+
 code {
   font-family: Consolas, monaco, monospace;
   padding: 2px;
@@ -54,7 +55,7 @@ code {
 
 table {
   border-collapse: collapse;
-  width: 100%
+  width: 100%;
 }
 
 td, th {
@@ -65,10 +66,9 @@ td, th {
 .page {
   display: flex;
   flex-direction: row;
-
   width: 100%;
   max-width: 100%;
-  margin: 0 auto
+  margin: 0 auto;
 }
 
 .menu {
@@ -77,8 +77,9 @@ td, th {
   padding: 20px;
   position: fixed;
   bottom: 0rem;
-  top: 0rem
+  top: 0rem;
 }
+
 .menu + * {
   margin-left: 300px;
 }
@@ -96,6 +97,6 @@ td, th {
 @media (max-width: 1030px) {
   .page {
     width: 100%;
-    padding: 0 30px
+    padding: 0 30px;
   }
 }

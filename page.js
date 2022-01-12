@@ -14,7 +14,7 @@ const v = new Vue({
   },
   computed: {
     markdownToHTML() {
-      return marked(this.markdown)
+      return marked.parse(this.markdown)
     }
   },
   watch: {
@@ -33,7 +33,6 @@ const v = new Vue({
               const hightlighted = hljs.highlight(code.innerText, {
                 language: language
               })
-              console.log(hightlighted)
               code.parentElement.innerHTML = hightlighted.value
             }
           }
