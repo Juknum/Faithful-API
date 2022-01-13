@@ -10,7 +10,7 @@ app.use(express.static('public'));
 
 //serves docs
 app.use(
-	'/docs',
+	'/',
 	swaggerUi.serve,
 	swaggerUi.setup(undefined, {
 		swaggerOptions: {
