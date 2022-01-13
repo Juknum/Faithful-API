@@ -22,4 +22,5 @@ jobs:
           git stash
           git pull
           npm install --save
+          npm run swag
           pm2 restart "API"
