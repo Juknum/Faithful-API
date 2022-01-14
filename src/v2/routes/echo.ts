@@ -3,16 +3,14 @@ import Echo from '../controllers/echo';
 
 const router = express.Router();
 
-router.get('/echo', async (_req, res) => {
-  let response;
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 
-  if (_req.body.message != undefined) {
-    response = await new Echo().postMessage(_req.body);
-  } else {
-    response = await new Echo().getMessage();
-  }
+router.post('/echo', async (req: any, res) => {
+  if (req.body && req.body.message)
+    return res.send(await new Echo().postMessage(req.body));
 
-  return res.send(response);
+  return res.sendStatus(await new Echo().getMessage());
 });
 
 export default router;

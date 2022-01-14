@@ -9,9 +9,20 @@ const v1 = require('./v1/main.js');
 	const PORT = process.env.PORT || 8000;
 
 	const app: Application = express();
-	app.use(express.static('public'));
+	app.use(express.static('public', {
+		extensions: ['html', 'xml', 'json']
+	}))
 
-	let css: string = (await fs.readFileSync(path.join(__dirname, '../public/custom.css'))).toString();
+	app.get('/', function (req, res) {
+		res.redirect('/docs')
+	})
+
+	app.use((_req, res, next) => {
+		res.append('Access-Control-Allow-Origin', '*')
+		next()
+	})
+
+	let css: string = fs.readFileSync(path.join(__dirname, '../public/custom.css')).toString();
 
 	//serves docs
 	app.use(
