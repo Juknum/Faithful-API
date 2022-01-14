@@ -2,7 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
-import v2 from './v2/routes';
+import v2 from './v2';
 const v1 = require('./v1/main.js');
 
 (async () => {
