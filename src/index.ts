@@ -2,7 +2,8 @@ import express, { Application, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
-import Router from './routes';
+import v2 from './v2/routes';
+const v1 = require('./v1/main.js');
 
 (async () => {
 	const PORT = process.env.PORT || 8000;
@@ -19,7 +20,9 @@ import Router from './routes';
 		swaggerUi.setup(require('../public/swagger.json'), undefined, undefined, css, 'https://database.compliancepack.net/images/brand/icons/general/compliance_white.ico', undefined, 'Compliance API'),
 	);
 
-	app.use(Router); // endpoints
+	// endpoints
+	app.use('/v1', v1);
+	app.use('/v2', v2);
 
 	app.listen(PORT, () => {
 		console.log(`Server is running at http://localhost:${PORT}`);
