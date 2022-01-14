@@ -6,6 +6,18 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"PingResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"echoResponse": {
 				"properties": {
 					"message": {
@@ -30,17 +42,10 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PingResponse": {
-				"properties": {
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"message"
-				],
+			"RawResponse": {
+				"properties": {},
 				"type": "object",
-				"additionalProperties": false
+				"additionalProperties": {}
 			}
 		},
 		"securitySchemes": {}
@@ -52,6 +57,25 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/ping": {
+			"get": {
+				"operationId": "GetMessage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PingResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/echo": {
 			"get": {
 				"operationId": "GetMessage",
@@ -99,23 +123,32 @@
 				}
 			}
 		},
-		"/ping": {
+		"/raw/{collection}": {
 			"get": {
-				"operationId": "GetMessage",
+				"operationId": "GetRawCollection",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PingResponse"
+									"$ref": "#/components/schemas/RawResponse"
 								}
 							}
 						}
 					}
 				},
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "path",
+						"name": "collection",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		}
 	},
