@@ -14,8 +14,8 @@ import Router from './routes';
 
 	//serves docs
 	app.use(
-		'/',
-		swaggerUi.serve, //'', '/swagger.json', 'Compliance API'
+		'/docs',
+		swaggerUi.serve,
 		swaggerUi.setup(require('../public/swagger.json'), undefined, undefined, css, 'https://database.compliancepack.net/images/brand/icons/general/compliance_white.ico', undefined, 'Compliance API'),
 	);
 
