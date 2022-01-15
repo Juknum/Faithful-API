@@ -1,4 +1,4 @@
-<img src="https://database.compliancepack.net/images/brand/logos/no_background/256x/compliance_32.png" alt="Compliance Logo" align="right" height="256px">
+<img src="https://database.compliancepack.net/images/brand/logos/no%20background/256/Compliance%20Basic.png" alt="Compliance Logo" align="right" height="256px">
 <div align="center">
   <h1>Compliance API</h1>
   <h3>An API for Compliance Resource Pack textures, add-ons and more.</h3>
