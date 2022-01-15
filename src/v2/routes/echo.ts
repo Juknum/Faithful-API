@@ -6,7 +6,7 @@ const router = express.Router();
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-router.post('/echo', async (req: any, res) => {
+router.post('/', async (req: any, res) => {
   if (req.body && req.body.message)
     return res.send(await new Echo().postMessage(req.body));
 

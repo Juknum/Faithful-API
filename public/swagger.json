@@ -46,6 +46,99 @@
 				"properties": {},
 				"type": "object",
 				"additionalProperties": {}
+			},
+			"ErrorResponse": {
+				"properties": {
+					"error": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TextureResponse": {
+				"properties": {
+					"name": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"tags"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UsesResponse": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PathsResponse": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ContributionsResponse": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TextureAllResponse": {
+				"properties": {
+					"name": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"uses": {
+						"$ref": "#/components/schemas/UsesResponse"
+					},
+					"paths": {
+						"$ref": "#/components/schemas/PathsResponse"
+					},
+					"contributions": {
+						"$ref": "#/components/schemas/ContributionsResponse"
+					}
+				},
+				"required": [
+					"name",
+					"tags",
+					"uses",
+					"paths",
+					"contributions"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -132,7 +225,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/RawResponse"
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RawResponse"
+										},
+										{
+											"$ref": "#/components/schemas/ErrorResponse"
+										}
+									]
 								}
 							}
 						}
@@ -143,6 +243,89 @@
 					{
 						"in": "path",
 						"name": "collection",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/texture/{id}": {
+			"get": {
+				"operationId": "GetId",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/TextureResponse"
+										},
+										{
+											"$ref": "#/components/schemas/ErrorResponse"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {}
+					}
+				]
+			}
+		},
+		"/texture/{id}/{type}": {
+			"get": {
+				"operationId": "GetType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UsesResponse"
+										},
+										{
+											"$ref": "#/components/schemas/TextureAllResponse"
+										},
+										{
+											"$ref": "#/components/schemas/ContributionsResponse"
+										},
+										{
+											"$ref": "#/components/schemas/PathsResponse"
+										},
+										{
+											"$ref": "#/components/schemas/ErrorResponse"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {}
+					},
+					{
+						"in": "path",
+						"name": "type",
 						"required": true,
 						"schema": {
 							"type": "string"

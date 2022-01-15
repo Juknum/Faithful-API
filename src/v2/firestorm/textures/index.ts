@@ -4,19 +4,21 @@ import config from '../config';
 config();
 
 import uses from './uses';
+import { contributions } from '..';
+import { PathsResponse, UsesResponse, ContributionsResponse, TextureAllResponse } from '~/v2/tools/interfaces';
 
 export default firestorm.collection('textures', el => {
-  el.uses = () => {
+  el.uses = async (): Promise<UsesResponse> => {
     return uses.search([{
-      field: 'textureID',
+      field: 'textureID',  // todo: to be replaced by texture
       criteria: '==',
       value: el[firestorm.ID_FIELD]
-    }])
-  }
+    }]);
+  };
 
-  el.paths = () => {
+  el.paths = async (): Promise<PathsResponse> => {
     return uses.search([{
-      field: 'textureID',
+      field: 'textureID',  // todo: to be replaced by texture
       criteria: '==',
       value: el[firestorm.ID_FIELD]
     }])
@@ -25,7 +27,33 @@ export default firestorm.collection('textures', el => {
       })
       .then(arr => {
         return parseArr(arr);
+      });
+  };
+
+  el.contributions = async (): Promise<ContributionsResponse> => {
+    return contributions.search([{
+      field: 'textureID',  // todo: to be replaced by texture
+      criteria: '==',
+      value: el[firestorm.ID_FIELD]
+    }]);
+  };
+
+  el.all = async (): Promise<TextureAllResponse> => {
+    let output = el;
+    return el.uses()
+      .then(uses => {
+        output.uses = uses;
+        return el.paths();
+      })
+      .then(paths => {
+        output.paths = paths;
+        return el.contributions();
+      })
+      .then(contributions => {
+        output.contributions = contributions
+        return output;
       })
   }
+
   return el;
 })

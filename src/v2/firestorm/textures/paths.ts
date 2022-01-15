@@ -1,15 +1,16 @@
 import firestorm from 'firestorm-db';
+import { TextureResponse, UseResponse } from '~/v2/tools/interfaces';
 import config from '../config';
 config();
 
 import uses from './uses';
 
 export default firestorm.collection('paths', el => {
-  el.use = () => {
-    return uses.get(el.useID)
-  }
+  el.use = async (): Promise<UseResponse> => {
+    return uses.get(el.useID);
+  };
 
-  el.texture = () => {
+  el.texture = (): Promise<TextureResponse> => {
     return new Promise((resolve, reject) => {
       el.use()
         .then(use => {
@@ -17,13 +18,9 @@ export default firestorm.collection('paths', el => {
         })
         .catch(err => {
           reject(err)
-        })
-    })
-  }
-
-  el.edition = () => {
-    return uses.get(el.useID).then(use => use.editions[0])
-  }
+        });
+    });
+  };
 
   return el;
 })
