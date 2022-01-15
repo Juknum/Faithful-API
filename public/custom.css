@@ -1,9 +1,10 @@
 /* darkmode */
-@import url("https://gitcdn.xyz/cdn/Amoenus/SwaggerDark/master/SwaggerDark.css");
+@import url('https://gitcdn.link/cdn/Amoenus/SwaggerDark/master/SwaggerDark.css');
+@import url('https://gitcdn.link/cdn/Amoenus/SwaggerDark/master/SwaggerDark.user.css');
 
 /* hide hideous swagger topbar menu */
 .swagger-ui .topbar {
-    padding: 0px !important;
-    height: 0px;
-    visibility: hidden; 
+	padding: 0px !important;
+	height: 0px;
+	visibility: hidden;
 }

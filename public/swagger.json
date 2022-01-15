@@ -6,136 +6,38 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"PingResponse": {
+			"Addon": {
 				"properties": {
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"echoResponse": {
-				"properties": {
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"echoRequirements": {
-				"properties": {
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"RawResponse": {
-				"properties": {},
-				"type": "object",
-				"additionalProperties": {}
-			},
-			"ErrorResponse": {
-				"properties": {
-					"error": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"error"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"TextureResponse": {
-				"properties": {
-					"name": {
-						"anyOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "number",
-								"format": "double"
-							}
-						]
+					"_id": {
+						"type": "number",
+						"format": "double"
 					},
-					"tags": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"name",
-					"tags"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UsesResponse": {
-				"properties": {},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PathsResponse": {
-				"properties": {},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ContributionsResponse": {
-				"properties": {},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"TextureAllResponse": {
-				"properties": {
 					"name": {
-						"anyOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "number",
-								"format": "double"
-							}
-						]
+						"type": "string"
 					},
-					"tags": {
+					"description": {
+						"type": "string"
+					},
+					"authors": {
 						"items": {
 							"type": "string"
 						},
 						"type": "array"
 					},
-					"uses": {
-						"$ref": "#/components/schemas/UsesResponse"
+					"comments": {
+						"type": "boolean"
 					},
-					"paths": {
-						"$ref": "#/components/schemas/PathsResponse"
-					},
-					"contributions": {
-						"$ref": "#/components/schemas/ContributionsResponse"
+					"slug": {
+						"type": "string"
 					}
 				},
 				"required": [
+					"_id",
 					"name",
-					"tags",
-					"uses",
-					"paths",
-					"contributions"
+					"description",
+					"authors",
+					"comments",
+					"slug"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -145,94 +47,21 @@
 	},
 	"info": {
 		"title": "Compliance API",
-		"version": "1.0.0",
+		"version": "2.0.0",
 		"contact": {}
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/ping": {
+		"/v2/addons/{addonId}": {
 			"get": {
-				"operationId": "GetMessage",
+				"operationId": "GetUser",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PingResponse"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/echo": {
-			"get": {
-				"operationId": "GetMessage",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "number",
-									"format": "double"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": []
-			},
-			"post": {
-				"operationId": "PostMessage",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/echoResponse"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/echoRequirements"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/raw/{collection}": {
-			"get": {
-				"operationId": "GetRawCollection",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/RawResponse"
-										},
-										{
-											"$ref": "#/components/schemas/ErrorResponse"
-										}
-									]
+									"$ref": "#/components/schemas/Addon"
 								}
 							}
 						}
@@ -242,93 +71,11 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "collection",
+						"name": "addonId",
 						"required": true,
 						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/texture/{id}": {
-			"get": {
-				"operationId": "GetId",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/TextureResponse"
-										},
-										{
-											"$ref": "#/components/schemas/ErrorResponse"
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {}
-					}
-				]
-			}
-		},
-		"/texture/{id}/{type}": {
-			"get": {
-				"operationId": "GetType",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/UsesResponse"
-										},
-										{
-											"$ref": "#/components/schemas/TextureAllResponse"
-										},
-										{
-											"$ref": "#/components/schemas/ContributionsResponse"
-										},
-										{
-											"$ref": "#/components/schemas/PathsResponse"
-										},
-										{
-											"$ref": "#/components/schemas/ErrorResponse"
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {}
-					},
-					{
-						"in": "path",
-						"name": "type",
-						"required": true,
-						"schema": {
-							"type": "string"
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
