@@ -1,0 +1,1 @@
+> All those functions are used to translate old database format to the new one until the transition is fully done, which will end by converting directly the data in the database to the new format
