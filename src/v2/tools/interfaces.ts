@@ -67,6 +67,21 @@ export interface Addon {
 	slug: string; // used in link & as comments id (ex: 'www.compliancepack.net/addons/compliance3D')
 }
 
+export interface AddonFiles extends Array<AddonFile> {}
+export interface AddonFile {
+	name: string; // name of the file given by the user
+	type: 'url'; // file type
+	parent: {
+		type: string; // parent table associated
+		id: string|number; // parent object ID
+	},
+	source: string; // source URL
+}
+
+export interface AddonAll extends Addon {
+	files: AddonFiles
+}
+
 export interface Posts extends Array<Post> {}
 export interface Post {
 	_id: string; // post unique id

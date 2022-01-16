@@ -41,6 +41,51 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"AddonFiles": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AddonAll": {
+				"properties": {
+					"_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"authors": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"comments": {
+						"type": "boolean"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"files": {
+						"$ref": "#/components/schemas/AddonFiles"
+					}
+				},
+				"required": [
+					"_id",
+					"name",
+					"description",
+					"authors",
+					"comments",
+					"slug",
+					"files"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -52,7 +97,7 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/v2/addons/{addonId}": {
+		"/addons/{addonId}": {
 			"get": {
 				"operationId": "GetUser",
 				"responses": {
@@ -67,6 +112,73 @@
 						}
 					}
 				},
+				"tags": [
+					"Addons"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "addonId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/addons/{addonId}/all": {
+			"get": {
+				"operationId": "GetAll",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AddonAll"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Addons"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "addonId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/addons/{addonId}/files": {
+			"get": {
+				"operationId": "GetFiles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AddonFiles"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Addons"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -84,7 +196,7 @@
 	},
 	"servers": [
 		{
-			"url": "/"
+			"url": "/v2"
 		}
 	]
 }

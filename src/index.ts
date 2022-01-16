@@ -1,9 +1,10 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
 import swaggerUi, { SwaggerUiOptions } from 'swagger-ui-express';
 import { RegisterRoutes } from '../build/routes';
 import v1 from './v1';
+import { ValidateError } from "tsoa";
 
 const PORT = process.env.PORT || 8000;
 
@@ -39,3 +40,25 @@ app.listen(PORT, () => {
 });
 
 RegisterRoutes(app);
+
+app.use(function errorHandler(
+  err: unknown,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void {
+  if (err instanceof ValidateError) {
+    console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+    return res.status(422).json({
+      message: "Validation Failed",
+      details: err?.fields,
+    });
+  }
+  if (err instanceof Error) {
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+
+  next();
+});

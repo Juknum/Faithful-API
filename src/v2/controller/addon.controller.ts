@@ -1,21 +1,23 @@
-import { Body, Controller, Get, Path, Post, Query, Route, SuccessResponse } from 'tsoa';
+import { Controller, Get, Path, Route, Tags } from 'tsoa';
 
-import { Addon } from '../tools/interfaces';
-// import f from '/src/v1/functions/addon.js';
+import { Addon, AddonFiles, AddonAll } from '../tools/interfaces';
+import f from '../service/addon.service';
 
-import { default as version } from '../';
-console.log(version);
-@Route(`/v2/addons`)
+@Route("addons")
+@Tags('Addons')
 export class AddonController extends Controller {
 	@Get('{addonId}')
 	public async getUser(@Path() addonId: number): Promise<Addon> {
-		return {
-			_id: 0,
-			authors: [],
-			name: 'test',
-			description: 'frzsc',
-			comments: false,
-			slug: 'efjrefj',
-		};
+		return f.get(addonId);
+	}
+
+	@Get('{addonId}/all')
+	public async getAll(@Path() addonId: number): Promise<AddonAll> {
+		return f.all(addonId)
+	}
+
+	@Get('{addonId}/files')
+	public async getFiles(@Path() addonId: number): Promise<AddonFiles> {
+		return f.files(addonId)
 	}
 }

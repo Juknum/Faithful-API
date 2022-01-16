@@ -3,10 +3,10 @@
     "version": "2.0.0",
     "description": "",
     "scripts": {
-        "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
-        "build": "tsoa spec-and-routes && tsc",
+        "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec --basePath v2\" \"nodemon -x tsoa routes --basePath v2\"",
+        "build": "tsoa spec --basePath v2 && tsoa routes --basePath v2 && tsc",
         "start": "node build/src/index.js",
-        "swag": "tsoa spec"
+        "swag": "tsoa spec --basePath v2"
     },
     "keywords": [],
     "author": "",
