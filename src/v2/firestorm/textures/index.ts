@@ -1,11 +1,11 @@
 import firestorm from 'firestorm-db';
-import { parseArr } from '../../tools/parseArr';
+import { arrayFlatening } from '../../tools/arrays';
 import config from '../config';
 config();
 
 import uses from './uses';
 import { contributions } from '..';
-import { Paths, Uses, Contributions, TextureAll } from '~/v2/tools/interfaces';
+import { Paths, Uses, Contributions, TextureAll } from '~/v2/interfaces';
 
 export default firestorm.collection('textures', (el) => {
 	el.uses = async (): Promise<Uses> => {
@@ -31,7 +31,7 @@ export default firestorm.collection('textures', (el) => {
 				return Promise.all(_uses.map((use) => use.paths()));
 			})
 			.then((arr) => {
-				return parseArr(arr);
+				return arrayFlatening(arr);
 			});
 	};
 

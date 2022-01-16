@@ -4,7 +4,7 @@ config();
 
 import textures from '.';
 import paths from './paths';
-import { Paths, Texture } from '~/v2/tools/interfaces';
+import { Paths, Texture } from '~/v2/interfaces';
 
 export default firestorm.collection('uses', (el) => {
 	el.texture = (): Promise<Texture> => {

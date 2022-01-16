@@ -1,5 +1,5 @@
 import firestorm from 'firestorm-db';
-import { Texture, User } from '~/v2/tools/interfaces';
+import { Texture, User } from '~/v2/interfaces';
 import { users } from '..';
 import config from '../config';
 import textures from '../textures';

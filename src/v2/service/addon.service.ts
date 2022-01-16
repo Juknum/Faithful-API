@@ -1,6 +1,5 @@
-import { addons, files } from '../../v1/firestorm/all'
-const parseArr = require('../tools/parseArr')
-import { Addon, AddonAll, AddonFiles } from '../tools/interfaces';
+import { addons, files } from '../../v1/firestorm/all';
+import { Addon, AddonAll, AddonFiles } from '../interfaces';
 
 export default {
   get: function (id: number): Promise<Addon> {

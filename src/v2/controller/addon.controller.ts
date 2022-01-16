@@ -1,6 +1,6 @@
 import { Controller, Get, Path, Route, Tags } from 'tsoa';
 
-import { Addon, AddonFiles, AddonAll } from '../tools/interfaces';
+import { Addon, AddonFiles, AddonAll } from '../interfaces';
 import f from '../service/addon.service';
 
 @Route("addons")
