@@ -1,6 +1,6 @@
 import { Controller, Get, Path, Route, Tags } from 'tsoa';
 
-import { Contributions, User } from '../interfaces';
+import { Addons, Contributions, User } from '../interfaces';
 import f from '../service/user.service';
 
 @Route("users")
@@ -14,6 +14,11 @@ export class UserController extends Controller {
 	@Get('{id}/contributions')
 	public async getContributions(@Path() id: string): Promise<Contributions> {
 		return f.getContributions(id);
+	}
+
+	@Get('{id}/addons')
+	public async getAddons(@Path() id: string): Promise<Addons> {
+		return f.getAddons(id);
 	}
 
 	// todo: implements setter with authentification verification

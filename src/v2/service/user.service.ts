@@ -1,5 +1,5 @@
 import { users } from '../firestorm';
-import { Contributions, User } from '../interfaces';
+import { Addons, Contributions, User } from '../interfaces';
 
 export default {
   get: function (id: string): Promise<User> {
@@ -8,6 +8,10 @@ export default {
 
   getContributions: function (id: string): Promise<Contributions> {
     return users.get(id).then(u => u.contributions());
+  },
+
+  getAddons: function (id: string): Promise<Addons> {
+    return users.get(id).then(u => u.addons());
   }
 
   // todo: implements setter with authentification verification

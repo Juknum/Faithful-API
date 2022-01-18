@@ -6,16 +6,18 @@ config();
 
 export default firestorm.collection('addons', (el) => {
   el.files = (): Promise<Files> => {
-    return files.search([{
-      field: "parent.id",
-      criteria: '==',
-      value: el[firestorm.ID_FIELD]
-    },
-    {
-      field: "parent.type",
-      criteria: '==',
-      value: 'addons'
-    }])
+    return files.search([
+      {
+        field: "parent.id",
+        criteria: '==',
+        value: el[firestorm.ID_FIELD]
+      },
+      {
+        field: "parent.type",
+        criteria: '==',
+        value: 'addons'
+      }
+    ])
   }
 
   el.all = (): Promise<AddonAll> => {
