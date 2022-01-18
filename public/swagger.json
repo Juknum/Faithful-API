@@ -8,11 +8,13 @@
 		"schemas": {
 			"Addon": {
 				"properties": {
-					"_id": {
-						"type": "number",
-						"format": "double"
+					"id": {
+						"type": "string"
 					},
 					"name": {
+						"type": "string"
+					},
+					"slug": {
 						"type": "string"
 					},
 					"description": {
@@ -24,36 +26,81 @@
 						},
 						"type": "array"
 					},
-					"comments": {
-						"type": "boolean"
+					"options": {
+						"properties": {
+							"tags": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							},
+							"optifine": {
+								"type": "boolean"
+							},
+							"comments": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"tags",
+							"optifine",
+							"comments"
+						],
+						"type": "object"
 					},
-					"slug": {
-						"type": "string"
+					"approval": {
+						"properties": {
+							"reason": {
+								"type": "string",
+								"nullable": true
+							},
+							"author": {
+								"type": "string",
+								"nullable": true
+							},
+							"status": {
+								"type": "string",
+								"enum": [
+									"approved",
+									"denied",
+									"pending"
+								]
+							}
+						},
+						"required": [
+							"reason",
+							"author",
+							"status"
+						],
+						"type": "object"
 					}
 				},
 				"required": [
-					"_id",
+					"id",
 					"name",
+					"slug",
 					"description",
 					"authors",
-					"comments",
-					"slug"
+					"options",
+					"approval"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AddonFiles": {
+			"Files": {
 				"properties": {},
 				"type": "object",
 				"additionalProperties": false
 			},
 			"AddonAll": {
 				"properties": {
-					"_id": {
-						"type": "number",
-						"format": "double"
+					"id": {
+						"type": "string"
 					},
 					"name": {
+						"type": "string"
+					},
+					"slug": {
 						"type": "string"
 					},
 					"description": {
@@ -65,23 +112,66 @@
 						},
 						"type": "array"
 					},
-					"comments": {
-						"type": "boolean"
+					"options": {
+						"properties": {
+							"tags": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							},
+							"optifine": {
+								"type": "boolean"
+							},
+							"comments": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"tags",
+							"optifine",
+							"comments"
+						],
+						"type": "object"
 					},
-					"slug": {
-						"type": "string"
+					"approval": {
+						"properties": {
+							"reason": {
+								"type": "string",
+								"nullable": true
+							},
+							"author": {
+								"type": "string",
+								"nullable": true
+							},
+							"status": {
+								"type": "string",
+								"enum": [
+									"approved",
+									"denied",
+									"pending"
+								]
+							}
+						},
+						"required": [
+							"reason",
+							"author",
+							"status"
+						],
+						"type": "object"
 					},
 					"files": {
-						"$ref": "#/components/schemas/AddonFiles"
+						"$ref": "#/components/schemas/Files"
 					}
 				},
 				"required": [
-					"_id",
+					"id",
 					"name",
+					"slug",
 					"description",
 					"authors",
-					"comments",
-					"slug",
+					"options",
+					"approval",
 					"files"
 				],
 				"type": "object",
@@ -94,7 +184,7 @@
 			},
 			"Texture": {
 				"properties": {
-					"_id": {
+					"id": {
 						"type": "string"
 					},
 					"name": {
@@ -116,7 +206,7 @@
 					}
 				},
 				"required": [
-					"_id",
+					"id",
 					"name",
 					"tags"
 				],
@@ -140,7 +230,7 @@
 			},
 			"TextureAll": {
 				"properties": {
-					"_id": {
+					"id": {
 						"type": "string"
 					},
 					"name": {
@@ -171,12 +261,62 @@
 					}
 				},
 				"required": [
-					"_id",
+					"id",
 					"name",
 					"tags",
 					"uses",
 					"paths",
 					"contributions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"uuid": {
+						"type": "string"
+					},
+					"muted": {
+						"properties": {
+							"end": {
+								"type": "string"
+							},
+							"start": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"end",
+							"start"
+						],
+						"type": "object"
+					},
+					"warns": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"username",
+					"roles",
+					"uuid",
+					"muted",
+					"warns"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -191,9 +331,9 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/addons/{addonId}": {
+		"/addons/{id}": {
 			"get": {
-				"operationId": "GetUser",
+				"operationId": "GetAddon",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -213,7 +353,7 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "addonId",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -223,7 +363,7 @@
 				]
 			}
 		},
-		"/addons/{addonId}/all": {
+		"/addons/{id}/all": {
 			"get": {
 				"operationId": "GetAll",
 				"responses": {
@@ -245,7 +385,7 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "addonId",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -255,7 +395,7 @@
 				]
 			}
 		},
-		"/addons/{addonId}/files": {
+		"/addons/{id}/files": {
 			"get": {
 				"operationId": "GetFiles",
 				"responses": {
@@ -264,7 +404,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/AddonFiles"
+									"$ref": "#/components/schemas/Files"
 								}
 							}
 						}
@@ -277,7 +417,7 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "addonId",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -464,6 +604,68 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}/contributions": {
+			"get": {
+				"operationId": "GetContributions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Contributions"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]

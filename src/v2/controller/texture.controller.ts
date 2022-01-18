@@ -4,7 +4,7 @@ import { Contributions, Paths, Texture, TextureAll, Textures, Uses } from '../in
 import f from '../service/texture.service';
 
 @Route("textures")
-@Tags('Textures')
+@Tags("Textures")
 export class TextureController extends Controller {
 	@Get('raw')
 	public async getRaw(): Promise<Textures> {
@@ -18,21 +18,23 @@ export class TextureController extends Controller {
 
 	@Get('{id}/uses')
 	public async getUses(@Path() id: number): Promise<Uses> {
-		return f.uses(id)
+		return f.getUses(id)
 	}
 
 	@Get('{id}/paths')
 	public async getPaths(@Path() id: number): Promise<Paths> {
-		return f.paths(id)
+		return f.getPaths(id)
 	}
 
 	@Get('{id}/contributions')
 	public async getContributions(@Path() id: number): Promise<Contributions> {
-		return f.contributions(id)
+		return f.getContributions(id)
 	}
 
 	@Get('{id}/all')
 	public async getAll(@Path() id: number): Promise<TextureAll> {
-		return f.all(id)
+		return f.getAll(id)
 	}
+
+	// todo: implements setter with authentification verification
 }

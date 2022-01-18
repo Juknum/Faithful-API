@@ -6,6 +6,8 @@ import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, H
 import { AddonController } from './../src/v2/controller/addon.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TextureController } from './../src/v2/controller/texture.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { UserController } from './../src/v2/controller/user.controller';
 import * as express from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -14,17 +16,18 @@ const models: TsoaRoute.Models = {
     "Addon": {
         "dataType": "refObject",
         "properties": {
-            "_id": {"dataType":"double","required":true},
+            "id": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
+            "slug": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
             "authors": {"dataType":"array","array":{"dataType":"string"},"required":true},
-            "comments": {"dataType":"boolean","required":true},
-            "slug": {"dataType":"string","required":true},
+            "options": {"dataType":"nestedObjectLiteral","nestedProperties":{"tags":{"dataType":"array","array":{"dataType":"string"},"required":true},"optifine":{"dataType":"boolean","required":true},"comments":{"dataType":"boolean","required":true}},"required":true},
+            "approval": {"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":[null]},{"dataType":"string"}],"required":true},"author":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":[null]},{"dataType":"string"}],"required":true},"status":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["approved"]},{"dataType":"enum","enums":["denied"]},{"dataType":"enum","enums":["pending"]}],"required":true}},"required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AddonFiles": {
+    "Files": {
         "dataType": "refObject",
         "properties": {
         },
@@ -34,13 +37,14 @@ const models: TsoaRoute.Models = {
     "AddonAll": {
         "dataType": "refObject",
         "properties": {
-            "_id": {"dataType":"double","required":true},
+            "id": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
+            "slug": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
             "authors": {"dataType":"array","array":{"dataType":"string"},"required":true},
-            "comments": {"dataType":"boolean","required":true},
-            "slug": {"dataType":"string","required":true},
-            "files": {"ref":"AddonFiles","required":true},
+            "options": {"dataType":"nestedObjectLiteral","nestedProperties":{"tags":{"dataType":"array","array":{"dataType":"string"},"required":true},"optifine":{"dataType":"boolean","required":true},"comments":{"dataType":"boolean","required":true}},"required":true},
+            "approval": {"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":[null]},{"dataType":"string"}],"required":true},"author":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":[null]},{"dataType":"string"}],"required":true},"status":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["approved"]},{"dataType":"enum","enums":["denied"]},{"dataType":"enum","enums":["pending"]}],"required":true}},"required":true},
+            "files": {"ref":"Files","required":true},
         },
         "additionalProperties": false,
     },
@@ -55,7 +59,7 @@ const models: TsoaRoute.Models = {
     "Texture": {
         "dataType": "refObject",
         "properties": {
-            "_id": {"dataType":"string","required":true},
+            "id": {"dataType":"string","required":true},
             "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}],"required":true},
             "tags": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
@@ -86,12 +90,25 @@ const models: TsoaRoute.Models = {
     "TextureAll": {
         "dataType": "refObject",
         "properties": {
-            "_id": {"dataType":"string","required":true},
+            "id": {"dataType":"string","required":true},
             "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}],"required":true},
             "tags": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "uses": {"ref":"Uses","required":true},
             "paths": {"ref":"Paths","required":true},
             "contributions": {"ref":"Contributions","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "User": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "username": {"dataType":"string","required":true},
+            "roles": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "uuid": {"dataType":"string","required":true},
+            "muted": {"dataType":"nestedObjectLiteral","nestedProperties":{"end":{"dataType":"string","required":true},"start":{"dataType":"string","required":true}},"required":true},
+            "warns": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -106,11 +123,11 @@ export function RegisterRoutes(app: express.Router) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-        app.get('/v2/addons/:addonId',
+        app.get('/v2/addons/:id',
 
-            function AddonController_getUser(request: any, response: any, next: any) {
+            function AddonController_getAddon(request: any, response: any, next: any) {
             const args = {
-                    addonId: {"in":"path","name":"addonId","required":true,"dataType":"double"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -122,18 +139,18 @@ export function RegisterRoutes(app: express.Router) {
                 const controller = new AddonController();
 
 
-              const promise = controller.getUser.apply(controller, validatedArgs as any);
+              const promise = controller.getAddon.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/v2/addons/:addonId/all',
+        app.get('/v2/addons/:id/all',
 
             function AddonController_getAll(request: any, response: any, next: any) {
             const args = {
-                    addonId: {"in":"path","name":"addonId","required":true,"dataType":"double"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -152,11 +169,11 @@ export function RegisterRoutes(app: express.Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/v2/addons/:addonId/files',
+        app.get('/v2/addons/:id/files',
 
             function AddonController_getFiles(request: any, response: any, next: any) {
             const args = {
-                    addonId: {"in":"path","name":"addonId","required":true,"dataType":"double"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -306,6 +323,52 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.getAll.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/v2/users/:id',
+
+            function UserController_getUser(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new UserController();
+
+
+              const promise = controller.getUser.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/v2/users/:id/contributions',
+
+            function UserController_getContributions(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new UserController();
+
+
+              const promise = controller.getContributions.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

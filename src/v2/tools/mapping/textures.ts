@@ -11,7 +11,7 @@ interface OldUse {
 export function mapUses(data: OldUses): Uses { return data.map(mapUse); }
 export function mapUse(old: OldUse): Use {
   return {
-    _id: old.id,
+    id: old.id,
     name: old.textureUseName,
     edition: old.editions[0],
     assets: (old.editions[0] === 'java' ? 'minecraft' : null),
@@ -28,7 +28,7 @@ interface OldTexture {
 export function mapTextures(data: OldTextures): Textures { return data.map(mapTexture); }
 export function mapTexture(old: OldTexture): Texture {
   return {
-    _id: old.id,
+    id: old.id,
     name: old.name,
     tags: old.type
   } as Texture;
@@ -46,7 +46,7 @@ interface OldPath {
 export function mapPaths(data: OldPaths): Paths { return data.map(mapPath) }
 export function mapPath(old: OldPath): Path {
   return {
-    _id: old.id,
+    id: old.id,
     use: old.useID,
     name: old.path.replace('assets/minecraft/', ''), // specified in the use
     mcmeta: old.mcmeta,
@@ -66,7 +66,7 @@ interface OldContribution {
 export function mapContributions(data: OldContributions): Contributions { return data.map(mapContribution) }
 export function mapContribution(old: OldContribution): Contribution {
   return {
-    _id: old.id,
+    id: old.id,
     date: old.date,
     texture: old.textureID.toString(),
     resolution: old.res === 'c32' ? '32x' : '64x',

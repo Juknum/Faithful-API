@@ -1,23 +1,25 @@
 import { Controller, Get, Path, Route, Tags } from 'tsoa';
 
-import { Addon, AddonFiles, AddonAll } from '../interfaces';
+import { Addon, Files, AddonAll } from '../interfaces';
 import f from '../service/addon.service';
 
 @Route("addons")
-@Tags('Addons')
+@Tags("Addons")
 export class AddonController extends Controller {
-	@Get('{addonId}')
-	public async getUser(@Path() addonId: number): Promise<Addon> {
-		return f.get(addonId);
+	@Get('{id}')
+	public async getAddon(@Path() id: number): Promise<Addon> {
+		return f.get(id);
 	}
 
-	@Get('{addonId}/all')
-	public async getAll(@Path() addonId: number): Promise<AddonAll> {
-		return f.all(addonId)
+	@Get('{id}/all')
+	public async getAll(@Path() id: number): Promise<AddonAll> {
+		return f.getAll(id)
 	}
 
-	@Get('{addonId}/files')
-	public async getFiles(@Path() addonId: number): Promise<AddonFiles> {
-		return f.files(addonId)
+	@Get('{id}/files')
+	public async getFiles(@Path() id: number): Promise<Files> {
+		return f.getFiles(id)
 	}
+
+	// todo: implements setter with authentification verification
 }

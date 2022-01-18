@@ -2,50 +2,50 @@ export interface Error {
 	error: string;
 }
 
-export interface TexturesAll extends Array<TextureAll> {}
+export interface TexturesAll extends Array<TextureAll> { }
 export interface TextureAll extends Texture {
 	uses: Uses;
 	paths: Paths;
 	contributions: Contributions;
 }
 
-export interface Textures extends Array<Texture> {}
+export interface Textures extends Array<Texture> { }
 export interface Texture {
-	_id: string; // texture unique id
+	id: string; // texture unique id
 	name: string | number; // texture name
 	tags: Array<string>; // texture tags (block, item...)
 }
 
-export interface Uses extends Array<Use> {}
+export interface Uses extends Array<Use> { }
 export interface Use {
-	_id: string; // use unique id
+	id: string; // use unique id
 	name: string; // use name
 	texture: number; // texture id
 	edition: string; // game edition
 	assets: string; // assets folder name (empty for bedrock)
 }
 
-export interface Paths extends Array<Path> {}
+export interface Paths extends Array<Path> { }
 export interface Path {
-	_id: string; // path unique id
+	id: string; // path unique id
 	name: string; // texture path ('textures/block/stone.png')
 	use: string; // use id
 	versions: Array<string>; // MC versions
 	mcmeta: boolean; // true if animated
 }
 
-export interface Contributions extends Array<Contribution> {}
+export interface Contributions extends Array<Contribution> { }
 export interface Contribution {
-	_id: string; // contribution unique id
+	id: string; // contribution unique id
 	date: number; // unix timestamp
 	resolution: '32x' | '64x'; // texture resolution
 	authors: Array<string>; // discords users ids
 	texture: string; // texture id
 }
 
-export interface Users extends Array<User> {}
+export interface Users extends Array<User> { }
 export interface User {
-	_id: string; // discord user id
+	id: string; // discord user id
 	username: string; // username displayed online
 	roles: Array<string>; // discord roles the user have
 	uuid: string; // MC UUID
@@ -57,34 +57,33 @@ export interface User {
 	warns: Array<string>; // list of all warns
 }
 
-export interface Addons extends Array<Addon> {}
+export interface Addons extends Array<Addon> { }
 export interface Addon {
-	_id: number; // addon unique id
+	id: string; // addon unique id
 	name: string; // addon name (> 5 && < 30)
+	slug: string; // used in link & as comments id (ex: 'www.compliancepack.net/addons/compliance3D')
 	description: string; // addon description (> 256 && < 4096)
 	authors: Array<string>; // discord users IDs
-	comments: boolean; // true if comments are enabled on this addon
-	slug: string; // used in link & as comments id (ex: 'www.compliancepack.net/addons/compliance3D')
+	options: {
+		comments: boolean; // true if comments are enabled on this addon
+		optifine: boolean; // true if the pack require optifine to work properly
+		tags: Array<string>; // Edition + Resolution
+	};
+	approval: {
+		status: "approved" | "denied" | "pending",
+		author: null | string; // approval/deny author
+		reason: null | string; // reason of deny
+	}
 }
 
-export interface AddonFiles extends Array<AddonFile> {}
-export interface AddonFile {
-	name: string; // name of the file given by the user
-	type: 'url'; // file type
-	parent: {
-		type: string; // parent table associated
-		id: string|number; // parent object ID
-	},
-	source: string; // source URL
-}
-
+export interface AddonsAll extends Array<AddonAll> { }
 export interface AddonAll extends Addon {
-	files: AddonFiles
+	files: Files
 }
 
-export interface Posts extends Array<Post> {}
+export interface Posts extends Array<Post> { }
 export interface Post {
-	_id: string; // post unique id
+	id: string; // post unique id
 	name: string; // addon name (> 5 && < 30)
 	description: string; // addon description (> 256 && < 4096)
 	authors: Array<string>; // discord users IDs
@@ -92,12 +91,12 @@ export interface Post {
 	slug: string; // used in link & as comments id (ex: 'www.compliancepack.net/addons/compliance3D')
 }
 
-export interface Files extends Array<File> {}
+export interface Files extends Array<File> { }
 export interface File {
-	_id: string; // file unique id
-	name: string; // file name when uploaded
-	use: string; // file use ('header', 'screenshot', 'file')
-	type: string; // file type: b64, url...
+	id: string; // file unique id
+	name: string | null; // file name when uploaded
+	use: "header" | "screenshot" | "file";
+	type: "url" | "b64";
 	parent: {
 		type: string; // collection name (addon, post...)
 		id: string; // id of the parent
@@ -105,9 +104,9 @@ export interface File {
 	source: string; // file content/url (ex: 'database.compliancepack.net/images/test.png')
 }
 
-export interface Changelogs extends Array<Changelog> {}
+export interface Changelogs extends Array<Changelog> { }
 export interface Changelog {
-	_id: string; // changelog unique id
+	id: string; // changelog unique id
 	name: string; // changelog name (ex: 'Beta 2')
 	added: Changes;
 	modified: Changes;
@@ -115,16 +114,16 @@ export interface Changelog {
 	fixed: Changes;
 }
 
-export interface Changes extends Array<Change> {}
+export interface Changes extends Array<Change> { }
 export interface Change {
-	_id: string; // change unique id
+	id: string; // change unique id
 	contribution?: Contribution;
 	comment: string; // additional comment
 }
 
-export interface Mods extends Array<Mod> {}
+export interface Mods extends Array<Mod> { }
 export interface Mod {
-	_id: string; // mod id (curseforge project id) (custom if not curseforge)
+	id: string; // mod id (curseforge project id) (custom if not curseforge)
 	name: string; // mod name (ex: Industrial Craft 2)
 	aliases: Array<string>; // mod aliases (ex: IC2)
 	curse_url: string; // curseforge project url (if not: undefined)
@@ -136,13 +135,13 @@ export interface Mod {
 	blacklisted: boolean; // if true, the mod is fully blacklisted
 }
 
-export interface Modpacks extends Array<Mod> {}
+export interface Modpacks extends Array<Mod> { }
 export interface Modpack {
-	_id: string; // modpack id (curseforge project id)
+	id: string; // modpack id (curseforge project id)
 	name: string; // modpack name
 	authors: Array<string>; // modpacks authors
 	versions: Array<{
-		_id: string; // modpack version
+		id: string; // modpack version
 		minecraft: string; // minecraft version (ex: "1.18")
 		mods: Mods;
 	}>;
