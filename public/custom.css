@@ -8,3 +8,7 @@
 	height: 0px;
 	visibility: hidden;
 }
+
+.swagger-ui .auth-wrapper .dialog-ux {
+	height: 100vh;
+}

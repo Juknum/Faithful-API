@@ -7,10 +7,18 @@
     ],
     "spec": {
         "outputDirectory": "public",
-        "specVersion": 3
+        "specVersion": 3,
+        "securityDefinitions": {
+            "discord": {
+                "type": "apiKey",
+                "name": "discord",
+                "in": "header"
+            }
+        }
     },
     "routes": {
-        "routesDir": "build"
+        "routesDir": "build",
+        "authenticationModule": "src/v2/tools/authentification.ts"
     },
     "compilerOptions": {
         "baseUrl": "/v2"
