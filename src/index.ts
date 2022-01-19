@@ -8,11 +8,9 @@ import path from 'path';
 import swaggerUi, { SwaggerUiOptions } from 'swagger-ui-express';
 import { RegisterRoutes } from '../build/routes';
 import { ValidateError } from "tsoa";
-import errorHandler from "api-error-handler";
 
 import * as dotenv from "dotenv";
 import apiErrorHandler from 'api-error-handler';
-import { AxiosError } from 'axios';
 dotenv.config();
 
 const PORT = process.env.PORT || 8000;
@@ -49,8 +47,6 @@ app.use((_req, res, next) => {
   res.append('Access-Control-Allow-Origin', '*');
   next();
 });
-
-let css: string = fs.readFileSync(path.join(__dirname, '../public/custom.css')).toString();
 
 const swaggerDoc = require('../public/swagger.json');
 const options: SwaggerUiOptions = {
