@@ -23,6 +23,11 @@ export class TextureController extends Controller {
 		return this.service.getVersions();
 	}
 
+	@Get("versions/{edition}")
+	public getVersionByEdition(@Path() edition: string): Promise<string[]> {
+		return this.service.getVersionByEdition(edition);
+	}
+
 	@Get("resolutions")
 	public async getResolutions(): Promise<string[]> {
 		return this.service.getResolutions();

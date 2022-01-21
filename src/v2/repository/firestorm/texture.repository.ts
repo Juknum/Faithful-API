@@ -1,3 +1,5 @@
+import { NotFoundError } from "./../../tools/ApiError";
+import firestorm from "firestorm-db";
 import { textures, paths, uses, contributions } from "../../firestorm";
 import {
 	Contribution,
@@ -85,6 +87,16 @@ export default class TextureFirestormRepository implements TextureRepository {
 					});
 					return acc.sort().reverse();
 				}, []);
+			});
+	}
+
+	getVersionByEdition(edition: string): Promise<string[]> {
+		return firestorm
+			.collection("settings")
+			.get("versions")
+			.then((versions) => {
+				if (versions[edition] === undefined) throw new NotFoundError("edition not found");
+				return versions[edition];
 			});
 	}
 }

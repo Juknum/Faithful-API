@@ -176,4 +176,5 @@ export interface TextureRepository {
 	getVersions(): Promise<string[]>;
 	getEditions(): Promise<string[]>;
 	getResolutions(): Promise<string[]>;
+	getVersionByEdition(edition: string): Promise<string[]>;
 }

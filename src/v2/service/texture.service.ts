@@ -1,7 +1,7 @@
 import { textures } from "../firestorm";
 import { Contributions, Paths, Texture, Textures, TextureAll, Uses } from "../interfaces";
 import { TextureRepository } from "../interfaces";
-import TextureFirestormRepository from "../repository/firestorm/TextureRepository";
+import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 
 export default class TextureService {
 	private readonly textureRepo: TextureRepository = new TextureFirestormRepository();
@@ -37,6 +37,10 @@ export default class TextureService {
 
 	getVersions(): Promise<string[]> {
 		return this.textureRepo.getVersions();
+	}
+
+	getVersionByEdition(edition: string): Promise<string[]> {
+		return this.textureRepo.getVersionByEdition(edition);
 	}
 
 	getEditions(): Promise<string[]> {
