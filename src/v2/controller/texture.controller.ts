@@ -18,6 +18,11 @@ export class TextureController extends Controller {
 		return this.service.getEditions();
 	}
 
+	@Get("tags")
+	public async getTags(): Promise<string[]> {
+		return this.service.getTags();
+	}
+
 	@Get("versions")
 	public async getVersions(): Promise<string[]> {
 		return this.service.getVersions();

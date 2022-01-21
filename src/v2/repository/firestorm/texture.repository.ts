@@ -1,17 +1,7 @@
 import { NotFoundError } from "./../../tools/ApiError";
 import firestorm from "firestorm-db";
 import { textures, paths, uses, contributions } from "../../firestorm";
-import {
-	Contribution,
-	Contributions,
-	Paths,
-	Texture,
-	Textures,
-	TextureAll,
-	Uses,
-	TextureRepository,
-	Path,
-} from "../../interfaces";
+import { Contributions, Paths, Texture, Textures, TextureAll, Uses, TextureRepository, Path } from "../../interfaces";
 import { mapTexture, OldUse } from "../../tools/mapping/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
@@ -72,6 +62,25 @@ export default class TextureFirestormRepository implements TextureRepository {
 						return acc;
 					}, []) as string[]
 				).sort();
+			});
+	}
+
+	getTags(): Promise<string[]> {
+		return textures
+			.select({
+				fields: ["type"], // TODO: change with tags
+			})
+			.then((res: any) => {
+				return (
+					Object.values(res).reduce((acc: string[], cur: any) => {
+						const types = cur.type;
+						acc.push(types);
+						return acc;
+					}, []) as string[]
+				)
+					.flat()
+					.filter((e, i, a) => a.indexOf(e) === i)
+					.sort();
 			});
 	}
 

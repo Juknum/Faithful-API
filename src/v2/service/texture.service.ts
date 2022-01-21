@@ -47,6 +47,10 @@ export default class TextureService {
 		return this.textureRepo.getEditions();
 	}
 
+	getTags(): Promise<string[]> {
+		return this.textureRepo.getTags();
+	}
+
 	getResolutions = function (): Promise<string[]> {
 		return this.textureRepo.getResolutions();
 	};
