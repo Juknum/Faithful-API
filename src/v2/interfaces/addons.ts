@@ -27,6 +27,5 @@ export interface AddonAll extends Addon {
 export interface AddonRepository {
 	getRaw(): Promise<Addons>;
 	getAddonById(id: number): Promise<Addon>;
-	getAllById(id: number): Promise<AddonAll>;
 	getFilesById(addonId: number): Promise<Files>;
 }

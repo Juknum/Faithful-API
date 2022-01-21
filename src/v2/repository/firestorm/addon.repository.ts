@@ -10,10 +10,6 @@ export default class AddonFirestormRepository implements AddonRepository {
 		return addons.get(id);
 	}
 
-	getAllById(id: number): Promise<AddonAll> {
-		return addons.get(id).then((addon) => addon.all());
-	}
-
 	getFilesById(addonId: number): Promise<Files> {
 		return addons.get(addonId).then((addon) => addon.files());
 	}
