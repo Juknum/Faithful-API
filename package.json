@@ -7,7 +7,7 @@
         "build": "tsoa spec && tsoa routes && tsc",
         "start": "node build/src/index.js",
         "swag": "tsoa spec",
-        "prettier-format": "prettier --config .prettierrc '**/*.ts' --write"
+        "prettier-format": "prettier src/**/*.ts --config .prettierrc --write"
     },
     "keywords": [],
     "author": "",

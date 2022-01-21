@@ -1,11 +1,11 @@
-import firestorm from 'firestorm-db';
-import { Texture, Use } from '~/v2/interfaces';
-import config from '../config';
+import firestorm from "firestorm-db";
+import { Texture, Use } from "~/v2/interfaces";
+import config from "../config";
 config();
 
-import uses from './uses';
+import uses from "./uses";
 
-export default firestorm.collection('paths', (el) => {
+export default firestorm.collection("paths", (el) => {
 	el.use = async (): Promise<Use> => {
 		return uses.get(el.useID);
 	};
