@@ -1,7 +1,7 @@
 import { Textures, Texture, Use, Uses, Path, Paths, Contributions, Contribution } from "~/v2/interfaces";
 
 interface OldUses extends Array<OldUse> { }
-interface OldUse {
+export interface OldUse {
   textureID: number;
   textureUseName: string;
   editions: Array<string>;

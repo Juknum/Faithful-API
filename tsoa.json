@@ -6,6 +6,7 @@
         "src/**/*controller.ts"
     ],
     "spec": {
+        "basePath": "v2",
         "outputDirectory": "public",
         "specVersion": 3,
         "securityDefinitions": {
@@ -17,10 +18,8 @@
         }
     },
     "routes": {
+        "basePath": "v2",
         "routesDir": "build",
         "authenticationModule": "src/v2/tools/authentification.ts"
-    },
-    "compilerOptions": {
-        "baseUrl": "/v2"
     }
 }

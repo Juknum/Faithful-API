@@ -3,10 +3,11 @@
     "version": "2.0.0",
     "description": "",
     "scripts": {
-        "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec --basePath v2\" \"nodemon -x tsoa routes --basePath v2\"",
-        "build": "tsoa spec --basePath v2 && tsoa routes --basePath v2 && tsc",
+        "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec\" \"nodemon -x tsoa routes\"",
+        "build": "tsoa spec && tsoa routes && tsc",
         "start": "node build/src/index.js",
-        "swag": "tsoa spec --basePath v2"
+        "swag": "tsoa spec",
+        "prettier-format": "prettier --config .prettierrc '**/*.ts' --write"
     },
     "keywords": [],
     "author": "",
@@ -18,6 +19,7 @@
         "@types/swagger-ui-express": "^4.1.3",
         "concurrently": "^7.0.0",
         "nodemon": "^2.0.15",
+        "prettier": "^2.5.1",
         "ts-node": "^10.4.0",
         "tsoa": "^3.14.1",
         "typescript": "^4.5.4"
