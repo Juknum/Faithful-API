@@ -1,5 +1,4 @@
 import firestorm from "firestorm-db";
-import { arrayFlatening } from "../../tools/arrays";
 import config from "../config";
 config();
 
@@ -34,7 +33,7 @@ export default firestorm.collection("textures", (el) => {
 				return Promise.all(_uses.map((use) => use.paths()));
 			})
 			.then((arr) => {
-				return arrayFlatening(arr);
+				return arr.flat();
 			})
 			.then(mapPaths); // todo: (DATA 2.0) remove after database rewrite
 	};

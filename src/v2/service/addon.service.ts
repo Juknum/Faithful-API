@@ -1,19 +1,28 @@
 import { addons } from "../firestorm";
-import { Addon, AddonAll, Files } from "../interfaces";
+import { Addons, Addon, AddonAll, AddonRepository, Files } from "../interfaces";
+import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 
-export default {
-	get: function (id: number): Promise<Addon> {
+export default class AddonService {
+	private readonly addonRepo: AddonRepository = new AddonFirestormRepository();
+
+	getRaw(): Promise<Addons> {
+		return this.addonRepo.getRaw();
+	}
+
+	getAddon(id: number): Promise<Addon> {
 		if (isNaN(id) || id < 0) return Promise.reject(new Error("Addons IDs are integer greater than 0"));
-		return addons.get(id);
-	},
-	getFiles: function (id: number): Promise<Files> {
+		return this.addonRepo.getAddonById(id);
+	}
+
+	getFiles(id: number): Promise<Files> {
 		if (isNaN(id) || id < 0) return Promise.reject(new Error("Addons IDs are integer greater than 0"));
-		return addons.get(id).then((addon) => addon.files());
-	},
-	getAll: function (id: number): Promise<AddonAll> {
+		return this.addonRepo.getFilesById(id);
+	}
+
+	getAll(id: number): Promise<AddonAll> {
 		if (isNaN(id) || id < 0) return Promise.reject(new Error("Addons IDs are integer greater than 0"));
-		return addons.get(id).then((addon) => addon.all());
-	},
+		return this.addonRepo.getAllById(id);
+	}
 
 	// todo: implements setter with authentification verification
-};
+}

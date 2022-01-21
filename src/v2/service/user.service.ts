@@ -1,5 +1,5 @@
-import { Addons, Contributions, User, UserCreationParams, UserRepository } from "../interfaces";
-import * as urf from "../repository/firestorm/UserFirestormRepository";
+import { Addons, Contributions, User, UserRepository } from "../interfaces";
+import * as urf from "../repository/firestorm/user.repository";
 
 export class UserService {
 	private repository: UserRepository = new urf.default();
