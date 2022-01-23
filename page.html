@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Compliance API</title>
+
+  <link rel="icon" href="https://database.compliancepack.net/images/brand/logos/site/compliance_white.ico" />
+  <link rel="icon" type="image/x-icon" href="https://database.compliancepack.net/images/brand/logos/site/compliance_white.ico" />
+  <link rel="shortcut icon" type="image/x-icon" href="https://database.compliancepack.net/images/brand/logos/site/compliance_white.ico" />
+
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/http.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/javascript.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/github-dark-dimmed.min.css"/>
+  <link rel="stylesheet" href="page.css" />
+</head>
+
+<body>
+  <div class="page">
+    <div class="menu">
+      <h3 align="center">Index</h3>
+      <ul>
+        <li><a href="/">About</a></li>
+        <li>
+          <a href="/v1">API v1</a>
+          <ol>
+            <li>
+              <a href="/v1#i-firestorm-collections">Firestorm Collections</a>
+              <ol>
+                <li><a href="/v1#1-raw-data">Raw data</a></li>
+                <li><a href="/v1#2-firestorm-textures">Firestorm Textures</a></li>
+                <li><a href="/v1#3-firestorm-contributions">Firestorm Contributions</a></li>
+                <li><a href="/v1#3-firestorm-addons">Firestorm Addons</a></li>
+              </ol>
+            </li>
+            <li>
+              <a href="/v1#ii-purge-cache">Purge cache</a>
+            </li>
+          </ol>
+        </li>
+      </ul>
+    </div>
+    <div class="markdown"><div id="app"></div></div> 
+  </div>
+  <p align="center">&copy; 2022 Compliance Team</p>
+  <script src='https://cdn.jsdelivr.net/npm/marked@4.0.9/marked.min.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.24.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+  <script src="page.js"></script>
+</body>
