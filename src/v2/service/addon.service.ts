@@ -1,4 +1,4 @@
-import { Addons, Addon, AddonAll, AddonRepository, Files } from "../interfaces";
+import { Addons, Addon, AddonAll, AddonRepository, Files, File } from "../interfaces";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 import { NotFoundError } from "../tools/ApiError";
 
@@ -30,6 +30,16 @@ export default class AddonService {
 		});
 	}
 
+	async getScreenshots(id): Promise<Array<string>> {
+		return this.getFiles(id)
+			.then((files: Files) => {
+				return files.filter((f: File) => f.use === "screenshot" || f.use === "carousel"); // todo: only keep screenshots
+			})
+			.then((files: Files) => {
+				return Object.values(files).map((f: File) => f.source)
+			})
+	}
+
 	async getSreenshotURL(id: number, index: number): Promise<string> {
 		const files = await this.getFiles(id);
 
@@ -38,7 +48,7 @@ export default class AddonService {
 			throw new NotFoundError("Files not found");
 		}
 
-		const screenshotFile = files.filter((f) => f.use === "screenshot" || (f as any).use === "carousel")[index];
+		const screenshotFile = files.filter((f) => f.use === "screenshot" || (f as any).use === "carousel")[index]; // todo: only keep screenshots
 
 		// if no header file, not found
 		if (screenshotFile === undefined) {
