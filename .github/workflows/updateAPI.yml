@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# todo: use this instead of npm run dev:
+# npm run build
+# npm run start -> cause an issue, needs to be fixed first
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,5 +26,5 @@ jobs:
           git stash
           git pull
           npm install --save
-          npm run swag
+          npm run dev
           pm2 restart "API"
