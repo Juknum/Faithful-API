@@ -1,0 +1,25 @@
+{
+    "entryFile": "src/index.ts",
+    "noImplicitAdditionalProperties": "throw-on-extras",
+    "controllerPathGlobs": [
+        "./src/**/*",
+        "src/**/*controller.ts"
+    ],
+    "spec": {
+        "basePath": "v2",
+        "outputDirectory": "public",
+        "specVersion": 3,
+        "securityDefinitions": {
+            "discord": {
+                "type": "apiKey",
+                "name": "discord",
+                "in": "header"
+            }
+        }
+    },
+    "routes": {
+        "basePath": "v2",
+        "routesDir": "build",
+        "authenticationModule": "src/v2/tools/authentification.ts"
+    }
+}

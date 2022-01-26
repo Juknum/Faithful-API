@@ -1,3 +1,6 @@
+node_modules
 .env
-node_modules/*
-.vscode
+dist
+build
+public/swagger.json
+.vscode/settings.json
