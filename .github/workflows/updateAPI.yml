@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-# todo: use this instead of npm run dev:
+# todo: use this instead of npm run dev: (in the pm2 program)
 # npm run build
 # npm run start -> cause an issue, needs to be fixed first
 
@@ -26,5 +26,4 @@ jobs:
           git stash
           git pull
           npm install --save
-          npm run dev
           pm2 restart "API"
