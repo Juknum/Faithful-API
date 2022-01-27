@@ -5,10 +5,6 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-# todo: use this instead of npm run dev: (in the pm2 program)
-# npm run build
-# npm run start -> cause an issue, needs to be fixed first
-
 jobs:
   build:
     runs-on: ubuntu-latest
