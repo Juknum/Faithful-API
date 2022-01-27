@@ -26,4 +26,5 @@ jobs:
           git stash
           git pull
           npm install --save
+          npm run build
           pm2 restart "API"
