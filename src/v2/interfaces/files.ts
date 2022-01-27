@@ -10,3 +10,7 @@ export interface File {
 	};
 	source: string; // file content/url (ex: 'database.compliancepack.net/images/test.png')
 }
+
+//! needs to be approved & finished by @TheRolfFR
+export type FileDataParam = Pick<File, "name" | "use" | "type">
+export interface FileCreationParam extends FileDataParam {}

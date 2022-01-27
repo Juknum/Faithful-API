@@ -21,11 +21,13 @@ export interface Addon {
 		optifine: boolean; // true if the pack require optifine to work properly
 		tags: AddonTagArray; // Edition + Resolution
 	};
-	approval: {
-		status: "approved" | "denied" | "pending";
-		author: null | string; // approval/deny author
-		reason: null | string; // reason of deny
-	};
+	approval: AddonReview;
+}
+
+export interface AddonReview {
+	status: "approved" | "denied" | "pending";
+	author: null | string; // approval/deny author
+	reason: null | string; // reason of deny
 }
 
 export type AddonDataParam = Pick<Addon, "name" | "description" | "authors" | "options">;

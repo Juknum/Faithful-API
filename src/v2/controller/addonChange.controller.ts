@@ -1,8 +1,8 @@
 import { PermissionError } from "./../tools/ApiError";
 import { UserService } from "./../service/user.service";
-import { Body, Controller, Delete, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
+import { Body, Controller, Delete, Patch, Path, Post, Put, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import AddonService from "../service/addon.service";
-import { Addon, AddonCreationParam } from "../interfaces/addons";
+import { Addon, AddonCreationParam, AddonReview } from "../interfaces/addons";
 import { BadRequestError } from "../tools/ApiError";
 
 @Route("addons")
@@ -34,4 +34,16 @@ export class AddonChangeController extends Controller {
 
 		this.service.delete(id);
 	}
+	
+	@Response<PermissionError>(403)
+	@Patch("{id}")
+	@SuccessResponse(204)
+	@Security("discord", [])
+	public async updateAddon(@Path() id: string, @Body() data: any): Promise<void> {}
+
+	@Response<PermissionError>(403)
+	@Put("{id}/review")
+	@SuccessResponse(204)
+	@Security("discord", [])
+	public async acceptAddon(@Path() id: string, @Body() data: AddonReview): Promise<void> {}
 }
