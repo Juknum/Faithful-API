@@ -4,8 +4,8 @@
     "description": "",
     "scripts": {
         "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec\" \"nodemon -x tsoa routes\"",
-        "build": "tsoa spec && tsoa routes && tsc",
-        "start": "node build/src/index.js",
+        "build": "tsoa spec && tsoa routes && tsc && cp -R public dist/public",
+        "start": "node dist/src/index.js",
         "swag": "tsoa spec",
         "prettier-format": "prettier src/**/*.ts --config .prettierrc --write"
     },
@@ -22,7 +22,6 @@
         "nodemon": "^2.0.15",
         "prettier": "^2.5.1",
         "ts-node": "^10.4.0",
-        "tsoa": "^3.14.1",
         "typescript": "^4.5.4"
     },
     "dependencies": {
@@ -36,6 +35,7 @@
         "firestorm-db": "^1.9.0",
         "multer": "^1.4.4",
         "statuses": "^2.0.1",
-        "swagger-ui-express": "^4.3.0"
+        "swagger-ui-express": "^4.3.0",
+        "tsoa": "^3.14.1"
     }
 }
