@@ -3,7 +3,7 @@
     "version": "2.0.0",
     "description": "",
     "scripts": {
-        "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec\" \"nodemon -x tsoa routes\"",
+        "dev": "tsoa routes && concurrently \"nodemon\" \"nodemon -x tsoa spec\" \"nodemon -x tsoa routes\"",
         "build": "tsoa spec && tsoa routes && tsc && cp -R public dist/public",
         "start": "node dist/src/index.js",
         "swag": "tsoa spec",
