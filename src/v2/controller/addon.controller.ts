@@ -20,6 +20,14 @@ export class AddonController extends Controller {
 		return this.service.getAddon(id);
 	}
 
+	@Response<NotFoundError>(404)
+	@Get("/slug/{slug}")
+	public async getAddonBySlug(@Path() slug: string): Promise<Addon> {
+		const res = await this.service.getAddonBySlug(slug);
+		if (res === undefined) throw new NotFoundError("Addon not found");
+		return res;
+	}
+
 	@Get("{id}/all")
 	public async getAll(@Path() id: number): Promise<AddonAll> {
 		return this.service.getAll(id);

@@ -9,13 +9,31 @@
         "basePath": "v2",
         "outputDirectory": "public",
         "specVersion": 3,
+        "specMerging": "recursive",
         "securityDefinitions": {
             "discord": {
                 "type": "apiKey",
                 "name": "discord",
                 "in": "header"
             }
+        },
+        "paths": {
+        "/addons": {
+          "post": {
+            "consumes": [
+              "multipart/form-data"
+            ],
+            "parameters": [
+              {
+                "in": "formData",
+                "name": "headerFile",
+                "required": true,
+                "type": "file"
+              }
+            ]
+          }
         }
+      }
     },
     "routes": {
         "basePath": "v2",

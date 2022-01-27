@@ -7,6 +7,12 @@ export class ApiError extends Error {
 	}
 }
 
+export class BadRequestError extends ApiError {
+	constructor(message?: string) {
+		super("BadRequest", 400, message);
+	}
+}
+
 export class NotFoundError extends ApiError {
 	constructor(message?: string) {
 		super("NotFound", 404, message);
