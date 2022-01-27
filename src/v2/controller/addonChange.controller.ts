@@ -6,6 +6,7 @@ import { Addon, AddonCreationParam } from "../interfaces/addons";
 import { BadRequestError } from "../tools/ApiError";
 
 @Route("addons")
+@Tags("Addons")
 export class AddonChangeController extends Controller {
 	private readonly service: AddonService = new AddonService();
 
