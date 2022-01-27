@@ -1,6 +1,6 @@
 import { PermissionError } from "./../tools/ApiError";
 import { UserService } from "./../service/user.service";
-import { Body, Controller, Delete, Path, Post, Request, Response, Route, Security, SuccessResponse } from "tsoa";
+import { Body, Controller, Delete, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import AddonService from "../service/addon.service";
 import { Addon, AddonCreationParam } from "../interfaces/addons";
 import { BadRequestError } from "../tools/ApiError";
