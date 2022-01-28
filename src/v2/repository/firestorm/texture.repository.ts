@@ -10,7 +10,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.read_raw();
 	};
 
-	searchTextureByName = function (name: string, property:  TextureProperty): Promise<any> {
+	searchTextureByName = function (name: string, property: TextureProperty): Promise<any> {
 		const s = [{field: "name",criteria: "includes",	value: name}];
 
 		return textures.search(s)
@@ -20,29 +20,13 @@ export default class TextureFirestormRepository implements TextureRepository {
 			})
 	};
 
-	getTextureById = function (id: number): Promise<Texture> {
+	getTextureById = function (id: number, property: TextureProperty): Promise<Texture> {
 		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return textures.get(id).then(mapTexture); // todo: (DATA 2.0) remove after database rewrite
-	};
-
-	getUsesById = function (id: number): Promise<Uses> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return textures.get(id).then((texture) => texture.uses());
-	};
-
-	getPathsById = function (id: number): Promise<Paths> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return textures.get(id).then((texture) => texture.paths());
-	};
-
-	getContributionsById = function (id: number): Promise<Contributions> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return textures.get(id).then((texture) => texture.contributions());
-	};
-
-	getAllById = function (id: number): Promise<TextureAll> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return textures.get(id).then((texture) => texture.all());
+		return textures.get(id)
+			.then(t => {
+				if (property === null) return mapTexture(t); // todo: (DATA 2.0) remove after database rewrite
+				return t[property]();
+			})
 	};
 
 	getEditions = function () {

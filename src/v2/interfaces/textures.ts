@@ -20,11 +20,7 @@ export type TextureProperty =  "uses" | "paths" | "contributions" | "all" | null
 
 export interface TextureRepository {
 	getRaw(): Promise<Textures>;
-	getTextureById(id: number): Promise<Texture>;
-	getUsesById(id: number): Promise<Uses>;
-	getPathsById(id: number): Promise<Paths>;
-	getContributionsById(id: number): Promise<Contributions>;
-	getAllById(id: number): Promise<TextureAll>;
+	getTextureById(id: number, property: TextureProperty): Promise<Texture>;
 	getVersions(): Promise<string[]>;
 	getEditions(): Promise<string[]>;
 	getResolutions(): Promise<string[]>;

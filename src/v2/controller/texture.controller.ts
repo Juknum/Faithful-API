@@ -41,37 +41,22 @@ export class TextureController extends Controller {
 
 	@Get("name/{name}")
 	public async getTextures(@Path() name: string): Promise<Textures> {
-		return this.service.searchByName(name, null);
+		return this.service.getByName(name, null);
 	}
-	
+
 	@Get("name/{name}/{property}")
-	public async getTexturesProperty(@Path() name: string, @Path() property:  TextureProperty): Promise<Textures> {
-		return this.service.searchByName(name, property);
+	public async getTexturesProperty(@Path() name: string, @Path() property: TextureProperty): Promise<Textures> {
+		return this.service.getByName(name, property);
 	}
 
 	@Get("{id}")
 	public async getTexture(@Path() id: number): Promise<Texture> {
-		return this.service.get(id);
+		return this.service.getById(id, null);
 	}
-
-	@Get("{id}/uses")
-	public async getUses(@Path() id: number): Promise<Uses> {
-		return this.service.getUses(id);
-	}
-
-	@Get("{id}/paths")
-	public async getPaths(@Path() id: number): Promise<Paths> {
-		return this.service.getPaths(id);
-	}
-
-	@Get("{id}/contributions")
-	public async getContributions(@Path() id: number): Promise<Contributions> {
-		return this.service.getContributions(id);
-	}
-
-	@Get("{id}/all")
-	public async getAll(@Path() id: number): Promise<TextureAll> {
-		return this.service.getAll(id);
+	
+	@Get("{id}/{property}")
+	public async getTextureProperty(@Path() id: number, @Path() property: TextureProperty): Promise<Texture> {
+		return this.service.getById(id, property);
 	}
 
 	// todo: implements setter with authentification verification

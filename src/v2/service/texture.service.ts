@@ -11,29 +11,9 @@ export default class TextureService {
 		return textures.read_raw();
 	};
 
-	get(id: number): Promise<Texture> {
+	getById(id: number, property: TextureProperty): Promise<Texture> {
 		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return this.textureRepo.getTextureById(id); // todo: (DATA 2.0) remove after database rewrite
-	}
-
-	getUses(id: number): Promise<Uses> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return this.textureRepo.getUsesById(id);
-	}
-
-	getPaths(id: number): Promise<Paths> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return this.textureRepo.getPathsById(id);
-	}
-
-	getContributions(id: number): Promise<Contributions> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return this.textureRepo.getContributionsById(id);
-	}
-
-	getAll(id: number): Promise<TextureAll> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
-		return this.textureRepo.getAllById(id);
+		return this.textureRepo.getTextureById(id, property);
 	}
 
 	getVersions(): Promise<Array<string>> {
@@ -56,7 +36,7 @@ export default class TextureService {
 		return this.textureRepo.getResolutions();
 	}
 
-	searchByName(name: string, property:  TextureProperty): Promise<Textures> {
+	getByName(name: string, property: TextureProperty): Promise<Textures> {
 		return this.textureRepo.searchTextureByName(name, property);
 	}
 }
