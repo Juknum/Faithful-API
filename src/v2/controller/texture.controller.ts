@@ -1,6 +1,7 @@
 import { Controller, Get, Path, Route, Tags } from "tsoa";
 
 import { Contributions, Paths, Texture, TextureAll, Textures, Uses } from "../interfaces";
+import { TextureProperty } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
 
 @Route("textures")
@@ -14,34 +15,42 @@ export class TextureController extends Controller {
 	}
 
 	@Get("editions")
-	public async getEditions(): Promise<string[]> {
+	public async getEditions(): Promise<Array<string>> {
 		return this.service.getEditions();
 	}
 
 	@Get("tags")
-	public async getTags(): Promise<string[]> {
+	public async getTags(): Promise<Array<string>> {
 		return this.service.getTags();
 	}
 
+	@Get("resolutions")
+	public async getResolutions(): Promise<Array<string>> {
+		return this.service.getResolutions();
+	}
+
 	@Get("versions")
-	public async getVersions(): Promise<string[]> {
+	public async getVersions(): Promise<Array<string>> {
 		return this.service.getVersions();
 	}
 
 	@Get("versions/{edition}")
-	public getVersionByEdition(@Path() edition: string): Promise<string[]> {
+	public getVersionByEdition(@Path() edition: string): Promise<Array<string>> {
 		return this.service.getVersionByEdition(edition);
 	}
 
-	@Get("resolutions")
-	public async getResolutions(): Promise<string[]> {
-		return this.service.getResolutions();
+	@Get("name/{name}")
+	public async getTextures(@Path() name: string): Promise<Textures> {
+		return this.service.searchByName(name, null);
+	}
+	
+	@Get("name/{name}/{property}")
+	public async getTexturesProperty(@Path() name: string, @Path() property:  TextureProperty): Promise<Textures> {
+		return this.service.searchByName(name, property);
 	}
 
-	//! ORDER IS VERY IMPORTANT PUT prefixed BEFORE ID
-	// else get Validation error with id number with value 'editions'
 	@Get("{id}")
-	public async getUser(@Path() id: number): Promise<Texture> {
+	public async getTexture(@Path() id: number): Promise<Texture> {
 		return this.service.get(id);
 	}
 

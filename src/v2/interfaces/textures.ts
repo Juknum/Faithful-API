@@ -16,6 +16,8 @@ export interface Texture {
 	tags: Array<string>; // texture tags (block, item...)
 }
 
+export type TextureProperty =  "uses" | "paths" | "contributions" | "all" | null;
+
 export interface TextureRepository {
 	getRaw(): Promise<Textures>;
 	getTextureById(id: number): Promise<Texture>;
@@ -28,4 +30,5 @@ export interface TextureRepository {
 	getResolutions(): Promise<string[]>;
 	getTags(): Promise<string[]>;
 	getVersionByEdition(edition: string): Promise<string[]>;
+	searchTextureByName(name: string, property: TextureProperty): Promise<Textures>;
 }

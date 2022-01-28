@@ -1,12 +1,13 @@
 import { textures } from "../firestorm";
 import { Contributions, Paths, Texture, Textures, TextureAll, Uses } from "../interfaces";
 import { TextureRepository } from "../interfaces";
+import { TextureProperty } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 
 export default class TextureService {
 	private readonly textureRepo: TextureRepository = new TextureFirestormRepository();
 
-	getRaw = function (): Promise<Textures> {
+	getRaw(): Promise<Textures> {
 		return textures.read_raw();
 	};
 
@@ -35,23 +36,27 @@ export default class TextureService {
 		return this.textureRepo.getAllById(id);
 	}
 
-	getVersions(): Promise<string[]> {
+	getVersions(): Promise<Array<string>> {
 		return this.textureRepo.getVersions();
 	}
 
-	getVersionByEdition(edition: string): Promise<string[]> {
+	getVersionByEdition(edition: string): Promise<Array<string>> {
 		return this.textureRepo.getVersionByEdition(edition);
 	}
 
-	getEditions(): Promise<string[]> {
+	getEditions(): Promise<Array<string>> {
 		return this.textureRepo.getEditions();
 	}
 
-	getTags(): Promise<string[]> {
+	getTags(): Promise<Array<string>> {
 		return this.textureRepo.getTags();
 	}
 
-	getResolutions = function (): Promise<string[]> {
+	getResolutions(): Promise<Array<string>> {
 		return this.textureRepo.getResolutions();
-	};
+	}
+
+	searchByName(name: string, property:  TextureProperty): Promise<Textures> {
+		return this.textureRepo.searchTextureByName(name, property);
+	}
 }

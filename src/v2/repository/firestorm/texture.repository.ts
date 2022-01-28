@@ -2,11 +2,22 @@ import { NotFoundError } from "./../../tools/ApiError";
 import firestorm from "firestorm-db";
 import { textures, paths, uses, contributions } from "../../firestorm";
 import { Contributions, Paths, Texture, Textures, TextureAll, Uses, TextureRepository, Path } from "../../interfaces";
-import { mapTexture, OldUse } from "../../tools/mapping/textures";
+import { mapTexture, mapTextures, OldUse } from "../../tools/mapping/textures";
+import { TextureProperty } from "~/v2/interfaces/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	getRaw = function (): Promise<Textures> {
 		return textures.read_raw();
+	};
+
+	searchTextureByName = function (name: string, property:  TextureProperty): Promise<any> {
+		const s = [{field: "name",criteria: "includes",	value: name}];
+
+		return textures.search(s)
+			.then(textures => {
+				if (property === null) return mapTextures(textures); // todo: (DATA 2.0) use only textures after database rewrite
+				return Promise.all(textures.map(t => t[property]()));
+			})
 	};
 
 	getTextureById = function (id: number): Promise<Texture> {
@@ -40,7 +51,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 				fields: ["editions"],
 			})
 			.then((res) => {
-				return Object.values(res).reduce((acc: string[], cur: OldUse) => {
+				return Object.values(res).reduce((acc: Array<string>, cur: OldUse) => {
 					(cur.editions || []).forEach((edi) => {
 						if (!acc.includes(edi)) acc.push(edi);
 					});
@@ -49,34 +60,34 @@ export default class TextureFirestormRepository implements TextureRepository {
 			});
 	};
 
-	getResolutions(): Promise<string[]> {
+	getResolutions(): Promise<Array<string>> {
 		return contributions
 			.select({
 				fields: ["res"], // TODO: change with resolution
 			})
 			.then((res: any) => {
 				return (
-					Object.values(res).reduce((acc: string[], cur: any) => {
+					Object.values(res).reduce((acc: Array<string>, cur: any) => {
 						const res = cur.res; // TODO: change with resolution
 						if (!acc.includes(res)) acc.push(res);
 						return acc;
-					}, []) as string[]
+					}, []) as Array<string>
 				).sort();
 			});
 	}
 
-	getTags(): Promise<string[]> {
+	getTags(): Promise<Array<string>> {
 		return textures
 			.select({
 				fields: ["type"], // TODO: change with tags
 			})
 			.then((res: any) => {
 				return (
-					Object.values(res).reduce((acc: string[], cur: any) => {
+					Object.values(res).reduce((acc: Array<string>, cur: any) => {
 						const types = cur.type;
 						acc.push(types);
 						return acc;
-					}, []) as string[]
+					}, []) as Array<string>
 				)
 					.flat()
 					.filter((e, i, a) => a.indexOf(e) === i)
@@ -84,13 +95,13 @@ export default class TextureFirestormRepository implements TextureRepository {
 			});
 	}
 
-	getVersions(): Promise<string[]> {
+	getVersions(): Promise<Array<string>> {
 		return paths
 			.select({
 				fields: ["versions"],
 			})
 			.then((res) => {
-				return Object.values(res).reduce((acc: string[], cur: Path) => {
+				return Object.values(res).reduce((acc: Array<string>, cur: Path) => {
 					(cur.versions || []).forEach((edi) => {
 						if (!acc.includes(edi)) acc.push(edi);
 					});
@@ -99,7 +110,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 			});
 	}
 
-	getVersionByEdition(edition: string): Promise<string[]> {
+	getVersionByEdition(edition: string): Promise<Array<string>> {
 		return firestorm
 			.collection("settings")
 			.get("versions")
