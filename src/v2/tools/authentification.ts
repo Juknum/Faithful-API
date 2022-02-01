@@ -65,6 +65,9 @@ export async function expressAuthentication(
 		}
 
 		// if not respected permission error
+		console.error(
+			"PermissionError on " + discordID + ": " + JSON.stringify(roles) + ", " + JSON.stringify(scopes) + " needed",
+		);
 		return Promise.reject(new PermissionError());
 	}
 
