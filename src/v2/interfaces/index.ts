@@ -9,6 +9,7 @@ import { Mod, Mods } from "./mods";
 import { Modpack, Modpacks } from "./modpacks";
 import { Addon, AddonAll, Addons, AddonsAll, AddonRepository } from "./addons";
 import { Change, Changes, Changelog, Changelogs } from "./changelogs";
+import { SettingsRepository } from "./settings";
 
 export interface Error {
 	error: string;
@@ -36,6 +37,7 @@ export {
 	Paths,
 	Post,
 	Posts,
+	SettingsRepository,
 	Texture,
 	TextureAll,
 	Textures,
