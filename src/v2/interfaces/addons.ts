@@ -12,6 +12,7 @@ export type AddonTagArray = Array<AddonTag[number]>;
 
 export interface Addons extends Array<Addon> {}
 export interface Addon {
+	id?: number | string;
 	name: string; // addon name (> 5 && < 30)
 	slug: string; // used in link & as comments id (ex: 'www.compliancepack.net/addons/compliance3D')
 	description: string; // addon description (> 256 && < 4096)
@@ -24,10 +25,13 @@ export interface Addon {
 	approval: AddonReview;
 }
 
-export interface AddonReview {
+export interface AddonReviewBody {
 	status: "approved" | "denied" | "pending";
-	author: null | string; // approval/deny author
 	reason: null | string; // reason of deny
+}
+
+export interface AddonReview extends AddonReviewBody {
+	author: null | string; // approval/deny author -> Discord ID
 }
 
 export type AddonDataParam = Pick<Addon, "name" | "description" | "authors" | "options">;
@@ -48,4 +52,5 @@ export interface AddonRepository {
 	getFilesById(addonId: number): Promise<Files>;
 	create(addon: Addon): Promise<Addon>;
 	delete(id: number): Promise<void>;
+	update(id: number, addon: Addon): Promise<Addon>;
 }

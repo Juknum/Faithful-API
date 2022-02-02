@@ -49,4 +49,10 @@ export default class AddonFirestormRepository implements AddonRepository {
 	delete(id: number): Promise<void> {
 		return addons.remove(String(id)).then(() => {}); // return nothing
 	}
+
+	update(id: number, addon: Addon): Promise<Addon> {
+		return addons.set(id, addon).then(() => {
+			return addons.get(id);
+		});
+	}
 }

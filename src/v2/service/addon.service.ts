@@ -1,7 +1,7 @@
 import { BadRequestError } from "./../tools/ApiError";
 import { UserService } from "./user.service";
 import { Addons, Addon, AddonAll, AddonRepository, Files, File } from "../interfaces";
-import { AddonCreationParam, AddonDataParam } from "../interfaces/addons";
+import { AddonCreationParam, AddonDataParam, AddonReview } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 import { NotFoundError } from "../tools/ApiError";
 
@@ -129,7 +129,42 @@ export default class AddonService {
 		return this.addonRepo.create(addon);
 	}
 
+	async update(id: number, body: AddonCreationParam): Promise<Addon> {
+		// authentification was already made
+		// tag values have already been verified
+
+		// remove double authors
+		body.authors = body.authors.filter((v, i, a) => a.indexOf(v) === i);
+
+		// verify existing authors
+		// return value not interesting
+		await Promise.all(body.authors.map((authorID) => this.userService.get(authorID))).catch((err) => {
+			throw new BadRequestError("One author ID or more don't exist");
+		});
+
+		const addonDataParams = body as AddonDataParam;
+		const addon: Addon = {
+			...addonDataParams,
+			slug: body.name.split(" ").join("_"),
+			approval: {
+				status: "pending",
+				author: null,
+				reason: null,
+			},
+		};
+
+		return this.addonRepo.update(id, addon);
+	}
+
 	public delete(id: number) {
 		return this.addonRepo.delete(id);
+	}
+
+	async review(id: number, review: AddonReview): Promise<void> {
+		const addon = await this.getAddon(id);
+
+		addon.approval = review;
+
+		this.addonRepo.update(id, addon);
 	}
 }
