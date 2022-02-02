@@ -1,4 +1,4 @@
-import { Addons, Contributions, User, Users, UserRepository } from "../interfaces";
+import { Addons, Contributions, UserNames, User, Users, UserRepository } from "../interfaces";
 import * as urf from "../repository/firestorm/user.repository";
 
 export class UserService {
@@ -8,7 +8,7 @@ export class UserService {
 		return this.repository.getRaw();
 	}
 
-	public getNames(): Promise<any> {
+	public getNames(): Promise<UserNames> {
 		return this.repository.getNames();
 	}
 	
