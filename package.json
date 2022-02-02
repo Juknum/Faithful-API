@@ -4,7 +4,7 @@
     "description": "",
     "scripts": {
         "dev": "tsoa routes && concurrently \"nodemon\" \"nodemon -x tsoa spec\" \"nodemon -x tsoa routes\"",
-        "build": "tsoa spec && tsoa routes && tsc && cp -R public dist/public",
+        "build": "tsoa spec && tsoa routes && tsc && cp -R public dist/",
         "start": "node dist/src/index.js",
         "swag": "tsoa spec",
         "prettier-format": "prettier src/**/*.ts --config .prettierrc --write"
