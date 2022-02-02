@@ -4,10 +4,10 @@ import { Texture, TextureAll, Textures, TexturesAll, TextureRepository } from ".
 import { User, Users, UserCreationParams, UserRepository } from "./users";
 import { Uses, Use } from "./uses";
 import { Contribution, Contributions } from "./contributions";
-import { File, Files } from "./files";
+import { File, FileRepository, Files } from "./files";
 import { Mod, Mods } from "./mods";
 import { Modpack, Modpacks } from "./modpacks";
-import { Addon, AddonAll, Addons, AddonsAll, AddonRepository } from "./addons";
+import { Addon, AddonAll, Addons, AddonsAll, AddonRepository, AddonStatus } from "./addons";
 import { Change, Changes, Changelog, Changelogs } from "./changelogs";
 import { SettingsRepository } from "./settings";
 
@@ -20,6 +20,7 @@ export {
 	AddonAll,
 	Addons,
 	AddonsAll,
+	AddonStatus,
 	AddonRepository,
 	Changelog,
 	Changelogs,
@@ -29,6 +30,7 @@ export {
 	Contribution,
 	File,
 	Files,
+	FileRepository,
 	Modpack,
 	Modpacks,
 	Mod,

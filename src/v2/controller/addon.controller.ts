@@ -1,7 +1,7 @@
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Controller, Get, Path, Request, Response, Route, SuccessResponse, Tags } from "tsoa";
 
-import { Addon, Addons, Files, AddonAll } from "../interfaces";
+import { Addon, AddonStatus, Addons, Files, AddonAll } from "../interfaces";
 import AddonService from "../service/addon.service";
 import { NotFoundError, ApiError } from "./../tools/ApiError";
 
@@ -15,17 +15,23 @@ export class AddonController extends Controller {
 		return this.service.getRaw();
 	}
 
-	@Get("{id}")
-	public async getAddon(@Path() id: number): Promise<Addon> {
-		return this.service.getAddon(id);
-	}
-
 	@Response<NotFoundError>(404)
 	@Get("/slug/{slug}")
 	public async getAddonBySlug(@Path() slug: string): Promise<Addon> {
 		const res = await this.service.getAddonBySlug(slug);
 		if (res === undefined) throw new NotFoundError("Addon not found");
 		return res;
+	}
+
+	@Response<NotFoundError>(404)
+	@Get("/status/{status}")
+	public async getAddonByStatus(@Path() status: AddonStatus): Promise<Addons> {
+		return this.service.getAddonByStatus(status);
+	}
+
+	@Get("{id}")
+	public async getAddon(@Path() id: number): Promise<Addon> {
+		return this.service.getAddon(id);
 	}
 
 	@Get("{id}/all")
@@ -60,5 +66,4 @@ export class AddonController extends Controller {
 		const response = (<any>request).res as ExResponse;
 		response.redirect(headerFileURL);
 	}
-
 }

@@ -1,9 +1,10 @@
 import { BadRequestError } from "./../tools/ApiError";
 import { UserService } from "./user.service";
-import { Addons, Addon, AddonAll, AddonRepository, Files, File } from "../interfaces";
+import { Addons, Addon, AddonStatus, AddonAll, AddonRepository, Files, File, FileRepository } from "../interfaces";
 import { AddonCreationParam, AddonDataParam, AddonReview } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 import { NotFoundError } from "../tools/ApiError";
+import { FilesFirestormRepository } from "../repository/firestorm/files.repository";
 
 function to_slug(value: string) {
 	return value.split(" ").join("_");
@@ -12,6 +13,7 @@ function to_slug(value: string) {
 export default class AddonService {
 	private readonly userService: UserService = new UserService();
 	private readonly addonRepo: AddonRepository = new AddonFirestormRepository();
+	private readonly fileRepo: FileRepository = new FilesFirestormRepository();
 
 	getRaw(): Promise<Addons> {
 		return this.addonRepo.getRaw();
@@ -88,6 +90,10 @@ export default class AddonService {
 		return this.addonRepo.getAddonBySlug(slug);
 	}
 
+	getAddonByStatus(status: AddonStatus): Promise<Addons> {
+		return this.addonRepo.getAddonByStatus(status);
+	}
+
 	/**
 	 * Check body and adds a new addon
 	 * @param body Body which will be controlled
@@ -115,7 +121,11 @@ export default class AddonService {
 			throw new BadRequestError("The slug corresponding to this addon name already exists");
 		}
 
+		const downloads = body.downloads;
+		delete body.downloads;
+
 		const addonDataParams = body as AddonDataParam;
+
 		const addon: Addon = {
 			...addonDataParams,
 			slug: body.name.split(" ").join("_"),
@@ -126,7 +136,36 @@ export default class AddonService {
 			},
 		};
 
-		return this.addonRepo.create(addon);
+		let addonCreated: Addon;
+		return this.addonRepo
+			.create(addon)
+			.then((addon) => {
+				addonCreated = addon;
+				const id = addon.id;
+
+				let files: Files = [];
+				downloads.forEach((d) => {
+					const f: File = {
+						name: d.key,
+						use: "download",
+						type: "url",
+						parent: {
+							type: "addons",
+							id: String(id),
+						},
+						source: "",
+					};
+					d.links.forEach((link) => {
+						f.source = link;
+						files.push(f);
+					});
+				});
+
+				return Promise.all(files.map((file) => this.fileRepo.addFile(file)));
+			})
+			.then(() => {
+				return addonCreated;
+			});
 	}
 
 	async update(id: number, body: AddonCreationParam): Promise<Addon> {
@@ -142,7 +181,10 @@ export default class AddonService {
 			throw new BadRequestError("One author ID or more don't exist");
 		});
 
-		const addonDataParams = body as AddonDataParam;
+		const downloads = body.downloads;
+		delete body.downloads;
+
+		const addonDataParams: AddonDataParam = body;
 		const addon: Addon = {
 			...addonDataParams,
 			slug: body.name.split(" ").join("_"),

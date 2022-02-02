@@ -25,8 +25,9 @@ export interface Addon {
 	approval: AddonReview;
 }
 
+export type AddonStatus = "approved" | "denied" | "pending";
 export interface AddonReviewBody {
-	status: "approved" | "denied" | "pending";
+	status: null | AddonStatus;
 	reason: null | string; // reason of deny
 }
 
@@ -49,6 +50,7 @@ export interface AddonRepository {
 	getRaw(): Promise<Addons>;
 	getAddonById(id: number): Promise<Addon>;
 	getAddonBySlug(slug: string): Promise<Addon>;
+	getAddonByStatus(stauts: AddonStatus): Promise<Addons>;
 	getFilesById(addonId: number): Promise<Files>;
 	create(addon: Addon): Promise<Addon>;
 	delete(id: number): Promise<void>;

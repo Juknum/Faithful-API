@@ -1,5 +1,5 @@
 import { addons } from "../../firestorm";
-import { Files, AddonAll, Addon, Addons, AddonRepository } from "../../interfaces";
+import { Files, AddonStatus, Addon, Addons, AddonRepository } from "../../interfaces";
 
 export default class AddonFirestormRepository implements AddonRepository {
 	getRaw(): Promise<Addons> {
@@ -12,6 +12,16 @@ export default class AddonFirestormRepository implements AddonRepository {
 
 	getFilesById(addonId: number): Promise<Files> {
 		return addons.get(addonId).then((addon) => addon.files());
+	}
+
+	getAddonByStatus(status: AddonStatus): Promise<Addons> {
+		return addons.search([
+			{
+				criteria: "==",
+				field: "approval.status",
+				value: status,
+			},
+		]);
 	}
 
 	getAddonBySlug(slug: string): Promise<Addon> {
