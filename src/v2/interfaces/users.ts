@@ -19,7 +19,15 @@ export interface UserCreationParams {
 	media: Medias;
 }
 
+export interface UserNames extends Array<UserName> {}
+export interface UserName {
+	id: string;
+	username: string;
+}
+
 export interface UserRepository {
+	getRaw(): Promise<Users>;
+	getNames(): Promise<any>;
 	getUserById(id: string): Promise<User>;
 	getContributionsById(id: string): Promise<Contributions>;
 	getAddonsById(id: string): Promise<Addons>;

@@ -1,7 +1,7 @@
 import { Path, Paths } from "./paths";
 import { Post, Posts } from "./posts";
 import { Texture, TextureAll, Textures, TexturesAll, TextureRepository } from "./textures";
-import { User, Users, UserCreationParams, UserRepository } from "./users";
+import { User, UserNames, UserName, Users, UserCreationParams, UserRepository } from "./users";
 import { Uses, Use } from "./uses";
 import { Contribution, Contributions } from "./contributions";
 import { File, FileRepository, Files } from "./files";
@@ -47,6 +47,8 @@ export {
 	TextureRepository,
 	Users,
 	User,
+	UserName,
+	UserNames,
 	UserCreationParams,
 	UserRepository,
 	Use,

@@ -1,5 +1,5 @@
 import { users } from "../../firestorm";
-import { Addons, Contributions, User, UserCreationParams, UserRepository } from "../../interfaces";
+import { Addons, Contributions, UserNames, User, Users, UserCreationParams, UserRepository } from "../../interfaces";
 
 function __tranformUser(user: any): User {
 	return {
@@ -17,6 +17,15 @@ function __tranformUser(user: any): User {
 }
 
 export default class UserFirestormRepository implements UserRepository {
+	getRaw(): Promise<Users> {
+		return users.read_raw();
+	}
+
+	getNames(): Promise<UserNames> {
+		return users.select({ fields: ["username"] })
+		// todo: remove empty users
+	}
+
 	getUserById(id: string): Promise<User> {
 		return users
 			.get(id)

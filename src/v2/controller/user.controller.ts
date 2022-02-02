@@ -1,6 +1,6 @@
 import { ForbiddenError } from "./../tools/ApiError";
 import { Body, Controller, Delete, Get, Path, Put, Request, Route, Security, Tags } from "tsoa";
-import { Addons, Contributions, User, UserCreationParams } from "../interfaces";
+import { Addons, Contributions, UserNames, Users, User, UserCreationParams } from "../interfaces";
 import { UserService } from "../service/user.service";
 
 @Route("users")
@@ -8,7 +8,19 @@ import { UserService } from "../service/user.service";
 export class UserController extends Controller {
 	private userService: UserService = new UserService();
 
+	@Get("raw")
+	@Security("discord", ["administrator"]) // avoid warns info to be shown
+	public async getRaw(): Promise<Users> {
+		return this.userService.getRaw();
+	}
+
+	@Get("names")
+	public async getNames(): Promise<UserNames> {
+		return this.userService.getNames();
+	}
+
 	@Get("{id}")
+	@Security("discord", ["administrator"]) // avoid warns info to be shown
 	public async getUser(@Path() id: string): Promise<User> {
 		return this.userService.get(id);
 	}
