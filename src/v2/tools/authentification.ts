@@ -1,3 +1,4 @@
+require('dotenv').config();
 import * as express from "express";
 import axios from "axios";
 import { PermissionError, NotFoundError, ApiError } from "./ApiError";
@@ -11,13 +12,22 @@ export async function expressAuthentication(
 	securityName: string,
 	scopes?: string[],
 ): Promise<string> {
-	if (securityName === "discord") {
-		let token: string;
-		if (request.headers && request.headers.discord) {
+
+	let token: string;
+
+	if (securityName === "cloudflare") {
+		if (request.headers && request.headers.cloudflare)
+			token = request.headers.cloudflare as string;
+		else return Promise.reject(new Error("Missing access_token in query"));
+
+		if (token === process.env.CLOUDFLARE_PASSWORD) return Promise.resolve('valid cloudflare password');
+		return Promise.reject(new Error("Password did not match"))
+	}
+
+	else if (securityName === "discord") {
+		if (request.headers && request.headers.discord)
 			token = request.headers.discord as string;
-		} else {
-			return Promise.reject(new Error("Missing access_token in query"));
-		}
+		else return Promise.reject(new Error("Missing access_token in query"));
 
 		// scopes is roles
 		if (scopes.length) scopes.push("Developer");
