@@ -13,13 +13,13 @@ export class SettingsController extends Controller {
 		return this.settingsService.raw();
 	}
 
-	@SuccessResponse(200)
-	@Response<NotFoundError>(404)
-	@Get("{path}")
 	/**
 	 * Gives particular setting from path
 	 * @param path setting path split by .
 	 */
+	@SuccessResponse(200)
+	@Response<NotFoundError>(404)
+	@Get("{path}")
 	public async get(@Path() path: String): Promise<any> {
 		const splitPath = path.split(".");
 

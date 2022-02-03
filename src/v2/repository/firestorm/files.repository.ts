@@ -1,40 +1,44 @@
-import files from "../../firestorm/files";
+import repo from "../../firestorm/files";
 import { File, FileParent, FileRepository, Files } from "./../../interfaces/files";
 export class FilesFirestormRepository implements FileRepository {
 	addFile(file: File): Promise<File> {
-		return files.add(file);
+		return repo.add(file);
 	}
 	getFileByID(id: string): Promise<File> {
-		return files.get(id);
+		return repo.get(id);
 	}
 	getFilesByParent(parent: FileParent): Promise<Files> {
-		return files.search([
+		return repo.search([
+			{
+				field: "parent.id",
+				criteria: "==",
+				value: String(parent.id),
+			},
 			{
 				field: "parent.type",
 				criteria: "==",
 				value: parent.type,
 			},
-			{
-				field: "parent.id",
-				criteria: "==",
-				value: parent.id,
-			},
 		]);
 	}
 	setFileById(id: string, file: File): Promise<File> {
-		return files.set(id, file).then(() => {
+		return repo.set(id, file).then(() => {
 			return this.getFileByID(id);
 		});
 	}
 	removeFileById(id: string): Promise<void> {
-		return files.remove(id).then(() => {});
+		return repo.remove(id).then(() => {});
 	}
 
 	removeFilesByParent(parent: FileParent): Promise<void> {
 		return this.getFilesByParent(parent)
 			.then((files: any) => {
-				return files.removeBulk(files.map((f) => f.id));
+				return repo.removeBulk(files.map((f) => f.id));
 			})
 			.then(() => {});
+	}
+
+	removeFileByPath(path: string): Promise<void> {
+		return Promise.resolve();
 	}
 }

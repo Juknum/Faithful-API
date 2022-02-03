@@ -1,6 +1,7 @@
 import { BadRequestError } from "./../tools/ApiError";
 import { UserService } from "./user.service";
-import { Addons, Addon, AddonStatus, AddonAll, AddonRepository, Files, File, FileRepository } from "../interfaces";
+import { FileService } from "./file.service";
+import { Addons, Addon, AddonStatus, AddonAll, AddonRepository, Files, File, FileParent } from "../interfaces";
 import { AddonCreationParam, AddonDataParam, AddonReview } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 import { NotFoundError } from "../tools/ApiError";
@@ -12,8 +13,8 @@ function to_slug(value: string) {
 
 export default class AddonService {
 	private readonly userService: UserService = new UserService();
+	private readonly fileService: FileService = new FileService();
 	private readonly addonRepo: AddonRepository = new AddonFirestormRepository();
-	private readonly fileRepo: FileRepository = new FilesFirestormRepository();
 
 	getRaw(): Promise<Addons> {
 		return this.addonRepo.getRaw();
@@ -161,7 +162,7 @@ export default class AddonService {
 					});
 				});
 
-				return Promise.all(files.map((file) => this.fileRepo.addFile(file)));
+				return Promise.all(files.map((file) => this.fileService.addFile(file)));
 			})
 			.then(() => {
 				return addonCreated;
@@ -184,6 +185,33 @@ export default class AddonService {
 		const downloads = body.downloads;
 		delete body.downloads;
 
+		let files: Files = [];
+		downloads.forEach((d) => {
+			const f: File = {
+				name: d.key,
+				use: "download",
+				type: "url",
+				parent: {
+					type: "addons",
+					id: String(id),
+				},
+				source: "",
+			};
+			d.links.forEach((link) => {
+				f.source = link;
+				files.push(f);
+			});
+		});
+
+		await this.fileService
+			.removeFilesByParent({
+				type: "addons",
+				id: String(id),
+			})
+			.catch((err) => {
+				throw new BadRequestError(err);
+			});
+
 		const addonDataParams: AddonDataParam = body;
 		const addon: Addon = {
 			...addonDataParams,
@@ -195,11 +223,33 @@ export default class AddonService {
 			},
 		};
 
-		return this.addonRepo.update(id, addon);
+		// update addon, reupload download links
+		return Promise.all([this.addonRepo.update(id, addon), ...files.map((file) => this.fileService.addFile(file))]).then(
+			(results) => {
+				return results[0];
+			},
+		);
 	}
 
-	public delete(id: number) {
-		return this.addonRepo.delete(id);
+	public async delete(id: number): Promise<void> {
+		const parent: FileParent = {
+			type: "addons",
+			id: String(id),
+		};
+
+		const files = await this.getFiles(id);
+
+		const realFiles = files
+			.filter((f) => f.use == "carousel" || f.use == "header" || f.use == "screenshot")
+			.map((f) => f.source.replace(/^http[s]?:\/\/.+?\//, ""))
+			.map((s) => this.fileService.removeFileByPath(s));
+
+		// remove addon
+		// rmeove addon links
+		// remove real files
+		const deletePromises = [this.addonRepo.delete(id), this.fileService.removeFilesByParent(parent), ...realFiles];
+
+		return Promise.allSettled(deletePromises).then(() => {});
 	}
 
 	async review(id: number, review: AddonReview): Promise<void> {

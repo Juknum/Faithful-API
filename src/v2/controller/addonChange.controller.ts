@@ -28,7 +28,7 @@ export class AddonChangeController extends Controller {
 	@Post("")
 	@SuccessResponse(201, "Addon created")
 	@Security("discord", [])
-	public async createAddonData(@Body() body: AddonCreationParam, @Request() request: any): Promise<Addon> {
+	public async addonCreate(@Body() body: AddonCreationParam, @Request() request: any): Promise<Addon> {
 		if (!body.authors.includes(request.user)) throw new BadRequestError("Addon author must include the authed user");
 		return this.service.create(body);
 	}
@@ -37,7 +37,7 @@ export class AddonChangeController extends Controller {
 	@Delete("{id}")
 	@SuccessResponse(204)
 	@Security("discord", [])
-	public async deleteAddon(@Path() id: number, @Request() request: any): Promise<void> {
+	public async addonDelete(@Path() id: number, @Request() request: any): Promise<void> {
 		const addon = await this.service.getAddon(id);
 
 		// if not an author wants to delete the addon
@@ -54,7 +54,7 @@ export class AddonChangeController extends Controller {
 	@Patch("{id}")
 	@SuccessResponse(204)
 	@Security("discord", [])
-	public async updateAddon(
+	public async addonUpdate(
 		@Path() id: number,
 		@Body() body: AddonCreationParam,
 		@Request() request: any,
@@ -81,8 +81,6 @@ export class AddonChangeController extends Controller {
 			...data,
 			author: String(request.user),
 		};
-
-		console.log(review);
 
 		await this.service.review(id, review);
 	}
