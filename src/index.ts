@@ -6,11 +6,13 @@ import bodyParser from "body-parser";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import { RegisterRoutes } from "../build/routes";
 import { ValidateError } from "tsoa";
+import cors from "cors";
 
 import * as dotenv from "dotenv";
 import apiErrorHandler from "api-error-handler";
 dotenv.config();
 
+const DEV = (process.env.DEV || "false") === "true";
 const PORT = process.env.PORT || 8000;
 
 firestorm.address(process.env.FIRESTORM_URL);
@@ -39,10 +41,7 @@ app.get("/", function (req, res) {
 	res.redirect("/docs");
 });
 
-app.use((_req, res, next) => {
-	res.append("Access-Control-Allow-Origin", "*");
-	next();
-});
+app.use(cors());
 
 const swaggerDoc = require("../public/swagger.json");
 const options: SwaggerUiOptions = {

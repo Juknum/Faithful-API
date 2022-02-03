@@ -30,8 +30,9 @@ export class SettingsController extends Controller {
 		return response;
 	}
 
+	@SuccessResponse(204)
 	@Response<PermissionError>(403)
-	@Post()
+	@Post("/raw")
 	@Security("discord", ["administrator", "developer"])
 	public async update(@Body() body: any): Promise<void> {
 		return this.settingsService.update(body);
