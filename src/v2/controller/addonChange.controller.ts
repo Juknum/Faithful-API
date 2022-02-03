@@ -25,6 +25,11 @@ import { BadRequestError } from "../tools/ApiError";
 export class AddonChangeController extends Controller {
 	private readonly service: AddonService = new AddonService();
 
+	/**
+	 * Create an add-on
+	 * @param body 
+	 * @param request 
+	 */
 	@Post("")
 	@SuccessResponse(201, "Addon created")
 	@Security("discord", [])
@@ -33,6 +38,11 @@ export class AddonChangeController extends Controller {
 		return this.service.create(body);
 	}
 
+	/**
+	 * Delete an add-on using it's ID
+	 * @param id ID of the deleted add-on
+	 * @param request 
+	 */
 	@Response<PermissionError>(403)
 	@Delete("{id}")
 	@SuccessResponse(204)
@@ -50,6 +60,12 @@ export class AddonChangeController extends Controller {
 		this.service.delete(id);
 	}
 
+	/**
+	 * Update an add-on using it's ID
+	 * @param id ID of the updated add-on
+	 * @param body 
+	 * @param request 
+	 */
 	@Response<PermissionError>(403)
 	@Patch("{id}")
 	@SuccessResponse(204)
@@ -72,6 +88,12 @@ export class AddonChangeController extends Controller {
 		return this.service.update(id, body);
 	}
 
+	/**
+	 * Set the review value of the add-on using the given ID
+	 * @param id ID of the reviewed add-on
+	 * @param data Data containing, the status (pending, approved or denied) & the reason if denied (null otherwise)
+	 * @param request 
+	 */
 	@Response<PermissionError>(403)
 	@Put("{id}/review")
 	@SuccessResponse(204)

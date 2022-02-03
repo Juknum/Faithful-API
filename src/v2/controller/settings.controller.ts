@@ -7,6 +7,9 @@ import { SettingsService } from "../service/settings.service";
 export class SettingsController extends Controller {
 	private readonly settingsService = new SettingsService();
 
+	/**
+	 * Get the raw collection
+	 */
 	@SuccessResponse(200)
 	@Get("raw")
 	public async getRaw(): Promise<any> {
@@ -15,7 +18,7 @@ export class SettingsController extends Controller {
 
 	/**
 	 * Gives particular setting from path
-	 * @param path setting path split by .
+	 * @param path setting path split by "."
 	 */
 	@SuccessResponse(200)
 	@Response<NotFoundError>(404)
@@ -30,6 +33,10 @@ export class SettingsController extends Controller {
 		return response;
 	}
 
+	/**
+	 * Update the whole collection with the sent content
+	 * @param body 
+	 */
 	@SuccessResponse(204)
 	@Response<PermissionError>(403)
 	@Post("/raw")

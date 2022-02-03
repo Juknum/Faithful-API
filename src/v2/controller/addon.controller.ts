@@ -32,7 +32,7 @@ export class AddonController extends Controller {
 
 	/**
 	 * Get add-ons using their approval status value
-	 * @param status status value
+	 * @param status Status value
 	 */
 	@Response<NotFoundError>(404)
 	@Get("/status/{status}")

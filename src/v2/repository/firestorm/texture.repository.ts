@@ -3,7 +3,7 @@ import firestorm from "firestorm-db";
 import { textures, paths, uses, contributions } from "../../firestorm";
 import { Contributions, Paths, Texture, Textures, TextureAll, Uses, TextureRepository, Path } from "../../interfaces";
 import { mapTexture, mapTextures, OldUse } from "../../tools/mapping/textures";
-import { TextureProperty } from "~/v2/interfaces/textures";
+import { Edition, TextureProperty } from "~/v2/interfaces/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	getRaw = function (): Promise<Textures> {
@@ -45,6 +45,11 @@ export default class TextureFirestormRepository implements TextureRepository {
 	};
 
 	getResolutions(): Promise<Array<string>> {
+
+		/**
+		 *! Resolutions should be the form of "32x" / "64x" and not resulting of contributions resolutions ("c32"...)
+		 */
+
 		return contributions
 			.select({
 				fields: ["res"], // TODO: change with resolution
@@ -94,7 +99,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 			});
 	}
 
-	getVersionByEdition(edition: string): Promise<Array<string>> {
+	getVersionByEdition(edition: Edition): Promise<Array<string>> {
 		return firestorm
 			.collection("settings")
 			.get("versions")

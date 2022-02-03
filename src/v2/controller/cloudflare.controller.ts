@@ -7,6 +7,9 @@ import CloudflareService from "../service/cloudflare.service";
 export class CloudflareController extends Controller {
   private readonly service: CloudflareService = new CloudflareService();
 
+  /**
+   * Purge the whole cache of cloudflare for the domain compliancepack.net, all sub-domains are affected too.
+   */
   @Get("purge")
   @Security("cloudflare")
   public async purge(): Promise<void> {

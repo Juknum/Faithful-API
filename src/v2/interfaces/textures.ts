@@ -16,6 +16,7 @@ export interface Texture {
 	tags: Array<string>; // texture tags (block, item...)
 }
 
+export type Edition = "java" | "bedrock" | "dungeons";
 export type TextureProperty =  "uses" | "paths" | "contributions" | "all" | null;
 
 export interface TextureRepository {
@@ -25,6 +26,6 @@ export interface TextureRepository {
 	getEditions(): Promise<string[]>;
 	getResolutions(): Promise<string[]>;
 	getTags(): Promise<string[]>;
-	getVersionByEdition(edition: string): Promise<string[]>;
+	getVersionByEdition(edition: Edition): Promise<string[]>;
 	searchTextureByName(name: string, property: TextureProperty): Promise<Textures>;
 }

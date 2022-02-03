@@ -23,6 +23,12 @@ import { FileService } from "../service/file.service";
 export class FileChangeController extends Controller {
 	private readonly service: FileService = new FileService();
 
+	/**
+	 * TODO
+	 * Create a file
+	 * @param body 
+	 * @param request 
+	 */
 	@Post("")
 	@SuccessResponse(201, "File created")
 	@Security("discord", [])
@@ -30,11 +36,32 @@ export class FileChangeController extends Controller {
 		return;
 	}
 
+	/**
+	 * TODO
+	 * Delete a file with it's given ID
+	 * @param id file ID
+	 * @param request 
+	 */
 	@Response<PermissionError>(403)
 	@Delete("{id}")
 	@SuccessResponse(204)
 	@Security("discord", [])
-	public async deleteFile(@Path() id: number, @Request() request: any): Promise<void> {}
+	public async deleteFile(@Path() id: number, @Request() request: any): Promise<void> {
+		return;
+	}
 
-	// todo : add file update
+	/**
+	 * TODO
+	 * Update a file with it's given ID
+	 * @param id file ID
+	 * @param body 
+	 * @param request 
+	 */
+	@Response<PermissionError>(403)
+	@Put("{id}")
+	@SuccessResponse(201, "File Updated")
+	@Security("discord", [])
+	public async updateFile(@Path() id: number, @Body() body: any, @Request() request: any): Promise<void> {
+		return;
+	}
 }
