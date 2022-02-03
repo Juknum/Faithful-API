@@ -30,6 +30,7 @@ export interface UserRepository {
 	getNames(): Promise<any>;
 	getUserById(id: string): Promise<User>;
 	getContributionsById(id: string): Promise<Contributions>;
+	getAddonsApprovedById(id: string): Promise<Addons>;
 	getAddonsById(id: string): Promise<Addons>;
 	create(id: string, user: UserCreationParams): Promise<User>;
 	update(id: string, user: User): Promise<User>;

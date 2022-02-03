@@ -45,13 +45,22 @@ export class UserController extends Controller {
 	}
 
 	/**
+	 * Get all approved add-ons from that user
+	 * @param id User ID
+	 */
+	@Get("{id}/addons/approved")
+	public async getAddons(@Path() id: string): Promise<Addons> {
+		return this.userService.getAddons(id);
+	}
+
+	/**
 	 * Get all add-ons from that user
 	 * @param id User ID
 	 */
 	@Get("{id}/addons")
-	public async getAddons(@Path() id: string): Promise<Addons> {
-		//! todo: only returns approved add-ons & make authentified urls for pending & denied (admins only)
-		return this.userService.getAddons(id);
+	@Security("discord", ["administrator"]) //! todo: authorise access for owners & admins
+	public async getAllAddons(@Path() id: string): Promise<Addons> {
+		return this.userService.getAllAddons(id);
 	}
 
 	// todo: implements setter with authentification verification

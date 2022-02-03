@@ -25,6 +25,10 @@ export class UserService {
 	}
 
 	public getAddons(id: string): Promise<Addons> {
+		return this.repository.getAddonsApprovedById(id);
+	}
+
+	public getAllAddons(id: string): Promise<Addons> {
 		return this.repository.getAddonsById(id);
 	}
 
