@@ -87,7 +87,7 @@ export default class AddonService {
 		return headerFile.source;
 	}
 
-	getAddonBySlug(slug: string): Promise<Addon> {
+	getAddonBySlug(slug: string): Promise<Addon | undefined> {
 		return this.addonRepo.getAddonBySlug(slug);
 	}
 

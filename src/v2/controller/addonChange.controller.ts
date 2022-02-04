@@ -27,8 +27,8 @@ export class AddonChangeController extends Controller {
 
 	/**
 	 * Create an add-on
-	 * @param body 
-	 * @param request 
+	 * @param body
+	 * @param request
 	 */
 	@Post("")
 	@SuccessResponse(201, "Addon created")
@@ -40,15 +40,18 @@ export class AddonChangeController extends Controller {
 
 	/**
 	 * Delete an add-on using it's ID
-	 * @param id ID of the deleted add-on
-	 * @param request 
+	 * @param id_or_slug ID or slug of the deleted add-on
+	 * @param request
 	 */
 	@Response<PermissionError>(403)
-	@Delete("{id}")
+	@Delete("{id_or_slug}")
 	@SuccessResponse(204)
 	@Security("discord", [])
-	public async addonDelete(@Path() id: number, @Request() request: any): Promise<void> {
-		const addon = await this.service.getAddon(id);
+	public async addonDelete(@Path() id_or_slug: string, @Request() request: any): Promise<void> {
+		const int_id = parseInt(id_or_slug);
+
+		let addon = await (isNaN(int_id) ? this.service.getAddonBySlug(id_or_slug) : this.service.getAddon(int_id));
+		const id = addon.id as number;
 
 		// if not an author wants to delete the addon
 		if (!addon.authors.includes(request.user)) {
@@ -62,21 +65,24 @@ export class AddonChangeController extends Controller {
 
 	/**
 	 * Update an add-on using it's ID
-	 * @param id ID of the updated add-on
-	 * @param body 
-	 * @param request 
+	 * @param id_or_slug ID or slug of the updated add-on
+	 * @param body
+	 * @param request
 	 */
 	@Response<PermissionError>(403)
-	@Patch("{id}")
+	@Patch("{id_or_slug}")
 	@SuccessResponse(204)
 	@Security("discord", [])
 	public async addonUpdate(
-		@Path() id: number,
+		@Path() id_or_slug: string,
 		@Body() body: AddonCreationParam,
 		@Request() request: any,
 	): Promise<Addon> {
 		if (!body.authors.includes(request.user)) throw new BadRequestError("Addon author must include the authed user");
-		const addon = await this.service.getAddon(id);
+		const int_id = parseInt(id_or_slug);
+
+		let addon = await (isNaN(int_id) ? this.service.getAddonBySlug(id_or_slug) : this.service.getAddon(int_id));
+		const id = addon.id as number;
 
 		// if not an author wants to delete the addon
 		if (!addon.authors.includes(request.user)) {
@@ -90,15 +96,24 @@ export class AddonChangeController extends Controller {
 
 	/**
 	 * Set the review value of the add-on using the given ID
-	 * @param id ID of the reviewed add-on
+	 * @param id_or_slug ID or slug of the reviewed add-on
 	 * @param data Data containing, the status (pending, approved or denied) & the reason if denied (null otherwise)
-	 * @param request 
+	 * @param request
 	 */
 	@Response<PermissionError>(403)
-	@Put("{id}/review")
+	@Put("{id_or_slug}/review")
 	@SuccessResponse(204)
 	@Security("discord", ["Administrator", "Moderator"])
-	public async reviewAddon(@Path() id: number, @Body() data: AddonReviewBody, @Request() request: any): Promise<void> {
+	public async reviewAddon(
+		@Path() id_or_slug: string,
+		@Body() data: AddonReviewBody,
+		@Request() request: any,
+	): Promise<void> {
+		const int_id = parseInt(id_or_slug);
+
+		let addon = await (isNaN(int_id) ? this.service.getAddonBySlug(id_or_slug) : this.service.getAddon(int_id));
+		const id = addon.id as number;
+
 		const review: AddonReview = {
 			...data,
 			author: String(request.user),

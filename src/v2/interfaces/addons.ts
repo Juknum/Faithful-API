@@ -49,7 +49,7 @@ export interface AddonAll extends Addon {
 export interface AddonRepository {
 	getRaw(): Promise<Addons>;
 	getAddonById(id: number): Promise<Addon>;
-	getAddonBySlug(slug: string): Promise<Addon>;
+	getAddonBySlug(slug: string): Promise<Addon | undefined>;
 	getAddonByStatus(stauts: AddonStatus): Promise<Addons>;
 	getFilesById(addonId: number): Promise<Files>;
 	create(addon: Addon): Promise<Addon>;
