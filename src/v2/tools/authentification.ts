@@ -30,8 +30,8 @@ export async function expressAuthentication(
 		else return Promise.reject(new Error("Missing access_token in query"));
 
 		// scopes is roles
-		//! question: is everybody considered as Developer ? or only Admins ?
-		if (scopes.length) scopes.push("Developer");
+		// adding devs role when developing stuff only
+		if (scopes.length && process.env.DEV.toLowerCase() === 'true') scopes.push("Developer");
 
 		const discordUser: APIUser = await axios
 			.get("https://discord.com/api/users/@me", {
