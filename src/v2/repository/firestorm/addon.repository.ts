@@ -2,7 +2,7 @@ import { addons } from "../../firestorm";
 import { Files, AddonStatus, Addon, Addons, AddonRepository } from "../../interfaces";
 
 export default class AddonFirestormRepository implements AddonRepository {
-	getRaw(): Promise<Addons> {
+	getRaw(): Promise<Record<string,Addon>> {
 		return addons.read_raw();
 	}
 

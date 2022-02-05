@@ -46,21 +46,11 @@ export class AddonChangeController extends Controller {
 	@Response<PermissionError>(403)
 	@Delete("{id_or_slug}")
 	@SuccessResponse(204)
-	@Security("discord", [])
-	public async addonDelete(@Path() id_or_slug: string, @Request() request: any): Promise<void> {
-		const int_id = parseInt(id_or_slug);
+	@Security("discord", ["addon:own"])
+	public async addonDelete(@Path() id_or_slug: string): Promise<void> {
+		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
 
-		let addon = await (isNaN(int_id) ? this.service.getAddonBySlug(id_or_slug) : this.service.getAddon(int_id));
-		const id = addon.id as number;
-
-		// if not an author wants to delete the addon
-		if (!addon.authors.includes(request.user)) {
-			// check if admin
-			const user = await new UserService().get(request.user);
-			if (!user.roles.includes("Administrator") && !user.roles.includes("Moderator")) throw new PermissionError();
-		}
-
-		this.service.delete(id);
+		this.service.delete(addonId);
 	}
 
 	/**
@@ -72,7 +62,7 @@ export class AddonChangeController extends Controller {
 	@Response<PermissionError>(403)
 	@Patch("{id_or_slug}")
 	@SuccessResponse(204)
-	@Security("discord", [])
+	@Security("discord", ["addon:own"])
 	public async addonUpdate(
 		@Path() id_or_slug: string,
 		@Body() body: AddonCreationParam,
@@ -81,8 +71,7 @@ export class AddonChangeController extends Controller {
 		if (!body.authors.includes(request.user)) throw new BadRequestError("Addon author must include the authed user");
 		const int_id = parseInt(id_or_slug);
 
-		let addon = await (isNaN(int_id) ? this.service.getAddonBySlug(id_or_slug) : this.service.getAddon(int_id));
-		const id = addon.id as number;
+		const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
 
 		// if not an author wants to delete the addon
 		if (!addon.authors.includes(request.user)) {
@@ -111,14 +100,13 @@ export class AddonChangeController extends Controller {
 	): Promise<void> {
 		const int_id = parseInt(id_or_slug);
 
-		let addon = await (isNaN(int_id) ? this.service.getAddonBySlug(id_or_slug) : this.service.getAddon(int_id));
-		const id = addon.id as number;
+		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
 
 		const review: AddonReview = {
 			...data,
 			author: String(request.user),
 		};
 
-		await this.service.review(id, review);
+		await this.service.review(addonId, review);
 	}
 }

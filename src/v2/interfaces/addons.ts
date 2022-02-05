@@ -25,7 +25,12 @@ export interface Addon {
 	approval: AddonReview;
 }
 
-export type AddonStatus = "approved" | "denied" | "pending";
+export const AddonNotApprovedValues = [	"denied", "pending"] as const;
+export type AddonProprety = "files" | "all";
+export type AddonNotApproved = typeof AddonNotApprovedValues[number];
+export const AddonStatusValues = [...AddonNotApprovedValues, "approved"] as const;
+export type AddonStatus = typeof AddonStatusValues[number];
+
 export interface AddonReviewBody {
 	status: null | AddonStatus;
 	reason: null | string; // reason of deny
@@ -47,7 +52,7 @@ export interface AddonAll extends Addon {
 }
 
 export interface AddonRepository {
-	getRaw(): Promise<Addons>;
+	getRaw(): Promise<Record<string,Addon>>;
 	getAddonById(id: number): Promise<Addon>;
 	getAddonBySlug(slug: string): Promise<Addon | undefined>;
 	getAddonByStatus(stauts: AddonStatus): Promise<Addons>;

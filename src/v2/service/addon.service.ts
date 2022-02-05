@@ -16,13 +16,51 @@ export default class AddonService {
 	private readonly fileService: FileService = new FileService();
 	private readonly addonRepo: AddonRepository = new AddonFirestormRepository();
 
-	getRaw(): Promise<Addons> {
+	/**
+	 * Util method to get id from
+	 * @param id_or_slug ID or slug of the requested add-on
+	 */
+	public async getIdFromPath(id_or_slug: string): Promise<[number, Addon | undefined]> {
+		const int_id = parseInt(id_or_slug);
+
+		// if slug
+		if (isNaN(int_id)) {
+			const addon = await this.getAddonBySlug(id_or_slug);
+			if (!addon) throw new NotFoundError("Addon not found");
+			return [addon.id as number, addon];
+		}
+
+		// else if id
+		return [int_id, undefined];
+	}
+
+	public async getAddonFromSlugOrId(id_or_slug: string): Promise<[number, Addon]> {
+		let [id, addon] = await this.getIdFromPath(id_or_slug);
+
+		if (!addon) addon = await this.getAddon(id);
+		if (!addon) throw new NotFoundError("Addon not found");
+
+		return [id, addon];
+	}
+
+	public async getApprovedAddonFromSlugOrId(id_or_slug: string): Promise<[number, Addon]> {
+		const [id, addon] = await this.getAddonFromSlugOrId(id_or_slug);
+		if (addon.approval.status === "approved") return [id, addon];
+
+		throw new NotFoundError("This add-on is not publicly available");
+	}
+
+	getRaw(): Promise<Record<string,Addon>> {
 		return this.addonRepo.getRaw();
 	}
 
 	getAddon(id: number): Promise<Addon> {
 		if (isNaN(id) || id < 0) return Promise.reject(new Error("Addons IDs are integer greater than 0"));
 		return this.addonRepo.getAddonById(id);
+	}
+
+	getAddonAuthors(id: number): Promise<Array<string>> {
+		return this.getAddon(id).then((addon: Addon) => addon.authors);
 	}
 
 	getFiles(id: number): Promise<Files> {

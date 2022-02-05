@@ -7,7 +7,7 @@ import { Contribution, Contributions } from "./contributions";
 import { File, FileParent, FileRepository, Files } from "./files";
 import { Mod, Mods } from "./mods";
 import { Modpack, Modpacks } from "./modpacks";
-import { Addon, AddonAll, Addons, AddonsAll, AddonRepository, AddonStatus } from "./addons";
+import { Addon, AddonAll, AddonProprety, AddonNotApproved, Addons, AddonsAll, AddonRepository, AddonStatus } from "./addons";
 import { Change, Changes, Changelog, Changelogs } from "./changelogs";
 import { SettingsRepository } from "./settings";
 
@@ -20,6 +20,8 @@ export {
 	AddonAll,
 	Addons,
 	AddonsAll,
+	AddonNotApproved,
+	AddonProprety,
 	AddonStatus,
 	AddonRepository,
 	Changelog,
