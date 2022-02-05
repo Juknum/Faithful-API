@@ -31,6 +31,10 @@ export async function expressAuthentication(
 				if (!AddonStatusValues.includes(request.params.id_or_slug as any)) {
 					const addon = (await addonService.getAddonFromSlugOrId(request.params.id_or_slug))[1];
 					if (addon.approval.status !== "approved") return Promise.reject(new ForbiddenError());
+					else {
+						//* not authed, not a status, is an id/slug
+						return Promise.resolve(undefined);
+					}
 				}
 
 				// if addon status & not approved status

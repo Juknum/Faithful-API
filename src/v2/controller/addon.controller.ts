@@ -49,7 +49,6 @@ export class AddonController extends Controller {
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}")
 	public async getAddon(@Path() id_or_slug: string): Promise<Addon | Addons> {
-		console.log(id_or_slug, AddonStatusValues);
 		if (AddonStatusValues.includes(id_or_slug as any)) return this.getAddonsByStatus(id_or_slug as AddonStatus);
 		return this.service.getAddonFromSlugOrId(id_or_slug).then(r => r[1]);
 	}

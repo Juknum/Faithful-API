@@ -21,10 +21,10 @@ export default class AddonService {
 	 * @param id_or_slug ID or slug of the requested add-on
 	 */
 	public async getIdFromPath(id_or_slug: string): Promise<[number, Addon | undefined]> {
-		const int_id = parseInt(id_or_slug);
+		const int_id: number = parseInt(id_or_slug);
 
 		// if slug
-		if (isNaN(int_id)) {
+		if (isNaN(int_id) || int_id.toString() !== id_or_slug) {
 			const addon = await this.getAddonBySlug(id_or_slug);
 			if (!addon) throw new NotFoundError("Addon not found");
 			return [addon.id as number, addon];
