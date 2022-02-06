@@ -46,6 +46,10 @@ app.use(cors());
 const swaggerDoc = require("../public/swagger.json");
 const options: SwaggerUiOptions = {
 	customCssUrl: "/custom.css",
+	customJs: "/custom.js",
+	swaggerOptions: {
+		tryItOutEnabled: true,
+	},
 	customfavIcon: "https://database.compliancepack.net/images/brand/logos/site/compliance_white.ico",
 	customSiteTitle: "Compliance API",
 };
