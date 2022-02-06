@@ -1,7 +1,7 @@
 {
     "name": "compliance-api",
     "version": "2.0.0",
-    "description": "",
+    "description": "An API for Compliance Resource Pack textures, add-ons and more",
     "scripts": {
         "dev": "nodemon",
         "build": "tsoa spec && tsoa routes && tsc && cp -R public dist/",

@@ -17,13 +17,6 @@
 		}, 20);
 	}
 
-	startUntil(
-		() => {
-			document.querySelector("h2.title").firstChild.data = document.title;
-		},
-		() => !!document.querySelector("h2.title"),
-	);
-
 	function getKeys() {
 		const value = window.localStorage.getItem(API_KEY);
 
