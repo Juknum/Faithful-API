@@ -16,6 +16,7 @@ export interface Texture {
 	tags: Array<string>; // texture tags (block, item...)
 }
 
+export type KnownPacks = "default" | "c32" | "c64" | "classic_faithful_32" | "classic_faithful_32_progart" | "classic_faithful_64";
 export type Edition = "java" | "bedrock" | "dungeons";
 export type TextureProperty =  "uses" | "paths" | "contributions" | "all" | null;
 
@@ -28,4 +29,5 @@ export interface TextureRepository {
 	getTags(): Promise<string[]>;
 	getVersionByEdition(edition: Edition): Promise<string[]>;
 	searchTextureByName(name: string, property: TextureProperty): Promise<Textures>;
+	getURLById(id: number, pack: KnownPacks, version: string): Promise<string>;
 }

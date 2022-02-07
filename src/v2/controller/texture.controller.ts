@@ -1,8 +1,9 @@
-import { Controller, Get, Path, Route, Tags } from "tsoa";
-
+import { Controller, Get, Path, Request, Response, Route, SuccessResponse, Tags } from "tsoa";
+import { Request as ExRequest, Response as ExResponse } from "express";
 import { Texture, Textures } from "../interfaces";
-import { Edition, TextureProperty } from "../interfaces/textures";
+import { Edition, KnownPacks, TextureProperty } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
+import { NotFoundError } from "../tools/ApiError";
 
 @Route("textures")
 @Tags("Textures")
@@ -96,6 +97,16 @@ export class TextureController extends Controller {
 	@Get("{id}/{property}")
 	public async getTextureProperty(@Path() id: number, @Path() property: TextureProperty): Promise<Texture> {
 		return this.service.getById(id, property);
+	}
+
+	/**
+	 * 
+	 */
+	@Response<NotFoundError>(404)
+	@Get("{id}/url/{pack}/{mc_version}")
+	@SuccessResponse(302, "Redirect")
+	public async getTextureURL(@Path() id: string, @Path() pack: KnownPacks, @Path() mc_version: string, @Request() request: ExRequest): Promise<string> {
+		return this.service.getURLById(parseInt(id), pack, mc_version);
 	}
 
 	// todo: implements setter with authentification verification

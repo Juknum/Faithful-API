@@ -1,7 +1,7 @@
 import { textures } from "../firestorm";
 import { Texture, Textures } from "../interfaces";
 import { TextureRepository } from "../interfaces";
-import { Edition, TextureProperty } from "../interfaces/textures";
+import { Edition, KnownPacks, TextureProperty } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 
 export default class TextureService {
@@ -38,5 +38,9 @@ export default class TextureService {
 
 	getByName(name: string, property: TextureProperty): Promise<Textures> {
 		return this.textureRepo.searchTextureByName(name, property);
+	}
+
+	getURLById(id: number, pack: KnownPacks, version: string): Promise<string> {
+		return this.textureRepo.getURLById(id, pack, version);
 	}
 }

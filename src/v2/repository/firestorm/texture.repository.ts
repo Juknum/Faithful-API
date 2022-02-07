@@ -3,11 +3,15 @@ import firestorm from "firestorm-db";
 import { textures, paths, uses, contributions } from "../../firestorm";
 import { Contributions, Paths, Texture, Textures, TextureAll, Uses, TextureRepository, Path } from "../../interfaces";
 import { mapTexture, mapTextures, OldUse } from "../../tools/mapping/textures";
-import { Edition, TextureProperty } from "~/v2/interfaces/textures";
+import { Edition, KnownPacks, TextureProperty } from "~/v2/interfaces/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	getRaw = function (): Promise<Textures> {
 		return textures.read_raw();
+	};
+
+	getURLById(id: number, pack: KnownPacks, version: string) {
+		return textures.get(id).then(texture => texture.url(pack, version));
 	};
 
 	searchTextureByName = function (name: string, property: TextureProperty): Promise<any> {
