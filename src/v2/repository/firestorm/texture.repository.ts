@@ -14,18 +14,29 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.get(id).then(texture => texture.url(pack, version));
 	};
 
-	searchTextureByName = function (name: string, property: TextureProperty): Promise<any> {
-		const s = [{field: "name",criteria: "includes",	value: name}];
+	searchTextureByNameOrId = async function (name_or_id): Promise<Textures | Texture> {
+		const res: Texture | Textures = await this.searchTexturePropertyByNameOrId(name_or_id, null);
+		return res;
+	}
 
-		return textures.search(s)
-			.then(textures => {
-				if (property === null) return mapTextures(textures); // todo: (DATA 2.0) use only textures after database rewrite
-				return Promise.all(textures.map(t => t[property]()));
-			})
+	searchTexturePropertyByNameOrId = function (name_or_id: string | number, property: TextureProperty): Promise<Textures | Texture | Paths | Uses | Contributions> {
+		const int_id: number = parseInt(name_or_id as string);
+	
+		if (isNaN(int_id) || int_id.toString() !== name_or_id.toString()) {
+			if (name_or_id.toString().length <= 3) return Promise.reject(new Error("Texture name must be longer than 3 characters."));
+
+			return textures.search([{field: "name", criteria: "includes",	value: name_or_id}])
+				.then((textures: Textures) => {
+					if (property === null) return mapTextures(textures as any); // todo: (DATA 2.0) use only textures after database rewrite
+					return Promise.all(textures.map(t => t[property]()));
+				})
+		}
+
+		return this.getTextureById(int_id, property);
 	};
 
 	getTextureById = function (id: number, property: TextureProperty): Promise<Texture> {
-		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
+		if (isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0."));
 		return textures.get(id)
 			.then(t => {
 				if (property === null) return mapTexture(t); // todo: (DATA 2.0) remove after database rewrite

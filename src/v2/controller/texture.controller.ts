@@ -1,6 +1,6 @@
 import { Controller, Get, Path, Request, Response, Route, SuccessResponse, Tags } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
-import { Texture, Textures } from "../interfaces";
+import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import { Edition, KnownPacks, TextureProperty } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
@@ -62,12 +62,12 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get all textures that have the given string in their name
-	 * @param name Searched texture name
+	 * Get a texture using it's ID
+	 * @param id_or_name Texture ID or texture name
 	 */
-	@Get("name/{name}")
-	public async getTextures(@Path() name: string): Promise<Textures> {
-		return this.service.getByName(name, null);
+	@Get("{id_or_name}")
+	public async getTexture(@Path() id_or_name: string | number): Promise<Textures | Texture> {
+		return this.service.getByNameOrId(id_or_name);
 	}
 
 	/**
@@ -75,30 +75,11 @@ export class TextureController extends Controller {
 	 * @param name Searched texture name
 	 * @param property Property from the texture
 	 */
-	@Get("name/{name}/{property}")
-	public async getTexturesProperty(@Path() name: string, @Path() property: TextureProperty): Promise<Textures> {
-		return this.service.getByName(name, property);
-	}
-
-	/**
-	 * Get a texture using it's ID
-	 * @param id Texture ID
-	 */
-	@Get("{id}")
-	public async getTexture(@Path() id: number): Promise<Texture> {
-		return this.service.getById(id, null);
+	@Get("{id_or_name}/{property}")
+	public async getTexturesProperty(@Path() id_or_name: string | number, @Path() property: TextureProperty): Promise<Textures | Texture | Paths | Uses | Contributions> {
+		return this.service.getPropertyByNameOrId(id_or_name, property);
 	}
 	
-	/**
-	 * Get more information about a texture using it's ID
-	 * @param id Texture ID
-	 * @param property Property from the texture
-	 */
-	@Get("{id}/{property}")
-	public async getTextureProperty(@Path() id: number, @Path() property: TextureProperty): Promise<Texture> {
-		return this.service.getById(id, property);
-	}
-
 	/**
 	 * 
 	 */

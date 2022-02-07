@@ -28,6 +28,7 @@ export interface TextureRepository {
 	getResolutions(): Promise<string[]>;
 	getTags(): Promise<string[]>;
 	getVersionByEdition(edition: Edition): Promise<string[]>;
-	searchTextureByName(name: string, property: TextureProperty): Promise<Textures>;
+	searchTexturePropertyByNameOrId(name_or_id: string | number, property: TextureProperty): Promise<Textures | Texture | Paths | Uses | Contributions>;
+	searchTextureByNameOrId(name_or_id: string | number): Promise<Textures | Texture>;
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string>;
 }
