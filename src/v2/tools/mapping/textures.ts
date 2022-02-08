@@ -78,6 +78,7 @@ export function mapContribution(old: OldContribution): Contribution {
 		date: old.date,
 		texture: old.textureID.toString(),
 		resolution: old.res === "c32" ? "32x" : "64x",
+		pack: old.res,
 		authors: old.contributors,
 	};
 }
