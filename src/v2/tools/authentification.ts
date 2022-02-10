@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 import * as express from "express";
 import axios from "axios";
 import { PermissionError, NotFoundError, ApiError, ForbiddenError } from "./ApiError";
@@ -6,7 +6,7 @@ import { APIUser } from "discord-api-types";
 import { UserService } from "../service/user.service";
 import AddonService from "../service/addon.service";
 import { Addon } from "../interfaces";
-import { AddonNotApprovedValues, AddonStatusValues } from "../interfaces/addons";
+import { AddonNotApprovedValues, AddonStatusValues, AddonStatus } from "../interfaces/addons";
 
 const userService = new UserService();
 const addonService = new AddonService();
@@ -16,14 +16,12 @@ export async function expressAuthentication(
 	securityName: string,
 	scopes?: string[],
 ): Promise<any> {
-
 	let token: string;
 
 	// if there is no auth (no discord header)
 	// but if we want access with no auth for approved only
 	if (scopes.includes("addon:approved")) {
-		
-		if ('id_or_slug' in request.params) {
+		if ("id_or_slug" in request.params) {
 			// if not authentified
 			if (!request.headers.discord) {
 				// not authed
@@ -38,29 +36,30 @@ export async function expressAuthentication(
 				}
 
 				// if addon status & not approved status
-				else if (AddonNotApprovedValues.includes(request.params.id_or_slug as any)) return Promise.reject(new ForbiddenError());
+				else if (AddonNotApprovedValues.includes(request.params.id_or_slug as any))
+					return Promise.reject(new ForbiddenError());
 			}
-		
+
 			// may be authed
 			// if you are looking at a status
-			if (AddonStatusValues.includes(request.params.id_or_slug as any) && !AddonNotApprovedValues.includes(request.params.id_or_slug as any)) return Promise.resolve(undefined);
+			if (
+				AddonStatusValues.includes(request.params.id_or_slug as any) &&
+				!AddonNotApprovedValues.includes(request.params.id_or_slug as any)
+			)
+				return Promise.resolve(undefined);
 		}
 	}
 
 	if (securityName === "cloudflare") {
-		if (request.headers && request.headers.cloudflare)
-			token = request.headers.cloudflare as string;
+		if (request.headers && request.headers.cloudflare) token = request.headers.cloudflare as string;
 		else return Promise.reject(new Error("Missing cloudflare token in header"));
 
-		if (token === process.env.CLOUDFLARE_PASSWORD) return Promise.resolve('Valid cloudflare password');
-		return Promise.reject(new Error("Password did not match"))
-	}
-
-	else if (securityName === "discord") {
-		if (request.headers && request.headers.discord)
-			token = request.headers.discord as string;
+		if (token === process.env.CLOUDFLARE_PASSWORD) return Promise.resolve("Valid cloudflare password");
+		return Promise.reject(new Error("Password did not match"));
+	} else if (securityName === "discord") {
+		if (request.headers && request.headers.discord) token = request.headers.discord as string;
 		else return Promise.reject(new Error("Missing discord token in header"));
-		
+
 		const discordUser: APIUser = await axios
 			.get("https://discord.com/api/users/@me", {
 				headers: {
@@ -76,18 +75,18 @@ export async function expressAuthentication(
 		// B proven (authentified)
 
 		const discordID: string = discordUser.id;
-		
+
 		// if no scopes, go go go
 		// but only after discord login
 		if (scopes.length == 0) return Promise.resolve(discordID);
 
-		if ((scopes.includes("addon:approved") || scopes.includes("addon:own")) && 'id_or_slug' in request.params) {
-			if (AddonStatusValues.includes(request.params.id_or_slug as any)) {
-				if (!AddonNotApprovedValues.includes(request.params.id_or_slug as any)) return Promise.resolve(discordID);
+		if ((scopes.includes("addon:approved") || scopes.includes("addon:own")) && "id_or_slug" in request.params) {
+			const id_or_slug: any = request.params.id_or_slug;
+			if (AddonStatusValues.includes(id_or_slug)) {
+				if (!AddonNotApprovedValues.includes(id_or_slug)) return Promise.resolve(discordID);
 				//* check if D: admin or roles, uses the rest of authentification with roles
-			}
-			else {
-				const addon: Addon = (await addonService.getAddonFromSlugOrId(request.params.id_or_slug))[1];
+			} else {
+				const addon: Addon = (await addonService.getAddonFromSlugOrId(id_or_slug))[1];
 
 				// check if C: author
 				if (addon.authors.includes(discordID)) return discordID;
@@ -97,7 +96,7 @@ export async function expressAuthentication(
 
 		// scopes is roles
 		// adding devs role when developing stuff only
-		if (scopes.length && process.env.DEV.toLowerCase() === 'true') scopes.push("Developer");
+		if (scopes.length && process.env.DEV.toLowerCase() === "true") scopes.push("Developer");
 
 		const user: any | undefined = await userService.getUserById(discordID).catch(() => {});
 
@@ -128,7 +127,7 @@ export async function expressAuthentication(
 			"PermissionError on " + discordID + ": " + JSON.stringify(roles) + ", " + JSON.stringify(scopes) + " needed",
 		);
 
-		if(scopes.includes("addon:approved") && !('id_or_slug' in request.params)) {
+		if (scopes.includes("addon:approved") && !("id_or_slug" in request.params)) {
 			return Promise.resolve(undefined);
 		}
 		return Promise.reject(new PermissionError());

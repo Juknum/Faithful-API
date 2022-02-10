@@ -1,3 +1,4 @@
+import { File } from "./../interfaces/files";
 import { AddonReview } from "./../interfaces/addons";
 import { PermissionError } from "./../tools/ApiError";
 import { UserService } from "./../service/user.service";
@@ -5,6 +6,7 @@ import {
 	Body,
 	Controller,
 	Delete,
+	FormField,
 	Patch,
 	Path,
 	Post,
@@ -15,6 +17,7 @@ import {
 	Security,
 	SuccessResponse,
 	Tags,
+	UploadedFile,
 } from "tsoa";
 import AddonService from "../service/addon.service";
 import { Addon, AddonCreationParam, AddonReviewBody } from "../interfaces/addons";
@@ -108,5 +111,10 @@ export class AddonChangeController extends Controller {
 		};
 
 		await this.service.review(addonId, review);
+	}
+
+	public async postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
+		const buffer = file.buffer;
+		return this.service.postHeader(id_or_slug, file.originalname, buffer);
 	}
 }

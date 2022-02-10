@@ -1,5 +1,17 @@
+import firestorm from "firestorm-db";
+import FormData from "form-data";
 import repo from "../../firestorm/files";
 import { File, FileParent, FileRepository, Files } from "./../../interfaces/files";
+
+function toArrayBuffer(buf: Buffer) {
+	const ab = new ArrayBuffer(buf.length);
+	const view = new Uint8Array(ab);
+	for (let i = 0; i < buf.length; ++i) {
+		view[i] = buf[i];
+	}
+	return ab;
+}
+
 export class FilesFirestormRepository implements FileRepository {
 	addFile(file: File): Promise<File> {
 		return repo.add(file);
@@ -40,5 +52,14 @@ export class FilesFirestormRepository implements FileRepository {
 
 	removeFileByPath(path: string): Promise<void> {
 		return Promise.resolve();
+	}
+
+	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void> {
+		const form = new FormData();
+		form.append("path", path);
+		form.append("file", buffer, filename);
+		form.append("overwrite", String(overwrite === true));
+
+		return firestorm.files.upload(form);
 	}
 }

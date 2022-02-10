@@ -29,7 +29,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["administrator"])
 	@Get("/")
-	public async getRaw(@Request() request: ExRequest): Promise<Record<string,Addon>> {
+	public async getRaw(@Request() request: ExRequest): Promise<Record<string, Addon>> {
 		return this.service.getRaw();
 	}
 
@@ -50,7 +50,7 @@ export class AddonController extends Controller {
 	@Get("{id_or_slug}")
 	public async getAddon(@Path() id_or_slug: string): Promise<Addon | Addons> {
 		if (AddonStatusValues.includes(id_or_slug as any)) return this.getAddonsByStatus(id_or_slug as AddonStatus);
-		return this.service.getAddonFromSlugOrId(id_or_slug).then(r => r[1]);
+		return this.service.getAddonFromSlugOrId(id_or_slug).then((r) => r[1]);
 	}
 
 	/**
@@ -61,7 +61,9 @@ export class AddonController extends Controller {
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/{property}")
 	public async getAddonPropertyById(@Path() id_or_slug: string, property: AddonProprety): Promise<Addon | Files> {
-		return this.service.getAddonFromSlugOrId(id_or_slug).then((value: [number, Addon]) => this.getAddonProperty(value[0], property));
+		return this.service
+			.getAddonFromSlugOrId(id_or_slug)
+			.then((value: [number, Addon]) => this.getAddonProperty(value[0], property));
 	}
 
 	/**
@@ -73,7 +75,9 @@ export class AddonController extends Controller {
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/files/screenshots")
 	public async getScreenshots(@Path() id_or_slug: string): Promise<Array<string>> {
-		return this.service.getAddonFromSlugOrId(id_or_slug).then((value: [number, Addon]) => this.service.getScreenshots(value[0]));
+		return this.service
+			.getAddonFromSlugOrId(id_or_slug)
+			.then((value: [number, Addon]) => this.service.getScreenshots(value[0]));
 	}
 
 	/**
@@ -104,7 +108,9 @@ export class AddonController extends Controller {
 	@SuccessResponse(302, "Redirect")
 	public async getHeaderFile(@Path() id_or_slug: string, @Request() request: ExRequest): Promise<void> {
 		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
-		const headerFileURL = await this.service.getHeaderFileURL(id);
+		let headerFileURL = await this.service.getHeaderFileURL(id);
+		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
+		console.log(headerFileURL);
 		const response = (<any>request).res as ExResponse;
 		response.redirect(headerFileURL);
 	}

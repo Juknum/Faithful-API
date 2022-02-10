@@ -18,6 +18,7 @@ export type FileDataParam = Pick<File, "name" | "use" | "type">;
 export interface FileCreationParam extends FileDataParam {}
 
 export interface FileRepository {
+	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void>;
 	addFile(file: File): Promise<File>;
 	getFileByID(id: string): Promise<File>;
 	getFilesByParent(parent: FileParent): Promise<Files>;

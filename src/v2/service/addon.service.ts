@@ -50,7 +50,7 @@ export default class AddonService {
 		throw new NotFoundError("This add-on is not publicly available");
 	}
 
-	getRaw(): Promise<Record<string,Addon>> {
+	getRaw(): Promise<Record<string, Addon>> {
 		return this.addonRepo.getRaw();
 	}
 
@@ -267,6 +267,51 @@ export default class AddonService {
 				return results[0];
 			},
 		);
+	}
+
+	public async postHeader(id_or_slug: string, filename: string, buffer: Buffer): Promise<void | File> {
+		// get addonID
+		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
+		const addon_id = id_and_addon[0];
+		const addon = id_and_addon[1];
+		const slug = addon.slug;
+
+		// get existing header
+		const files = await this.getFiles(addon_id).catch((): Files => []);
+		const header = files.filter((f) => f.use === "header");
+
+		// remove file if existing
+		if (header.length) await Promise.all(header.map((e) => this.fileService.removeFileById(e.id)));
+
+		const extension = filename.split(".").pop();
+		const uploadLocation = `/images/addons/${slug}/header.${extension}`;
+
+		// reput pending addon
+		addon.approval = {
+			status: "pending",
+			author: null,
+			reason: null,
+		};
+		await this.addonRepo.update(addon_id, addon);
+
+		// upload file
+		await this.fileService.upload(uploadLocation, filename, buffer, true);
+
+		const newFile: File = {
+			name: "header",
+			use: "header",
+			parent: {
+				id: String(addon_id),
+				type: "addons",
+			},
+			type: "url",
+			source: uploadLocation,
+		};
+
+		// add file to db
+		await this.fileService.addFile(newFile);
+
+		return newFile;
 	}
 
 	public async delete(id: number): Promise<void> {

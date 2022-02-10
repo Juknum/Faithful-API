@@ -1,3 +1,4 @@
+import { AddonChangeController } from "./v2/controller/addonChange.controller";
 import { ApiError } from "./v2/tools/ApiError";
 import status from "statuses";
 import * as firestorm from "firestorm-db";
@@ -10,6 +11,7 @@ import cors from "cors";
 
 import * as dotenv from "dotenv";
 import apiErrorHandler from "api-error-handler";
+import formHandler from "./v2/tools/FormHandler";
 dotenv.config();
 
 const DEV = (process.env.DEV || "false") === "true";
@@ -23,12 +25,12 @@ const app: Application = express();
 // Use body parser to read sent json payloads
 //! DO NOT DELETE THE BODY PARSER, IT IS USED TO AGGREGATE DATA AND TRANSFORM IT
 //! SPENT 2 HOURS ON THIS SHIT
+app.use(bodyParser.json());
 app.use(
 	bodyParser.urlencoded({
 		extended: true,
 	}),
 );
-app.use(bodyParser.json());
 //! DO NOT DELETE
 
 app.use(
@@ -64,6 +66,10 @@ app.use(apiErrorHandler());
 
 RegisterRoutes(app);
 
+// manual things
+const adc = new AddonChangeController();
+formHandler(app, "/v2/addons/:id_or_slug/files/header", adc, adc.postHeader);
+
 const v1 = require("./v1");
 app.use("/v1", v1);
 
@@ -94,6 +100,7 @@ app.use(function errorHandler(err: any, req: Request, res: Response, next: NextF
 
 		const finalError = new ApiError(name, code, message);
 
+		console.trace(finalError);
 		apiErrorHandler()(finalError, req, res, next);
 		return res.end();
 	}
