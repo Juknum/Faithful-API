@@ -45,7 +45,6 @@ app.get("/", function (req, res) {
 
 app.use(cors());
 
-const swaggerDoc = require("../public/swagger.json");
 const options: SwaggerUiOptions = {
 	customCssUrl: "/custom.css",
 	customJs: "/custom.js",
@@ -55,8 +54,6 @@ const options: SwaggerUiOptions = {
 	customfavIcon: "https://database.compliancepack.net/images/brand/logos/site/compliance_white.ico",
 	customSiteTitle: "Compliance API",
 };
-// //todo: find out what the fuck we are doing
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
 
 app.listen(PORT, () => {
 	console.log(`Server is running at http://localhost:${PORT}`);
@@ -69,6 +66,77 @@ RegisterRoutes(app);
 // manual things
 const adc = new AddonChangeController();
 formHandler(app, "/v2/addons/:id_or_slug/files/header", adc, adc.postHeader);
+
+const swaggerDoc = require("../public/swagger.json");
+swaggerDoc.paths["/addons/{id_or_slug}/files/header"].post = {
+	"operationId": "PostHeaderFile",
+	"responses": {
+		"200": {
+			"description": "Redirect"
+		},
+		"403": {
+			"description": "",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "#/components/schemas/PermissionError"
+					}
+				}
+			}
+		},
+		"404": {
+			"description": "",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "#/components/schemas/NotFoundError"
+					}
+				}
+			}
+		}
+	},
+	"description": "Post header file for addon",
+	"tags": [
+		"Addons"
+	],
+	"security": [
+		{
+			"discord": [
+				"addon:own"
+			]
+		}
+	],
+	"parameters": [
+		{
+			"description": "ID or slug of the requested add-on",
+			"in": "path",
+			"name": "id_or_slug",
+			"required": true,
+			"schema": {
+				"type": "string"
+			}
+		}
+	],
+    "requestBody": {
+      "content": {
+        "multipart/form-data": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "file": { 
+                "description": "Header file",
+                "type": "file"
+              },
+            },
+            "required": ["file"] 
+          }
+        }
+      }
+    }
+  }
+
+// //todo: find out what the fuck we are doing
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
 
 const v1 = require("./v1");
 app.use("/v1", v1);
@@ -99,8 +167,7 @@ app.use(function errorHandler(err: any, req: Request, res: Response, next: NextF
 			} catch (error) {}
 
 		const finalError = new ApiError(name, code, message);
-
-		console.trace(finalError);
+		
 		apiErrorHandler()(finalError, req, res, next);
 		return res.end();
 	}

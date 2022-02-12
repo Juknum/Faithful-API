@@ -38,7 +38,7 @@ export default function formHandler(app: Application, url: string, controller: C
 	app.post(
 		url,
 		async function (req: ExRequest, res: ExResponse, next: NextFunction) {
-			req["user"] = await expressAuthentication(req, "discord", ["addon:own"]);
+			req["user"] = await expressAuthentication(req, "discord", ["addon:own"]).catch(err => next(err));
 			next();
 		},
 		upload.single("file"),
