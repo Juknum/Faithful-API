@@ -63,77 +63,27 @@ app.use(apiErrorHandler());
 
 RegisterRoutes(app);
 
+let swaggerDoc = require("../public/swagger.json");
+
 // manual things
 const adc = new AddonChangeController();
-formHandler(app, "/v2/addons/:id_or_slug/files/header", adc, adc.postHeader);
-
-const swaggerDoc = require("../public/swagger.json");
-swaggerDoc.paths["/addons/{id_or_slug}/files/header"].post = {
-	"operationId": "PostHeaderFile",
-	"responses": {
-		"200": {
-			"description": "Redirect"
-		},
-		"403": {
-			"description": "",
-			"content": {
-				"application/json": {
-					"schema": {
-						"$ref": "#/components/schemas/PermissionError"
-					}
-				}
-			}
-		},
-		"404": {
-			"description": "",
-			"content": {
-				"application/json": {
-					"schema": {
-						"$ref": "#/components/schemas/NotFoundError"
-					}
-				}
-			}
-		}
+swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/files/header", adc, adc.postHeader, swaggerDoc, {
+	prefix: "/v2",
+	operationId: "PostHeader",
+	security: {
+		discord: ["addon:own"],
 	},
-	"description": "Post header file for addon",
-	"tags": [
-		"Addons"
-	],
-	"security": [
-		{
-			"discord": [
-				"addon:own"
-			]
-		}
-	],
-	"parameters": [
-		{
-			"description": "ID or slug of the requested add-on",
-			"in": "path",
-			"name": "id_or_slug",
-			"required": true,
-			"schema": {
-				"type": "string"
-			}
-		}
-	],
-    "requestBody": {
-      "content": {
-        "multipart/form-data": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "file": { 
-                "description": "Header file",
-                "type": "file"
-              },
-            },
-            "required": ["file"] 
-          }
-        }
-      }
-    }
-  }
+	description: "Post header file for addon",
+});
+
+swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/files/screenshots", adc, adc.addonAddScreenshot, swaggerDoc, {
+	prefix: "/v2",
+	operationId: "PostScreenshot",
+	security: {
+		discord: ["addon:own"],
+	},
+	description: "Post screenshot file for addon",
+});
 
 // //todo: find out what the fuck we are doing
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
@@ -167,7 +117,7 @@ app.use(function errorHandler(err: any, req: Request, res: Response, next: NextF
 			} catch (error) {}
 
 		const finalError = new ApiError(name, code, message);
-		
+
 		apiErrorHandler()(finalError, req, res, next);
 		return res.end();
 	}

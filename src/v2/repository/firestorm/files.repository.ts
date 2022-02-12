@@ -62,4 +62,8 @@ export class FilesFirestormRepository implements FileRepository {
 
 		return firestorm.files.upload(form);
 	}
+
+	remove(path: string): Promise<void> {
+		return firestorm.files.delete(path).then(() => {});
+	}
 }

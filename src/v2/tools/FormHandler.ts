@@ -1,3 +1,4 @@
+import { JsonObject } from "swagger-ui-express";
 import { Controller } from "tsoa";
 import multer from "multer";
 import { expressAuthentication } from "./authentification";
@@ -34,11 +35,25 @@ function promiseHandler(controllerObj: any, promise: any, response: any, success
 		.catch((error: any) => next(error));
 }
 
-export default function formHandler(app: Application, url: string, controller: Controller, method: Function): void {
+interface SwaggerDocOptions {
+	prefix: string;
+	security: { [key: string]: string[] };
+	operationId: string;
+	description: string;
+}
+
+export default function formHandler(
+	app: Application,
+	url: string,
+	controller: Controller,
+	method: Function,
+	swaggerDoc: JsonObject,
+	swaggerDocOptions: SwaggerDocOptions,
+): JsonObject {
 	app.post(
 		url,
 		async function (req: ExRequest, res: ExResponse, next: NextFunction) {
-			req["user"] = await expressAuthentication(req, "discord", ["addon:own"]).catch(err => next(err));
+			req["user"] = await expressAuthentication(req, "discord", ["addon:own"]).catch((err) => next(err));
 			next();
 		},
 		upload.single("file"),
@@ -51,4 +66,76 @@ export default function formHandler(app: Application, url: string, controller: C
 			}
 		},
 	);
+
+	// add doc
+	const pathCorrected = url.replace(swaggerDocOptions.prefix, "").replace(/:([A-ZA-z_]+)/, "{$1}");
+	if (!("paths" in swaggerDoc)) swaggerDoc.paths = {};
+	if (!(pathCorrected in swaggerDoc.paths)) swaggerDoc.paths[pathCorrected] = {};
+	swaggerDoc.paths[pathCorrected].post = {
+		operationId: swaggerDocOptions.operationId,
+		responses: {
+			"201": {
+				description: "File created",
+				content: {
+					"application/json": {
+						schema: {
+							$ref: "#/components/schemas/File",
+						},
+					},
+				},
+			},
+			"403": {
+				description: "",
+				content: {
+					"application/json": {
+						schema: {
+							$ref: "#/components/schemas/PermissionError",
+						},
+					},
+				},
+			},
+			"404": {
+				description: "",
+				content: {
+					"application/json": {
+						schema: {
+							$ref: "#/components/schemas/NotFoundError",
+						},
+					},
+				},
+			},
+		},
+		description: swaggerDocOptions.description,
+		tags: ["Addons"],
+		security: [swaggerDocOptions.security],
+		parameters: [
+			{
+				description: "ID or slug of the requested add-on",
+				in: "path",
+				name: "id_or_slug",
+				required: true,
+				schema: {
+					type: "string",
+				},
+			},
+		],
+		requestBody: {
+			content: {
+				"multipart/form-data": {
+					schema: {
+						type: "object",
+						properties: {
+							file: {
+								description: "Header file",
+								type: "file",
+							},
+						},
+						required: ["file"],
+					},
+				},
+			},
+		},
+	};
+
+	return swaggerDoc;
 }

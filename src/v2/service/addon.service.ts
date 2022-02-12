@@ -6,6 +6,7 @@ import { AddonCreationParam, AddonDataParam, AddonReview } from "../interfaces/a
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 import { NotFoundError } from "../tools/ApiError";
 import { FilesFirestormRepository } from "../repository/firestorm/files.repository";
+import { URL } from "url";
 
 function to_slug(value: string) {
 	return value.split(" ").join("_");
@@ -314,6 +315,53 @@ export default class AddonService {
 		return newFile;
 	}
 
+	public async postScreenshot(id_or_slug: string, filename: string, buffer: Buffer): Promise<void | File> {
+		// get addonID
+		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
+		const addon_id = id_and_addon[0];
+		const addon = id_and_addon[1];
+		const slug = addon.slug;
+
+		// new name is biggest file integer name + 1
+		const newName =
+			((await this.getScreenshots(addon_id))
+				.map((url) => url.split("/").pop())
+				.map((filename) => filename.split(".")[0] || "0")
+				.map((filebase) => parseInt(filebase) || 0)
+				.sort()
+				.reverse()[0] || 0) + 1;
+
+		const extension = filename.split(".").pop();
+		const uploadLocation = `/images/addons/${slug}/${newName}.${extension}`;
+
+		// reput pending addon
+		addon.approval = {
+			status: "pending",
+			author: null,
+			reason: null,
+		};
+		await this.addonRepo.update(addon_id, addon);
+
+		// upload file
+		await this.fileService.upload(uploadLocation, filename, buffer, true);
+
+		const newFile: File = {
+			name: "screen" + newName,
+			use: "screenshot",
+			parent: {
+				id: String(addon_id),
+				type: "addons",
+			},
+			type: "url",
+			source: uploadLocation,
+		};
+
+		// add file to db
+		await this.fileService.addFile(newFile);
+
+		return newFile;
+	}
+
 	public async delete(id: number): Promise<void> {
 		const parent: FileParent = {
 			type: "addons",
@@ -341,5 +389,39 @@ export default class AddonService {
 		addon.approval = review;
 
 		this.addonRepo.update(id, addon);
+	}
+
+	/**
+	 * Deletes the given screenshot at given index
+	 * @param id_or_slug ID or slug of the deleted add-on screenshot
+	 * @param index Deleted add-on screenshot index
+	 */
+	public async deleteScreenshot(id_or_slug: string, index: number): Promise<void> {
+		// get addonID
+		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
+		const addon_id = id_and_addon[0];
+		const addon = id_and_addon[1];
+
+		// get existing screenshots
+		const files = await this.getFiles(addon_id).catch((): Files => []);
+		const screens = files.filter((f) => f.use === "screenshot" || f.use === "carousel");
+
+		const screen = screens[index];
+		if (screen === undefined) return Promise.reject(new NotFoundError("Screenshot not found"));
+
+		let source = screen.source;
+
+		// delete eventual url beginning
+		try {
+			source = new URL(source).pathname;
+		} catch (_error) {
+			// don't worry it's not important, you tried
+		}
+
+		// remove file from file service
+		await this.fileService.removeFileById(screen.id);
+
+		// remove actual file
+		await this.fileService.remove(source);
 	}
 }

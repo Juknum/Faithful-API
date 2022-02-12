@@ -110,7 +110,7 @@ export class AddonController extends Controller {
 		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
 		let headerFileURL = await this.service.getHeaderFileURL(id);
 		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
-		console.log(headerFileURL);
+
 		const response = (<any>request).res as ExResponse;
 		response.redirect(headerFileURL);
 	}

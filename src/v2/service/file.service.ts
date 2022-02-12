@@ -23,4 +23,8 @@ export class FileService {
 	public async upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean = false) {
 		return this.repo.upload(path, filename, buffer, overwrite);
 	}
+
+	public async remove(path: string) {
+		return this.repo.remove(path);
+	}
 }

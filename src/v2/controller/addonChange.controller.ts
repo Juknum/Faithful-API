@@ -17,7 +17,6 @@ import {
 	Security,
 	SuccessResponse,
 	Tags,
-	UploadedFile,
 } from "tsoa";
 import AddonService from "../service/addon.service";
 import { Addon, AddonCreationParam, AddonReviewBody } from "../interfaces/addons";
@@ -114,7 +113,23 @@ export class AddonChangeController extends Controller {
 	}
 
 	public async postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
-		const buffer = file.buffer;
-		return this.service.postHeader(id_or_slug, file.originalname, buffer);
+		return this.service.postHeader(id_or_slug, file.originalname, file.buffer);
+	}
+
+	public async addonAddScreenshot(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
+		return this.service.postScreenshot(id_or_slug, file.originalname, file.buffer);
+	}
+
+	/**
+	 * Delete an add-on screenshot
+	 * @param id_or_slug ID or slug of the deleted add-on screenshot
+	 * @param index Deleted add-on screenshot index
+	 */
+	@Response<PermissionError>(403)
+	@Delete("{id_or_slug}/files/screenshots/{index}")
+	@SuccessResponse(204)
+	@Security("discord", ["addon:own"])
+	public async addonDeleteScreenshot(@Path() id_or_slug: string, @Path() index: number): Promise<void> {
+		return this.service.deleteScreenshot(id_or_slug, index);
 	}
 }
