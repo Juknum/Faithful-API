@@ -1,10 +1,24 @@
+import { BadRequestError } from "./ApiError";
 import { JsonObject } from "swagger-ui-express";
 import { Controller } from "tsoa";
 import multer from "multer";
 import { expressAuthentication } from "./authentification";
 import { Application, NextFunction, Response as ExResponse, Request as ExRequest } from "express";
 
-const upload = multer();
+const MIME_TYPES_ACCEPTED = ["image/gif", "image/png", "image/jpeg"];
+
+const upload = multer({
+	limits: {
+		fileSize: 500000, // 500KB
+	},
+	fileFilter(req, file, callback) {
+		if (MIME_TYPES_ACCEPTED.includes(file.mimetype)) callback(null, true);
+		else
+			callback(
+				new BadRequestError("Incorrect file mime type provided, " + MIME_TYPES_ACCEPTED.join(" or ") + " expected"),
+			);
+	},
+});
 
 function returnHandler(response: any, statusCode?: number, data?: any, headers: any = {}) {
 	if (response.headersSent) {
