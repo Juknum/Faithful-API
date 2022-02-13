@@ -6,7 +6,6 @@ import {
 	Body,
 	Controller,
 	Delete,
-	FormField,
 	Patch,
 	Path,
 	Post,
@@ -80,7 +79,7 @@ export class AddonChangeController extends Controller {
 	@Put("{id_or_slug}/review")
 	@SuccessResponse(204)
 	@Security("discord", ["Administrator", "Moderator"])
-	public async reviewAddon(
+	public async addonReview(
 		@Path() id_or_slug: string,
 		@Body() data: AddonReviewBody,
 		@Request() request: any,

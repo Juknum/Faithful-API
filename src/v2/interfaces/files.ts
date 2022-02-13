@@ -20,7 +20,7 @@ export interface FileCreationParam extends FileDataParam {}
 export interface FileRepository {
 	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void>;
 	remove(path: string): Promise<void>;
-	addFile(file: File): Promise<File>;
+	addFile(file: File): Promise<string>;
 	getFileByID(id: string): Promise<File>;
 	getFilesByParent(parent: FileParent): Promise<Files>;
 	setFileById(id: string, file: File): Promise<File>;

@@ -13,7 +13,7 @@ function toArrayBuffer(buf: Buffer) {
 }
 
 export class FilesFirestormRepository implements FileRepository {
-	addFile(file: File): Promise<File> {
+	addFile(file: File): Promise<string> {
 		return repo.add(file);
 	}
 	getFileByID(id: string): Promise<File> {
@@ -51,7 +51,7 @@ export class FilesFirestormRepository implements FileRepository {
 	}
 
 	removeFileByPath(path: string): Promise<void> {
-		return Promise.resolve();
+		return this.remove(path).finally(() => {});
 	}
 
 	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void> {

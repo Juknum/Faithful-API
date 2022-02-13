@@ -12,7 +12,7 @@ export class FileService {
 		return this.repo.removeFilesByParent(parent);
 	}
 
-	public async addFile(file: File) {
+	public async addFile(file: File): Promise<string> {
 		return this.repo.addFile(file);
 	}
 

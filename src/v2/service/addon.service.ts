@@ -177,11 +177,12 @@ export default class AddonService {
 		};
 
 		let addonCreated: Addon;
+		let addon_id: string | number;
 		return this.addonRepo
 			.create(addon)
 			.then((addon) => {
 				addonCreated = addon;
-				const id = addon.id;
+				addon_id = addon.id;
 
 				let files: Files = [];
 				downloads.forEach((d) => {
@@ -191,7 +192,7 @@ export default class AddonService {
 						type: "url",
 						parent: {
 							type: "addons",
-							id: String(id),
+							id: String(addon_id),
 						},
 						source: "",
 					};
@@ -204,6 +205,7 @@ export default class AddonService {
 				return Promise.all(files.map((file) => this.fileService.addFile(file)));
 			})
 			.then(() => {
+				addonCreated.id = addon_id;
 				return addonCreated;
 			});
 	}
@@ -310,7 +312,8 @@ export default class AddonService {
 		};
 
 		// add file to db
-		await this.fileService.addFile(newFile);
+		// returns file id
+		newFile.id = await this.fileService.addFile(newFile);
 
 		return newFile;
 	}
@@ -357,7 +360,7 @@ export default class AddonService {
 		};
 
 		// add file to db
-		await this.fileService.addFile(newFile);
+		newFile.id = await this.fileService.addFile(newFile);
 
 		return newFile;
 	}
