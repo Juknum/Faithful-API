@@ -106,7 +106,7 @@ export default function formHandler(
 			},
 		},
 		description: swaggerDocOptions.description,
-		tags: ["Addons"],
+		tags: ["Addons submission"],
 		security: [swaggerDocOptions.security],
 		parameters: [
 			{

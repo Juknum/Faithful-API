@@ -424,4 +424,36 @@ export default class AddonService {
 		// remove actual file
 		await this.fileService.remove(source);
 	}
+
+	/**
+	 * Deletes the given screenshot at given index
+	 * @param id_or_slug ID or slug of the deleted add-on screenshot
+	 */
+	public async deleteHeader(id_or_slug: string): Promise<void> {
+		// get addonID
+		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
+		const addon_id = id_and_addon[0];
+		const addon = id_and_addon[1];
+
+		// get existing screenshots
+		const files = await this.getFiles(addon_id).catch((): Files => []);
+		const header = files.filter((f) => f.use === "header")[0];
+
+		if (header === undefined) return Promise.reject(new NotFoundError("Header not found"));
+
+		let source = header.source;
+
+		// delete eventual url beginning
+		try {
+			source = new URL(source).pathname;
+		} catch (_error) {
+			// don't worry it's not important, you tried
+		}
+
+		// remove file from file service
+		await this.fileService.removeFileById(header.id);
+
+		// remove actual file
+		await this.fileService.remove(source);
+	}
 }

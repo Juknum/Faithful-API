@@ -23,7 +23,7 @@ import { Addon, AddonCreationParam, AddonReviewBody } from "../interfaces/addons
 import { BadRequestError } from "../tools/ApiError";
 
 @Route("addons")
-@Tags("Addons")
+@Tags("Addons submission")
 export class AddonChangeController extends Controller {
 	private readonly service: AddonService = new AddonService();
 
@@ -38,21 +38,6 @@ export class AddonChangeController extends Controller {
 	public async addonCreate(@Body() body: AddonCreationParam, @Request() request: any): Promise<Addon> {
 		if (!body.authors.includes(request.user)) throw new BadRequestError("Addon author must include the authed user");
 		return this.service.create(body);
-	}
-
-	/**
-	 * Delete an add-on using it's ID
-	 * @param id_or_slug ID or slug of the deleted add-on
-	 * @param request
-	 */
-	@Response<PermissionError>(403)
-	@Delete("{id_or_slug}")
-	@SuccessResponse(204)
-	@Security("discord", ["addon:own"])
-	public async addonDelete(@Path() id_or_slug: string): Promise<void> {
-		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
-
-		this.service.delete(addonId);
 	}
 
 	/**
@@ -112,6 +97,21 @@ export class AddonChangeController extends Controller {
 		await this.service.review(addonId, review);
 	}
 
+	/**
+	 * Delete an add-on using it's ID
+	 * @param id_or_slug ID or slug of the deleted add-on
+	 * @param request
+	 */
+	@Response<PermissionError>(403)
+	@Delete("{id_or_slug}")
+	@SuccessResponse(204)
+	@Security("discord", ["addon:own"])
+	public async addonDelete(@Path() id_or_slug: string): Promise<void> {
+		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
+
+		this.service.delete(addonId);
+	}
+
 	public async postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
 		return this.service.postHeader(id_or_slug, file.originalname, file.buffer);
 	}
@@ -126,10 +126,23 @@ export class AddonChangeController extends Controller {
 	 * @param index Deleted add-on screenshot index
 	 */
 	@Response<PermissionError>(403)
-	@Delete("{id_or_slug}/files/screenshots/{index}")
+	@Delete("{id_or_slug}/screenshots/{index}")
 	@SuccessResponse(204)
 	@Security("discord", ["addon:own"])
 	public async addonDeleteScreenshot(@Path() id_or_slug: string, @Path() index: number): Promise<void> {
 		return this.service.deleteScreenshot(id_or_slug, index);
+	}
+
+	/**
+	 * Delete an add-on screenshot
+	 * @param id_or_slug ID or slug of the deleted add-on screenshot
+	 * @param index Deleted add-on screenshot index
+	 */
+	@Response<PermissionError>(403)
+	@Delete("{id_or_slug}/header/")
+	@SuccessResponse(204)
+	@Security("discord", ["addon:own"])
+	public async addonDeleteHeader(@Path() id_or_slug: string): Promise<void> {
+		return this.service.deleteHeader(id_or_slug);
 	}
 }

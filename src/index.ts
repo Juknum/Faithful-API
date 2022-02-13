@@ -67,7 +67,11 @@ let swaggerDoc = require("../public/swagger.json");
 
 // manual things
 const adc = new AddonChangeController();
-swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/files/header", adc, adc.postHeader, swaggerDoc, {
+const screenDelete = swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
+const headerDelete = swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
+delete swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
+delete swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
+swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/header", adc, adc.postHeader, swaggerDoc, {
 	prefix: "/v2",
 	operationId: "PostHeader",
 	security: {
@@ -75,8 +79,9 @@ swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/files/header", adc, adc.po
 	},
 	description: "Post header file for addon",
 });
+swaggerDoc.paths["/addons/{id_or_slug}/header"].delete = headerDelete;
 
-swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/files/screenshots", adc, adc.addonAddScreenshot, swaggerDoc, {
+swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/screenshots", adc, adc.addonAddScreenshot, swaggerDoc, {
 	prefix: "/v2",
 	operationId: "PostScreenshot",
 	security: {
@@ -84,6 +89,7 @@ swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/files/screenshots", adc, a
 	},
 	description: "Post screenshot file for addon",
 });
+swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
 
 // //todo: find out what the fuck we are doing
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
