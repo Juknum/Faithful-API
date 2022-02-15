@@ -4,7 +4,8 @@
     "description": "An API for Compliance Resource Pack textures, add-ons and more",
     "scripts": {
         "dev": "nodemon",
-        "build": "tsoa spec && tsoa routes && tsc && cp -R public dist/",
+        "compile": "tsc",
+        "build": "tsoa spec && tsoa routes && npm run compile && cp -R public dist/",
         "start": "node dist/src/index.js",
         "swag": "tsoa spec",
         "prettier-format": "prettier src/**/*.ts --config .prettierrc --write"
