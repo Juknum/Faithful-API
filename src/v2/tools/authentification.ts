@@ -23,7 +23,8 @@ export async function expressAuthentication(
 	if (scopes.includes("addon:approved")) {
 		if ("id_or_slug" in request.params) {
 			// if not authentified
-			if (!request.headers.discord) {
+			if (!request.headers.discord && !request.query.discord) {
+				console.trace(request.params);
 				// not authed
 				// is not an addon status (is id/slug of addon)
 				if (!AddonStatusValues.includes(request.params.id_or_slug as any)) {
@@ -57,7 +58,8 @@ export async function expressAuthentication(
 		if (token === process.env.CLOUDFLARE_PASSWORD) return Promise.resolve("Valid cloudflare password");
 		return Promise.reject(new Error("Password did not match"));
 	} else if (securityName === "discord") {
-		if (request.headers && request.headers.discord) token = request.headers.discord as string;
+		if (request.query && request.query.discord) token = request.query.discord as string;
+		else if (request.headers && request.headers.discord) token = request.headers.discord as string;
 		else return Promise.reject(new Error("Missing discord token in header"));
 
 		const discordUser: APIUser = await axios
