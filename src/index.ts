@@ -43,10 +43,12 @@ app.get("/", function (req, res) {
 	res.redirect("/docs");
 });
 
-app.use(cors({
-	'origin': '*',
-  'allowedHeaders': ['discord']
-}));
+app.use(
+	cors({
+		origin: "*",
+		allowedHeaders: ["discord", "content-type"],
+	}),
+);
 
 const options: SwaggerUiOptions = {
 	customCssUrl: "/custom.css",
