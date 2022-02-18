@@ -24,7 +24,6 @@ export async function expressAuthentication(
 		if ("id_or_slug" in request.params) {
 			// if not authentified
 			if (!request.headers.discord && !request.query.discord) {
-				console.trace(request.params);
 				// not authed
 				// is not an addon status (is id/slug of addon)
 				if (!AddonStatusValues.includes(request.params.id_or_slug as any)) {
