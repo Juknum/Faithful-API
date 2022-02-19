@@ -1,3 +1,4 @@
+import { AddonDownload } from "./../interfaces/addons";
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Controller, Get, Path, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 
@@ -54,6 +55,24 @@ export class AddonController extends Controller {
 	}
 
 	/**
+	 * Get a redirect URL for the requested add-on header
+	 * @param id_or_slug ID or slug of the requested add-on
+	 */
+	@Response<NotFoundError>(404)
+	@Response<PermissionError>(403)
+	@Security("discord", ["addon:approved", "administrator"])
+	@Get("{id_or_slug}/header")
+	@SuccessResponse(302, "Redirect")
+	public async getHeaderFile(@Path() id_or_slug: string, @Request() request: ExRequest): Promise<void> {
+		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
+		let headerFileURL = await this.service.getHeaderFileURL(id);
+		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
+
+		const response = (<any>request).res as ExResponse;
+		response.redirect(headerFileURL);
+	}
+
+	/**
 	 * Get any add-on property with id or slug
 	 */
 	@Response<NotFoundError>(404)
@@ -77,7 +96,39 @@ export class AddonController extends Controller {
 	public async getScreenshots(@Path() id_or_slug: string): Promise<Array<string>> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
-			.then((value: [number, Addon]) => this.service.getScreenshots(value[0]));
+			.then((value: [number, Addon]) => this.service.getScreenshots(value[0]))
+			.then((screens) => screens.map((s) => (s.startsWith("/") ? process.env.DB_IMAGE_ROOT + s : s)));
+	}
+
+	/**
+	 * Get an array of URLs of all screenshots for the requested add-on
+	 * @param id_or_slug ID or slug of the requested add-on
+	 */
+	@Response<NotFoundError>(404)
+	@Response<PermissionError>(403)
+	@Security("discord", ["addon:approved", "administrator"])
+	@Get("{id_or_slug}/files/downloads")
+	public async getDownloads(@Path() id_or_slug: string): Promise<Array<AddonDownload>> {
+		return this.service
+			.getAddonFromSlugOrId(id_or_slug)
+			.then(([addon_id, _]) => this.service.getFiles(addon_id))
+			.then((files) => {
+				return Object.values(
+					files
+						.filter((f) => f.use === "download" || f.use === "file")
+						.reduce((acc, file) => {
+							if (acc[file.name] === undefined) {
+								acc[file.name] = {
+									key: file.name,
+									links: [],
+								};
+							}
+							acc[file.name].links.push(file.source);
+
+							return acc;
+						}, {}),
+				);
+			});
 	}
 
 	/**
@@ -97,21 +148,15 @@ export class AddonController extends Controller {
 		response.redirect(screenshotURL);
 	}
 
-	/**
-	 * Get a redirect URL for the requested add-on header
-	 * @param id_or_slug ID or slug of the requested add-on
-	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/files/header")
-	@SuccessResponse(302, "Redirect")
-	public async getHeaderFile(@Path() id_or_slug: string, @Request() request: ExRequest): Promise<void> {
+	public async getHeaderURL(@Path() id_or_slug: string, @Request() request: ExRequest): Promise<string> {
 		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
 		let headerFileURL = await this.service.getHeaderFileURL(id);
 		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
 
-		const response = (<any>request).res as ExResponse;
-		response.redirect(headerFileURL);
+		return headerFileURL;
 	}
 }

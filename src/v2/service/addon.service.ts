@@ -186,19 +186,17 @@ export default class AddonService {
 
 				let files: Files = [];
 				downloads.forEach((d) => {
-					const f: File = {
-						name: d.key,
-						use: "download",
-						type: "url",
-						parent: {
-							type: "addons",
-							id: String(addon_id),
-						},
-						source: "",
-					};
 					d.links.forEach((link) => {
-						f.source = link;
-						files.push(f);
+						files.push({
+							name: d.key,
+							use: "download",
+							type: "url",
+							parent: {
+								type: "addons",
+								id: String(addon_id),
+							},
+							source: link,
+						});
 					});
 				});
 
@@ -228,19 +226,17 @@ export default class AddonService {
 
 		let files: Files = [];
 		downloads.forEach((d) => {
-			const f: File = {
-				name: d.key,
-				use: "download",
-				type: "url",
-				parent: {
-					type: "addons",
-					id: String(id),
-				},
-				source: "",
-			};
 			d.links.forEach((link) => {
-				f.source = link;
-				files.push(f);
+				files.push({
+					name: d.key,
+					use: "download",
+					type: "url",
+					parent: {
+						type: "addons",
+						id: String(id),
+					},
+					source: link,
+				});
 			});
 		});
 
@@ -279,12 +275,8 @@ export default class AddonService {
 		const addon = id_and_addon[1];
 		const slug = addon.slug;
 
-		// get existing header
-		const files = await this.getFiles(addon_id).catch((): Files => []);
-		const header = files.filter((f) => f.use === "header");
-
-		// remove file if existing
-		if (header.length) await Promise.all(header.map((e) => this.fileService.removeFileById(e.id)));
+		// try to remove curent header
+		await this.deleteHeader(String(addon_id)).catch(() => {});
 
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/header.${extension}`;
@@ -325,14 +317,8 @@ export default class AddonService {
 		const addon = id_and_addon[1];
 		const slug = addon.slug;
 
-		// new name is biggest file integer name + 1
-		const newName =
-			((await this.getScreenshots(addon_id))
-				.map((url) => url.split("/").pop())
-				.map((filename) => filename.split(".")[0] || "0")
-				.map((filebase) => parseInt(filebase) || 0)
-				.sort()
-				.reverse()[0] || 0) + 1;
+		// new random name based on time and random part
+		const newName = new Date().getTime().toString(36) + Math.random().toString(36).slice(2);
 
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/${newName}.${extension}`;
