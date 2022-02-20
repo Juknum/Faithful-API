@@ -1,5 +1,5 @@
 import { Controller, Get, Path, Request, Response, Route, SuccessResponse, Tags } from "tsoa";
-import { Request as ExRequest, Response as ExResponse } from "express";
+import { Request as ExRequest, Response as ExResponse, response } from "express";
 import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import { Edition, KnownPacks, TextureProperty } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
@@ -86,8 +86,9 @@ export class TextureController extends Controller {
 	@Response<NotFoundError>(404)
 	@Get("{id}/url/{pack}/{mc_version}")
 	@SuccessResponse(302, "Redirect")
-	public async getTextureURL(@Path() id: string, @Path() pack: KnownPacks, @Path() mc_version: string, @Request() request: ExRequest): Promise<string> {
-		return this.service.getURLById(parseInt(id), pack, mc_version);
+	public async getTextureURL(@Path() id: string, @Path() pack: KnownPacks, @Path() mc_version: string, @Request() request: ExRequest): Promise<void> {
+		const response = (<any>request).res as ExResponse;
+		response.redirect(await this.service.getURLById(parseInt(id), pack, mc_version));
 	}
 
 	// todo: implements setter with authentification verification
