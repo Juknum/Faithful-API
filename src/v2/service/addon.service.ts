@@ -10,7 +10,6 @@ import { URL } from "url";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 function to_slug(value: string) {
-	console.log(value.split('').filter(c => /[a-zA-Z0-9_-]/.test(c)).join(''));
 	return value.split('').filter(c => /[a-zA-Z0-9_-]/.test(c)).join('');
 }
 
