@@ -1,11 +1,15 @@
 import { FilesFirestormRepository } from "./../repository/firestorm/files.repository";
-import { FileRepository, FileParent, File } from "./../interfaces/files";
+import { FileRepository, FileParent, FileUse, File } from "./../interfaces/files";
 
 export class FileService {
 	private readonly repo: FileRepository = new FilesFirestormRepository();
 
 	public async removeFileByPath(path: string): Promise<void> {
 		return this.repo.removeFileByPath(path);
+	}
+
+	public async remvoveFilesByParentAndUse(parent: FileParent, use: FileUse) {
+		return this.repo.removeFilesByParentAndUse(parent, use);
 	}
 
 	public async removeFilesByParent(parent: FileParent) {

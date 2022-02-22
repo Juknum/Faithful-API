@@ -1,7 +1,7 @@
 import firestorm from "firestorm-db";
 import FormData from "form-data";
 import repo from "../../firestorm/files";
-import { File, FileParent, FileRepository, Files } from "./../../interfaces/files";
+import { File, FileParent, FileRepository, Files, FileUse } from "./../../interfaces/files";
 
 function toArrayBuffer(buf: Buffer) {
 	const ab = new ArrayBuffer(buf.length);
@@ -46,6 +46,14 @@ export class FilesFirestormRepository implements FileRepository {
 		return this.getFilesByParent(parent)
 			.then((files: any) => {
 				return repo.removeBulk(files.map((f) => f.id));
+			})
+			.then(() => {});
+	}
+
+	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<void> {
+		return this.getFilesByParent(parent)
+			.then((files: any) => {
+				return repo.removeBulk(files.filter((f) => f.use === use).map((f) => f.id))
 			})
 			.then(() => {});
 	}

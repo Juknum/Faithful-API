@@ -3,11 +3,13 @@ export interface FileParent {
 	id: string; // id of the parent
 }
 
+export type FileUse = "download" | "header" | "screenshot" | "carousel";
+
 export interface Files extends Array<File> {}
 export interface File {
 	id?: string; // file unique id
 	name: string | null; // file name when uploaded
-	use: "header" | "screenshot" | "file" | "carousel" | "download";
+	use: FileUse;
 	type: "url" | "b64";
 	parent: FileParent;
 	source: string; // file content/url (ex: 'database.compliancepack.net/images/test.png')
@@ -26,5 +28,6 @@ export interface FileRepository {
 	setFileById(id: string, file: File): Promise<File>;
 	removeFileById(id: string): Promise<void>;
 	removeFilesByParent(parent: FileParent): Promise<void>;
+	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<void>;
 	removeFileByPath(path: string): Promise<void>;
 }

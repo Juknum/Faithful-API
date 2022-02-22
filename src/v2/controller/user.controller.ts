@@ -79,7 +79,7 @@ export class UserController extends Controller {
 			const user = await this.userService.get(id).catch(() => {});
 
 			// admin can modify if they want
-			if (user && !user.roles.includes("administrator")) throw new ForbiddenError("Cannot delete another user");
+			if (user && !user.roles.includes("Administrator")) throw new ForbiddenError("Cannot set another user");
 		}
 
 		const user = await this.userService.get(id).catch(() => {});

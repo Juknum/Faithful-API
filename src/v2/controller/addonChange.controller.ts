@@ -54,16 +54,13 @@ export class AddonChangeController extends Controller {
 		@Body() body: AddonCreationParam,
 		@Request() request: any,
 	): Promise<Addon> {
-		if (!body.authors.includes(request.user)) throw new BadRequestError("Addon author must include the authed user");
-		const int_id = parseInt(id_or_slug);
-
 		const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
 
 		// if not an author wants to delete the addon
 		if (!addon.authors.includes(request.user)) {
 			// check if admin
 			const user = await new UserService().get(request.user);
-			if (!user.roles.includes("administrator")) throw new PermissionError();
+			if (!user.roles.includes("Administrator")) throw new BadRequestError("Addon author must include the authed user");
 		}
 
 		return this.service.update(id, body);

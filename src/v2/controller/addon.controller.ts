@@ -15,11 +15,32 @@ export class AddonController extends Controller {
 	private async getAddonProperty(id: number, property: AddonProprety): Promise<Addon | Files> {
 		switch (property) {
 			case "files":
-				return this.service.getFiles(id);
+				return (await this.service.getFiles(id)).map((f) => {
+					if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/")) 
+						f.source = process.env.DB_IMAGE_ROOT + f.source;
+
+					if (f.use === "download" && (!f.source.startsWith('https://') && !f.source.startsWith('http://'))) 
+						f.source = 'http://' + f.source;
+
+					return f;
+				});
 
 			case "all":
 			default:
-				return this.service.getAll(id);
+				return this.service.getAll(id)
+					.then((addon: AddonAll) => {
+						addon.files = addon.files.map((f) => {
+							if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/")) 
+								f.source = process.env.DB_IMAGE_ROOT + f.source;
+
+							if (f.use === "download" && (!f.source.startsWith('https://') && !f.source.startsWith('http://'))) 
+								f.source = 'http://' + f.source;
+
+							return f;
+						})
+
+						return addon;
+					});
 		}
 	}
 
@@ -115,7 +136,11 @@ export class AddonController extends Controller {
 			.then((files) => {
 				return Object.values(
 					files
-						.filter((f) => f.use === "download" || f.use === "file")
+						.filter((f) => f.use === "download")
+						.map((f) => {
+							if (!f.source.startsWith('https://') && !f.source.startsWith('http://')) f.source = 'http://' + f.source;
+							return f;
+						})
 						.reduce((acc, file) => {
 							if (acc[file.name] === undefined) {
 								acc[file.name] = {

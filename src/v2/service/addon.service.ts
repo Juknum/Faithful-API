@@ -8,8 +8,10 @@ import { NotFoundError } from "../tools/ApiError";
 import { FilesFirestormRepository } from "../repository/firestorm/files.repository";
 import { URL } from "url";
 
+// filter & keep only values that are in a-Z & 0-9 & _ or -
 function to_slug(value: string) {
-	return value.split(" ").join("_");
+	console.log(value.split('').filter(c => /[a-zA-Z0-9_-]/.test(c)).join(''));
+	return value.split('').filter(c => /[a-zA-Z0-9_-]/.test(c)).join('');
 }
 
 export default class AddonService {
@@ -168,7 +170,7 @@ export default class AddonService {
 
 		const addon: Addon = {
 			...addonDataParams,
-			slug: body.name.split(" ").join("_"),
+			slug: slugValue,
 			approval: {
 				status: "pending",
 				author: null,
@@ -241,18 +243,18 @@ export default class AddonService {
 		});
 
 		await this.fileService
-			.removeFilesByParent({
+			.remvoveFilesByParentAndUse({
 				type: "addons",
 				id: String(id),
-			})
+			}, "download")
 			.catch((err) => {
 				throw new BadRequestError(err);
 			});
 
 		const addonDataParams: AddonDataParam = body;
 		const addon: Addon = {
+			...await this.getAddon(id),
 			...addonDataParams,
-			slug: body.name.split(" ").join("_"),
 			approval: {
 				status: "pending",
 				author: null,
@@ -424,6 +426,12 @@ export default class AddonService {
 		const addon_id = id_and_addon[0];
 		const addon = id_and_addon[1];
 
+		addon.approval = {
+			reason: null,
+			author: null,
+			status: "pending"
+		}
+
 		// get existing screenshots
 		const files = await this.getFiles(addon_id).catch((): Files => []);
 		const header = files.filter((f) => f.use === "header")[0];
@@ -438,6 +446,14 @@ export default class AddonService {
 		} catch (_error) {
 			// don't worry it's not important, you tried
 		}
+
+		// reput pending addon
+		addon.approval = {
+			status: "denied",
+			author: null,
+			reason: "Add-on must have a header image",
+		};
+		await this.addonRepo.update(addon_id, addon);
 
 		// remove file from file service
 		await this.fileService.removeFileById(header.id);
