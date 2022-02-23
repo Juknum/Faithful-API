@@ -19,17 +19,38 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return res;
 	}
 
-	searchTexturePropertyByNameOrId = function (name_or_id: string | number, property: TextureProperty): Promise<Textures | Texture | Paths | Uses | Contributions> {
+	searchTexturePropertyByNameOrId = async function (name_or_id: string | number, property: TextureProperty): Promise<Textures | Texture | Paths | Uses | Contributions> {
 		const int_id: number = parseInt(name_or_id as string);
 	
 		if (isNaN(int_id) || int_id.toString() !== name_or_id.toString()) {
-			if (name_or_id.toString().length <= 3) return Promise.reject(new Error("Texture name must be longer than 3 characters."));
+			name_or_id = name_or_id.toString();
 
-			return textures.search([{field: "name", criteria: "includes",	value: name_or_id}])
-				.then((textures: Textures) => {
-					if (property === null) return mapTextures(textures as any); // todo: (DATA 2.0) use only textures after database rewrite
-					return Promise.all(textures.map(t => t[property]()));
-				})
+			if (name_or_id.length < 3) return Promise.reject(new Error("Texture name must be longer than 2 characters."));
+
+			/**
+			 * What do we do ? How do we search ?
+			 * - if it starts/ends with an "_", the name is considered as incomplete => include mode
+			 * - if not, the name is considered as full                              => exact match mode
+			 * 		- if no results for the exact match, use the include mode instead
+			 */
+			if (name_or_id.startsWith("_") || name_or_id.endsWith("_"))
+				return textures.search([{field: "name", criteria: "includes",	value: name_or_id}])
+					.then((textures: Textures) => {
+						if (property === null) return mapTextures(textures as any); // todo: (DATA 2.0) use only textures after database rewrite
+						return Promise.all(textures.map(t => t[property]()));
+					})
+
+			else
+				return textures.search([{field: "name", criteria: "==",	value: name_or_id}])
+					.then((res: Textures) => {
+						if (res.length === 0) return textures.search([{field: "name", criteria: "includes",	value: name_or_id}])
+						return res;
+					})
+					.then((textures: Textures) => {
+						if (property === null) return mapTextures(textures as any); // todo: (DATA 2.0) use only textures after database rewrite
+						return Promise.all(textures.map(t => t[property]()));
+					})
+
 		}
 
 		return this.getTextureById(int_id, property);
