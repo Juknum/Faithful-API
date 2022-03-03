@@ -46,11 +46,10 @@ export default firestorm.collection("textures", (el) => {
 			.then((_paths: Paths) => {
 				path = _paths.filter((p: Path) => p.versions.includes(version))[0];
 
-				//! to be removed once repository are named correctly (without Jappa- in each branch)
 				switch (pack) {
 					case "c32":
 					case "c64":
-						if (version !== "dungeons-latest") version = `Jappa-${version}`
+						if (version !== "dungeons-latest") version = `${version}`
 						break;
 				
 					default:
