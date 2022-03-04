@@ -1,4 +1,4 @@
-import { ForbiddenError } from "./../tools/ApiError";
+import { BadRequestError, ForbiddenError } from "./../tools/ApiError";
 import { Body, Controller, Delete, Get, Path, Put, Request, Route, Security, Tags } from "tsoa";
 import { Addons, Contributions, UserNames, Users, User, UserCreationParams } from "../interfaces";
 import { UserService } from "../service/user.service";
@@ -58,8 +58,14 @@ export class UserController extends Controller {
 	 * @param id User ID
 	 */
 	@Get("{id}/addons")
-	@Security("discord", ["administrator"]) //! todo: authorise access for owners & admins
-	public async getAllAddons(@Path() id: string): Promise<Addons> {
+	@Security("discord", [])
+	public async getAllAddons(@Path() id: string, @Request() request: any): Promise<Addons> {
+		if (id !== request.user) {
+			// check if admin
+			const user = await new UserService().get(request.user);
+			if (!user.roles.includes("Administrator")) throw new BadRequestError("Addon author must include the authed user");
+		}
+
 		return this.userService.getAllAddons(id);
 	}
 
@@ -68,8 +74,8 @@ export class UserController extends Controller {
 	/**
 	 * Update user data for the given user ID
 	 * @param id User ID
-	 * @param body 
-	 * @param request 
+	 * @param body
+	 * @param request
 	 */
 	@Put("{id}")
 	@Security("discord", [])
