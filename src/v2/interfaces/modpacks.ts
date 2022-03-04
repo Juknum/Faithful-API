@@ -1,4 +1,4 @@
-import { Mods } from "./mods";
+import { Mods } from './mods';
 
 export interface Modpacks extends Array<Modpack> {}
 export interface Modpack {

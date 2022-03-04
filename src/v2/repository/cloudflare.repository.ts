@@ -1,5 +1,6 @@
+import { CloudflareRepository } from '../interfaces/cloudflare';
+
 require('dotenv').config();
-import { CloudflareRepository } from "../interfaces/cloudflare";
 
 export default class CloudflareClassRepository implements CloudflareRepository {
   private readonly cf = require('cloudflare')({
@@ -11,27 +12,26 @@ export default class CloudflareClassRepository implements CloudflareRepository {
     // https://api.cloudflare.com/#zone-list-zones
     // permission needed: #zone:read
     return this.cf.zones.browse()
-      .then(res => {
+      .then((res) =>
         // https://cloudflare.github.io/node-cloudflare/#zonespurgecache
         // https://api.cloudflare.com/#zone-purge-all-files
         // permission needed: #cache_purge:edit
-        return Promise.all(res.result
-          .map(e => e.id)
-          .map(id => this.cf.zones.purgeCache(
+        Promise.all(res.result
+          .map((e) => e.id)
+          .map((id) => this.cf.zones.purgeCache(
             id,
             {
-              purge_everything: true
-            }
-          ))
-        )      
-      })
-      .then(response => {
-        if (Array.isArray(response)) 
-          response.forEach(zone => {
+              purge_everything: true,
+            },
+          ))))
+      .then((response) => {
+        if (Array.isArray(response)) {
+          response.forEach((zone) => {
             delete zone.result;
-          })
+          });
+        }
 
         return Promise.resolve(response);
-      })
+      });
   }
 }

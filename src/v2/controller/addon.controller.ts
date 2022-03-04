@@ -1,66 +1,67 @@
-import { AddonDownload } from "./../interfaces/addons";
-import { Request as ExRequest, Response as ExResponse } from "express";
-import { Controller, Get, Path, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
+import { Request as ExRequest, Response as ExResponse } from 'express';
+import {
+  Controller, Get, Path, Request, Response, Route, Security, SuccessResponse, Tags,
+} from 'tsoa';
+import {
+  AddonDownload, AddonNotApprovedValues, AddonStatus, AddonStatusValues,
+} from '../interfaces/addons';
 
-import { Addon, AddonNotApproved, Addons, Files, AddonAll, AddonProprety } from "../interfaces";
-import { AddonNotApprovedValues, AddonStatus, AddonStatusValues } from "../interfaces/addons";
-import AddonService from "../service/addon.service";
-import { NotFoundError, ApiError, PermissionError } from "./../tools/ApiError";
+import {
+  Addon, AddonNotApproved, Addons, Files, AddonAll, AddonProprety,
+} from '../interfaces';
+import AddonService from '../service/addon.service';
+import { NotFoundError, ApiError, PermissionError } from '../tools/ApiError';
 
-@Route("addons")
-@Tags("Addons")
+@Route('addons')
+@Tags('Addons')
 export class AddonController extends Controller {
-	private readonly service: AddonService = new AddonService();
+  private readonly service: AddonService = new AddonService();
 
-	private async getAddonProperty(id: number, property: AddonProprety): Promise<Addon | Files> {
-		switch (property) {
-			case "files":
-				return (await this.service.getFiles(id)).map((f) => {
-					if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/")) 
-						f.source = process.env.DB_IMAGE_ROOT + f.source;
+  private async getAddonProperty(id: number, property: AddonProprety): Promise<Addon | Files> {
+    switch (property) {
+      case 'files':
+        return (await this.service.getFiles(id)).map((f) => {
+          if ((f.use === 'header' || f.use === 'screenshot') && f.source.startsWith('/')) f.source = process.env.DB_IMAGE_ROOT + f.source;
 
-					if (f.use === "download" && (!f.source.startsWith('https://') && !f.source.startsWith('http://'))) 
-						f.source = 'http://' + f.source;
+          if (f.use === 'download' && (!f.source.startsWith('https://') && !f.source.startsWith('http://'))) f.source = `http://${f.source}`;
 
-					return f;
-				});
+          return f;
+        });
 
-			case "all":
-			default:
-				return this.service.getAll(id)
-					.then((addon: AddonAll) => {
-						addon.files = addon.files.map((f) => {
-							if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/")) 
-								f.source = process.env.DB_IMAGE_ROOT + f.source;
+      case 'all':
+      default:
+        return this.service.getAll(id)
+          .then((addon: AddonAll) => {
+            addon.files = addon.files.map((f) => {
+              if ((f.use === 'header' || f.use === 'screenshot') && f.source.startsWith('/')) f.source = process.env.DB_IMAGE_ROOT + f.source;
 
-							if (f.use === "download" && (!f.source.startsWith('https://') && !f.source.startsWith('http://'))) 
-								f.source = 'http://' + f.source;
+              if (f.use === 'download' && (!f.source.startsWith('https://') && !f.source.startsWith('http://'))) f.source = `http://${f.source}`;
 
-							return f;
-						})
+              return f;
+            });
 
-						return addon;
-					});
-		}
-	}
+            return addon;
+          });
+    }
+  }
 
 	/**
 	 * Get the raw collection
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
-	@Security("discord", ["administrator"])
-	@Get("/")
-	public async getRaw(@Request() request: ExRequest): Promise<Record<string, Addon>> {
-		return this.service.getRaw();
-	}
+	@Security('discord', ['administrator'])
+	@Get('/')
+  public async getRaw(@Request() request: ExRequest): Promise<Record<string, Addon>> {
+    return this.service.getRaw();
+  }
 
 	/**
 	 * Get all add-ons using their status
 	 * @param status Add-on status add-on
 	 */
 	public async getAddonsByStatus(status: AddonStatus): Promise<Addons> {
-		return this.service.getAddonByStatus(status);
+	  return this.service.getAddonByStatus(status);
 	}
 
 	/**
@@ -68,11 +69,11 @@ export class AddonController extends Controller {
 	 * @param id_or_slug Desired addon id or slug or addons per status
 	 */
 	@Response<PermissionError>(403)
-	@Security("discord", ["addon:approved", "administrator"])
-	@Get("{id_or_slug}")
+	@Security('discord', ['addon:approved', 'administrator'])
+	@Get('{id_or_slug}')
 	public async getAddon(@Path() id_or_slug: string): Promise<Addon | Addons> {
-		if (AddonStatusValues.includes(id_or_slug as any)) return this.getAddonsByStatus(id_or_slug as AddonStatus);
-		return this.service.getAddonFromSlugOrId(id_or_slug).then((r) => r[1]);
+	  if (AddonStatusValues.includes(id_or_slug as any)) return this.getAddonsByStatus(id_or_slug as AddonStatus);
+	  return this.service.getAddonFromSlugOrId(id_or_slug).then((r) => r[1]);
 	}
 
 	/**
@@ -81,16 +82,16 @@ export class AddonController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
-	@Security("discord", ["addon:approved", "administrator"])
-	@Get("{id_or_slug}/header")
-	@SuccessResponse(302, "Redirect")
+	@Security('discord', ['addon:approved', 'administrator'])
+	@Get('{id_or_slug}/header')
+	@SuccessResponse(302, 'Redirect')
 	public async getHeaderFile(@Path() id_or_slug: string, @Request() request: ExRequest): Promise<void> {
-		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
-		let headerFileURL = await this.service.getHeaderFileURL(id);
-		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
+	  const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
+	  let headerFileURL = await this.service.getHeaderFileURL(id);
+	  if (headerFileURL.startsWith('/')) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
 
-		const response = (<any>request).res as ExResponse;
-		response.redirect(headerFileURL);
+	  const response = (<any>request).res as ExResponse;
+	  response.redirect(headerFileURL);
 	}
 
 	/**
@@ -98,12 +99,12 @@ export class AddonController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
-	@Security("discord", ["addon:approved", "administrator"])
-	@Get("{id_or_slug}/{property}")
+	@Security('discord', ['addon:approved', 'administrator'])
+	@Get('{id_or_slug}/{property}')
 	public async getAddonPropertyById(@Path() id_or_slug: string, property: AddonProprety): Promise<Addon | Files> {
-		return this.service
-			.getAddonFromSlugOrId(id_or_slug)
-			.then((value: [number, Addon]) => this.getAddonProperty(value[0], property));
+	  return this.service
+	    .getAddonFromSlugOrId(id_or_slug)
+	    .then((value: [number, Addon]) => this.getAddonProperty(value[0], property));
 	}
 
 	/**
@@ -112,13 +113,13 @@ export class AddonController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
-	@Security("discord", ["addon:approved", "administrator"])
-	@Get("{id_or_slug}/files/screenshots")
+	@Security('discord', ['addon:approved', 'administrator'])
+	@Get('{id_or_slug}/files/screenshots')
 	public async getScreenshots(@Path() id_or_slug: string): Promise<Array<string>> {
-		return this.service
-			.getAddonFromSlugOrId(id_or_slug)
-			.then((value: [number, Addon]) => this.service.getScreenshots(value[0]))
-			.then((screens) => screens.map((s) => (s.startsWith("/") ? process.env.DB_IMAGE_ROOT + s : s)));
+	  return this.service
+	    .getAddonFromSlugOrId(id_or_slug)
+	    .then((value: [number, Addon]) => this.service.getScreenshots(value[0]))
+	    .then((screens) => screens.map((s) => (s.startsWith('/') ? process.env.DB_IMAGE_ROOT + s : s)));
 	}
 
 	/**
@@ -127,33 +128,31 @@ export class AddonController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
-	@Security("discord", ["addon:approved", "administrator"])
-	@Get("{id_or_slug}/files/downloads")
+	@Security('discord', ['addon:approved', 'administrator'])
+	@Get('{id_or_slug}/files/downloads')
 	public async getDownloads(@Path() id_or_slug: string): Promise<Array<AddonDownload>> {
-		return this.service
-			.getAddonFromSlugOrId(id_or_slug)
-			.then(([addon_id, _]) => this.service.getFiles(addon_id))
-			.then((files) => {
-				return Object.values(
-					files
-						.filter((f) => f.use === "download")
-						.map((f) => {
-							if (!f.source.startsWith('https://') && !f.source.startsWith('http://')) f.source = 'http://' + f.source;
-							return f;
-						})
-						.reduce((acc, file) => {
-							if (acc[file.name] === undefined) {
-								acc[file.name] = {
-									key: file.name,
-									links: [],
-								};
-							}
-							acc[file.name].links.push(file.source);
+	  return this.service
+	    .getAddonFromSlugOrId(id_or_slug)
+	    .then(([addon_id, _]) => this.service.getFiles(addon_id))
+	    .then((files) => Object.values(
+	      files
+	        .filter((f) => f.use === 'download')
+	        .map((f) => {
+	          if (!f.source.startsWith('https://') && !f.source.startsWith('http://')) f.source = `http://${f.source}`;
+	          return f;
+	        })
+	        .reduce((acc, file) => {
+	          if (acc[file.name] === undefined) {
+	            acc[file.name] = {
+	              key: file.name,
+	              links: [],
+	            };
+	          }
+	          acc[file.name].links.push(file.source);
 
-							return acc;
-						}, {}),
-				);
-			});
+	          return acc;
+	        }, {}),
+	    ));
 	}
 
 	/**
@@ -163,25 +162,25 @@ export class AddonController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
-	@Security("discord", ["addon:approved", "administrator"])
-	@Get("{id_or_slug}/files/screenshots/{index}")
-	@SuccessResponse(302, "Redirect")
+	@Security('discord', ['addon:approved', 'administrator'])
+	@Get('{id_or_slug}/files/screenshots/{index}')
+	@SuccessResponse(302, 'Redirect')
 	public async getScreenshot(@Path() id_or_slug: string, @Path() index: number, @Request() request: ExRequest) {
-		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
-		const screenshotURL = await this.service.getSreenshotURL(id, index);
-		const response = (<any>request).res as ExResponse;
-		response.redirect(screenshotURL);
+	  const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
+	  const screenshotURL = await this.service.getSreenshotURL(id, index);
+	  const response = (<any>request).res as ExResponse;
+	  response.redirect(screenshotURL);
 	}
 
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
-	@Security("discord", ["addon:approved", "administrator"])
-	@Get("{id_or_slug}/files/header")
+	@Security('discord', ['addon:approved', 'administrator'])
+	@Get('{id_or_slug}/files/header')
 	public async getHeaderURL(@Path() id_or_slug: string, @Request() request: ExRequest): Promise<string> {
-		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
-		let headerFileURL = await this.service.getHeaderFileURL(id);
-		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
+	  const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
+	  let headerFileURL = await this.service.getHeaderFileURL(id);
+	  if (headerFileURL.startsWith('/')) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
 
-		return headerFileURL;
+	  return headerFileURL;
 	}
 }

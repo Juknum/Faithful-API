@@ -1,11 +1,11 @@
-import { Files } from "./files";
+import { Files } from './files';
 
 export interface AddonDownload {
 	key: string;
 	links: string[];
 }
 
-export const AddonTagValues = ["Java", "32x", "Bedrock", "64x"] as const;
+export const AddonTagValues = ['Java', '32x', 'Bedrock', '64x'] as const;
 
 export type AddonTag = typeof AddonTagValues;
 export type AddonTagArray = Array<AddonTag[number]>;
@@ -25,10 +25,10 @@ export interface Addon {
 	approval: AddonReview;
 }
 
-export const AddonNotApprovedValues = [	"denied", "pending"] as const;
-export type AddonProprety = "files" | "all";
+export const AddonNotApprovedValues = ['denied', 'pending'] as const;
+export type AddonProprety = 'files' | 'all';
 export type AddonNotApproved = typeof AddonNotApprovedValues[number];
-export const AddonStatusValues = [...AddonNotApprovedValues, "approved"] as const;
+export const AddonStatusValues = [...AddonNotApprovedValues, 'approved'] as const;
 export type AddonStatus = typeof AddonStatusValues[number];
 
 export interface AddonReviewBody {
@@ -40,7 +40,7 @@ export interface AddonReview extends AddonReviewBody {
 	author: null | string; // approval/deny author -> Discord ID
 }
 
-export type AddonDataParam = Pick<Addon, "name" | "description" | "authors" | "options">;
+export type AddonDataParam = Pick<Addon, 'name' | 'description' | 'authors' | 'options'>;
 
 export interface AddonCreationParam extends AddonDataParam {
 	downloads: AddonDownload[];
@@ -52,7 +52,7 @@ export interface AddonAll extends Addon {
 }
 
 export interface AddonRepository {
-	getRaw(): Promise<Record<string,Addon>>;
+	getRaw(): Promise<Record<string, Addon>>;
 	getAddonById(id: number): Promise<Addon>;
 	getAddonBySlug(slug: string): Promise<Addon | undefined>;
 	getAddonByStatus(stauts: AddonStatus): Promise<Addons>;

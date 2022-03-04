@@ -1,4 +1,4 @@
-import { Contribution } from "./contributions";
+import { Contribution } from './contributions';
 
 export interface Changelogs extends Array<Changelog> {}
 export interface Changelog {

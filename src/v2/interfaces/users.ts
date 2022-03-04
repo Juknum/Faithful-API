@@ -1,8 +1,8 @@
-import { Contributions } from "./contributions";
-import { Addons } from "./addons";
+import { Contributions } from './contributions';
+import { Addons } from './addons';
 
 export interface Media {
-	type: "CurseForge|GitHub|Patreon|Paypal|Planet Minecraft|PSN|Reddit|Steam|Twitter|Website|Xbox|YouTube|Other";
+	type: 'CurseForge|GitHub|Patreon|Paypal|Planet Minecraft|PSN|Reddit|Steam|Twitter|Website|Xbox|YouTube|Other';
 	link: string;
 }
 export interface Medias extends Array<Media> {}
