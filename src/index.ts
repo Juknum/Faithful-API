@@ -1,23 +1,22 @@
-import status from 'statuses';
-import * as firestorm from 'firestorm-db';
-import express, {
-  Application, Request, Response, NextFunction,
-} from 'express';
-import bodyParser from 'body-parser';
-import swaggerUi, { SwaggerUiOptions } from 'swagger-ui-express';
-import { ValidateError } from 'tsoa';
-import cors from 'cors';
+import status from "statuses";
+import * as firestorm from "firestorm-db";
+import express, { Application, Request, Response, NextFunction } from "express";
+import bodyParser from "body-parser";
+import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
+import { ValidateError } from "tsoa";
+import cors from "cors";
 
-import * as dotenv from 'dotenv';
-import apiErrorHandler from 'api-error-handler';
-import { RegisterRoutes } from '../build/routes';
-import { ApiError } from './v2/tools/ApiError';
-import { AddonChangeController } from './v2/controller/addonChange.controller';
-import formHandler from './v2/tools/FormHandler';
+import * as dotenv from "dotenv";
+import apiErrorHandler from "api-error-handler";
+import { RegisterRoutes } from "../build/routes";
+import { ApiError } from "./v2/tools/ApiError";
+import { AddonChangeController } from "./v2/controller/addonChange.controller";
+import formHandler from "./v2/tools/FormHandler";
 
 dotenv.config();
 
-const DEV = (process.env.DEV || 'false') === 'true';
+// eslint: disable=unused
+const DEV = (process.env.DEV || "false") === "true";
 const PORT = process.env.PORT || 8000;
 
 firestorm.address(process.env.FIRESTORM_URL);
@@ -30,113 +29,114 @@ const app: Application = express();
 //! SPENT 2 HOURS ON THIS SHIT
 app.use(bodyParser.json());
 app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  }),
+	bodyParser.urlencoded({
+		extended: true,
+	}),
 );
 //! DO NOT DELETE
 
 app.use(
-  express.static('public', {
-    extensions: ['html', 'xml', 'json'],
-  }),
+	express.static("public", {
+		extensions: ["html", "xml", "json"],
+	}),
 );
 
-app.get('/', (req, res) => {
-  res.redirect('/docs');
+app.get("/", (req, res) => {
+	res.redirect("/docs");
 });
 
 app.use(
-  cors({
-    origin: '*',
-    allowedHeaders: ['discord', 'content-type'],
-  }),
+	cors({
+		origin: "*",
+		allowedHeaders: ["discord", "content-type"],
+	}),
 );
 
 const options: SwaggerUiOptions = {
-  customCssUrl: '/custom.css',
-  customJs: '/custom.js',
-  swaggerOptions: {
-    tryItOutEnabled: true,
-  },
-  customfavIcon: 'https://database.compliancepack.net/images/brand/logos/site/compliance_white.ico',
-  customSiteTitle: 'Compliance API',
+	customCssUrl: "/custom.css",
+	customJs: "/custom.js",
+	swaggerOptions: {
+		tryItOutEnabled: true,
+	},
+	customfavIcon: "https://database.compliancepack.net/images/brand/logos/site/compliance_white.ico",
+	customSiteTitle: "Compliance API",
 };
 
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+	console.log(`Server is running at http://localhost:${PORT}`);
 });
 
 app.use(apiErrorHandler());
 
 RegisterRoutes(app);
 
-let swaggerDoc = require('../public/swagger.json');
+let swaggerDoc = require("../public/swagger.json");
 
 // manual things
 const adc = new AddonChangeController();
-const screenDelete = swaggerDoc.paths['/addons/{id_or_slug}/screenshots/{index}'];
-const headerDelete = swaggerDoc.paths['/addons/{id_or_slug}/header'].delete;
-delete swaggerDoc.paths['/addons/{id_or_slug}/screenshots/{index}'];
-delete swaggerDoc.paths['/addons/{id_or_slug}/header'].delete;
-swaggerDoc = formHandler(app, '/v2/addons/:id_or_slug/header', adc, adc.postHeader, swaggerDoc, {
-  prefix: '/v2',
-  operationId: 'PostHeader',
-  security: {
-    discord: ['addon:own'],
-  },
-  description: 'Post header file for addon',
+const screenDelete = swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
+const headerDelete = swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
+delete swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
+delete swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
+swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/header", adc, adc.postHeader, swaggerDoc, {
+	prefix: "/v2",
+	operationId: "PostHeader",
+	security: {
+		discord: ["addon:own"],
+	},
+	description: "Post header file for addon",
 });
-swaggerDoc.paths['/addons/{id_or_slug}/header'].delete = headerDelete;
+swaggerDoc.paths["/addons/{id_or_slug}/header"].delete = headerDelete;
 
-swaggerDoc = formHandler(app, '/v2/addons/:id_or_slug/screenshots', adc, adc.addonAddScreenshot, swaggerDoc, {
-  prefix: '/v2',
-  operationId: 'PostScreenshot',
-  security: {
-    discord: ['addon:own'],
-  },
-  description: 'Post screenshot file for addon',
+swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/screenshots", adc, adc.addonAddScreenshot, swaggerDoc, {
+	prefix: "/v2",
+	operationId: "PostScreenshot",
+	security: {
+		discord: ["addon:own"],
+	},
+	description: "Post screenshot file for addon",
 });
-swaggerDoc.paths['/addons/{id_or_slug}/screenshots/{index}'] = screenDelete;
+swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
 
 // //todo: find out what the fuck we are doing
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
 
-const v1 = require('./v1');
+const v1 = require("./v1");
 
-app.use('/v1', v1);
+app.use("/v1", v1);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction): Response | void => {
-  if (err instanceof ValidateError) {
-    console.error('ValidateError', err);
-    console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
-    return res.status(422).json({
-      message: 'Validation Failed',
-      details: err?.fields,
-    });
-  } if (err) {
-    if (err.isAxiosError) console.error('axios error: body, headers, err', req.body, req.headers, err);
-    const code = parseInt(err.statusCode || (err.response ? err.response.status : err.code)) || 400;
-    const message = (err.response && err.response.data ? err.response.data.error : err.message) || err;
-    const stack = process.env.VERBORSE ? (err.stack ? err.stack : '') : '';
+	if (err instanceof ValidateError) {
+		console.error("ValidateError", err);
+		console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+		return res.status(422).json({
+			message: "Validation Failed",
+			details: err?.fields,
+		});
+	}
+	if (err) {
+		if (err.isAxiosError) console.error("axios error: body, headers, err", req.body, req.headers, err);
+		const code = parseInt(err.statusCode || (err.response ? err.response.status : err.code)) || 400;
+		const message = (err.response && err.response.data ? err.response.data.error : err.message) || err;
+		const stack = process.env.VERBORSE ? (err.stack ? err.stack : "") : "";
 
-    if (process.env.VERBOSE === 'true') {
-      console.error('code, message, stack', code, message, stack);
-    }
+		if (process.env.VERBOSE === "true") {
+			console.error("code, message, stack", code, message, stack);
+		}
 
-    let { name } = err;
+		let { name } = err;
 
-    if (!name) {
-      try {
-        name = status(code).replace(/ /, '');
-      } catch (error) {}
-    }
+		if (!name) {
+			try {
+				name = status(code).replace(/ /, "");
+			} catch (error) {}
+		}
 
-    const finalError = new ApiError(name, code, message);
+		const finalError = new ApiError(name, code, message);
 
-    apiErrorHandler()(finalError, req, res, next);
-    return res.end();
-  }
+		apiErrorHandler()(finalError, req, res, next);
+		return res.end();
+	}
 
-  next();
+	next();
 });

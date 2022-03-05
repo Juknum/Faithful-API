@@ -8,7 +8,8 @@
         "build": "tsoa spec && tsoa routes && npm run compile && cp -R public dist/",
         "start": "node dist/src/index.js",
         "swag": "tsoa spec",
-        "prettier-format": "prettier src/**/*.ts --config .prettierrc --write"
+        "prettier-format": "prettier src/**/*.ts --config .prettierrc --write",
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
     },
     "keywords": [],
     "author": "",
@@ -23,7 +24,10 @@
         "@typescript-eslint/parser": "^5.13.0",
         "eslint": "^8.10.0",
         "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-config-airbnb-typescript": "^16.1.0",
+        "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-prettier": "^4.0.0",
         "nodemon": "^2.0.15",
         "prettier": "^2.5.1",
         "ts-node": "^10.4.0",
