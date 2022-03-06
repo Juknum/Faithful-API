@@ -3,20 +3,19 @@ export interface FileParent {
 	id: string; // id of the parent
 }
 
-export type FileUse = 'download' | 'header' | 'screenshot' | 'carousel';
-
-export interface Files extends Array<File> {}
+export type FileUse = "download" | "header" | "screenshot" | "carousel";
 export interface File {
 	id?: string; // file unique id
 	name: string | null; // file name when uploaded
 	use: FileUse;
-	type: 'url' | 'b64';
+	type: "url" | "b64";
 	parent: FileParent;
 	source: string; // file content/url (ex: 'database.compliancepack.net/images/test.png')
 }
+export interface Files extends Array<File> {}
 
 //! needs to be approved & finished by @TheRolfFR
-export type FileDataParam = Pick<File, 'name' | 'use' | 'type'>;
+export type FileDataParam = Pick<File, "name" | "use" | "type">;
 export interface FileCreationParam extends FileDataParam {}
 
 export interface FileRepository {

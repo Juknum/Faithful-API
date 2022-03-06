@@ -1,8 +1,8 @@
-import { Contributions } from './contributions';
-import { Addons } from './addons';
+import { Contributions } from "./contributions";
+import { Addons } from "./addons";
 
 export interface Media {
-	type: 'CurseForge|GitHub|Patreon|Paypal|Planet Minecraft|PSN|Reddit|Steam|Twitter|Website|Xbox|YouTube|Other';
+	type: "CurseForge|GitHub|Patreon|Paypal|Planet Minecraft|PSN|Reddit|Steam|Twitter|Website|Xbox|YouTube|Other";
 	link: string;
 }
 export interface Medias extends Array<Media> {}
@@ -19,12 +19,19 @@ export interface UserCreationParams {
 	media: Medias;
 }
 
-export interface UserNames extends Array<UserName> {}
 export interface UserName {
 	id: string;
 	username: string;
 }
+export interface UserNames extends Array<UserName> {}
 
+export interface User extends UserCreationParams {
+	roles: Array<string>; // discord roles the user have, that can be modified by admin only
+	id: string; // discord user id
+}
+export interface Users extends Array<User> {}
+
+/* eslint-disable no-unused-vars */
 export interface UserRepository {
 	getRaw(): Promise<Users>;
 	getNames(): Promise<any>;
@@ -35,10 +42,4 @@ export interface UserRepository {
 	create(id: string, user: UserCreationParams): Promise<User>;
 	update(id: string, user: User): Promise<User>;
 	delete(id: string): Promise<void>;
-}
-
-export interface Users extends Array<User> {}
-export interface User extends UserCreationParams {
-	roles: Array<string>; // discord roles the user have, that can be modified by admin only
-	id: string; // discord user id
 }

@@ -15,7 +15,7 @@ import formHandler from "./v2/tools/FormHandler";
 
 dotenv.config();
 
-// eslint: disable=unused
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEV = (process.env.DEV || "false") === "true";
 const PORT = process.env.PORT || 8000;
 
@@ -105,20 +105,21 @@ const v1 = require("./v1");
 
 app.use("/v1", v1);
 
-app.use((err: any, req: Request, res: Response, next: NextFunction): Response | void => {
+app.use((err: any, req: Request, res: Response, next: NextFunction): void => {
 	if (err instanceof ValidateError) {
 		console.error("ValidateError", err);
 		console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
-		return res.status(422).json({
+		res.status(422).json({
 			message: "Validation Failed",
 			details: err?.fields,
 		});
+		return;
 	}
 	if (err) {
 		if (err.isAxiosError) console.error("axios error: body, headers, err", req.body, req.headers, err);
-		const code = parseInt(err.statusCode || (err.response ? err.response.status : err.code)) || 400;
+		const code = parseInt(err.statusCode || (err.response ? err.response.status : err.code), 10) || 400;
 		const message = (err.response && err.response.data ? err.response.data.error : err.message) || err;
-		const stack = process.env.VERBORSE ? (err.stack ? err.stack : "") : "";
+		const stack = process.env.VERBORSE && err.stack ? err.stack : "";
 
 		if (process.env.VERBOSE === "true") {
 			console.error("code, message, stack", code, message, stack);
@@ -129,13 +130,16 @@ app.use((err: any, req: Request, res: Response, next: NextFunction): Response | 
 		if (!name) {
 			try {
 				name = status(code).replace(/ /, "");
-			} catch (error) {}
+			} catch (error) {
+				// you tried your best, we don't blame you
+			}
 		}
 
 		const finalError = new ApiError(name, code, message);
 
 		apiErrorHandler()(finalError, req, res, next);
-		return res.end();
+		res.end();
+		return;
 	}
 
 	next();

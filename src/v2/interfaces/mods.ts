@@ -1,4 +1,3 @@
-export interface Mods extends Array<Mod> {}
 export interface Mod {
 	id: string; // mod id (curseforge project id) (custom if not curseforge)
 	name: string; // mod name (ex: Industrial Craft 2)
@@ -11,3 +10,5 @@ export interface Mod {
 	};
 	blacklisted: boolean; // if true, the mod is fully blacklisted
 }
+
+export interface Mods extends Array<Mod> {}

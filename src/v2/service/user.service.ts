@@ -1,52 +1,50 @@
-import {
-  Addons, Contributions, UserNames, User, Users, UserRepository,
-} from '../interfaces';
-import * as urf from '../repository/firestorm/user.repository';
+import { Addons, Contributions, UserNames, User, Users, UserRepository } from "../interfaces";
+import UserFirestormRepository from "../repository/firestorm/user.repository";
 
 export class UserService {
-  private repository: UserRepository = new urf.default();
+	private repository: UserRepository = new UserFirestormRepository();
 
-  public getRaw(): Promise<Users> {
-    return this.repository.getRaw();
-  }
+	public getRaw(): Promise<Users> {
+		return this.repository.getRaw();
+	}
 
-  public getNames(): Promise<UserNames> {
-    return this.repository.getNames();
-  }
+	public getNames(): Promise<UserNames> {
+		return this.repository.getNames();
+	}
 
-  public get(id: string): Promise<User> {
-    return this.repository.getUserById(id);
-  }
+	public get(id: string): Promise<User> {
+		return this.repository.getUserById(id);
+	}
 
-  public getUserById(id: string): Promise<User> {
-    return this.get(id);
-  }
+	public getUserById(id: string): Promise<User> {
+		return this.get(id);
+	}
 
-  public getContributions(id: string): Promise<Contributions> {
-    return this.repository.getContributionsById(id);
-  }
+	public getContributions(id: string): Promise<Contributions> {
+		return this.repository.getContributionsById(id);
+	}
 
-  public getAddons(id: string): Promise<Addons> {
-    return this.repository.getAddonsApprovedById(id);
-  }
+	public getAddons(id: string): Promise<Addons> {
+		return this.repository.getAddonsApprovedById(id);
+	}
 
-  public getAllAddons(id: string): Promise<Addons> {
-    return this.repository.getAddonsById(id);
-  }
+	public getAllAddons(id: string): Promise<Addons> {
+		return this.repository.getAddonsById(id);
+	}
 
-  //! We don't make verifications here, it's in the controllers
+	//! We don't make verifications here, it's in the controllers
 
-  public async setRoles(id: string, roles: string[]) {
-    const user = await this.getUserById(id);
-    user.roles = roles;
-    return this.update(id, user);
-  }
+	public async setRoles(id: string, roles: string[]) {
+		const user = await this.getUserById(id);
+		user.roles = roles;
+		return this.update(id, user);
+	}
 
-  public async update(id: string, user: User): Promise<User> {
-    return this.repository.update(id, user);
-  }
+	public async update(id: string, user: User): Promise<User> {
+		return this.repository.update(id, user);
+	}
 
-  public delete(id: string): Promise<void> {
-    return this.repository.delete(id);
-  }
+	public delete(id: string): Promise<void> {
+		return this.repository.delete(id);
+	}
 }

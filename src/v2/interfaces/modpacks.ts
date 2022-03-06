@@ -1,6 +1,5 @@
-import { Mods } from './mods';
+import { Mods } from "./mods";
 
-export interface Modpacks extends Array<Modpack> {}
 export interface Modpack {
 	id: string; // modpack id (curseforge project id)
 	name: string; // modpack name
@@ -11,3 +10,5 @@ export interface Modpack {
 		mods: Mods;
 	}>;
 }
+
+export interface Modpacks extends Array<Modpack> {}
