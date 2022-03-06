@@ -95,9 +95,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 			.then((response: any) =>
 				(
 					Object.values(response).reduce((resolutionList: Array<string>, currentContribution: any) => {
-						const { res: contributionResolution } = currentContribution; // TODO: change with resolution
-						if (!resolutionList.includes(contributionResolution)) resolutionList.push(contributionResolution);
-						return resolutionList;
+					  const { res: contributionResolution } = currentContribution; // TODO: change with resolution
+					  if (!resolutionList.includes(contributionResolution)) resolutionList.push(contributionResolution);
+					  return resolutionList;
 					}, []) as Array<string>
 				).sort(),
 			);
@@ -111,9 +111,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 			.then((res: any) =>
 				(
 					Object.values(res).reduce((acc: Array<string>, cur: any) => {
-						const types = cur.type;
-						acc.push(types);
-						return acc;
+					  const types = cur.type;
+					  acc.push(types);
+					  return acc;
 					}, []) as Array<string>
 				)
 					.flat()

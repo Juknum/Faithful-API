@@ -24,13 +24,13 @@ export class SettingsController extends Controller {
 	@Response<NotFoundError>(404)
 	@Get("{path}")
 	public async get(@Path() path: String): Promise<any> {
-		const splitPath = path.split(".");
+	  const splitPath = path.split(".");
 
-		const response = await this.settingsService.get(splitPath);
+	  const response = await this.settingsService.get(splitPath);
 
-		if (response === undefined) throw new NotFoundError(`No setting found for key '${path}'`);
+	  if (response === undefined) throw new NotFoundError(`No setting found for key '${path}'`);
 
-		return response;
+	  return response;
 	}
 
 	/**
@@ -42,6 +42,6 @@ export class SettingsController extends Controller {
 	@Post("/raw")
 	@Security("discord", ["administrator", "developer"])
 	public async update(@Body() body: any): Promise<void> {
-		return this.settingsService.update(body);
+	  return this.settingsService.update(body);
 	}
 }

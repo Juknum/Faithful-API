@@ -7,15 +7,15 @@ import uses from './uses';
 config();
 
 export default firestorm.collection('paths', (el) => {
-  el.use = async (): Promise<Use> => uses.get(el.useID);
+	el.use = async (): Promise<Use> => uses.get(el.useID);
 
-  el.texture = (): Promise<Texture> => new Promise((resolve, reject) => {
-    el.use()
-      .then((use) => resolve(use.texture()))
-      .catch((err) => {
-        reject(err);
-      });
-  });
+	el.texture = (): Promise<Texture> => new Promise((resolve, reject) => {
+		el.use()
+			.then((use) => resolve(use.texture()))
+			.catch((err) => {
+				reject(err);
+			});
+	});
 
-  return el;
+	return el;
 });

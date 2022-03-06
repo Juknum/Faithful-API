@@ -49,13 +49,13 @@ export default firestorm.collection("textures", (el) => {
 				[path] = texturePaths.filter((p: Path) => p.versions.includes(version));
 
 				switch (pack) {
-					case "c32":
-					case "c64":
-						if (version !== "dungeons-latest") version = `${version}`;
-						break;
+				case "c32":
+				case "c64":
+					if (version !== "dungeons-latest") version = `${version}`;
+					break;
 
-					default:
-						break;
+				default:
+					break;
 				}
 
 				return el.uses();

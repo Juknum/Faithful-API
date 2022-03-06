@@ -15,9 +15,9 @@ export default class CloudflareClassRepository implements CloudflareRepository {
 		return this.cf.zones
 			.browse()
 			.then((res) =>
-				// https://cloudflare.github.io/node-cloudflare/#zonespurgecache
-				// https://api.cloudflare.com/#zone-purge-all-files
-				// permission needed: #cache_purge:edit
+			// https://cloudflare.github.io/node-cloudflare/#zonespurgecache
+			// https://api.cloudflare.com/#zone-purge-all-files
+			// permission needed: #cache_purge:edit
 				Promise.all(
 					res.result
 						.map((e) => e.id)

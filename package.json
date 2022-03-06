@@ -8,7 +8,6 @@
         "build": "tsoa spec && tsoa routes && npm run compile && cp -R public dist/",
         "start": "node dist/src/index.js",
         "swag": "tsoa spec",
-        "prettier-format": "prettier src/**/*.ts --config .prettierrc --write",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
     },
     "keywords": [],

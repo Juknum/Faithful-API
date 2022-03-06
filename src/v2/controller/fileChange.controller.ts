@@ -48,7 +48,7 @@ export class FileChangeController extends Controller {
 	@SuccessResponse(204)
 	@Security("discord", [])
 	public async deleteFile(@Path() id: number, @Request() request: any): Promise<void> {
-		return Promise.resolve();
+	  return Promise.resolve();
 	}
 
 	/**
@@ -63,6 +63,6 @@ export class FileChangeController extends Controller {
 	@SuccessResponse(201, "File Updated")
 	@Security("discord", [])
 	public async updateFile(@Path() id: number, @Body() body: any, @Request() request: any): Promise<void> {
-		return Promise.resolve();
+	  return Promise.resolve();
 	}
 }

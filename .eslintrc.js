@@ -9,6 +9,7 @@ module.exports = {
 	},
 	plugins: ["@typescript-eslint", "prettier", "import"],
 	rules: {
+		"indent": ["error", "tab"],
 		"import/no-cycle": "warn",
 		"no-unused-vars": "off",
 		"@typescript-eslint/no-unused-vars": ["error"],

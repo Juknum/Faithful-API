@@ -23,7 +23,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("editions")
 	public async getEditions(): Promise<Array<string>> {
-		return this.service.getEditions();
+	  return this.service.getEditions();
 	}
 
 	/**
@@ -31,7 +31,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("tags")
 	public async getTags(): Promise<Array<string>> {
-		return this.service.getTags();
+	  return this.service.getTags();
 	}
 
 	/**
@@ -40,7 +40,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("resolutions")
 	public async getResolutions(): Promise<Array<string>> {
-		return this.service.getResolutions();
+	  return this.service.getResolutions();
 	}
 
 	/**
@@ -48,7 +48,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("versions")
 	public async getVersions(): Promise<Array<string>> {
-		return this.service.getVersions();
+	  return this.service.getVersions();
 	}
 
 	/**
@@ -58,7 +58,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("versions/{edition}")
 	public getVersionByEdition(@Path() edition: Edition): Promise<Array<string>> {
-		return this.service.getVersionByEdition(edition);
+	  return this.service.getVersionByEdition(edition);
 	}
 
 	/**
@@ -67,7 +67,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("{id_or_name}")
 	public async getTexture(@Path() id_or_name: string | number): Promise<Textures | Texture> {
-		return this.service.getByNameOrId(id_or_name);
+	  return this.service.getByNameOrId(id_or_name);
 	}
 
 	/**
@@ -80,7 +80,7 @@ export class TextureController extends Controller {
 		@Path() id_or_name: string | number,
 		@Path() property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions> {
-		return this.service.getPropertyByNameOrId(id_or_name, property);
+	  return this.service.getPropertyByNameOrId(id_or_name, property);
 	}
 
 	/**
@@ -95,8 +95,8 @@ export class TextureController extends Controller {
 		@Path() mc_version: string,
 		@Request() request: ExRequest,
 	): Promise<void> {
-		const response = (<any>request).res as ExResponse;
-		response.redirect(await this.service.getURLById(parseInt(id, 10), pack, mc_version));
+	  const response = (<any>request).res as ExResponse;
+	  response.redirect(await this.service.getURLById(parseInt(id, 10), pack, mc_version));
 	}
 
 	// todo: implements setter with authentification verification

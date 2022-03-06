@@ -6,7 +6,7 @@ import { UserService } from '../service/user.service';
 @Route('users')
 @Tags('Users')
 export class UserController extends Controller {
-    private userService: UserService = new UserService();
+	private userService: UserService = new UserService();
 
     /**
      * Get the raw collection of users
@@ -14,16 +14,16 @@ export class UserController extends Controller {
     @Get('raw')
     @Security('discord', ['administrator']) // avoid warns info to be shown
     @Security('bot')
-    public async getRaw(): Promise<Users> {
-        return this.userService.getRaw();
-    }
+	public async getRaw(): Promise<Users> {
+		return this.userService.getRaw();
+	}
 
     /**
      * Get all usernames the database has
      */
     @Get('names')
     public async getNames(): Promise<UserNames> {
-        return this.userService.getNames();
+    	return this.userService.getNames();
     }
 
     /**
@@ -34,7 +34,7 @@ export class UserController extends Controller {
     @Security('discord', ['administrator']) // avoid warns info to be shown
     @Security('bot')
     public async getUser(@Path() id: string): Promise<User> {
-        return this.userService.get(id);
+    	return this.userService.get(id);
     }
 
     /**
@@ -43,7 +43,7 @@ export class UserController extends Controller {
      */
     @Get('{id}/contributions')
     public async getContributions(@Path() id: string): Promise<Contributions> {
-        return this.userService.getContributions(id);
+    	return this.userService.getContributions(id);
     }
 
     /**
@@ -52,7 +52,7 @@ export class UserController extends Controller {
      */
     @Get('{id}/addons/approved')
     public async getAddons(@Path() id: string): Promise<Addons> {
-        return this.userService.getAddons(id);
+    	return this.userService.getAddons(id);
     }
 
     /**
@@ -63,14 +63,14 @@ export class UserController extends Controller {
     @Security('discord', [])
     @Security('bot')
     public async getAllAddons(@Path() id: string, @Request() request: any): Promise<Addons> {
-        if (id !== request.user) {
-            // check if admin
-            const user = await new UserService().get(request.user);
-            if (!user.roles.includes('Administrator'))
-                throw new BadRequestError('Addon author must include the authed user');
-        }
+    	if (id !== request.user) {
+    		// check if admin
+    		const user = await new UserService().get(request.user);
+    		if (!user.roles.includes('Administrator'))
+    			throw new BadRequestError('Addon author must include the authed user');
+    	}
 
-        return this.userService.getAllAddons(id);
+    	return this.userService.getAllAddons(id);
     }
 
     // todo: implements setter with authentification verification
@@ -85,26 +85,26 @@ export class UserController extends Controller {
     @Security('discord', [])
     @Security('bot')
     public async set(@Path() id: string, @Body() body: UserCreationParams, @Request() request: any): Promise<User> {
-        // the security middleware adds a key user with anything inside when validated, see security middleware Promise return type
-        if (id !== request.user) {
-            const user = await this.userService.get(id).catch(() => {});
+    	// the security middleware adds a key user with anything inside when validated, see security middleware Promise return type
+    	if (id !== request.user) {
+    		const user = await this.userService.get(id).catch(() => {});
 
-            // admin can modify if they want
-            if (user && !user.roles.includes('Administrator')) throw new ForbiddenError('Cannot set another user');
-        }
+    		// admin can modify if they want
+    		if (user && !user.roles.includes('Administrator')) throw new ForbiddenError('Cannot set another user');
+    	}
 
-        const user = await this.userService.get(id).catch(() => {});
+    	const user = await this.userService.get(id).catch(() => {});
 
-        const roles = user ? user.roles || [] : [];
+    	const roles = user ? user.roles || [] : [];
 
-        // add roles and ID
-        const sent: User = {
-            ...body,
-            roles,
-            id,
-        };
+    	// add roles and ID
+    	const sent: User = {
+    		...body,
+    		roles,
+    		id,
+    	};
 
-        return this.userService.update(id, sent);
+    	return this.userService.update(id, sent);
     }
 
     /**
@@ -116,7 +116,7 @@ export class UserController extends Controller {
     @Security('discord', ['administrator'])
     @Security('bot')
     public async setRoles(@Path() id: string, @Body() roles: string[]) {
-        return this.userService.setRoles(id, roles);
+    	return this.userService.setRoles(id, roles);
     }
 
     /**
@@ -127,6 +127,6 @@ export class UserController extends Controller {
     @Security('discord', ['administrator'])
     @Security('bot')
     public async delete(@Path() id: string): Promise<void> {
-        return this.userService.delete(id);
+    	return this.userService.delete(id);
     }
 }

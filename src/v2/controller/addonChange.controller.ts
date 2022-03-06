@@ -53,16 +53,16 @@ export class AddonChangeController extends Controller {
 		@Body() body: AddonCreationParam,
 		@Request() request: any,
 	): Promise<Addon> {
-		const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
+	  const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
 
-		// if not an author wants to delete the addon
-		if (!addon.authors.includes(request.user)) {
-			// check if admin
-			const user = await new UserService().get(request.user);
-			if (!user.roles.includes("Administrator")) throw new BadRequestError("Addon author must include the authed user");
-		}
+	  // if not an author wants to delete the addon
+	  if (!addon.authors.includes(request.user)) {
+	    // check if admin
+	    const user = await new UserService().get(request.user);
+	    if (!user.roles.includes("Administrator")) throw new BadRequestError("Addon author must include the authed user");
+	  }
 
-		return this.service.update(id, body);
+	  return this.service.update(id, body);
 	}
 
 	/**
@@ -80,14 +80,14 @@ export class AddonChangeController extends Controller {
 		@Body() data: AddonReviewBody,
 		@Request() request: any,
 	): Promise<void> {
-		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
+	  const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
 
-		const review: AddonReview = {
-			...data,
-			author: String(request.user),
-		};
+	  const review: AddonReview = {
+	    ...data,
+	    author: String(request.user),
+	  };
 
-		await this.service.review(addonId, review);
+	  await this.service.review(addonId, review);
 	}
 
 	/**
@@ -100,17 +100,17 @@ export class AddonChangeController extends Controller {
 	@SuccessResponse(204)
 	@Security("discord", ["addon:own"])
 	public async addonDelete(@Path() id_or_slug: string): Promise<void> {
-		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
+	  const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
 
-		this.service.delete(addonId);
+	  this.service.delete(addonId);
 	}
 
 	public async postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
-		return this.service.postHeader(id_or_slug, file.originalname, file.buffer);
+	  return this.service.postHeader(id_or_slug, file.originalname, file.buffer);
 	}
 
 	public async addonAddScreenshot(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
-		return this.service.postScreenshot(id_or_slug, file.originalname, file.buffer);
+	  return this.service.postScreenshot(id_or_slug, file.originalname, file.buffer);
 	}
 
 	/**
@@ -123,7 +123,7 @@ export class AddonChangeController extends Controller {
 	@SuccessResponse(204)
 	@Security("discord", ["addon:own"])
 	public async addonDeleteScreenshot(@Path() id_or_slug: string, @Path() index: number): Promise<void> {
-		return this.service.deleteScreenshot(id_or_slug, index);
+	  return this.service.deleteScreenshot(id_or_slug, index);
 	}
 
 	/**
@@ -136,6 +136,6 @@ export class AddonChangeController extends Controller {
 	@SuccessResponse(204)
 	@Security("discord", ["addon:own"])
 	public async addonDeleteHeader(@Path() id_or_slug: string): Promise<void> {
-		return this.service.deleteHeader(id_or_slug);
+	  return this.service.deleteHeader(id_or_slug);
 	}
 }

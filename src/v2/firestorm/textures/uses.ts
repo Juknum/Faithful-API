@@ -8,15 +8,15 @@ import paths from './paths';
 config();
 
 export default firestorm.collection('uses', (el) => {
-  el.texture = (): Promise<Texture> => textures.get(el.textureID);
+	el.texture = (): Promise<Texture> => textures.get(el.textureID);
 
-  el.paths = (): Promise<Paths> => paths.search([
-    {
-      field: 'useID',
-      criteria: '==',
-      value: el[firestorm.ID_FIELD],
-    },
-  ]);
+	el.paths = (): Promise<Paths> => paths.search([
+		{
+			field: 'useID',
+			criteria: '==',
+			value: el[firestorm.ID_FIELD],
+		},
+	]);
 
-  return el;
+	return el;
 });

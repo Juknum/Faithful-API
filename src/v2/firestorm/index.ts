@@ -8,5 +8,5 @@ import addons from './addons';
 import settings from './settings';
 
 export {
-  textures, files, addons, paths, uses, contributions, users, settings,
+	textures, files, addons, paths, uses, contributions, users, settings,
 };
