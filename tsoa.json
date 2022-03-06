@@ -12,6 +12,11 @@
     "specVersion": 3,
     "specMerging": "recursive",
     "securityDefinitions": {
+      "bot": {
+        "type": "apiKey",
+        "name": "bot",
+        "in": "header"
+      },
       "discord": {
         "type": "apiKey",
         "name": "discord",
