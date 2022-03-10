@@ -6,7 +6,9 @@ import users from './users';
 import files from './files';
 import addons from './addons';
 import settings from './settings';
+import mods from "./mods";
+import modpacks from "./mods/modpacks";
 
 export {
-	textures, files, addons, paths, uses, contributions, users, settings,
+	textures, files, addons, paths, uses, contributions, users, settings, mods, modpacks,
 };

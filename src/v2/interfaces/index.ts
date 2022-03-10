@@ -11,10 +11,10 @@ import { Contribution, Contributions } from './contributions';
 import {
 	File, FileParent, FileRepository, Files,
 } from './files';
-import { Mod, Mods } from './mods';
-import { Modpack, Modpacks } from './modpacks';
+import { Mod, Mods, ModsRepository } from './mods';
+import { Modpack, Modpacks, ModpacksRepository } from './modpacks';
 import {
-	Addon, AddonAll, AddonProprety, AddonNotApproved, Addons, AddonsAll, AddonRepository, AddonStatus,
+	Addon, AddonAll, AddonProperty, AddonNotApproved, Addons, AddonsAll, AddonRepository, AddonStatus, AddonDownload, AddonStatusValues
 } from './addons';
 import {
 	Change, Changes, Changelog, Changelogs,
@@ -31,9 +31,11 @@ export {
 	Addons,
 	AddonsAll,
 	AddonNotApproved,
-	AddonProprety,
+	AddonProperty,
 	AddonStatus,
 	AddonRepository,
+	AddonDownload,
+	AddonStatusValues,
 	Changelog,
 	Changelogs,
 	Change,
@@ -48,6 +50,8 @@ export {
 	Modpacks,
 	Mod,
 	Mods,
+	ModsRepository,
+	ModpacksRepository,
 	Path,
 	Paths,
 	Post,

@@ -1,8 +1,8 @@
 import { URL } from "url";
+import { Addons, Addon, AddonStatus, AddonAll, AddonRepository, Files, File, FileParent } from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import { UserService } from "./user.service";
 import { FileService } from "./file.service";
-import { Addons, Addon, AddonStatus, AddonAll, AddonRepository, Files, File, FileParent } from "../interfaces";
 import { AddonCreationParam, AddonDataParam, AddonReview } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 

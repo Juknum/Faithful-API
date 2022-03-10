@@ -12,3 +12,7 @@ export interface Mod {
 }
 
 export interface Mods extends Array<Mod> {}
+
+export interface ModsRepository {
+	getRaw(): Promise<Mods>
+}

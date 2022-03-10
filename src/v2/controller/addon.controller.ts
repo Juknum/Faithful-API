@@ -1,8 +1,7 @@
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Controller, Get, Path, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
-import { AddonDownload, AddonStatus, AddonStatusValues } from "../interfaces/addons";
+import { Addon, Addons, Files, AddonAll, AddonProperty, AddonDownload, AddonStatus, AddonStatusValues  } from "../interfaces";
 
-import { Addon, Addons, Files, AddonAll, AddonProprety } from "../interfaces";
 import AddonService from "../service/addon.service";
 import { NotFoundError, PermissionError } from "../tools/ApiError";
 
@@ -11,7 +10,7 @@ import { NotFoundError, PermissionError } from "../tools/ApiError";
 export class AddonController extends Controller {
 	private readonly service: AddonService = new AddonService();
 
-	private async getAddonProperty(id: number, property: AddonProprety): Promise<Addon | Files> {
+	private async getAddonProperty(id: number, property: AddonProperty): Promise<Addon | Files> {
 		switch (property) {
 		case "files":
 			return (await this.service.getFiles(id)).map((f) => {
@@ -98,7 +97,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/{property}")
-	public async getAddonPropertyById(@Path() id_or_slug: string, property: AddonProprety): Promise<Addon | Files> {
+	public async getAddonPropertyById(@Path() id_or_slug: string, property: AddonProperty): Promise<Addon | Files> {
 	  return this.service
 	    .getAddonFromSlugOrId(id_or_slug)
 	    .then((value: [number, Addon]) => this.getAddonProperty(value[0], property));

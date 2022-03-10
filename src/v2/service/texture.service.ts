@@ -1,5 +1,5 @@
-import { textures } from "../firestorm";
 import { Contributions, Paths, Texture, Textures, Uses, TextureRepository } from "../interfaces";
+import { textures } from "../firestorm";
 import { Edition, KnownPacks, TextureProperty } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 
