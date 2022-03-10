@@ -13,6 +13,14 @@ export interface Mod {
 
 export interface Mods extends Array<Mod> {}
 
+export interface PackVersions {
+	[integer: string]: {
+		min: string,
+		max: string
+	}
+}
+
 export interface ModsRepository {
 	getRaw(): Promise<Mods>
+	getPackVersion(): Promise<PackVersions>
 }

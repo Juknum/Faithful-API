@@ -1,5 +1,5 @@
 import { Controller, Get, Route, Tags } from "tsoa";
-import { Mods } from "../interfaces";
+import { Mods, PackVersions } from "../interfaces";
 import ModsService from "../service/mods.service";
 
 
@@ -14,5 +14,10 @@ export class ModsController extends Controller {
 	@Get("raw")
 	public async getRaw(): Promise<Mods> {
 		return this.service.getRaw();
+	}
+
+	@Get("pack_versions")
+	public async getPackVersions(): Promise<PackVersions> {
+		return this.service.getPackVersions();
 	}
 }

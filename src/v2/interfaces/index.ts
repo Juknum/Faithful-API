@@ -11,7 +11,7 @@ import { Contribution, Contributions } from './contributions';
 import {
 	File, FileParent, FileRepository, Files,
 } from './files';
-import { Mod, Mods, ModsRepository } from './mods';
+import { Mod, Mods, ModsRepository, PackVersions } from './mods';
 import { Modpack, Modpacks, ModpacksRepository } from './modpacks';
 import {
 	Addon, AddonAll, AddonProperty, AddonNotApproved, Addons, AddonsAll, AddonRepository, AddonStatus, AddonDownload, AddonStatusValues
@@ -52,6 +52,7 @@ export {
 	Mods,
 	ModsRepository,
 	ModpacksRepository,
+	PackVersions,
 	Path,
 	Paths,
 	Post,

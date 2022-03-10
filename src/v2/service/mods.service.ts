@@ -1,5 +1,6 @@
-import { Mods, ModsRepository } from "~/v2/interfaces";
+import { Mods, ModsRepository, PackVersions } from "~/v2/interfaces";
 import { mods } from "../firestorm";
+import pack_versions from "../firestorm/mods/pack_versions";
 import ModsFirestormRepository from "../repository/firestorm/mods.repository";
 
 export default class ModsService {
@@ -7,5 +8,9 @@ export default class ModsService {
   
 	getRaw(): Promise<Mods> {
 		return mods.read_raw();
+	}
+
+	getPackVersions(): Promise<PackVersions> {
+		return pack_versions.read_raw();
 	}
 }
