@@ -1,6 +1,6 @@
 import { Mods, ModsRepository, PackVersions } from "~/v2/interfaces";
 import { mods } from "../firestorm";
-import pack_versions from "../firestorm/mods/pack_versions";
+import { pack_versions } from "../firestorm/modding/pack_versions";
 import ModsFirestormRepository from "../repository/firestorm/mods.repository";
 
 export default class ModsService {

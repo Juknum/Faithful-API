@@ -119,7 +119,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction): void => {
 		if (err.isAxiosError) console.error("axios error: body, headers, err", req.body, req.headers, err);
 		const code = parseInt(err.statusCode || (err.response ? err.response.status : err.code), 10) || 400;
 		const message = (err.response && err.response.data ? err.response.data.error : err.message) || err;
-		const stack = process.env.VERBORSE && err.stack ? err.stack : "";
+		const stack = process.env.VERBOSE && err.stack ? err.stack : "";
 
 		if (process.env.VERBOSE === "true") {
 			console.error("code, message, stack", code, message, stack);

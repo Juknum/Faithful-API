@@ -1,19 +1,19 @@
 import firestorm from "firestorm-db";
 import FormData from "form-data";
-import repo from "../../firestorm/files";
+import { files } from "../../firestorm";
 import { File, FileParent, FileRepository, Files, FileUse } from "../../interfaces/files";
 
 export class FilesFirestormRepository implements FileRepository {
 	addFile(file: File): Promise<string> {
-		return repo.add(file);
+		return files.add(file);
 	}
 
 	getFileByID(id: string): Promise<File> {
-		return repo.get(id);
+		return files.get(id);
 	}
 
 	getFilesByParent(parent: FileParent): Promise<Files> {
-		return repo.search([
+		return files.search([
 			{
 				field: "parent.id",
 				criteria: "==",
@@ -28,22 +28,22 @@ export class FilesFirestormRepository implements FileRepository {
 	}
 
 	setFileById(id: string, file: File): Promise<File> {
-		return repo.set(id, file).then(() => this.getFileByID(id));
+		return files.set(id, file).then(() => this.getFileByID(id));
 	}
 
 	removeFileById(id: string): Promise<void> {
-		return repo.remove(id).then(() => {});
+		return files.remove(id).then(() => {});
 	}
 
 	removeFilesByParent(parent: FileParent): Promise<void> {
 		return this.getFilesByParent(parent)
-			.then((files: any) => repo.removeBulk(files.map((f) => f.id)))
+			.then((_files: any) => _files.removeBulk(_files.map((f) => f.id)))
 			.then(() => {});
 	}
 
 	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<void> {
 		return this.getFilesByParent(parent)
-			.then((files: any) => repo.removeBulk(files.filter((f) => f.use === use).map((f) => f.id)))
+			.then((_files: any) => _files.removeBulk(_files.filter((f) => f.use === use).map((f) => f.id)))
 			.then(() => {});
 	}
 

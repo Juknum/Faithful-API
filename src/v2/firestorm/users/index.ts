@@ -1,12 +1,12 @@
 import firestorm from 'firestorm-db';
 import { Contributions, Addons } from '~/v2/interfaces';
 import { contributions } from '..';
-import addons from '../addons';
+import { addons } from '../addons';
 import config from '../config';
 
 config();
 
-export default firestorm.collection('users', (el) => {
+export const users = firestorm.collection('users', (el) => {
 	el.contributions = async (): Promise<Contributions> => contributions.search([
 		{
 			field: 'contributors',

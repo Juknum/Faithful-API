@@ -62,22 +62,24 @@ export function mapPaths(data: OldPaths): Paths {
 	return data.map(mapPath);
 }
 
-interface OldContribution {
+export interface OldContribution {
 	date: number;
 	res: "c32" | "c64";
 	textureID: number;
 	contributors: Array<string>;
 	id: string;
 }
-interface OldContributions extends Array<OldContribution> {}
+export interface OldContributions extends Array<OldContribution> {}
 
 export function mapContribution(old: OldContribution): Contribution {
+	if (old.res === undefined) return old as any; // new contribution
+
 	return {
 		id: old.id,
 		date: old.date,
 		texture: old.textureID.toString(),
-		resolution: old.res === "c32" ? "32x" : "64x",
-		pack: old.res,
+		resolution: old.res === "c32" ? 32 : 64, // map old values
+		pack: old.res === "c32" ? "compliance_32x" : "compliance_64x",
 		authors: old.contributors,
 	};
 }

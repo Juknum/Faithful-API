@@ -3,4 +3,4 @@ import config from "../config";
 
 config();
 
-export default firestorm.collection("pack_versions");
+export const mods = firestorm.collection("mods");

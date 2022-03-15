@@ -6,10 +6,6 @@ import { Contributions, Paths, Texture, Textures, Uses, TextureRepository, Path 
 import { mapTexture, mapTextures, OldUse } from "../../tools/mapping/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
-	public getRaw(): Promise<Textures> {
-		return textures.read_raw();
-	}
-
 	public getURLById(id: number, pack: KnownPacks, version: string) {
 		return textures.get(id).then((texture) => texture.url(pack, version));
 	}

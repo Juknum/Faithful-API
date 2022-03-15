@@ -4,14 +4,14 @@ import { KnownPacks } from "~/v2/interfaces/textures";
 import { TextureUse } from "~/v1/firestorm/uses";
 import config from "../config";
 
-import uses from "./uses";
+import { uses } from "./uses";
 import { contributions } from "..";
 import { mapContributions, mapPaths, mapTexture, mapUses } from "../../tools/mapping/textures";
-import settings from "../settings";
+import { settings } from "../settings";
 
 config();
 
-export default firestorm.collection("textures", (el) => {
+export const textures = firestorm.collection("textures", (el) => {
 	el.uses = async (): Promise<Uses> =>
 		uses
 			.search([
@@ -47,17 +47,6 @@ export default firestorm.collection("textures", (el) => {
 			.then((texturePaths: Paths) => {
 				// eq to [0]
 				[path] = texturePaths.filter((p: Path) => p.versions.includes(version));
-
-				switch (pack) {
-				case "c32":
-				case "c64":
-					if (version !== "dungeons-latest") version = `${version}`;
-					break;
-
-				default:
-					break;
-				}
-
 				return el.uses();
 			})
 			.then((_uses: Uses) => {

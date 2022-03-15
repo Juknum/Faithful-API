@@ -9,9 +9,9 @@ require('./firestorm_config')()
  * @property {String} date date of contribution
  * @property {Number} textureID texture's id modified
  * @property {String[]} contributors authors of the contribution
- * @property {String} res res of contribution (c32, c64)
- * @property {Function} getContributors users assiocated to this contribution
- * @property {Function} texture texture assiocated to this contribution
+ * @property {String} res res of contribution (compliance_32, compliance_c64)
+ * @property {Function} getContributors users associated to this contribution
+ * @property {Function} texture texture associated to this contribution
  */
 
 module.exports = firestorm.collection('contributions', el => {

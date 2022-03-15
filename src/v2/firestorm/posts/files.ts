@@ -3,4 +3,4 @@ import config from '../config';
 
 config();
 
-export default firestorm.collection('settings');
+export const files = firestorm.collection('files', (el) => el);

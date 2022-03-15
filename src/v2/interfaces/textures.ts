@@ -18,16 +18,15 @@ export interface TexturesAll extends Array<TextureAll> {}
 
 export type KnownPacks =
 	| "default"
-	| "c32"
-	| "c64"
-	| "classic_faithful_32"
-	| "classic_faithful_32_progart"
-	| "classic_faithful_64";
+	| "compliance_32x"
+	| "compliance_64x"
+	| "classic_faithful_32x"
+	| "classic_faithful_32x_progart"
+	| "classic_faithful_64x";
 export type Edition = "java" | "bedrock" | "dungeons";
 export type TextureProperty = "uses" | "paths" | "contributions" | "all" | null;
 
 export interface TextureRepository {
-	getRaw(): Promise<Textures>;
 	getTextureById(id: number, property: TextureProperty): Promise<Texture>;
 	getVersions(): Promise<string[]>;
 	getEditions(): Promise<string[]>;
