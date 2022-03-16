@@ -3,7 +3,7 @@ import { KnownPacks } from "./textures";
 export interface ContributionCreationParams {
 	date: number; // unix timestamp
 	resolution: 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096; // texture resolution
-	pack: Omit<KnownPacks, "default">; // resource pack name
+	pack: Exclude<KnownPacks, "default">; // resource pack name
 	authors: Array<string>; // discords users ids
 	texture: string; // texture id
 }
