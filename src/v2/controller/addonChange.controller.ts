@@ -33,7 +33,7 @@ export class AddonChangeController extends Controller {
   @Response<PermissionError>(403)
   @Patch('{id_or_slug}')
   @SuccessResponse(204)
-  @Security('discord', ['addon:own'])
+  @Security('discord', ['addon:own', 'administrator'])
   public async addonUpdate(@Path() id_or_slug: string, @Body() body: AddonCreationParam, @Request() request: any): Promise<Addon> {
   	const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug)
 
