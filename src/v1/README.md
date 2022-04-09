@@ -214,7 +214,7 @@ GET  /v1/addon/{id}/{attribute?} HTTP/1.1
       "type": "addons",
       "id": 0
     },
-    "source": "https://database.compliancepack.net/images/addons/2d-bed-icons/header"
+    "source": "https://database.faithfulpack.net/images/addons/2d-bed-icons/header"
   },
   "1": {
     "name": "GitHub",
@@ -224,7 +224,7 @@ GET  /v1/addon/{id}/{attribute?} HTTP/1.1
       "type": "addons",
       "id": 0
     },
-    "source": "https://github.com/Compliance-Addons/Addons/raw/master/32x/2D%20Bed%20Icons/2D%20Bed%20Icons%2032x.zip"
+    "source": "https://github.com/Faithful-Addons/Addons/raw/master/32x/2D%20Bed%20Icons/2D%20Bed%20Icons%2032x.zip"
   }
 }
 ```

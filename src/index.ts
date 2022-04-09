@@ -58,7 +58,7 @@ const options: SwaggerUiOptions = {
 	swaggerOptions: {
 		tryItOutEnabled: true,
 	},
-	customfavIcon: "https://database.compliancepack.net/images/brand/logos/site/compliance_white.ico",
+	customfavIcon: "https://database.faithfulpack.net/images/brand/logos/site/compliance_white.ico",
 	customSiteTitle: "Compliance API",
 };
 

@@ -10,7 +10,7 @@ export interface File {
 	use: FileUse;
 	type: "url" | "b64";
 	parent: FileParent;
-	source: string; // file content/url (ex: 'database.compliancepack.net/images/test.png')
+	source: string; // file content/url (ex: 'database.faithfulpack.net/images/test.png')
 }
 export interface Files extends Array<File> {}
 

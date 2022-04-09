@@ -8,7 +8,7 @@ export class CloudflareController extends Controller {
 	private readonly service: CloudflareService = new CloudflareService()
 
   /**
-   * Purge the whole cache of cloudflare for the domain compliancepack.net, all sub-domains are affected too.
+   * Purge the whole cache of cloudflare for the domain faithfulpack.net, all sub-domains are affected too.
    */
   @Get('purge')
   @Security('cloudflare')
@@ -17,7 +17,7 @@ export class CloudflareController extends Controller {
 	}
 
   /**
-   * Sets compliance to developer mode on for 3 hours for the domain compliancepack.net, all sub-domains are affected too.
+   * Sets compliance to developer mode on for 3 hours for the domain faithfulpack.net, all sub-domains are affected too.
    *
    * Development Mode temporarily allows you to enter development mode for your websites if you need to make changes to your site.
    * This will bypass Cloudflare's accelerated cache and slow down your site, but is useful if you are making changes to cacheable
