@@ -1,20 +1,20 @@
-import { DevMode } from './../interfaces/cloudflare'
 import { Controller, Get, Path, Route, Security, Tags } from 'tsoa'
+import { DevMode } from "../interfaces/cloudflare"
 import CloudflareService from '../service/cloudflare.service'
 
 @Route('cloudflare')
 @Tags('Cloudflare')
 export class CloudflareController extends Controller {
-  private readonly service: CloudflareService = new CloudflareService()
+	private readonly service: CloudflareService = new CloudflareService()
 
   /**
    * Purge the whole cache of cloudflare for the domain compliancepack.net, all sub-domains are affected too.
    */
   @Get('purge')
   @Security('cloudflare')
-  public async purge(): Promise<void> {
-    return this.service.purge()
-  }
+	public async purge(): Promise<void> {
+		return this.service.purge()
+	}
 
   /**
    * Sets compliance to developer mode on for 3 hours for the domain compliancepack.net, all sub-domains are affected too.
@@ -27,6 +27,6 @@ export class CloudflareController extends Controller {
   @Get('dev/{mode}')
   @Security('cloudflare')
   public async dev(@Path() mode: DevMode): Promise<any> {
-    return this.service.dev(mode)
+  	return this.service.dev(mode)
   }
 }
