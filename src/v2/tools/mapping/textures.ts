@@ -79,7 +79,7 @@ export function mapContribution(old: OldContribution): Contribution {
 		date: old.date,
 		texture: old.textureID.toString(),
 		resolution: old.res === "c32" ? 32 : 64, // map old values
-		pack: old.res === "c32" ? "compliance_32x" : "compliance_64x",
+		pack: old.res === "c32" ? "faithful_32x" : "faithful_64x",
 		authors: old.contributors,
 	};
 }

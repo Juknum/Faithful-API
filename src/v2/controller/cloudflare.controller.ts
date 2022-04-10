@@ -17,7 +17,7 @@ export class CloudflareController extends Controller {
 	}
 
   /**
-   * Sets compliance to developer mode on for 3 hours for the domain faithfulpack.net, all sub-domains are affected too.
+   * Sets faithful to developer mode on for 3 hours for the domain faithfulpack.net, all sub-domains are affected too.
    *
    * Development Mode temporarily allows you to enter development mode for your websites if you need to make changes to your site.
    * This will bypass Cloudflare's accelerated cache and slow down your site, but is useful if you are making changes to cacheable

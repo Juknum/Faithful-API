@@ -58,8 +58,8 @@ const options: SwaggerUiOptions = {
 	swaggerOptions: {
 		tryItOutEnabled: true,
 	},
-	customfavIcon: "https://database.faithfulpack.net/images/brand/logos/site/compliance_white.ico",
-	customSiteTitle: "Compliance API",
+	customfavIcon: "https://database.faithfulpack.net/images/branding/site/favicon.ico",
+	customSiteTitle: "Faithful API",
 };
 
 app.listen(PORT, () => {

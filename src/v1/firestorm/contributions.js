@@ -9,7 +9,7 @@ require('./firestorm_config')()
  * @property {String} date date of contribution
  * @property {Number} textureID texture's id modified
  * @property {String[]} contributors authors of the contribution
- * @property {String} res res of contribution (compliance_32, compliance_c64)
+ * @property {String} res res of contribution (faithful_32, faithful_c64)
  * @property {Function} getContributors users associated to this contribution
  * @property {Function} texture texture associated to this contribution
  */

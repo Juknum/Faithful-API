@@ -18,8 +18,8 @@ export interface TexturesAll extends Array<TextureAll> {}
 
 export type KnownPacks =
 	| "default"
-	| "compliance_32x"
-	| "compliance_64x"
+	| "faithful_32x"
+	| "faithful_64x"
 	| "classic_faithful_32x"
 	| "classic_faithful_32x_progart"
 	| "classic_faithful_64x";

@@ -3,8 +3,8 @@
 @import url('https://gitcdn.link/cdn/Amoenus/SwaggerDark/master/SwaggerDark.user.css');
 
 @font-face {
-  font-family: Compliance;
-  src: url("../Compliance.ttf") format("truetype");
+  font-family: Faithful;
+  src: url("../Faithful.ttf") format("truetype");
 }
 
 html, body {
@@ -18,7 +18,7 @@ html, body {
 
 h1, h2, h3,
 .title {
-  font-family: Compliance !important;
+  font-family: Faithful !important;
 	font-weight: 600;
 }
 

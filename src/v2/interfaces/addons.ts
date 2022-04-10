@@ -28,7 +28,7 @@ export interface AddonReview extends AddonReviewBody {
 export interface Addon {
 	id?: number | string;
 	name: string; // addon name (> 5 && < 30)
-	slug: string; // used in link & as comments id (ex: 'www.faithfulpack.net/addons/compliance3D')
+	slug: string; // used in link & as comments id (ex: 'www.faithfulpack.net/addons/Faithful3D')
 	description: string; // addon description (> 256 && < 4096)
 	authors: Array<string>; // discord users IDs
 	options: {

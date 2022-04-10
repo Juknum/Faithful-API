@@ -31,8 +31,8 @@ export const textures = firestorm.collection("textures", (el) => {
 			.then(mapPaths); // todo: (DATA 2.0) remove after database rewrite
 
 	el.url = async (pack: KnownPacks, version: string): Promise<string> => {
-		// https://raw.githubusercontent.com/Compliance-Resource-Pack/App/main/resources/transparency.png  // fallback image
-		// https://raw.githubusercontent.com/Compliance-Resource-Pack/Compliance-Java-32x/Jappa-1.18.1/assets/minecraft/textures/block/acacia_door_bottom.png
+		// https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png  // fallback image
+		// https://raw.githubusercontent.com/Faithful-Resource-Pack/Faithful-Java-32x/Jappa-1.18.1/assets/minecraft/textures/block/acacia_door_bottom.png
 
 		let urls: string;
 		let path: Path;
@@ -59,7 +59,7 @@ export const textures = firestorm.collection("textures", (el) => {
 			.catch((err) => {
 				console.error(err);
 				// fallback image
-				return "https://raw.githubusercontent.com/Compliance-Resource-Pack/App/main/resources/transparency.png";
+				return "https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png";
 			});
 	};
 
