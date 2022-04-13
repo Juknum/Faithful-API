@@ -12,11 +12,12 @@ module.exports = {
 		"indent": ["error", "tab"],
 		"import/no-cycle": "warn",
 		"no-unused-vars": "off",
+		"no-plusplus": "off",
 		"@typescript-eslint/no-unused-vars": ["error"],
 		"no-console": "off",
 		"no-param-reassign": "off",
 		"import/prefer-default-export": "off",
-		camelcase: "off",
+		"camelcase": "off",
 		"class-methods-use-this": "off",
 		"import/extensions": [
 			"error",

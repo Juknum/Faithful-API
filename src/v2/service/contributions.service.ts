@@ -1,6 +1,6 @@
 import { contributions } from "../firestorm";
-import { Contribution, Contributions } from "../interfaces";
-import { ContributionCreationParams, ContributionsRepository } from "../interfaces/contributions";
+import { Contribution, Contributions, ContributionsPacks } from "../interfaces";
+import { ContributionCreationParams, ContributionsAuthors, ContributionsRepository } from "../interfaces/contributions";
 import ContributionFirestormRepository from "../repository/firestorm/contributions.repository";
 
 export default class ContributionService {
@@ -10,8 +10,12 @@ export default class ContributionService {
 		return contributions.read_raw().then((res: any) => Object.values(res));
 	}
 
-	getPacks(): Promise<Array<string>> {
+	getPacks(): ContributionsPacks  {
 		return this.contributionRepo.getPacks();
+	}
+
+	getAuthors(): Promise<ContributionsAuthors> {
+		return this.contributionRepo.getAuthors();
 	}
 
 	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions> {

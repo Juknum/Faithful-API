@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Post, Put, Route, Security, Tags } from "tsoa";
-import { Contributions, Contribution, ContributionCreationParams } from "../interfaces";
+import { Contributions, Contribution, ContributionCreationParams, ContributionsAuthors, ContributionsPacks } from "../interfaces";
 import ContributionService from "../service/contributions.service";
 
 @Route("contributions")
@@ -19,8 +19,13 @@ export class ContributionsController extends Controller {
 	 * Get all resource packs that have been contributed to
 	 */
 	@Get("packs")
-	public async getPacks(): Promise<Array<string>> {
+	public async getPacks(): Promise<ContributionsPacks> {
 		return this.service.getPacks();
+	}
+
+	@Get("authors")
+	public async getAuthors(): Promise<ContributionsAuthors> {
+		return this.service.getAuthors();
 	}
 
 	@Get("{id}")

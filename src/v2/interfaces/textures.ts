@@ -16,13 +16,8 @@ export interface TextureAll extends Texture {
 }
 export interface TexturesAll extends Array<TextureAll> {}
 
-export type KnownPacks =
-	| "default"
-	| "faithful_32x"
-	| "faithful_64x"
-	| "classic_faithful_32x"
-	| "classic_faithful_32x_progart"
-	| "classic_faithful_64x";
+export const KnownPacksArr: Array<string> = [ "default", "faithful_32x", "faithful_64x", "classic_faithful_32x", "classic_faithful_32x_progart", "classic_faithful_64x" ]
+export type KnownPacks = typeof KnownPacksArr[number];
 export type Edition = "java" | "bedrock" | "dungeons";
 export type TextureProperty = "uses" | "paths" | "contributions" | "all" | null;
 
