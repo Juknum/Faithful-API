@@ -2,7 +2,7 @@ import { users } from "../../firestorm";
 import { Addons, Contributions, UserNames, User, Users, UserCreationParams, UserRepository } from "../../interfaces";
 
 // eslint-disable-next-line no-underscore-dangle
-function __tranformUser(user: any): User {
+function __transformUser(user: any): User {
 	return {
 		id: user.id,
 		username: user.username || "",
@@ -30,7 +30,7 @@ export default class UserFirestormRepository implements UserRepository {
 	getUserById(id: string): Promise<User> {
 		return users
 			.get(id)
-			.then((u) => __tranformUser(u))
+			.then((u) => __transformUser(u))
 			.catch((err) => {
 				if (err.isAxiosError && err.response.statusCode === 404) {
 					const formattedError = new Error("User not found") as any;

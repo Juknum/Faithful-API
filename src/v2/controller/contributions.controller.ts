@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Delete, Get, Post, Put, Route, Security, Tags } from "tsoa";
 import { Contributions, Contribution, ContributionCreationParams } from "../interfaces";
 import ContributionService from "../service/contributions.service";
 
@@ -15,9 +15,27 @@ export class ContributionsController extends Controller {
 		return this.service.getRaw();
 	}
 
+	/**
+	 * Get all resource packs that have been contributed to
+	 */
+	@Get("packs")
+	public async getPacks(): Promise<Array<string>> {
+		return this.service.getPacks();
+	}
+
 	@Get("{id}")
 	public async getContributionById(id: string): Promise<Contribution> {
 		return this.service.getById(id);
+	}
+
+	/**
+	 * @param {String} users should be the discord users ids joined by '-'
+	 * @param {String} packs should be the resource packs joined by '-'
+	 */
+	@Get("search/{users}/{packs}")
+	public async searchContributionsFrom(users: string, packs: string): Promise<Contributions> {
+		if (packs === "all") return this.service.searchContributionsFrom(users.split("-"), null);
+		return this.service.searchContributionsFrom(users.split("-"), packs.split("-"));
 	}
 	
 	@Get("between/{begin}/{ends}")
@@ -25,14 +43,14 @@ export class ContributionsController extends Controller {
 		return this.service.getByDateRange(begin, ends);
 	}
 
-	@Get("from/{date}")
-	public async getContributionFrom(date: string): Promise<Contributions> {
-		return this.service.getByDateRange(date, new Date().getTime().toString());
+	@Get("from/{timestamp}")
+	public async getContributionFrom(timestamp: string): Promise<Contributions> {
+		return this.service.getByDateRange(timestamp, new Date().getTime().toString());
 	}
 
-	@Get("before/{date}")
-	public async getContributionBefore(date: string): Promise<Contributions> {
-		return this.service.getByDateRange("0", date);
+	@Get("before/{timestamp}")
+	public async getContributionBefore(timestamp: string): Promise<Contributions> {
+		return this.service.getByDateRange("0", timestamp);
 	}
 
 	@Post()
@@ -48,4 +66,12 @@ export class ContributionsController extends Controller {
 	public async deleteContribution(id: string): Promise<void> {
 		return this.service.deleteContribution(id);
 	}
+
+	@Put("{id}")
+	@Security('discord', ['administrator'])
+	@Security('bot')
+	public async updateContribution(id: string, @Body() body: ContributionCreationParams): Promise<Contribution> {
+		return this.service.updateContribution(id, body);
+	}
+
 }

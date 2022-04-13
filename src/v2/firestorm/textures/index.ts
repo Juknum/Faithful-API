@@ -6,8 +6,9 @@ import config from "../config";
 
 import { uses } from "./uses";
 import { contributions } from "..";
-import { mapContributions, mapPaths, mapTexture, mapUses } from "../../tools/mapping/textures";
+import { mapPaths, mapTexture, mapUses } from "../../tools/mapping/textures";
 import { settings } from "../settings";
+import { MinecraftSorter } from "../../tools/sorter";
 
 config();
 
@@ -46,7 +47,11 @@ export const textures = firestorm.collection("textures", (el) => {
 			})
 			.then((texturePaths: Paths) => {
 				// eq to [0]
-				[path] = texturePaths.filter((p: Path) => p.versions.includes(version));
+				if (version === "latest") {
+					[path] = texturePaths;
+					[version] = path.versions.sort(MinecraftSorter).reverse();
+				} else [path] = texturePaths.filter((p: Path) => p.versions.includes(version));
+
 				return el.uses();
 			})
 			.then((_uses: Uses) => {
@@ -56,23 +61,18 @@ export const textures = firestorm.collection("textures", (el) => {
 					use.assets === null ? path.name : `assets/${use.assets}/${path.name}`
 				}`;
 			})
-			.catch((err) => {
-				console.error(err);
-				// fallback image
-				return "https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png";
-			});
+			.catch("https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png"); // fallback image
 	};
 
 	el.contributions = async (): Promise<Contributions> =>
 		contributions
 			.search([
 				{
-					field: "textureID", // todo: to be replaced by texture
+					field: "texture",
 					criteria: "==",
 					value: parseInt(el[firestorm.ID_FIELD], 10),
 				},
 			])
-			.then(mapContributions); // todo: (DATA 2.0) remove after database rewrite
 
 	el.all = async (): Promise<TextureAll> => {
 		const output = mapTexture(el) as any;

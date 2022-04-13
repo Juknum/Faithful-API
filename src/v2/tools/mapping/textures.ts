@@ -1,4 +1,4 @@
-import { Textures, Texture, Use, Uses, Path, Paths, Contributions, Contribution } from "~/v2/interfaces";
+import { Textures, Texture, Use, Uses, Path, Paths } from "~/v2/interfaces";
 
 export interface OldUse {
 	textureID: number;
@@ -71,18 +71,18 @@ export interface OldContribution {
 }
 export interface OldContributions extends Array<OldContribution> {}
 
-export function mapContribution(old: OldContribution): Contribution {
-	if (old.res === undefined) return old as any; // new contribution
+// export function mapContribution(old: OldContribution): Contribution {
+// 	if (old.res === undefined) return old as any; // new contribution
 
-	return {
-		id: old.id,
-		date: old.date,
-		texture: old.textureID.toString(),
-		resolution: old.res === "c32" ? 32 : 64, // map old values
-		pack: old.res === "c32" ? "faithful_32x" : "faithful_64x",
-		authors: old.contributors,
-	};
-}
-export function mapContributions(data: OldContributions): Contributions {
-	return data.map(mapContribution);
-}
+// 	return {
+// 		id: old.id,
+// 		date: old.date,
+// 		texture: old.textureID.toString(),
+// 		resolution: old.res === "c32" ? 32 : 64, // map old values
+// 		pack: old.res === "c32" ? "faithful_32x" : "faithful_64x",
+// 		authors: old.contributors,
+// 	};
+// }
+// export function mapContributions(data: OldContributions): Contributions {
+// 	return data.map(mapContribution);
+// }

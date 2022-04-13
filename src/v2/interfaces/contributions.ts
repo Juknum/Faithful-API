@@ -17,5 +17,8 @@ export interface ContributionsRepository {
 	getContributionById(id: string): Promise<Contribution>;
 	addContribution(params: ContributionCreationParams): Promise<Contribution>;
 	deleteContribution(id: string): Promise<void>;
+	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution>;
 	getByDateRange(begin: string, ends: string): Promise<Contributions>;
+	getPacks(): Promise<Array<string>>;
+	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions>;
 }

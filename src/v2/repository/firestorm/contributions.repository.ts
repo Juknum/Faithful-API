@@ -1,14 +1,38 @@
 import { Contribution, ContributionCreationParams, Contributions, ContributionsRepository } from "~/v2/interfaces/contributions";
-import { mapContribution, mapContributions } from "../../tools/mapping/textures";
 import { contributions } from "../../firestorm";
 
 export default class ContributionFirestormRepository implements ContributionsRepository {
 	getContributionById(id: string): Promise<Contribution> {
-		return contributions.get(id).then(mapContribution);
+		return contributions.get(id);
+	}
+
+	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions> {
+		const options = [{
+			field: "authors",
+			criteria: "array-contains-any",
+			value: users
+		}];
+
+		if (packs !== null) options.push({ field: "pack", criteria: "in", value: packs });
+		return contributions.search(options)
+			.then((res: Contributions) => res.filter((c: Contribution) => packs === null ? true : packs.includes(c.pack)))
+	}
+
+	getPacks(): Promise<Array<string>> {
+		const packs: Array<string> = [];
+
+		return contributions.select({ fields: [ "res", "pack" ] }) // todo remove "res" after rewrite
+			.then((obj: any) => Object.values(obj).map((o: any) => o.pack || o.res))
+			.then((res: Array<string>) => res.forEach(r => !packs.includes(r) ? packs.push(r) : null ))
+			.then(() => packs);
 	}
 
 	addContribution(params: ContributionCreationParams): Promise<Contribution> {
 		return contributions.add(params).then((id: string) => contributions.get(id));
+	}
+
+	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution> {
+		return contributions.set(id, params).then(() => contributions.get(id));
 	}
 
 	deleteContribution(id: string): Promise<void> {
@@ -60,6 +84,6 @@ export default class ContributionFirestormRepository implements ContributionsRep
 					}
 				])
 			})
-			.then((endsContribution: any) => mapContributions(Object.values({...res, ...endsContribution})))
+			.then((endsContribution: any) => ({...res, ...endsContribution}))
 	}
 } 

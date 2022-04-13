@@ -8,7 +8,7 @@ config();
 
 export const contributions = firestorm.collection('contributions', (el) => {
 	el.getContributors = (): Promise<User> => users.searchKeys(el.contributors || []);
-	el.texture = (): Promise<Texture> => textures.get(el.textureID);
+	el.getTexture = (): Promise<Texture> => textures.get(el.textureID);
 
 	return el;
 });
