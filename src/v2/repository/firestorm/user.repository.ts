@@ -7,24 +7,23 @@ function __transformUser(user: any): User {
 		id: user.id,
 		username: user.username || "",
 		uuid: user.uuid || "",
-		roles: user.roles || user.type,
+		roles: user.roles || [],
 		media: user.media,
 		warns: user.warns || [],
-		muted: user.muted || {
-			start: "0",
-			end: "0",
-		},
+		anonymous: user.anonymous || false,
 	};
 }
 
 export default class UserFirestormRepository implements UserRepository {
 	getRaw(): Promise<Users> {
-		return users.read_raw();
+		return users.read_raw()
+			.then((res: any) => Object.values(res))
+			.then((arr: Array<User>) => arr.map((el) => __transformUser(el)));
 	}
 
 	getNames(): Promise<UserNames> {
-		return users.select({ fields: ["username"] });
-		// todo: remove empty users
+		return users.select({ fields: ["username", "uuid"] });
+		// TODO: remove empty users
 	}
 
 	getUserById(id: string): Promise<User> {
@@ -43,6 +42,51 @@ export default class UserFirestormRepository implements UserRepository {
 			});
 	}
 
+	getUsersByName(name: string): Promise<Users> {
+		if (!name || name.length < 3) return Promise.reject(new Error('User search requires at least 3 letters'))
+
+		return users.search([
+			{
+				field: "username",
+				criteria: "includes",
+				value: name,
+      	ignoreCase: true
+			}
+		])
+			.then((arr: Array<User>) => arr.map((el) => __transformUser(el)));
+	}
+
+	getUsersFromRole(role: string, username?: string): Promise<Users> {
+		if (role === "all" && !username) return users.read_raw().then((res: any) => Object.values(res));
+		const options = []
+
+		if (role !== "all") options.push({
+			field: "roles",
+			criteria: "array-contains",
+			value: role,
+			ignoreCase: true
+		})
+
+		if (username) options.push({
+			field: "username",
+			criteria: "includes",
+			value: username,
+			ignoreCase: true
+		})
+
+		return users.search(options)
+			.then((arr: Array<User>) => arr.map((el) => __transformUser(el)));
+	}
+
+	getRoles(): Promise<Array<string>> {
+		const output: Array<string> = [];
+		return users.select({ fields: ["roles"]})
+			.then((obj: any) => Object.values(obj))
+			.then((arr: Array<{roles: Array<string>, id: string}>) => arr.map((el) => el.roles))
+			.then((arr: Array<Array<string>>) => arr.flat().forEach(el => output.includes(el) ? null : output.push(el)))
+			.then(() => output);
+	}
+
 	getContributionsById(id: string): Promise<Contributions> {
 		return users.get(id).then((u) => u.contributions());
 	}
@@ -57,11 +101,7 @@ export default class UserFirestormRepository implements UserRepository {
 			.then((u) => u.addons())
 			.then((arr) => arr.filter((el) => el.approval.status === "approved"));
 	}
-
-	create(id: string, user: UserCreationParams): Promise<User> {
-		return this.update(id, user);
-	}
-
+	
 	update(id: string, user: UserCreationParams): Promise<User> {
 		return users.set(id, user).then(() => this.getUserById(id));
 	}

@@ -40,7 +40,7 @@ export class AddonChangeController extends Controller {
   	// if not an author wants to delete the addon
   	if (!addon.authors.includes(request.user)) {
   		// check if admin
-  		const user = await new UserService().get(request.user)
+  		const user = await new UserService().getUserById(request.user)
   		if (!user.roles.includes('Administrator')) throw new BadRequestError('Addon author must include the authed user')
   	}
 

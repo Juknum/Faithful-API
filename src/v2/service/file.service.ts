@@ -10,7 +10,7 @@ export class FileService {
 		return this.repo.removeFileByPath(path);
 	}
 
-	public async remvoveFilesByParentAndUse(parent: FileParent, use: FileUse) {
+	public async removeFilesByParentAndUse(parent: FileParent, use: FileUse) {
 		return this.repo.removeFilesByParentAndUse(parent, use);
 	}
 

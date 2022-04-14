@@ -1,4 +1,4 @@
-import { Addons, Contributions, UserNames, User, Users, UserRepository } from "../interfaces";
+import { Addons, Contributions, UserNames, User, Users, UserRepository, UserCreationParams } from "../interfaces";
 import UserFirestormRepository from "../repository/firestorm/user.repository";
 
 export class UserService {
@@ -12,12 +12,20 @@ export class UserService {
 		return this.repository.getNames();
 	}
 
-	public get(id: string): Promise<User> {
-		return this.repository.getUserById(id);
+	public getRoles(): Promise<Array<string>> {
+		return this.repository.getRoles();
+	}
+
+	public getUsersFromRole(role: string, username?: string): Promise<Users> {
+		return this.repository.getUsersFromRole(role, username);
 	}
 
 	public getUserById(id: string): Promise<User> {
-		return this.get(id);
+		return this.repository.getUserById(id);
+	}
+
+	public getUsersByName(username: string): Promise<Users> {
+		return this.repository.getUsersByName(username);
 	}
 
 	public getContributions(id: string): Promise<Contributions> {
@@ -38,6 +46,10 @@ export class UserService {
 		const user = await this.getUserById(id);
 		user.roles = roles;
 		return this.update(id, user);
+	}
+
+	public async create(id: string, user: User): Promise<User> {
+		return this.repository.update(id, user);
 	}
 
 	public async update(id: string, user: User): Promise<User> {

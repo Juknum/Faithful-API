@@ -150,7 +150,7 @@ export default class AddonService {
 
 		// verify existing authors
 		// return value not interesting
-		await Promise.all(body.authors.map((authorID) => this.userService.get(authorID))).catch(() => {
+		await Promise.all(body.authors.map((authorID) => this.userService.getUserById(authorID))).catch(() => {
 			throw new BadRequestError("One author ID or more don't exist");
 		});
 
@@ -219,7 +219,7 @@ export default class AddonService {
 
 		// verify existing authors
 		// return value not interesting
-		await Promise.all(body.authors.map((authorID) => this.userService.get(authorID))).catch(() => {
+		await Promise.all(body.authors.map((authorID) => this.userService.getUserById(authorID))).catch(() => {
 			throw new BadRequestError("One author ID or more don't exist");
 		});
 
@@ -243,7 +243,7 @@ export default class AddonService {
 		});
 
 		await this.fileService
-			.remvoveFilesByParentAndUse(
+			.removeFilesByParentAndUse(
 				{
 					type: "addons",
 					id: String(id),
