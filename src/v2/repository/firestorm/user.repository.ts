@@ -22,8 +22,9 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getNames(): Promise<UserNames> {
-		return users.select({ fields: ["username", "uuid"] });
-		// TODO: remove empty users
+		return users.select({ fields: [ "id", "username", "uuid", "anonymous"] })
+			.then((obj: any) => Object.values(obj))
+			.then((_users: Array<{id: string, username: string, uuid: string, anonymous: boolean}>) => _users.map(el => ({ id: el.id, username: el.anonymous ? undefined : el.username, uuid: el.anonymous ? undefined : el.uuid })))
 	}
 
 	getUserById(id: string): Promise<User> {
