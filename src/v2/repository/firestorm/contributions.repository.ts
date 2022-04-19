@@ -31,14 +31,19 @@ export default class ContributionFirestormRepository implements ContributionsRep
 				if (!out[id]) out[id] = { id, contributions: 1 }
 				else out[id].contributions++;
 			}))
-			.then(() => users.select({ fields: [ "id", "username", "uuid" ] }))
+			.then(() => users.select({ fields: [ "id", "username", "uuid", "anonymous" ] }))
 			.then((obj: any) => Object.values(obj).map((o: any) => o))
-			.then((_users: Array<{ id: string, username: string, uuid: string }>) => Object.values(out).map((author: { id: string, contributions: number }) => ({
-				id: author.id,
-				username: _users.find(u => u.id === author.id)?.username,
-				uuid: _users.find(u => u.id === author.id)?.uuid,
-				contributions: author.contributions,
-			})))
+			.then((_users: Array<{ id: string, username: string, uuid: string, anonymous: boolean }>) => Object.values(out).map((author: { id: string, contributions: number }) => {
+				const user = _users.find(u => u.id === author.id);
+
+				if (user) return {
+					...author,
+					username: user.anonymous ? undefined : user.username,
+					uuid: user.anonymous ? undefined : user.uuid,
+				}
+				
+				return author;
+			}))
 	}
 
 	addContribution(params: ContributionCreationParams): Promise<Contribution> {
