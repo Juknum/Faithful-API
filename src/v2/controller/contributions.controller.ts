@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Post, Put, Route, Security, Tags } from "tsoa";
-import { Contributions, Contribution, ContributionCreationParams, ContributionsAuthors, ContributionsPacks } from "../interfaces";
+import { Body, Controller, Delete, Get, Post, Put, Response, Route, Security, Tags } from "tsoa";
+import { Contributions, Contribution, ContributionCreationParams, ContributionsAuthors, ContributionsPacks, ContributionStats } from "../interfaces";
 import ContributionService from "../service/contributions.service";
+import { NotAvailableEror } from "../tools/ApiError";
 
 @Route("contributions")
 @Tags("Contributions")
@@ -13,6 +14,15 @@ export class ContributionsController extends Controller {
 	@Get("raw")
 	public async getRaw(): Promise<Contributions> {
 		return this.service.getRaw();
+	}
+
+	/**
+	 * Get all add-ons stats for public
+	 */
+	@Response<NotAvailableEror>(408)
+	@Get("stats")
+	public async getStats(): Promise<ContributionStats> {
+		return this.service.getStats()
 	}
 
 	/**

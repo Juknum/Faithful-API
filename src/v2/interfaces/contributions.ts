@@ -20,6 +20,24 @@ export interface ContributionsAuthor {
 	uuid: string; // user Minecraft uuid
 	contributions: number; // number of contributions for that user
 }
+
+export interface DayData {
+	date: number, // day as timestamp
+	count: number // number of contributions
+}
+export type DayRecord = Record<number, DayData>
+
+export type PackRecord = Record<ContributionsPack, DayRecord>
+export type PackData = Record<ContributionsPack, DayData[]>
+
+export interface ContributionStats {
+	total_contributions: number; // number of total contributions
+	total_authors: number; // number of users on contributions
+	total_last_week: number;
+	total_last_month: number;
+	activity: PackData
+}
+
 export interface ContributionsAuthors extends Array<ContributionsAuthor> {}
 
 export interface ContributionsRepository {

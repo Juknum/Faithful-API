@@ -68,12 +68,10 @@ export class AddonController extends Controller {
 	@Get("stats")
 	public async getStats(): Promise<AddonStats> {
 		return this.service.getStats(false)
-			.then(res => {
-				return extract<AddonStats>({
-					approved: true,
-					numbers: true
-				})(res)
-			})
+			.then(res => extract<AddonStats>({
+				approved: true,
+				numbers: true
+			})(res))
 	}
 
 	/**

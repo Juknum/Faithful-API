@@ -92,20 +92,20 @@ export default class AddonService {
 				if(!asAdmin) values = values.filter(a => a.approval.status === AddonStatusApproved)
 				
 				return values
-				.reduce((acc, val) => {
-					acc[val.approval.status]++;
-					val.options.tags.forEach(t => {
-						acc.numbers[t] = (acc.numbers[t] || 0) + 1
-					})
-					return acc
-				}, {
-					approved: 0,
-					pending: 0,
-					denied: 0,
-					numbers: {},
-				} as AddonStatsAdmin)
+					.reduce((acc, val) => {
+						acc[val.approval.status]++;
+						val.options.tags.forEach(t => {
+							acc.numbers[t] = (acc.numbers[t] || 0) + 1
+						})
+						return acc
+					}, {
+						approved: 0,
+						pending: 0,
+						denied: 0,
+						numbers: {},
+					} as AddonStatsAdmin)
 			}
-		)
+			)
 	}
 
 	async getScreenshots(id): Promise<Array<string>> {
