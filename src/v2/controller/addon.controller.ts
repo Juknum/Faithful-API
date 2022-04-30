@@ -1,9 +1,10 @@
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Controller, Get, Path, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
-import { Addon, Addons, Files, AddonAll, AddonProperty, AddonDownload, AddonStatus, AddonStatusValues  } from "../interfaces";
+import { Addon, Addons, Files, AddonAll, AddonProperty, AddonDownload, AddonStatus, AddonStatusValues, AddonStats, AddonStatsAdmin } from "../interfaces";
 
 import AddonService from "../service/addon.service";
-import { NotFoundError, PermissionError } from "../tools/ApiError";
+import { NotAvailableEror, NotFoundError, PermissionError } from "../tools/ApiError";
+import { extract } from "../tools/extract";
 
 @Route("addons")
 @Tags("Addons")
@@ -58,6 +59,32 @@ export class AddonController extends Controller {
 	 */
 	public async getAddonsByStatus(status: AddonStatus): Promise<Addons> {
 	  return this.service.getAddonByStatus(status);
+	}
+
+	/**
+	 * Get all add-ons stats for public
+	 */
+	@Response<NotAvailableEror>(408)
+	@Get("stats")
+	public async getStats(): Promise<AddonStats> {
+		return this.service.getStats(false)
+			.then(res => {
+				return extract<AddonStats>({
+					approved: true,
+					numbers: true
+				})(res)
+			})
+	}
+
+	/**
+	 * Get all add-ons stats for admins
+	 */
+	@Response<NotFoundError>(404)
+	@Response<PermissionError>(403)
+	@Security("discord", ["administrator"])
+	@Get("stats-admin")
+	public async getStatsAdmin(): Promise<AddonStatsAdmin> {
+		return this.service.getStats(true)
 	}
 
 	/**

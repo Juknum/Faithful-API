@@ -3,7 +3,7 @@ import { Addons, Addon, AddonStatus, AddonAll, AddonRepository, Files, File, Fil
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import { UserService } from "./user.service";
 import { FileService } from "./file.service";
-import { AddonCreationParam, AddonDataParam, AddonReview } from "../interfaces/addons";
+import { AddonCreationParam, AddonDataParam, AddonNotApprovedValues, AddonReview, AddonStats, AddonStatsAdmin, AddonStatusApproved } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
@@ -82,6 +82,30 @@ export default class AddonService {
 			...results[0],
 			files: results[1],
 		}));
+	}
+
+	getStats(asAdmin: boolean): Promise<AddonStatsAdmin> {
+		return this.getRaw()
+			.then(entries => {
+				let values = Object.values(entries)
+
+				if(!asAdmin) values = values.filter(a => a.approval.status === AddonStatusApproved)
+				
+				return values
+				.reduce((acc, val) => {
+					acc[val.approval.status]++;
+					val.options.tags.forEach(t => {
+						acc.numbers[t] = (acc.numbers[t] || 0) + 1
+					})
+					return acc
+				}, {
+					approved: 0,
+					pending: 0,
+					denied: 0,
+					numbers: {},
+				} as AddonStatsAdmin)
+			}
+		)
 	}
 
 	async getScreenshots(id): Promise<Array<string>> {

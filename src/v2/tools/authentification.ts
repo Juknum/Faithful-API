@@ -68,7 +68,11 @@ export async function expressAuthentication(request: express.Request, securityNa
 				}
 			})
 			.then(response => response.data)
-			.catch(err => new ApiError('Discord Error', err.statusCode, err.message))
+			.catch(err => new ApiError(
+				'Discord Error',
+				err?.response?.status,
+				err?.response?.data?.message || err.message
+			))
 		if (discordUser instanceof ApiError) return Promise.reject(discordUser)
 
 		// B proven (authentified)

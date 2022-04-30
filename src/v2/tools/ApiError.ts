@@ -22,6 +22,12 @@ export class NotFoundError extends ApiError {
 	}
 }
 
+export class NotAvailableEror extends ApiError {
+	constructor(message?: string) {
+		super("ResourceNotAvailableYet", 408, message);
+	}
+}
+
 export class ForbiddenError extends ApiError {
 	constructor(message?: string) {
 		super("Forbidden", 403, message);

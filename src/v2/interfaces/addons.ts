@@ -13,7 +13,8 @@ export type AddonTagArray = Array<AddonTag[number]>;
 export const AddonNotApprovedValues = ["denied", "pending"] as const;
 export type AddonProperty = "files" | "all";
 export type AddonNotApproved = typeof AddonNotApprovedValues[number];
-export const AddonStatusValues = [...AddonNotApprovedValues, "approved"] as const;
+export const AddonStatusApproved = "approved" as const;
+export const AddonStatusValues = [...AddonNotApprovedValues, AddonStatusApproved] as const;
 export type AddonStatus = typeof AddonStatusValues[number];
 
 export interface AddonReviewBody {
@@ -50,6 +51,16 @@ export interface AddonAll extends Addon {
 	files: Files;
 }
 export interface AddonsAll extends Array<AddonAll> {}
+
+export interface AddonStats {
+	approved: number
+	numbers: Record<AddonTag[number], number>;
+}
+
+export interface AddonStatsAdmin extends AddonStats {
+	pending: number
+	denied: number
+}
 
 export interface AddonRepository {
 	getRaw(): Promise<Record<string, Addon>>;

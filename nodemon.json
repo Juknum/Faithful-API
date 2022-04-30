@@ -2,7 +2,8 @@
     "exec": "tsoa spec-and-routes && ts-node src/index.ts",
     "watch": [
         "src",
-        "public/custom.js"
+        "public/custom.js",
+        ".env"
     ],
     "ext": "ts, css, json"
 }
