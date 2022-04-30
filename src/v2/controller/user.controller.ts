@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Path, Post, Put, Request, Route, Security, Tags } from 'tsoa';
-import { BadRequestError, ForbiddenError } from '../tools/ApiError';
-import { Addons, Contributions, UserNames, Users, User, UserCreationParams } from '../interfaces';
+import { Body, Controller, Delete, Get, Path, Post, Put, Request, Response, Route, Security, Tags } from 'tsoa';
+import { BadRequestError, ForbiddenError, NotAvailableEror } from '../tools/ApiError';
+import { Addons, Contributions, UserNames, Users, User, UserCreationParams, UserStats } from '../interfaces';
 import { UserService } from '../service/user.service';
 
 @Route('users')
@@ -17,6 +17,15 @@ export class UserController extends Controller {
 	@Security('bot')
 	public async getRaw(): Promise<Users> {
 		return this.userService.getRaw();
+	}
+
+	/**
+	 * Get all user stats for public
+	 */
+	@Response<NotAvailableEror>(408)
+	@Get('stats')
+	public async getStats(): Promise<UserStats> {
+		return this.userService.getStats();
 	}
 
 	/**

@@ -28,6 +28,13 @@ export interface User extends UserCreationParams {
 }
 export interface Users extends Array<User> {}
 
+export interface UserStats {
+	total: number,
+	total_anonymous: number,
+	total_roles: number,
+	total_per_roles: Record<string, number>
+}
+
 /* eslint-disable no-unused-vars */
 export interface UserRepository {
 	getRaw(): Promise<Users>;
