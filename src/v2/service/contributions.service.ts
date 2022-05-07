@@ -1,6 +1,6 @@
 import { contributions } from "../firestorm";
 import { Contribution, Contributions, ContributionsPacks } from "../interfaces";
-import { ContributionCreationParams, ContributionsAuthors, ContributionsRepository, ContributionStats, DayRecord, PackData, PackRecord } from "../interfaces/contributions";
+import { ContributionCreationParams, ContributionsAuthors, ContributionsRepository, ContributionStats, DayRecord, PackData, PackPercentile, PackRecord } from "../interfaces/contributions";
 import ContributionFirestormRepository from "../repository/firestorm/contributions.repository";
 import { lastMonth, lastWeek } from "../tools/utils";
 
@@ -20,6 +20,7 @@ export default class ContributionService {
 				let total_last_week = 0;
 				let total_last_month = 0;
 				const activity = {} as PackRecord;
+				const percentiles = {} as PackPercentile;
 
 				const last_month = lastMonth();
 				const last_week = lastWeek();
@@ -29,7 +30,7 @@ export default class ContributionService {
 				
 					cur.authors.forEach(a => {
 						if(!authors[a]) {
-							authors[a] = null;
+							authors[a] = true;
 							total_authors++;
 						}
 					})
@@ -52,16 +53,21 @@ export default class ContributionService {
 				})
 
 				const final_activity = {} as PackData;
-				for(const pack in Object.keys(activity)) {
+
+				Object.keys(activity).forEach(pack => {
 					final_activity[pack] = Object.values(activity[pack])
-				}
+
+					const counts = Object.values(activity[pack]).map(e => e.count).filter(e => e !== 0).sort()
+					percentiles[pack] = counts[Math.round(counts.length*95/100)]
+				})
 
 				return {
 					total_authors,
 					total_contributions,
 					total_last_week,
 					total_last_month,
-					activity: final_activity
+					activity: final_activity,
+					percentiles
 				};
 			})
 	}

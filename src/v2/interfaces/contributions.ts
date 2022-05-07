@@ -28,6 +28,7 @@ export interface DayData {
 export type DayRecord = Record<number, DayData>
 
 export type PackRecord = Record<ContributionsPack, DayRecord>
+export type PackPercentile = Record<ContributionsPack, number>
 export type PackData = Record<ContributionsPack, DayData[]>
 
 export interface ContributionStats {
@@ -35,7 +36,8 @@ export interface ContributionStats {
 	total_authors: number; // number of users on contributions
 	total_last_week: number;
 	total_last_month: number;
-	activity: PackData
+	activity: PackData;
+	percentiles: PackPercentile;
 }
 
 export interface ContributionsAuthors extends Array<ContributionsAuthor> {}

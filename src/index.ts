@@ -4,6 +4,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import { ValidateError } from "tsoa";
+import responseTime from "response-time";
 import cors from "cors";
 
 import * as dotenv from "dotenv";
@@ -34,6 +35,8 @@ app.use(
 	}),
 );
 //! DO NOT DELETE
+
+app.use(responseTime());
 
 app.use(
 	express.static("public", {
