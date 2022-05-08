@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Post, Put, Response, Route, Security, Ta
 import { Contributions, Contribution, ContributionCreationParams, ContributionsAuthors, ContributionsPacks, ContributionStats } from "../interfaces";
 import ContributionService from "../service/contributions.service";
 import { NotAvailableEror } from "../tools/ApiError";
+import cache from "../tools/cache";
 
 @Route("contributions")
 @Tags("Contributions")
@@ -22,7 +23,7 @@ export class ContributionsController extends Controller {
 	@Response<NotAvailableEror>(408)
 	@Get("stats")
 	public async getStats(): Promise<ContributionStats> {
-		return this.service.getStats()
+		return cache.handle('contributions-stats', () => this.service.getStats())
 	}
 
 	/**

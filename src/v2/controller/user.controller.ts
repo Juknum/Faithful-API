@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Path, Post, Put, Request, Response, Rout
 import { BadRequestError, ForbiddenError, NotAvailableEror } from '../tools/ApiError';
 import { Addons, Contributions, UserNames, Users, User, UserCreationParams, UserStats } from '../interfaces';
 import { UserService } from '../service/user.service';
+import cache from '../tools/cache';
 
 @Route('users')
 @Tags('Users')
@@ -25,7 +26,7 @@ export class UserController extends Controller {
 	@Response<NotAvailableEror>(408)
 	@Get('stats')
 	public async getStats(): Promise<UserStats> {
-		return this.userService.getStats();
+		return cache.handle('user-stats', () => this.userService.getStats())
 	}
 
 	/**

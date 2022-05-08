@@ -4,6 +4,7 @@ import { Addon, Addons, Files, AddonAll, AddonProperty, AddonDownload, AddonStat
 
 import AddonService from "../service/addon.service";
 import { NotAvailableEror, NotFoundError, PermissionError } from "../tools/ApiError";
+import cache from "../tools/cache";
 import { extract } from "../tools/extract";
 
 @Route("addons")
@@ -67,11 +68,11 @@ export class AddonController extends Controller {
 	@Response<NotAvailableEror>(408)
 	@Get("stats")
 	public async getStats(): Promise<AddonStats> {
-		return this.service.getStats(false)
+		return cache.handle('addon-stats', () => this.service.getStats(false)
 			.then(res => extract<AddonStats>({
 				approved: true,
 				numbers: true
-			})(res))
+			})(res)))
 	}
 
 	/**
@@ -82,7 +83,7 @@ export class AddonController extends Controller {
 	@Security("discord", ["administrator"])
 	@Get("stats-admin")
 	public async getStatsAdmin(): Promise<AddonStatsAdmin> {
-		return this.service.getStats(true)
+		return cache.handle('addon-stats-admin', () => this.service.getStats(true))
 	}
 
 	/**
