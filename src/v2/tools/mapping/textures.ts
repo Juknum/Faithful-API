@@ -30,6 +30,8 @@ interface OldTexture {
 interface OldTextures extends Array<OldTexture> {}
 
 export function mapTexture(old: OldTexture): Texture {
+	if (old.type === undefined) return old as any; // already converted texture
+
 	return {
 		id: old.id,
 		name: old.name,
@@ -70,19 +72,3 @@ export interface OldContribution {
 	id: string;
 }
 export interface OldContributions extends Array<OldContribution> {}
-
-// export function mapContribution(old: OldContribution): Contribution {
-// 	if (old.res === undefined) return old as any; // new contribution
-
-// 	return {
-// 		id: old.id,
-// 		date: old.date,
-// 		texture: old.textureID.toString(),
-// 		resolution: old.res === "c32" ? 32 : 64, // map old values
-// 		pack: old.res === "c32" ? "faithful_32x" : "faithful_64x",
-// 		authors: old.contributors,
-// 	};
-// }
-// export function mapContributions(data: OldContributions): Contributions {
-// 	return data.map(mapContribution);
-// }

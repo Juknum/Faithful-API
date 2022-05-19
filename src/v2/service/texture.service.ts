@@ -1,13 +1,12 @@
 import { Contributions, Paths, Texture, Textures, Uses, TextureRepository } from "../interfaces";
-import { textures } from "../firestorm";
-import { Edition, KnownPacks, TextureProperty } from "../interfaces/textures";
+import { Edition, KnownPacks, TextureCreationParam, TextureProperty } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 
 export default class TextureService {
 	private readonly textureRepo: TextureRepository = new TextureFirestormRepository();
 
 	getRaw(): Promise<Textures> {
-		return textures.read_raw();
+		return this.textureRepo.getRaw();
 	}
 
 	getById(id: number, property: TextureProperty): Promise<Texture> {
@@ -31,7 +30,7 @@ export default class TextureService {
 		return this.textureRepo.getTags();
 	}
 
-	getResolutions(): Promise<Array<string>> {
+	getResolutions(): Promise<Array<number>> {
 		return this.textureRepo.getResolutions();
 	}
 
@@ -48,5 +47,13 @@ export default class TextureService {
 
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string> {
 		return this.textureRepo.getURLById(id, pack, version);
+	}
+
+	createTexture(texture: TextureCreationParam): Promise<Texture> {
+		return this.textureRepo.createTexture(texture);
+	}
+
+	deleteTexture(id: string): Promise<void> {
+		return this.textureRepo.deleteTexture(id);
 	}
 }
