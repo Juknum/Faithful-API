@@ -29,4 +29,9 @@ export class ModsController extends Controller {
 		const response = (<any>request).res as ExResponse;
 		response.redirect(url);
 	}
+
+	@Get("{id}/curseforge/name")
+	public async getCurseForgeInfo(@Path() id: string): Promise<string> {
+		return cache.handle(`mods-curseforge-name-${id}`, () => this.service.getCurseForgeName(parseInt(id, 10)));
+	}
 }

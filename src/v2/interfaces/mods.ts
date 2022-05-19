@@ -24,4 +24,5 @@ export interface ModsRepository {
 	getRaw(): Promise<Mods>
 	getPackVersion(): Promise<PackVersions>
 	getThumbnail(id: number): Promise<string>
+	getCurseForgeName(id: number): Promise<string>
 }

@@ -17,4 +17,8 @@ export default class ModsService {
 	getThumbnail(id: number): Promise<string> {
 		return this.modsRepo.getThumbnail(id);
 	}
+
+	getCurseForgeName(id: number): Promise<string> {
+		return this.modsRepo.getCurseForgeName(id);
+	}
 }
