@@ -23,4 +23,5 @@ export interface PackVersions {
 export interface ModsRepository {
 	getRaw(): Promise<Mods>
 	getPackVersion(): Promise<PackVersions>
+	getThumbnail(id: number): Promise<string>
 }

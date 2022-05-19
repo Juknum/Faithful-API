@@ -13,4 +13,8 @@ export default class ModsService {
 	getPackVersions(): Promise<PackVersions> {
 		return pack_versions.read_raw();
 	}
+
+	getThumbnail(id: number): Promise<string> {
+		return this.modsRepo.getThumbnail(id);
+	}
 }
