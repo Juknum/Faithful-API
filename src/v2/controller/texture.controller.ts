@@ -1,7 +1,7 @@
-import { Controller, Get, Path, Request, Response, Route, SuccessResponse, Tags } from "tsoa";
+import { Body, Controller, Delete, Get, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
-import { Edition, KnownPacks, TextureProperty } from "../interfaces/textures";
+import { Edition, KnownPacks, TextureCreationParam, TextureProperty } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
 
@@ -35,11 +35,11 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get supported resolutions by the database
-	 *! currently returning contributions resolution instead of pack resolution (32x != c32)
+	 * Get current contributed resolutions in the database
+	 * integer array of square 2
 	 */
 	@Get("resolutions")
-	public async getResolutions(): Promise<Array<string>> {
+	public async getResolutions(): Promise<Array<number>> {
 	  return this.service.getResolutions();
 	}
 
@@ -110,5 +110,17 @@ export class TextureController extends Controller {
 	  response.redirect(await this.service.getURLById(parseInt(id, 10), pack, mc_version));
 	}
 
-	// todo: implements setter with authentification verification
+	@Post("")
+	@Security('bot')
+	@Security('discord', ['administrator'])
+	public async createTexture(@Body() body: TextureCreationParam): Promise<Texture> {
+		return this.service.createTexture(body);
+	}
+
+	@Delete("{id}")
+	@Security("bot")
+	@Security("discord", ["administrator"])
+	public async deleteTexture(id: string): Promise<void> {
+		return this.service.deleteTexture(id);
+	}
 }

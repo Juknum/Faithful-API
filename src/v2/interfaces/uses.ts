@@ -6,3 +6,9 @@ export interface Use {
 	assets: string; // assets folder name (empty for bedrock)
 }
 export interface Uses extends Array<Use> {}
+
+export interface UseRepository {
+	getRaw(): Promise<Uses>;
+	getUseByIdOrName(id_or_name: string): Promise<Uses | Use>;
+	deleteUse(id: string): Promise<void>;
+}
