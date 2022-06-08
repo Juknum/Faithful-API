@@ -8,4 +8,8 @@ export default class ModpacksService {
 	getRaw(): Promise<Modpacks> {
 		return modpacks.read_raw();
 	}
+
+	getThumbnail(id: number): Promise<string> {
+		return this.modsRepo.getThumbnail(id);
+	}
 }

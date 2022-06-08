@@ -38,11 +38,13 @@ export default class TextureService {
 		name_or_id: string | number,
 		property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions> {
-		return this.textureRepo.searchTexturePropertyByNameOrId(name_or_id, property);
+		return this.textureRepo.searchTexturePropertyByNameOrId(name_or_id, property)
+			.catch(() => Promise.reject(new Error("Service failed to make request")));
 	}
 
 	getByNameOrId(name_or_id: string | number): Promise<Textures | Texture> {
-		return this.textureRepo.searchTextureByNameOrId(name_or_id);
+		return this.textureRepo.searchTextureByNameOrId(name_or_id)
+			.catch(() => Promise.reject(new Error("Service failed to make request")));
 	}
 
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string> {
