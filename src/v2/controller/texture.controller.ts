@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
-import { Edition, KnownPacks, TextureCreationParam, TextureProperty } from "../interfaces/textures";
+import { Edition, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
 
@@ -77,14 +77,14 @@ export class TextureController extends Controller {
 
 	/**
 	 * Get more information about all textures that have the given string in their name
-	 * @param name Searched texture name, splitted by "," if multiple
+	 * @param id_or_name Searched texture name, splitted by "," if multiple
 	 * @param property Property from the texture
 	 */
 	@Get("{id_or_name}/{property}")
 	public async getTexturesProperty(
 		@Path() id_or_name: string | number,
 		@Path() property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | (Textures | Texture | Paths | Uses | Contributions)[]> {
+	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA | (TextureMCMETA | Textures | Texture | Paths | Uses | Contributions)[]> {
 		if(typeof id_or_name === 'string' && id_or_name.includes(',')) {
 			const id_array = id_or_name.split(',');
 			return (Promise.allSettled(id_array.map(id => this.service.getPropertyByNameOrId(id, property)))

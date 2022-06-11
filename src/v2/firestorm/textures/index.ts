@@ -1,6 +1,7 @@
+import axios from "axios";
 import firestorm from "firestorm-db";
 import { Paths, Uses, Contributions, TextureAll, Path, Use } from "~/v2/interfaces";
-import { KnownPacks } from "~/v2/interfaces/textures";
+import { KnownPacks, TextureMCMETA } from "~/v2/interfaces/textures";
 import { TextureUse } from "~/v1/firestorm/uses";
 import config from "../config";
 
@@ -74,6 +75,23 @@ export const textures = firestorm.collection("textures", (el) => {
 				},
 			])
 
+	el.mcmeta = async (): Promise<TextureMCMETA> => 
+		el
+			.paths()
+			.then((ps: Paths) => ps.find((path: Path) => path.mcmeta) || null)
+			.then((p: Path | null) => Promise.all([el.uses(), p]))
+			.then(([us, p]: [Uses, Path | null]) => { 
+				if (p === null) return [null, null]
+				return [us.find((use: Use) => use.id === p.use), p]
+			})
+			.then(([u, p]: [Use, Path | null]) => {
+				if (u === null || p === null) return null;
+				return axios.get(`https://raw.githubusercontent.com/CompliBot/Default-Java/${p.versions.sort(MinecraftSorter).reverse()[0]}/${u.assets === null ? p.name : `assets/${u.assets}/${p.name}`}.mcmeta`);
+			})
+			.then((res: any | null) => res ? res.data : {})
+			.catch({});
+
+
 	el.all = async (): Promise<TextureAll> => {
 		const output = mapTexture(el) as any;
 		return el
@@ -84,6 +102,10 @@ export const textures = firestorm.collection("textures", (el) => {
 			})
 			.then((tPaths: Path[]) => {
 				output.paths = tPaths;
+				return el.mcmeta();
+			})
+			.then((mcmeta: TextureMCMETA) => {
+				output.mcmeta = mcmeta;
 				return el.contributions();
 			})
 			.then((tContribs: Contributions) => {

@@ -1,5 +1,5 @@
 import firestorm from "firestorm-db";
-import { Edition, KnownPacks, TextureCreationParam, TextureProperty } from "~/v2/interfaces/textures";
+import { Edition, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty } from "~/v2/interfaces/textures";
 import { NotFoundError } from "../../tools/ApiError";
 import { textures, paths, uses, contributions } from "../../firestorm";
 import { Contributions, Paths, Texture, Textures, Uses, TextureRepository, Path } from "../../interfaces";
@@ -24,7 +24,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	public async searchTexturePropertyByNameOrId(
 		name_or_id: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions> {
+	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
 		const int_id: number = parseInt(name_or_id as string, 10);
 
 		if (Number.isNaN(int_id) || int_id.toString() !== name_or_id.toString()) {
@@ -55,7 +55,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 				})
 				.then((otherTexturesFound: Textures) => {
 					if (property === null) return mapTextures(otherTexturesFound as any); // todo: (DATA 2.0) use only textures after database rewrite
-					return Promise.all(otherTexturesFound.map((t) => t[property]()));
+					return Promise.all(otherTexturesFound.map((t) =>  t[property]()));
 				});
 		}
 

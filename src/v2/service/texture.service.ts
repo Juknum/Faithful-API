@@ -1,5 +1,5 @@
 import { Contributions, Paths, Texture, Textures, Uses, TextureRepository } from "../interfaces";
-import { Edition, KnownPacks, TextureCreationParam, TextureProperty } from "../interfaces/textures";
+import { Edition, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 
 export default class TextureService {
@@ -37,7 +37,7 @@ export default class TextureService {
 	getPropertyByNameOrId(
 		name_or_id: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions> {
+	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
 		return this.textureRepo.searchTexturePropertyByNameOrId(name_or_id, property)
 			.catch(() => Promise.reject(new Error("Service failed to make request")));
 	}

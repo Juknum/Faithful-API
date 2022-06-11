@@ -11,6 +11,14 @@ export interface Texture extends TextureCreationParam {
 }
 export interface Textures extends Array<Texture> {}
 
+export interface TextureMCMETA {
+	animation: {
+		interpolate?: true,
+		frametime?: number;
+		frames?: Array<number | { index: number, time: number }>;
+	}
+}
+
 export interface TextureAll extends Texture {
 	uses: Uses;
 	paths: Paths;
@@ -21,7 +29,7 @@ export interface TexturesAll extends Array<TextureAll> {}
 export const KnownPacksArr: Array<string> = [ "default", "faithful_32x", "faithful_64x", "classic_faithful_32x", "classic_faithful_32x_progart", "classic_faithful_64x" ]
 export type KnownPacks = typeof KnownPacksArr[number];
 export type Edition = "java" | "bedrock" | "dungeons";
-export type TextureProperty = "uses" | "paths" | "contributions" | "all" | null;
+export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;
 
 export interface TextureRepository {
 	getRaw(): Promise<Textures>;
@@ -34,7 +42,7 @@ export interface TextureRepository {
 	searchTexturePropertyByNameOrId(
 		name_or_id: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions>;
+	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA>;
 	searchTextureByNameOrId(name_or_id: string | number): Promise<Textures | Texture>;
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
