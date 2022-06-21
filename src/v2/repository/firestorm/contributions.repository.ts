@@ -11,11 +11,11 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	}
 
 	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {
-		const options = [{
+		const options = authors.map(a => ({
 			field: "authors",
-			criteria: "array-contains-any",
-			value: authors
-		}];
+			criteria: "array-contains",
+			value: a as any
+		}))
 
 		if (packs !== null) options.push({ field: "pack", criteria: "in", value: packs });
 		return contributions.search(options)
