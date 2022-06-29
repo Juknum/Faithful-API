@@ -7,7 +7,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	}
 
 	getPacks(): ContributionsPacks {
-		return KnownPacksArr.filter((pack: string) => pack !== "default");
+		return KnownPacksArr.filter((pack: string) => pack !== "default") as ContributionsPacks;
 	}
 
 	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {

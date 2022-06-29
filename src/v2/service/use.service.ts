@@ -15,4 +15,8 @@ export default class UseService {
 	deleteUse(id: string): Promise<void> {
 		return this.useRepo.deleteUse(id);
 	}
+
+	getUsesByIdsAndEdition(id_arr: number[], edition: string): Promise<Uses> {
+		return this.useRepo.getUsesByIdAndEdition(id_arr, edition)
+	}
 }

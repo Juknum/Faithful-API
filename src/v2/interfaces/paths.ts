@@ -7,3 +7,7 @@ export interface Path {
 }
 
 export interface Paths extends Array<Path> {}
+
+export interface PathRepository {
+	getPathsByUseIdsAndVersion(use_ids: string[], version: string): Promise<Paths>;
+}

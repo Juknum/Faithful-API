@@ -57,7 +57,7 @@ export default class ContributionService {
 				Object.keys(activity).forEach(pack => {
 					final_activity[pack] = Object.values(activity[pack])
 
-					const counts = Object.values(activity[pack]).map(e => e.count).filter(e => e !== 0).sort()
+					const counts = Object.values(activity[pack]).map((e: Record<any,any>) => e.count).filter(e => e !== 0).sort()
 					percentiles[pack] = counts[Math.round(counts.length*95/100)]
 				})
 

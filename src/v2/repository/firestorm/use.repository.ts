@@ -3,6 +3,18 @@ import { mapUse, mapUses } from "../../tools/mapping/textures";
 import { uses } from "../../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
+	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses> {
+		return uses.search([{
+			field: "textureID",
+			criteria: "in",
+			value: id_arr,
+		}, {
+			field: "editions",
+			criteria: "array-contains",
+			value: edition
+		}]).then(mapUses) // todo: remove this after rewrite
+	}
+
 	getRaw(): Promise<Uses> {
 		return uses.read_raw()
 			.then((res: any) => Object.values(res))

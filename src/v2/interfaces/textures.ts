@@ -26,13 +26,14 @@ export interface TextureAll extends Texture {
 }
 export interface TexturesAll extends Array<TextureAll> {}
 
-export const KnownPacksArr: Array<string> = [ "default", "faithful_32x", "faithful_64x", "classic_faithful_32x", "classic_faithful_32x_progart", "classic_faithful_64x" ]
+export const KnownPacksArr = [ "default", "faithful_32x", "faithful_64x", "classic_faithful_32x", "classic_faithful_32x_progart", "classic_faithful_64x" ] as const;
 export type KnownPacks = typeof KnownPacksArr[number];
 export type Edition = "java" | "bedrock" | "dungeons";
 export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;
 
 export interface TextureRepository {
 	getRaw(): Promise<Textures>;
+	getByNameIdAndTag(tag?: string, search?: string): Promise<Textures>;
 	getTextureById(id: number, property: TextureProperty): Promise<Texture>;
 	getVersions(): Promise<Array<string>>;
 	getEditions(): Promise<Array<string>>;
