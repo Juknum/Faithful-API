@@ -102,6 +102,19 @@ export default class UserFirestormRepository implements UserRepository {
 			.then((u) => u.addons())
 			.then((arr) => arr.filter((el) => el.approval.status === "approved"));
 	}
+
+	addWarn(id: string, warn: string): Promise<User> {
+		return users.get(id)
+			.then((u: User) => {
+				if (u.warns) return users.set(id, { warns: [...u.warns, warn] })
+				return users.set(id, { ...u, warns: [warn] })
+			})
+			.then(() => this.getUserById(id));
+	}
+
+	getWarns(id: string): Promise<User['warns']> {
+		return users.get(id).then((u) => u.warns);
+	}
 	
 	update(id: string, user: UserCreationParams): Promise<User> {
 		return users.set(id, user).then(() => this.getUserById(id));

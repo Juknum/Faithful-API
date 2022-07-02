@@ -22,7 +22,7 @@ export class NotFoundError extends ApiError {
 	}
 }
 
-export class NotAvailableEror extends ApiError {
+export class NotAvailableError extends ApiError {
 	constructor(message?: string) {
 		super("ResourceNotAvailableYet", 408, message);
 	}

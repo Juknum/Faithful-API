@@ -3,7 +3,7 @@ import { Controller, Get, Path, Request, Response, Route, Security, SuccessRespo
 import { Addon, Addons, Files, AddonAll, AddonProperty, AddonDownload, AddonStatus, AddonStatusValues, AddonStats, AddonStatsAdmin } from "../interfaces";
 
 import AddonService from "../service/addon.service";
-import { NotAvailableEror, NotFoundError, PermissionError } from "../tools/ApiError";
+import { NotAvailableError, NotFoundError, PermissionError } from "../tools/ApiError";
 import cache from "../tools/cache";
 import { extract } from "../tools/extract";
 
@@ -65,7 +65,7 @@ export class AddonController extends Controller {
 	/**
 	 * Get all add-ons stats for public
 	 */
-	@Response<NotAvailableEror>(408)
+	@Response<NotAvailableError>(408)
 	@Get("stats")
 	public async getStats(): Promise<AddonStats> {
 		return cache.handle('addon-stats', () => this.service.getStats(false)

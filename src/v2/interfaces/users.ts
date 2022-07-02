@@ -37,6 +37,8 @@ export interface UserStats {
 
 /* eslint-disable no-unused-vars */
 export interface UserRepository {
+	getWarns(id: string): Promise<User['warns']>;
+	addWarn(id: string, warn: string): Promise<User>;
 	getRaw(): Promise<Users>;
 	getNames(): Promise<any>;
 	getUserById(id: string): Promise<User>;
@@ -47,5 +49,5 @@ export interface UserRepository {
 	update(id: string, user: User): Promise<User>;
 	delete(id: string): Promise<void>;
 	getUsersFromRole(role: string, username?: string): Promise<Users>;
-	getRoles(): Promise<Array<string>>;
+	getRoles(): Promise<User['roles']>;
 }

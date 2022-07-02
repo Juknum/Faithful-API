@@ -68,7 +68,13 @@ export class UserService {
 		return this.repository.getAddonsById(id);
 	}
 
-	//! We don't make verifications here, it's in the controllers
+	public addWarn(id: string, data: { warn: string }): Promise<User> {
+		return this.repository.addWarn(id, data.warn);
+	}
+
+	public getWarns(id: string): Promise<User['warns']> {
+		return this.repository.getWarns(id);
+	}
 
 	public async setRoles(id: string, roles: string[]) {
 		const user = await this.getUserById(id);

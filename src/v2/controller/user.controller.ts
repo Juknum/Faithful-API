@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Request, Response, Route, Security, Tags } from 'tsoa';
-import { BadRequestError, ForbiddenError, NotAvailableEror } from '../tools/ApiError';
+import { BadRequestError, ForbiddenError, NotAvailableError } from '../tools/ApiError';
 import { Addons, Contributions, UserNames, Users, User, UserCreationParams, UserStats } from '../interfaces';
 import { UserService } from '../service/user.service';
 import cache from '../tools/cache';
@@ -23,7 +23,7 @@ export class UserController extends Controller {
 	/**
 	 * Get all user stats for public
 	 */
-	@Response<NotAvailableEror>(408)
+	@Response<NotAvailableError>(408)
 	@Get('stats')
 	public async getStats(): Promise<UserStats> {
 		return cache.handle('user-stats', () => this.userService.getStats())
@@ -139,6 +139,29 @@ export class UserController extends Controller {
 	@Security('bot')
 	public async create(@Path() id: string, @Body() body: UserCreationParams): Promise<User> {
 		return this.userService.create(id, {...body, id, media: [], warns: []});
+	}
+
+	/**
+	 * Add a warn to specified the user
+	 * @param {String} id - User ID
+	 * @param {Object<{warn: String}>} body - warn string
+	 */
+	@Put('{id}/warns')
+	@Security('discord', [ 'administrator' ])
+	@Security('bot')
+	public async addWarn(@Path() id: string, @Body() body: { warn: string }): Promise<User> {
+		return this.userService.addWarn(id, body);
+	}
+
+	/**
+	 * Add a warn to specified the user
+	 * @param {String} id - User ID
+	 */
+	@Get('{id}/warns')
+	@Security('discord', [ 'administrator' ])
+	@Security('bot')
+	public async getWarns(@Path() id: string): Promise<User['warns']> {
+		return this.userService.getWarns(id);
 	}
 
 	/**

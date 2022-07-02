@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Post, Put, Response, Route, Security, Tags } from "tsoa";
 import { Contributions, Contribution, ContributionCreationParams, ContributionsAuthors, ContributionsPacks, ContributionStats } from "../interfaces";
 import ContributionService from "../service/contributions.service";
-import { NotAvailableEror } from "../tools/ApiError";
+import { NotAvailableError } from "../tools/ApiError";
 import cache from "../tools/cache";
 
 @Route("contributions")
@@ -20,7 +20,7 @@ export class ContributionsController extends Controller {
 	/**
 	 * Get all add-ons stats for public
 	 */
-	@Response<NotAvailableEror>(408)
+	@Response<NotAvailableError>(408)
 	@Get("stats")
 	public async getStats(): Promise<ContributionStats> {
 		return cache.handle('contributions-stats', () => this.service.getStats())
