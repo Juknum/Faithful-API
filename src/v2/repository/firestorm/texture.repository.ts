@@ -32,7 +32,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 
 		if(tag !== undefined) {
 			criterias.push({
-				field: "tags",
+				field: "type", // TODO: replace with tags
 				criteria: "array-contains",
 				value: tag,
 			});
