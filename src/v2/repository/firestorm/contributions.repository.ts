@@ -22,6 +22,29 @@ export default class ContributionFirestormRepository implements ContributionsRep
 			.then((res: Contributions) => res.filter((c: Contribution) => packs === null ? true : packs.includes(c.pack)))
 	}
 
+	searchByIdAndPacks(texture_ids: string[], packs?: string[], authors?: string[]): Promise<Contributions> {
+		const options = []
+		if(authors) {
+			authors.forEach(a => {
+				options.push({
+					field: "authors",
+					criteria: "array-contains",
+					value: a as any
+				})
+			})
+		}
+		
+		if(packs) options.push({ field: "pack", criteria: "in", value: packs });
+		
+		options.push({
+			field: "texture",
+			criteria: "in",
+			value: texture_ids
+		});
+
+		return contributions.search(options)
+	}
+
 	getAuthors(): Promise<ContributionsAuthors> {
 		const out = {}
 

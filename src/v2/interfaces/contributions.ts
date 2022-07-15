@@ -40,6 +40,13 @@ export interface ContributionStats {
 	percentiles: PackPercentile;
 }
 
+// evolve this interface as parameter instead of function parameters
+export interface ContributionSearch {
+	packs?: string[],
+	users?: string[],
+	search?: string
+}
+
 export interface ContributionsAuthors extends Array<ContributionsAuthor> {}
 
 export interface ContributionsRepository {
@@ -50,5 +57,6 @@ export interface ContributionsRepository {
 	getByDateRange(begin: string, ends: string): Promise<Contributions>;
 	getAuthors(): Promise<ContributionsAuthors>;
 	getPacks(): ContributionsPacks;
+	searchByIdAndPacks(texture_ids: Array<string>, packs: Array<string>, users?: Array<string>): Promise<Contributions>;
 	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions>;
 }

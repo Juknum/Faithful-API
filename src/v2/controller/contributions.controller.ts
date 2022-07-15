@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Post, Put, Response, Route, Security, Tags } from "tsoa";
-import { Contributions, Contribution, ContributionCreationParams, ContributionsAuthors, ContributionsPacks, ContributionStats } from "../interfaces";
+import { Body, Controller, Delete, Get, Post, Put, Query, Response, Route, Security, Tags } from "tsoa";
+import { Contributions, Contribution, ContributionCreationParams, ContributionsAuthors, ContributionsPacks, ContributionStats, ContributionSearch } from "../interfaces";
 import ContributionService from "../service/contributions.service";
 import { NotAvailableEror } from "../tools/ApiError";
 import cache from "../tools/cache";
@@ -37,6 +37,21 @@ export class ContributionsController extends Controller {
 	@Get("authors")
 	public async getAuthors(): Promise<ContributionsAuthors> {
 		return this.service.getAuthors();
+	}
+
+	@Get("search")
+	public async searchWithTextureAndUser(
+		@Query() packs?: string,
+		@Query() users?: string,
+		@Query() search?: string,
+	): Promise<Contributions> {
+		const params: ContributionSearch = {
+			packs: packs && packs !== 'all' ? packs.split('-') : undefined,
+			users: users ? users.split('-') : undefined,
+			search,
+		}
+		
+		return this.service.search(params)
 	}
 
 	@Get("{id}")
