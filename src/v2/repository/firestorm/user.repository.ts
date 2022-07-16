@@ -32,7 +32,7 @@ export default class UserFirestormRepository implements UserRepository {
 			.get(id)
 			.then((u) => __transformUser(u))
 			.catch((err) => {
-				if (err.isAxiosError && err.response.statusCode === 404) {
+				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
 					const formattedError = new Error("User not found") as any;
 					formattedError.code = 404;
 

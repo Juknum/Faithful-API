@@ -1,4 +1,4 @@
-import { Addons, Contributions, UserNames, User, Users, UserRepository, UserStats } from "../interfaces";
+import { Addons, Contributions, UserNames, User, Users, UserRepository, UserStats, UserProfile } from "../interfaces";
 import UserFirestormRepository from "../repository/firestorm/user.repository";
 
 export class UserService {
@@ -75,6 +75,17 @@ export class UserService {
 	public getWarns(id: string): Promise<User['warns']> {
 		return this.repository.getWarns(id);
 	}
+	
+	public async setProfileById(id: string, body: UserProfile) {
+		const user = await this.getUserById(id);
+		user.username = body.username;
+		user.uuid = body.uuid;
+		user.media = body.media;
+
+		await this.update(id, user);
+	}
+
+	//! We don't make verifications here, it's in the controllers
 
 	public async setRoles(id: string, roles: string[]) {
 		const user = await this.getUserById(id);
