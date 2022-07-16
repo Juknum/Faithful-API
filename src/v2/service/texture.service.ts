@@ -1,9 +1,15 @@
 import { Contributions, Paths, Texture, Textures, Uses, TextureRepository } from "../interfaces";
-import { Edition, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty } from "../interfaces/textures";
+import { Edition, CreatedTextures, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
+import PathService from "./path.service";
+import UseService from "./use.service";
 
 export default class TextureService {
 	private readonly textureRepo: TextureRepository = new TextureFirestormRepository();
+
+	private readonly useService = new UseService();
+	
+	private readonly pathService = new PathService();
 
 	getRaw(): Promise<Textures> {
 		return this.textureRepo.getRaw();
@@ -53,6 +59,34 @@ export default class TextureService {
 
 	createTexture(texture: TextureCreationParam): Promise<Texture> {
 		return this.textureRepo.createTexture(texture);
+	}
+
+	async createEntireTextures(body: CreatedTextures): Promise<Textures> {
+		const tex = await Promise.all(body.map(t => this.createTexture(t)));
+		const tex_id = tex.map(t => t.id);
+
+		await Promise.all(
+			body.map(t => t.uses).map((tex_uses, i) => tex_uses.map((u,ui) => {
+				const use_id = tex_id[i] + String.fromCharCode('a'.charCodeAt(0) + ui);
+				return this.useService.createUse({
+					...u,
+					id: use_id
+				})
+			})).flat()
+		);
+
+		await Promise.all(
+			body.map(t => t.uses).map((tex_uses, i) => tex_uses.map((u, ui) => {
+				const use_id = tex_id[i] + String.fromCharCode('a'.charCodeAt(0) + ui);
+
+				return u.paths.map(p => this.pathService.createPath({
+					...p,
+					use: use_id
+				}))
+			})).flat(2)
+		);
+
+		return tex;
 	}
 
 	deleteTexture(id: string): Promise<void> {

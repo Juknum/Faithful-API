@@ -1,5 +1,5 @@
 import { Use, UseRepository, Uses } from "~/v2/interfaces";
-import { mapUse, mapUses } from "../../tools/mapping/textures";
+import { mapUse, mapUses, unmapUse } from "../../tools/mapping/textures";
 import { uses } from "../../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
@@ -26,5 +26,9 @@ export default class UseFirestormRepository implements UseRepository {
 	// todo: delete paths from it
 	deleteUse(id: string): Promise<void> {
 		return uses.remove(id);
+	}
+
+	set(use: Use): Promise<Use> {
+		return uses.set(use.id, unmapUse(use))
 	}
 }

@@ -15,4 +15,8 @@ export default class UseService {
 	deleteUse(id: string): Promise<void> {
 		return this.useRepo.deleteUse(id);
 	}
+
+	createUse(use: Use): Promise<Use> {
+		return this.useRepo.set(use);
+	}
 }

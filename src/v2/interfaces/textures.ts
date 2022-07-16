@@ -1,4 +1,4 @@
-import { Uses } from "./uses";
+import { CreatedUse, Uses } from "./uses";
 import { Paths } from "./paths";
 import { Contributions } from "./contributions";
 
@@ -25,6 +25,12 @@ export interface TextureAll extends Texture {
 	contributions: Contributions;
 }
 export interface TexturesAll extends Array<TextureAll> {}
+
+export interface CreatedTexture extends TextureCreationParam {
+	uses: CreatedUse[]
+}
+
+export interface CreatedTextures extends Array<CreatedTexture> {}
 
 export const KnownPacksArr: Array<string> = [ "default", "faithful_32x", "faithful_64x", "classic_faithful_32x", "classic_faithful_32x_progart", "classic_faithful_64x" ]
 export type KnownPacks = typeof KnownPacksArr[number];
