@@ -21,4 +21,8 @@ export default class ModsService {
 	getCurseForgeName(id: number): Promise<string> {
 		return this.modsRepo.getCurseForgeName(id);
 	}
+
+	getNameInDatabase(id: string): Promise<string> {
+		return this.modsRepo.getNameInDatabase(id);
+	}
 }
