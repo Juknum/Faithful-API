@@ -49,6 +49,6 @@
         "response-time": "^2.3.2",
         "statuses": "^2.0.1",
         "swagger-ui-express": "^4.4.0",
-        "tsoa": "^4.1.1"
+        "tsoa": "^4.1.0"
     }
 }

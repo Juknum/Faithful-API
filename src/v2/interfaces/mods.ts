@@ -25,5 +25,4 @@ export interface ModsRepository {
 	getPackVersion(): Promise<PackVersions>
 	getThumbnail(id: number): Promise<string>
 	getCurseForgeName(id: number): Promise<string>
-	getNameInDatabase(id: string): Promise<string>
 }

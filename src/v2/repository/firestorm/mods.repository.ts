@@ -1,6 +1,6 @@
 import axios from "axios";
 import { mods, pack_versions } from "../../firestorm";
-import { Mod, Mods, ModsRepository, PackVersions } from "../../interfaces";
+import { Mods, ModsRepository, PackVersions } from "../../interfaces";
 
 export default class ModsFirestormRepository implements ModsRepository {
 	public getRaw(): Promise<Mods> {
@@ -19,9 +19,5 @@ export default class ModsFirestormRepository implements ModsRepository {
 	public getCurseForgeName(id: number): Promise<string> {
 		return axios(`https://api.curseforge.com/v1/mods/${id}`, { headers: { "x-api-key": process.env.CURSE_FORGE_API_KEY }})
 			.then(res => res.data.data.name);
-	}
-
-	public getNameInDatabase(id: string): Promise<string> {
-		return mods.get(id).then((res: Mod) => res.name);
 	}
 }
