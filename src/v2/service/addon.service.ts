@@ -3,7 +3,7 @@ import { Addons, Addon, AddonStatus, AddonAll, AddonRepository, Files, File, Fil
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import { UserService } from "./user.service";
 import { FileService } from "./file.service";
-import { AddonCreationParam, AddonDataParam, AddonNotApprovedValues, AddonReview, AddonStats, AddonStatsAdmin, AddonStatusApproved } from "../interfaces/addons";
+import { AddonCreationParam, AddonDataParam, AddonReview, AddonStatsAdmin, AddonStatusApproved } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -

@@ -2,7 +2,7 @@ import { Contributions } from "./contributions";
 import { Addons } from "./addons";
 
 export interface Media {
-	type: "CurseForge|GitHub|Patreon|Paypal|Planet Minecraft|PSN|Reddit|Steam|Twitter|Website|Xbox|YouTube|Other";
+	type: "CurseForge"|"GitHub"|"Patreon"|"Paypal"|"Planet Minecraft"|"PSN"|"Reddit"|"Steam"|"Twitter"|"Website"|"Xbox"|"YouTube"|"Other";
 	link: string;
 }
 export interface Medias extends Array<Media> {}
@@ -21,6 +21,12 @@ export interface UserName {
 }
 export interface UserNames extends Array<UserName> {}
 
+export interface UserProfile {
+	media: Media[];
+	username: string;
+	uuid: string;
+}
+
 export interface User extends UserCreationParams {
 	warns: Array<string>; // list of all warns
 	id: string; // discord user id
@@ -37,6 +43,8 @@ export interface UserStats {
 
 /* eslint-disable no-unused-vars */
 export interface UserRepository {
+	getWarns(id: string): Promise<User['warns']>;
+	addWarn(id: string, warn: string): Promise<User>;
 	getRaw(): Promise<Users>;
 	getNames(): Promise<any>;
 	getUserById(id: string): Promise<User>;
@@ -47,5 +55,5 @@ export interface UserRepository {
 	update(id: string, user: User): Promise<User>;
 	delete(id: string): Promise<void>;
 	getUsersFromRole(role: string, username?: string): Promise<Users>;
-	getRoles(): Promise<Array<string>>;
+	getRoles(): Promise<User['roles']>;
 }

@@ -19,4 +19,8 @@ export default class UseService {
 	getUsesByIdsAndEdition(id_arr: number[], edition: string): Promise<Uses> {
 		return this.useRepo.getUsesByIdAndEdition(id_arr, edition)
 	}
+	
+	createUse(use: Use): Promise<Use> {
+		return this.useRepo.set(use);
+	}
 }
