@@ -108,7 +108,6 @@ export default class GalleryService {
 				textureID: t_id,
 				url: urls[i],
 				useID: u_id,
-				versions_featured: path.versions
 			}
 		})
 	}

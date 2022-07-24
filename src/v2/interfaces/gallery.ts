@@ -3,7 +3,6 @@ export interface GalleryResult {
   pathID: string,
   tag: string[],
   textureID: string,
-  versions_featured: string[],
   url: string,
   useID: string
 }
