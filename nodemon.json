@@ -1,5 +1,5 @@
 {
-    "exec": "tsoa spec-and-routes && ts-node src/index.ts",
+    "exec": "npm run exec",
     "watch": [
         "src",
         "public/custom.js",
