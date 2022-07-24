@@ -16,9 +16,10 @@ export function mapUse(old: OldUse): Use {
 	return {
 		id: old.id,
 		name: old.textureUseName,
+		texture: Number.parseInt(old.id, 10),
 		edition: old.editions[0],
 		assets: old.editions[0] === "java" ? "minecraft" : null,
-	} as Use;
+	}
 }
 
 export function unmapUse(use: Use): OldUse {

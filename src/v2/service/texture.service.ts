@@ -20,6 +20,10 @@ export default class TextureService {
 		return this.textureRepo.getTextureById(id, property);
 	}
 
+	getByNameIdAndTag(tag?: string, search?: string) {
+		return this.textureRepo.getByNameIdAndTag(tag, search)
+	}
+
 	getVersions(): Promise<Array<string>> {
 		return this.textureRepo.getVersions();
 	}

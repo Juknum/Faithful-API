@@ -3,6 +3,7 @@ export * from "./changelogs";
 export * from "./cloudflare";
 export * from "./contributions";
 export * from "./files";
+export * from "./gallery";
 export * from "./modpacks";
 export * from "./mods";
 export * from "./paths"; 

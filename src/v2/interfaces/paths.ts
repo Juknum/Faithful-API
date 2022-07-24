@@ -16,5 +16,6 @@ export interface Path extends InputPath {
 export interface Paths extends Array<Path> {}
 
 export interface PathRepository {
+	getPathsByUseIdsAndVersion(use_ids: string[], version: string): Promise<Paths>;
 	createPath(path: InputPath): Promise<Path>;
 }

@@ -1,11 +1,14 @@
 import { contributions } from "../firestorm";
 import { Contribution, Contributions, ContributionsPacks } from "../interfaces";
-import { ContributionCreationParams, ContributionsAuthors, ContributionsRepository, ContributionStats, DayRecord, PackData, PackPercentile, PackRecord } from "../interfaces/contributions";
+import { ContributionCreationParams, ContributionsAuthors, ContributionSearch, ContributionsRepository, ContributionStats, DayRecord, PackData, PackPercentile, PackRecord } from "../interfaces/contributions";
 import ContributionFirestormRepository from "../repository/firestorm/contributions.repository";
 import { lastMonth, lastWeek } from "../tools/utils";
+import TextureService from "./texture.service";
 
 export default class ContributionService {
 	private readonly contributionRepo: ContributionsRepository = new ContributionFirestormRepository();
+
+	private readonly textureService: TextureService = new TextureService();
 
 	getRaw(): Promise<Contributions> {
 		return contributions.read_raw().then((res: any) => Object.values(res));
@@ -57,7 +60,7 @@ export default class ContributionService {
 				Object.keys(activity).forEach(pack => {
 					final_activity[pack] = Object.values(activity[pack])
 
-					const counts = Object.values(activity[pack]).map(e => e.count).filter(e => e !== 0).sort()
+					const counts = Object.values(activity[pack]).map((e: Record<any,any>) => e.count).filter(e => e !== 0).sort()
 					percentiles[pack] = counts[Math.round(counts.length*95/100)]
 				})
 
@@ -82,6 +85,24 @@ export default class ContributionService {
 
 	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions> {
 		return this.contributionRepo.searchContributionsFrom(users, packs);
+	}
+	
+	async search(params: ContributionSearch): Promise<Contributions> {
+		let result: Contributions;
+		if(params.search) {
+			let res = await this.textureService.getByNameOrId(params.search);
+			if(!Array.isArray(res)) {
+				res = [res];
+			}
+			
+			const texture_ids = res.map(t => t.id);
+
+			result = await this.contributionRepo.searchByIdAndPacks(texture_ids, params.packs, params.users);
+		} else {
+			result = await this.searchContributionsFrom(params.users, params.packs);
+		}
+
+		return result;
 	}
 
 	getById(id: string): Promise<Contribution> {

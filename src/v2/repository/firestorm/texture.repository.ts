@@ -6,6 +6,59 @@ import { Contributions, Paths, Texture, Textures, Uses, TextureRepository, Path 
 import { mapTexture, mapTextures, OldUse } from "../../tools/mapping/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
+	async getByNameIdAndTag(tag?: string, search?: string) : Promise<Textures> {
+
+		// * none, read raw
+		if(tag === undefined && search === undefined) {
+			return this.getRaw();
+		}
+
+		// * number id: get + includes tag?
+		const number_id: number = search !== undefined ? Number.parseInt(search, 10) : Number.NaN;
+		if(!Number.isNaN(number_id)) {
+			const tex: Texture = await textures.get(number_id)
+				.then(mapTexture)
+				.catch(() => undefined);
+
+			if(tex === undefined) return Promise.resolve([]);
+
+			if(tag === undefined || tex.tags.includes(tag)) return Promise.resolve([tex]);
+
+			return Promise.resolve([]);
+		}
+
+		// tag or string search
+		const criterias = [];
+
+		if(tag !== undefined) {
+			criterias.push({
+				field: "type", // TODO: replace with tags
+				criteria: "array-contains",
+				value: tag,
+			});
+		}
+
+		// with search
+		let partial = false;
+		if(search !== undefined) {
+			partial = search.startsWith("_") || search.endsWith("_");
+
+			criterias.push({
+				field: "name",
+				criteria: partial ? "includes" : "==",
+				value: search,
+			});
+		}
+
+		const results: Textures = await textures.search(criterias).then(mapTextures);
+		if(results.length && search === undefined && !partial) return Promise.resolve(results);
+
+		// fallback string search criteria to include if empty results
+		criterias[criterias.length - 1].criteria = "includes";
+
+		return textures.search(criterias).then(mapTextures);
+	}
+
 	public getRaw() {
 		return textures.read_raw()
 			.then((res: any) => Object.values(res))
