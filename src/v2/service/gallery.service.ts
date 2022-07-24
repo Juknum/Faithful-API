@@ -103,7 +103,7 @@ export default class GalleryService {
 
 			return {
 				name: String(t.name),
-				tag: t.tags,
+				tags: t.tags,
 				pathID: path.id,
 				textureID: t_id,
 				url: urls[i],

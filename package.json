@@ -6,7 +6,7 @@
         "dev": "npm run spec-and-routes && npm run nodemon",
         "nodemon": "nodemon",
         "compile": "tsc",
-        "spec-and-routes": "tsoa spec-and-route",
+        "spec-and-routes": "tsoa spec-and-routes",
         "exec": "ts-node src/index.ts",
         "build": "npm run spec-and-routes && npm run compile && cp -R public dist/",
         "start": "node dist/src/index.js",

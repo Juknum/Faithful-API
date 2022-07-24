@@ -1,7 +1,7 @@
 export interface GalleryResult {
   name: string,
   pathID: string,
-  tag: string[],
+  tags: string[],
   textureID: string,
   url: string,
   useID: string
