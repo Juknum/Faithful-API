@@ -1,3 +1,8 @@
+import { Uses } from './uses';
+import { KnownPacks, Texture } from './textures';
+import { Contributions } from './contributions';
+import { Paths } from './paths';
+
 export interface GalleryResult {
   name: string,
   pathID: string,
@@ -8,3 +13,11 @@ export interface GalleryResult {
 }
 
 export type AcceptedRes = "16x" | "32x" | "64x";
+
+export interface GalleryModalResult {
+  contributions: Contributions,
+  texture: Texture,
+  uses: Uses,
+  paths: Paths,
+  urls: (KnownPacks | string)[]
+}

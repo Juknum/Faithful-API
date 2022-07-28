@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": [
+      "ES2020.Promise",
       "ESNext"
     ],
     "module": "CommonJS",
