@@ -22,6 +22,7 @@ export interface TextureMCMETA {
 export interface TextureAll extends Texture {
 	uses: Uses;
 	paths: Paths;
+	mcmeta: TextureMCMETA;
 	contributions: Contributions;
 }
 export interface TexturesAll extends Array<TextureAll> {}

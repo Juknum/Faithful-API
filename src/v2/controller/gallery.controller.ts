@@ -24,7 +24,7 @@ export class GalleryController extends Controller {
 	}
 
 	/**
-	 * Get modal informations with urls, texture, uses and paths
+	 * Get modal informations with urls, mcmeta, texture, uses and paths
 	 * @param id Searched texture name
 	 * @param mc_version Minecraft version needed for the images
 	 */
@@ -46,6 +46,7 @@ export class GalleryController extends Controller {
 			contributions: all.contributions,
 			uses: all.uses,
 			paths: all.paths,
+			mcmeta: all.mcmeta,
 			urls,
 			texture
 		});

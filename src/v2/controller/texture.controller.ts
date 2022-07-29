@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
-import { Edition, CreatedTextures, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty } from "../interfaces/textures";
+import { Edition, CreatedTextures, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty, TextureAll, TexturesAll } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
 
@@ -84,7 +84,7 @@ export class TextureController extends Controller {
 	public async getTexturesProperty(
 		@Path() id_or_name: string | number,
 		@Path() property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA | (TextureMCMETA | Textures | Texture | Paths | Uses | Contributions)[]> {
+	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA | TextureAll | (TextureMCMETA | Textures | Texture | Paths | Uses | Contributions | TexturesAll)[]> {
 		if(typeof id_or_name === 'string' && id_or_name.includes(',')) {
 			const id_array = id_or_name.split(',');
 			return (Promise.allSettled(id_array.map(id => this.service.getPropertyByNameOrId(id, property)))
