@@ -1,4 +1,7 @@
-import { AcceptedRes, GalleryResult, Path, PathRepository, Textures, Use } from "../interfaces";
+/* eslint-disable no-await-in-loop */
+
+import { textures } from "../firestorm";
+import { AcceptedRes, GalleryResult, Path, PathRepository, TextureMCMETA, Textures, Use } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import { SettingsService } from "./settings.service";
 import TextureService from "./texture.service";
@@ -22,7 +25,7 @@ export default class GalleryService {
 				.map(t_id => texture_to_use[t_id])
 				.map((use: Use) => {
 					const path_end = use_to_path[use.id].name;
-					if(use.assets === null || path_end.startsWith('assets')) return path_end;
+					if (use.assets === null || path_end.startsWith('assets')) return path_end;
 
 					return `assets/${use.assets}/${path_end}`
 				})
@@ -34,17 +37,16 @@ export default class GalleryService {
 		// ? texture -> texture found => uses -> uses found => paths -> paths found
 
 		const textures_found = await this.textureService.getByNameIdAndTag(tag, search);
-
 		
-		if(textures_found.length === 0) return Promise.resolve([]);
+		if (textures_found.length === 0) return Promise.resolve([]);
 		const ids = textures_found.map(t => Number.parseInt(t.id, 10));
 
 		const uses_found = await this.useService.getUsesByIdsAndEdition(ids, edition);
-		if(uses_found.length === 0) return Promise.resolve([]);
+		if (uses_found.length === 0) return Promise.resolve([]);
 		const use_ids = uses_found.map(u => u.id);
 
 		const paths_found = await this.pathRepo.getPathsByUseIdsAndVersion(use_ids, mc_version);
-		if(paths_found.length === 0) return Promise.resolve([]);
+		if (paths_found.length === 0) return Promise.resolve([]);
 
 		// ? From this we can go up, to filter with the found results
 		// ? because a texture may not have a matching use or a use a matching path
@@ -61,7 +63,7 @@ export default class GalleryService {
 		} = uses_found.reduce((acc, u) => {
 			const path = paths_found.find(p => p.use === u.id);
 
-			if(path) {
+			if (path) {
 				acc.use_to_path[u.id] = path;
 				acc.uses_filtered.push(u);
 			}
@@ -76,20 +78,30 @@ export default class GalleryService {
 		const { texture_to_use, textures_filtered }: {
 			texture_to_use: Record<string, Use>,
 			textures_filtered: Textures
-		 } = textures_found.reduce((acc, t) => {
-		 	const use = uses_filtered.find(u => String(u.texture) === t.id);
+			} = textures_found.reduce((acc, t) => {
+				const use = uses_filtered.find(u => String(u.texture) === t.id);
 
-		 	if(use && use_to_path[use.id]) {
-		 		acc.texture_to_use[String(t.id)] = use;
-		 		acc.textures_filtered.push(t);
-		 	}
+				if (use && use_to_path[use.id]) {
+					acc.texture_to_use[String(t.id)] = use;
+					acc.textures_filtered.push(t);
+				}
 
-		 	return acc;
-		 }, {
-		 	texture_to_use: {},
-		 	textures_filtered: []
-		 });
+				return acc;
+			}, {
+				texture_to_use: {},
+				textures_filtered: []
+			});
 
+		const animations: {[key: string]: TextureMCMETA} = {};
+		// eslint-disable-next-line no-restricted-syntax
+		for (const useId of Object.keys(use_to_path)) {
+			if (use_to_path[useId] && use_to_path[useId].mcmeta === true) {
+				const t = await textures.get(Number.parseInt(useId, 10));
+				animations[`${Number.parseInt(useId, 10)}`] = await t.mcmeta();
+			}
+		}
+
+		// TODO: setup pack as query params instead of using given resolution
 		// eslint-disable-next-line no-nested-ternary
 		const pack = res === "16x" ? "default" : (res === "32x" ? "faithful_32x" : "faithful_64x");
 
@@ -106,6 +118,7 @@ export default class GalleryService {
 				tags: t.tags,
 				pathID: path.id,
 				textureID: t_id,
+				mcmeta: animations[t_id] ?? null,
 				url: urls[i],
 				useID: u_id,
 			}

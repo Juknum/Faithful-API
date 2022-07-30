@@ -86,7 +86,8 @@ export const textures = firestorm.collection("textures", (el) => {
 			})
 			.then(([u, p]: [Use, Path | null]) => {
 				if (u === null || p === null) return null;
-				return axios.get(`https://raw.githubusercontent.com/CompliBot/Default-Java/${p.versions.sort(MinecraftSorter).reverse()[0]}/${u.assets === null ? p.name : `assets/${u.assets}/${p.name}`}.mcmeta`);
+				return axios.get(`https://raw.githubusercontent.com/CompliBot/Default-Java/${p.versions.sort(MinecraftSorter).reverse()[0]}/${u.assets === null ? p.name : `assets/${u.assets}/${p.name}`}.mcmeta`)
+					.catch(() => null); // avoid crash if mcmeta file cannot be found
 			})
 			.then((res: any | null) => res ? res.data : {})
 			.catch({});

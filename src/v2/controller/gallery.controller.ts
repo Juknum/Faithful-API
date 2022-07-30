@@ -15,8 +15,8 @@ export class GalleryController extends Controller {
 		@Path() res: AcceptedRes,
 		@Path() edition: string,
 		@Path() mc_version: string,
-    @Path() tag: string,
-    @Query() search?: string,
+		@Path() tag: string,
+		@Query() search?: string,
 	): Promise<GalleryResult[]> {
 		return this.service.search(res, edition, mc_version,
 			tag.toLowerCase() !== 'all' ? tag : undefined,

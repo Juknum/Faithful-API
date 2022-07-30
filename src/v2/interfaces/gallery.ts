@@ -8,6 +8,7 @@ export interface GalleryResult {
   pathID: string,
   tags: string[],
   textureID: string,
+  mcmeta: TextureMCMETA,
   url: string,
   useID: string
 }
