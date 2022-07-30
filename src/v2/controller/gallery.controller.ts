@@ -2,6 +2,7 @@ import { Controller, Get, Path, Query, Route, Tags } from "tsoa";
 import { AcceptedRes, GalleryModalResult, GalleryResult, KnownPacksArr, TextureAll, KnownPacks, Texture } from "../interfaces";
 import GalleryService from "../service/gallery.service";
 import TextureService from "../service/texture.service";
+import cache from "../tools/cache";
 
 @Route("gallery")
 @Tags("Gallery")
@@ -18,9 +19,10 @@ export class GalleryController extends Controller {
 		@Path() tag: string,
 		@Query() search?: string,
 	): Promise<GalleryResult[]> {
-		return this.service.search(res, edition, mc_version,
-			tag.toLowerCase() !== 'all' ? tag : undefined,
-			(search !== undefined && search.trim() !== '') ? search.trim() : undefined);
+		return cache.handle(`gallery-${res}-${edition}-${mc_version}-${tag}-${search ?? ''}}`, () => 
+			this.service.search(res, edition, mc_version,
+				tag.toLowerCase() !== 'all' ? tag : undefined,
+				(search !== undefined && search.trim() !== '') ? search.trim() : undefined))
 	}
 
 	/**

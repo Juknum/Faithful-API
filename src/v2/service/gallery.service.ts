@@ -92,6 +92,7 @@ export default class GalleryService {
 				textures_filtered: []
 			});
 
+		// TODO: optimize this to take less computation time
 		const animations: {[key: string]: TextureMCMETA} = {};
 		// eslint-disable-next-line no-restricted-syntax
 		for (const useId of Object.keys(use_to_path)) {
