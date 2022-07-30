@@ -58,9 +58,9 @@ export const textures = firestorm.collection("textures", (el) => {
 			.then((_uses: Uses) => {
 				// eq to [0]
 				[use] = _uses.filter((u: Use) => u.id === path.use);
-				return `${urls[use.edition]}${version}/${
-					use.assets === null ? path.name : `assets/${use.assets}/${path.name}`
-				}`;
+
+				// TODO: '|| path.name.includes('assets/realms')' is a temp fix,
+				return `${urls[use.edition]}${version}/${use.assets === null || path.name.includes('assets/realms') ? path.name : `assets/${use.assets}/${path.name}`}`;
 			})
 			.catch("https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png"); // fallback image
 	};
