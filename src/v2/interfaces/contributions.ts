@@ -1,6 +1,6 @@
-import { KnownPacks } from "./textures";
+import { OurPacksArr } from "./textures";
 
-export type ContributionsPack = Exclude<KnownPacks, "default">
+export type ContributionsPack = typeof OurPacksArr[number];
 export type ContributionsPacks = Array<ContributionsPack>
 export interface ContributionCreationParams {
 	date: number; // unix timestamp

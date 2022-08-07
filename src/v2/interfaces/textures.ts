@@ -27,7 +27,9 @@ export interface TextureAll extends Texture {
 }
 export interface TexturesAll extends Array<TextureAll> {}
 
-export const KnownPacksArr = [ "default", "faithful_32x", "faithful_64x", "classic_faithful_32x", "classic_faithful_32x_progart", "classic_faithful_64x" ] as const;
+// 🐰 🤲 OUR PACKS
+export const OurPacksArr = ["faithful_32x", "faithful_64x", "classic_faithful_32x", "classic_faithful_32x_progart", "classic_faithful_64x"] as const;
+export const KnownPacksArr = [ "default", ...OurPacksArr ] as const;
 
 export interface CreatedTexture extends TextureCreationParam {
 	uses: CreatedUse[]
