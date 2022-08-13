@@ -19,7 +19,7 @@ export class GalleryController extends Controller {
 		@Path() tag: string,
 		@Query() search?: string,
 	): Promise<GalleryResult[]> {
-		return cache.handle(`gallery-${res}-${edition}-${mc_version}-${tag}-${search ?? ''}}`, () => 
+		return cache.handle(`gallery-${res}-${edition}-${mc_version}-${tag}-${search ?? ''}`, () => 
 			this.service.search(res, edition, mc_version,
 				tag.toLowerCase() !== 'all' ? tag : undefined,
 				(search !== undefined && search.trim() !== '') ? search.trim() : undefined))
