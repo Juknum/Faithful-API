@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Path, Route, Tags } from "tsoa";
+import { Controller, Delete, Get, Path, Route, Security, Tags } from "tsoa";
 import { Use, Uses } from "../interfaces";
 import UseService from "../service/use.service";
 
@@ -33,6 +33,7 @@ export class UsesController extends Controller {
 	 * @returns {Promise<void>}
 	 */
 	@Delete("{id}")
+	@Security('discord', ['administrator'])
 	public async deleteUse(@Path() id: string): Promise<void> {
 		return this.service.deleteUse(id);
 	}
