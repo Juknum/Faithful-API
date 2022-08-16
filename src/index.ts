@@ -9,7 +9,6 @@ import cors from "cors";
 
 import * as dotenv from "dotenv";
 import apiErrorHandler from "api-error-handler";
-import sendError from "./errorSender";
 import { RegisterRoutes } from "../build/routes";
 import { ApiError } from "./v2/tools/ApiError";
 import { AddonChangeController } from "./v2/controller/addonChange.controller";
@@ -109,15 +108,10 @@ const v1 = require("./v1");
 
 app.use("/v1", v1);
 
-app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promise<void> => {
-	let code = null;
+app.use((err: any, req: Request, res: Response, next: NextFunction): void => {
 	if (err instanceof ValidateError) {
 		console.error("ValidateError", err);
 		console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
-		
-		code = 422;
-		await sendError(code, err, req);
-
 		res.status(422).json({
 			message: "Validation Failed",
 			details: err?.fields,
@@ -126,7 +120,7 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 	}
 	if (err) {
 		if (err.isAxiosError) console.error("axios error: body, headers, err", req.body, req.headers, err);
-		code = parseInt(err.statusCode || (err.response ? err.response.status : err.code), 10) || 400;
+		const code = parseInt(err.statusCode || (err.response ? err.response.status : err.code), 10) || 400;
 		const message = (err.response && err.response.data ? err.response.data.error : err.message) || err;
 		const stack = process.env.VERBOSE && err.stack ? err.stack : "";
 
@@ -145,8 +139,6 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 		}
 
 		const finalError = new ApiError(name, code, message);
-		
-		await sendError(code, err, req, message);
 
 		apiErrorHandler()(finalError, req, res, next);
 		res.end();
