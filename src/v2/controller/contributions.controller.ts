@@ -46,8 +46,8 @@ export class ContributionsController extends Controller {
 		@Query() search?: string,
 	): Promise<Contributions> {
 		const params: ContributionSearch = {
-			packs: packs && packs !== 'all' ? packs.split('-') : undefined,
-			users: users ? users.split('-') : undefined,
+			packs: packs && packs !== 'all' ? packs.split('-') : null,
+			users: users ? users.split('-') : [],
 			search,
 		}
 		
