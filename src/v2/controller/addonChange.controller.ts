@@ -97,11 +97,11 @@ export class AddonChangeController extends Controller {
    * @param index Deleted add-on screenshot index
    */
   @Response<PermissionError>(403)
-  @Delete('{id_or_slug}/screenshots/{index}')
+  @Delete('{id_or_slug}/screenshots/{index_or_slug}')
   @SuccessResponse(204)
   @Security('discord', ['addon:own', 'Administrator'])
-  public async addonDeleteScreenshot(@Path() id_or_slug: string, @Path() index: number): Promise<void> {
-  	return this.service.deleteScreenshot(id_or_slug, index)
+  public async addonDeleteScreenshot(@Path() id_or_slug: string, @Path() index_or_slug: number | string): Promise<void> {
+  	return this.service.deleteScreenshot(id_or_slug, index_or_slug)
   }
 
   /**

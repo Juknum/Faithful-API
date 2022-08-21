@@ -108,11 +108,20 @@ export default class AddonService {
 			)
 	}
 
-	async getScreenshots(id): Promise<Array<string>> {
+	async getScreenshotsFiles(id): Promise<Files> {
 		return this.getFiles(id)
 			.then(
 				(files: Files) => files.filter((f: File) => f.use === "screenshot" || f.use === "carousel"), // todo: only keep screenshots
 			)
+	}
+
+	async getScreenshotsIds(id): Promise<Array<string>> {
+		return this.getScreenshotsFiles(id)
+			.then((files: Files) => Object.values(files).map((f: File) => f.id));
+	}
+
+	async getScreenshots(id): Promise<Array<string>> {
+		return this.getScreenshotsFiles(id)
 			.then((files: Files) => Object.values(files).map((f: File) => f.source));
 	}
 
@@ -425,9 +434,9 @@ export default class AddonService {
 	/**
 	 * Deletes the given screenshot at given index
 	 * @param id_or_slug ID or slug of the deleted add-on screenshot
-	 * @param index Deleted add-on screenshot index
+	 * @param index_or_slug Deleted add-on screenshot index or slug
 	 */
-	public async deleteScreenshot(id_or_slug: string, index: number): Promise<void> {
+	public async deleteScreenshot(id_or_slug: string, index_or_slug: number | string): Promise<void> {
 		// get addonID
 		const [addon_id] = await this.getAddonFromSlugOrId(id_or_slug);
 
@@ -435,7 +444,9 @@ export default class AddonService {
 		const files = await this.getFiles(addon_id).catch((): Files => []);
 		const screens = files.filter((f) => f.use === "screenshot" || f.use === "carousel");
 
-		const screen = screens[index];
+		// find precise screen, by id else by index
+		const idedscreen = screens.filter(s => s.id && s.id === String(index_or_slug))[0];
+		const screen = idedscreen || screens[index_or_slug];
 		if (screen === undefined) return Promise.reject(new NotFoundError("Screenshot not found"));
 
 		let { source } = screen;

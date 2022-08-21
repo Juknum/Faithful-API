@@ -145,6 +145,20 @@ export class AddonController extends Controller {
 	}
 
 	/**
+	 * Get an array of IDs of all screenshots for the requested add-on
+	 * @param id_or_slug ID or slug of the requested add-on
+	 */
+	@Response<NotFoundError>(404)
+	@Response<PermissionError>(403)
+	@Security("discord", ["addon:own", "administrator"])
+	@Get("{id_or_slug}/files/screenshots-ids")
+	public async getScreenshotsIds(@Path() id_or_slug: string): Promise<Array<string>> {
+	  return this.service
+	    .getAddonFromSlugOrId(id_or_slug)
+	    .then((value: [number, Addon]) => this.service.getScreenshotsIds(value[0]));
+	}
+
+	/**
 	 * Get an array of URLs of all screenshots for the requested add-on
 	 * @param id_or_slug ID or slug of the requested add-on
 	 */
