@@ -131,7 +131,10 @@ export default class AddonService {
 			throw new NotFoundError("File not found");
 		}
 
-		return screenshotFile.source;
+		const src = screenshotFile.source;
+		const final = src.startsWith("/") ? process.env.DB_IMAGE_ROOT + src : src;
+		
+		return final;
 	}
 
 	async getHeaderFileURL(id: number): Promise<string> {
