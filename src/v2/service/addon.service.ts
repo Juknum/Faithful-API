@@ -174,8 +174,14 @@ export default class AddonService {
 
 		// verify existing authors
 		// return value not interesting
-		await Promise.all(body.authors.map((authorID) => this.userService.getUserById(authorID))).catch(() => {
+		const authors = await Promise.all(body.authors.map((authorID) => this.userService.getUserById(authorID))).catch(() => {
 			throw new BadRequestError("One author ID or more don't exist");
+		});
+
+		authors.forEach(author => {
+			if(!author.username) {
+				throw new BadRequestError("All authors must have a username");
+			}
 		});
 
 		// get the slug
@@ -243,8 +249,14 @@ export default class AddonService {
 
 		// verify existing authors
 		// return value not interesting
-		await Promise.all(body.authors.map((authorID) => this.userService.getUserById(authorID))).catch(() => {
+		const authors = await Promise.all(body.authors.map((authorID) => this.userService.getUserById(authorID))).catch(() => {
 			throw new BadRequestError("One author ID or more don't exist");
+		});
+
+		authors.forEach(author => {
+			if(!author.username) {
+				throw new BadRequestError("All authors must have a username");
+			}
 		});
 
 		const { downloads } = body;
