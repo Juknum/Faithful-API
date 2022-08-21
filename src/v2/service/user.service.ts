@@ -1,5 +1,6 @@
 import { Addons, Contributions, UserNames, User, Users, UserRepository, UserStats, UserProfile } from "../interfaces";
 import UserFirestormRepository from "../repository/firestorm/user.repository";
+import { BadRequestError } from "../tools/ApiError";
 
 export class UserService {
 	private repository: UserRepository = new UserFirestormRepository();
@@ -78,7 +79,13 @@ export class UserService {
 	
 	public async setProfileById(id: string, body: UserProfile) {
 		const user = await this.getUserById(id);
-		user.username = body.username;
+
+		const username = (body.username || "").trim();
+		if(username.length === 0) {
+			throw new BadRequestError("Username cannot be empty");
+		}
+		user.username = username;
+		
 		user.uuid = body.uuid;
 		user.media = body.media;
 
