@@ -146,7 +146,7 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 
 		const finalError = new ApiError(name, code, message);
 		
-		await sendError(code, err, req, message);
+		await sendError(code, err, req, stack, message);
 
 		apiErrorHandler()(finalError, req, res, next);
 		res.end();

@@ -23,7 +23,7 @@ const safeStringify = (obj, indent = 2) => {
 	return retVal;
 };
 
-export default async function sendError(code: number|null, err: any, req: Request, message?: string) {
+export default async function sendError(code: number|null, err: any, req: Request, stack: string, message?: string) {
 	if(!BOT_ENDPOINT || code === 404 || code === 403)
 		return;
         
@@ -33,7 +33,8 @@ export default async function sendError(code: number|null, err: any, req: Reques
 			message: message || null,
 			code,
 			err,
-			req
+			req,
+			stack,
 		}
 	};
 
