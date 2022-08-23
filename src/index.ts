@@ -126,7 +126,7 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 	}
 	if (err) {
 		if (err.isAxiosError) console.error("axios error: body, headers, err", req.body, req.headers, err);
-		code = parseInt(err.statusCode || (err.response ? err.response.status : err.code), 10) || 400;
+		code = parseInt((typeof err.status === 'number' ? err.status : err.statusCode) || (err.response ? err.response.status : err.code), 10) || 400;
 		const message = (err.response && err.response.data ? err.response.data.error : err.message) || err;
 		const stack = process.env.VERBOSE && err.stack ? err.stack : "";
 
