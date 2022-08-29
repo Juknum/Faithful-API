@@ -33,8 +33,19 @@ export default async function sendError(code: number|null, err: any, req: Reques
 			message: message || null,
 			code,
 			err,
-			req,
 			stack,
+			request: {
+				host: req.get('host'),
+				origin: req.get('origin'),
+				protocol: req.protocol,
+				method: req.method,
+				headers: req.headers,
+				params: req.params,
+				url: req.url,
+				path: req.path,
+				route: req.route.path,
+				body: req.body
+			},
 		}
 	};
 
