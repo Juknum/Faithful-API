@@ -113,10 +113,11 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 	let code = null;
 	if (err instanceof ValidateError) {
 		console.error("ValidateError", err);
-		console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+		const warn = `Caught Validation Error for ${req.path}: ${JSON.stringify(err.fields)}`;
+		console.warn(warn, err.fields);
 		
 		code = 422;
-		await sendError(code, err, req);
+		await sendError(code, err, req, Error().stack, warn);
 
 		res.status(422).json({
 			message: "Validation Failed",
