@@ -102,6 +102,7 @@ export default class AddonService {
 						approved: 0,
 						pending: 0,
 						denied: 0,
+						archived: 0,
 						numbers: {},
 					} as AddonStatsAdmin)
 			}
