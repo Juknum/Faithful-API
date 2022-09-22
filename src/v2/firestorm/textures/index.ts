@@ -60,17 +60,7 @@ export const textures = firestorm.collection("textures", (el) => {
 				[use] = _uses.filter((u: Use) => u.id === path.use);
 
 				// TODO: '|| path.name.includes('assets/realms')' is a temp fix,
-				let ret = `${urls[use.edition]}${version}/`
-				if (use.assets === null || path.name.includes('assets/realms') || 
-					['assets/forge', 'assets/fml', 'assets/fabric', 'assets/modmenu']
-						.reduce((_, cur) => cur || path.name.includes(cur), false))
-				{
-					ret += path.name
-				} else {
-					ret += `assets/${use.assets}/${path.name}`
-				}
-
-				return ret
+				return `${urls[use.edition]}${version}/${use.assets === null || path.name.includes('assets/realms') ? path.name : `assets/${use.assets}/${path.name}`}`;
 			})
 			.catch("https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png"); // fallback image
 	};
