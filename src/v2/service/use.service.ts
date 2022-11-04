@@ -3,9 +3,19 @@ import UseFirestormRepository from "../repository/firestorm/use.repository";
 import PathService from "./path.service";
 
 export default class UseService {
+	constructor();
+
+	constructor(pathService: PathService);
+
+	constructor(...args: any[]) {
+		// eslint-disable-next-line prefer-destructuring
+		if (args.length) this.pathService = args[0];
+		else this.pathService = new PathService(this);
+	}
+
 	private readonly useRepo: UseRepository = new UseFirestormRepository();
 
-	private readonly pathService: PathService = new PathService();
+	private readonly pathService: PathService;
 
 	getPathUseByIdOrName(id_or_name: string): Promise<Paths> {
 		return this.getUseByIdOrName(id_or_name).then((use: Use) =>

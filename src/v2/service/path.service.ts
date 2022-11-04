@@ -4,7 +4,17 @@ import { InputPath, Path, PathRepository, Paths } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 
 export default class PathService {
-	private readonly useService: UseService = new UseService();
+	constructor();
+
+	constructor(useService: UseService);
+
+	constructor(...args: any[]) {
+		// eslint-disable-next-line prefer-destructuring
+		if (args.length) this.useService = args[0];
+		else this.useService = new UseService(this);
+	}
+
+	private readonly useService: UseService;
 
 	private readonly repository: PathRepository = new PathFirestormRepository();
 
