@@ -11,7 +11,8 @@
         "build": "npm run spec-and-routes && npm run compile && cp -R public dist/",
         "start": "node dist/src/index.js",
         "swag": "tsoa spec",
-        "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+		"prettier": "prettier src/**/*.ts --config .prettierrc --write"
     },
     "keywords": [],
     "author": "",
@@ -32,7 +33,7 @@
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-prettier": "^4.2.1",
         "nodemon": "^2.0.18",
-        "prettier": "^2.7.1",
+        "prettier": "2.7.1",
         "ts-node": "^10.9.1",
         "typescript": "^4.7.4"
     },

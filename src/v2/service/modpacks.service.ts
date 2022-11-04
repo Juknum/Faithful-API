@@ -3,8 +3,9 @@ import { modpacks } from "../firestorm";
 import ModpacksFirestormRepository from "../repository/firestorm/modpacks.repository";
 
 export default class ModpacksService {
-	private readonly modsRepo: ModpacksRepository = new ModpacksFirestormRepository();
-  
+	private readonly modsRepo: ModpacksRepository =
+		new ModpacksFirestormRepository();
+
 	getRaw(): Promise<Modpacks> {
 		return modpacks.read_raw();
 	}

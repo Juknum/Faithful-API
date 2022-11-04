@@ -1,6 +1,6 @@
-import firestorm from 'firestorm-db';
-import config from './config';
+import firestorm from "firestorm-db";
+import config from "./config";
 
 config();
 
-export const settings = firestorm.collection('settings');
+export const settings = firestorm.collection("settings");

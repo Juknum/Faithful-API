@@ -1,4 +1,12 @@
-import { Textures, Texture, Use, Uses, Path, Paths, InputPath } from "~/v2/interfaces";
+import {
+	Textures,
+	Texture,
+	Use,
+	Uses,
+	Path,
+	Paths,
+	InputPath,
+} from "~/v2/interfaces";
 
 export interface OldCreationUse {
 	textureID: number;
@@ -19,7 +27,7 @@ export function mapUse(old: OldUse): Use {
 		texture: Number.parseInt(old.id, 10),
 		edition: old.editions[0],
 		assets: old.editions[0] === "java" ? "minecraft" : null,
-	}
+	};
 }
 
 export function unmapUse(use: Use): OldUse {
@@ -27,8 +35,8 @@ export function unmapUse(use: Use): OldUse {
 		textureUseName: use.name,
 		editions: [use.edition],
 		textureID: null,
-		id: use.id
-	}
+		id: use.id,
+	};
 }
 
 export function mapUses(data: OldUses): Uses {
@@ -83,7 +91,7 @@ export function unmapPath(path: InputPath): OldCreationPath {
 		path: path.name,
 		versions: path.versions,
 		mcmeta: path.mcmeta,
-	}
+	};
 }
 
 export function mapPaths(data: OldPaths): Paths {

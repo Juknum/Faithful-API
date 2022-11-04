@@ -1,5 +1,13 @@
 import { Controller, Get, Path, Query, Route, Tags } from "tsoa";
-import { AcceptedRes, GalleryModalResult, GalleryResult, KnownPacksArr, TextureAll, KnownPacks, Texture } from "../interfaces";
+import {
+	AcceptedRes,
+	GalleryModalResult,
+	GalleryResult,
+	KnownPacksArr,
+	TextureAll,
+	KnownPacks,
+	Texture,
+} from "../interfaces";
 import GalleryService from "../service/gallery.service";
 import TextureService from "../service/texture.service";
 import cache from "../tools/cache";
@@ -17,12 +25,21 @@ export class GalleryController extends Controller {
 		@Path() edition: string,
 		@Path() mc_version: string,
 		@Path() tag: string,
-		@Query() search?: string,
+		@Query() search?: string
 	): Promise<GalleryResult[]> {
-		return cache.handle(`gallery-${res}-${edition}-${mc_version}-${tag}-${search ?? ''}`, () => 
-			this.service.search(res, edition, mc_version,
-				tag.toLowerCase() !== 'all' ? tag : undefined,
-				(search !== undefined && search.trim() !== '') ? search.trim() : undefined))
+		return cache.handle(
+			`gallery-${res}-${edition}-${mc_version}-${tag}-${search ?? ""}`,
+			() =>
+				this.service.search(
+					res,
+					edition,
+					mc_version,
+					tag.toLowerCase() !== "all" ? tag : undefined,
+					search !== undefined && search.trim() !== ""
+						? search.trim()
+						: undefined
+				)
+		);
 	}
 
 	/**
@@ -35,14 +52,23 @@ export class GalleryController extends Controller {
 		@Path() id: number,
 		@Path() mc_version: string
 	): Promise<GalleryModalResult> {
-		const urls: any[] = (await Promise.allSettled(KnownPacksArr.map(p => this.textureService.getURLById(id, p, mc_version))))
-			.map((e,i) => [KnownPacksArr[i], e])
+		const urls: any[] = (
+			await Promise.allSettled(
+				KnownPacksArr.map((p) =>
+					this.textureService.getURLById(id, p, mc_version)
+				)
+			)
+		)
+			.map((e, i) => [KnownPacksArr[i], e])
 			.filter((p: [KnownPacks, any]) => p[1].status === "fulfilled")
-			.map((p: any) => [p[0], p[1].value])
+			.map((p: any) => [p[0], p[1].value]);
 
-		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;
+		const all = (await this.textureService.getPropertyByNameOrId(
+			id,
+			"all"
+		)) as TextureAll;
 
-		const texture = await this.textureService.getByNameOrId(id) as Texture;
+		const texture = (await this.textureService.getByNameOrId(id)) as Texture;
 
 		return Promise.resolve({
 			contributions: all.contributions,
@@ -50,7 +76,7 @@ export class GalleryController extends Controller {
 			paths: all.paths,
 			mcmeta: all.mcmeta,
 			urls,
-			texture
+			texture,
 		});
 	}
 }

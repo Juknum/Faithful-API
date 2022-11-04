@@ -18,7 +18,7 @@ export const MinecraftSorter = (a: string, b: string): number => {
 
 	while (i < upper && res === 0) {
 		res = _a[i] === _b[i] ? 0 : _a[i] < _b[i] ? -1 : 1; // each number
-	  i++;
+		i++;
 	}
 
 	if (res !== 0) return res;

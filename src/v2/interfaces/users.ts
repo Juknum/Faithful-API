@@ -2,7 +2,20 @@ import { Contributions } from "./contributions";
 import { Addons } from "./addons";
 
 export interface Media {
-	type: "CurseForge"|"GitHub"|"Patreon"|"Paypal"|"Planet Minecraft"|"PSN"|"Reddit"|"Steam"|"Twitter"|"Website"|"Xbox"|"YouTube"|"Other";
+	type:
+		| "CurseForge"
+		| "GitHub"
+		| "Patreon"
+		| "Paypal"
+		| "Planet Minecraft"
+		| "PSN"
+		| "Reddit"
+		| "Steam"
+		| "Twitter"
+		| "Website"
+		| "Xbox"
+		| "YouTube"
+		| "Other";
 	link: string;
 }
 export interface Medias extends Array<Media> {}
@@ -35,15 +48,15 @@ export interface User extends UserCreationParams {
 export interface Users extends Array<User> {}
 
 export interface UserStats {
-	total: number,
-	total_anonymous: number,
-	total_roles: number,
-	total_per_roles: Record<string, number>
+	total: number;
+	total_anonymous: number;
+	total_roles: number;
+	total_per_roles: Record<string, number>;
 }
 
 /* eslint-disable no-unused-vars */
 export interface UserRepository {
-	getWarns(id: string): Promise<User['warns']>;
+	getWarns(id: string): Promise<User["warns"]>;
 	addWarn(id: string, warn: string): Promise<User>;
 	getRaw(): Promise<Users>;
 	getNames(): Promise<any>;
@@ -55,5 +68,5 @@ export interface UserRepository {
 	update(id: string, user: User): Promise<User>;
 	delete(id: string): Promise<void>;
 	getUsersFromRole(role: string, username?: string): Promise<Users>;
-	getRoles(): Promise<User['roles']>;
+	getRoles(): Promise<User["roles"]>;
 }

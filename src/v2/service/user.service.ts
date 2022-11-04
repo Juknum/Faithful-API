@@ -1,4 +1,13 @@
-import { Addons, Contributions, UserNames, User, Users, UserRepository, UserStats, UserProfile } from "../interfaces";
+import {
+	Addons,
+	Contributions,
+	UserNames,
+	User,
+	Users,
+	UserRepository,
+	UserStats,
+	UserProfile,
+} from "../interfaces";
 import UserFirestormRepository from "../repository/firestorm/user.repository";
 import { BadRequestError } from "../tools/ApiError";
 
@@ -10,31 +19,33 @@ export class UserService {
 	}
 
 	public getStats(): Promise<UserStats> {
-		return this.getRaw()
-			.then(users => {
-				const all_roles = [] as string[]
-				return users.reduce((acc, user) => {
+		return this.getRaw().then((users) => {
+			const all_roles = [] as string[];
+			return users.reduce(
+				(acc, user) => {
 					acc.total++;
-					if(user.anonymous) acc.total_anonymous++;
-					
-					user.roles.forEach(role => {
-						if(!all_roles.includes(role)) {
-							all_roles.push(role)
+					if (user.anonymous) acc.total_anonymous++;
+
+					user.roles.forEach((role) => {
+						if (!all_roles.includes(role)) {
+							all_roles.push(role);
 							acc.total_roles++;
-							
+
 							acc.total_per_roles[role] = 0;
 						}
 						acc.total_per_roles[role]++;
-					})
+					});
 
-					return acc
-				}, {
+					return acc;
+				},
+				{
 					total: 0,
 					total_anonymous: 0,
 					total_roles: 0,
-					total_per_roles: {}
-				} as UserStats)
-			})
+					total_per_roles: {},
+				} as UserStats
+			);
+		});
 	}
 
 	public getNames(): Promise<UserNames> {
@@ -73,19 +84,19 @@ export class UserService {
 		return this.repository.addWarn(id, data.warn);
 	}
 
-	public getWarns(id: string): Promise<User['warns']> {
+	public getWarns(id: string): Promise<User["warns"]> {
 		return this.repository.getWarns(id);
 	}
-	
+
 	public async setProfileById(id: string, body: UserProfile) {
 		const user = await this.getUserById(id);
 
 		const username = (body.username || "").trim();
-		if(username.length === 0) {
+		if (username.length === 0) {
 			throw new BadRequestError("Username cannot be empty");
 		}
 		user.username = username;
-		
+
 		user.uuid = body.uuid;
 		user.media = body.media;
 

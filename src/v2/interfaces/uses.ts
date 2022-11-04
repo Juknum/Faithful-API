@@ -14,7 +14,7 @@ export interface Use extends CreationUse {
 export interface Uses extends Array<Use> {}
 
 export interface CreatedUse extends CreationUse {
-	paths: CreationPath[]
+	paths: CreationPath[];
 }
 
 export interface UseRepository {
@@ -23,4 +23,6 @@ export interface UseRepository {
 	getUseByIdOrName(id_or_name: string): Promise<Uses | Use>;
 	deleteUse(id: string): Promise<void>;
 	set(use: Use): Promise<Use>;
+	removeUseById(use_id: string): Promise<void>;
+	removeUsesByBulk(use_ids: string[]): Promise<void>;
 }

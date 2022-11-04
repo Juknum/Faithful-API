@@ -13,10 +13,10 @@ export interface Textures extends Array<Texture> {}
 
 export interface TextureMCMETA {
 	animation: {
-		interpolate?: true,
+		interpolate?: true;
 		frametime?: number;
-		frames?: Array<number | { index: number, time: number }>;
-	}
+		frames?: Array<number | { index: number; time: number }>;
+	};
 }
 
 export interface TextureAll extends Texture {
@@ -28,17 +28,29 @@ export interface TextureAll extends Texture {
 export interface TexturesAll extends Array<TextureAll> {}
 
 // 🐰 🤲 OUR PACKS
-export const OurPacksArr = ["faithful_32x", "faithful_64x", "classic_faithful_32x", "classic_faithful_32x_progart", "classic_faithful_64x"] as const;
-export const KnownPacksArr = [ "default", ...OurPacksArr ] as const;
+export const OurPacksArr = [
+	"faithful_32x",
+	"faithful_64x",
+	"classic_faithful_32x",
+	"classic_faithful_32x_progart",
+	"classic_faithful_64x",
+] as const;
+export const KnownPacksArr = ["default", ...OurPacksArr] as const;
 
 export interface CreatedTexture extends TextureCreationParam {
-	uses: CreatedUse[]
+	uses: CreatedUse[];
 }
 
 export interface CreatedTextures extends Array<CreatedTexture> {}
 export type KnownPacks = typeof KnownPacksArr[number];
 export type Edition = "java" | "bedrock" | "dungeons";
-export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;
+export type TextureProperty =
+	| "uses"
+	| "paths"
+	| "contributions"
+	| "mcmeta"
+	| "all"
+	| null;
 
 export interface TextureRepository {
 	getRaw(): Promise<Textures>;
@@ -51,9 +63,11 @@ export interface TextureRepository {
 	getVersionByEdition(edition: Edition): Promise<Array<string>>;
 	searchTexturePropertyByNameOrId(
 		name_or_id: string | number,
-		property: TextureProperty,
+		property: TextureProperty
 	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA>;
-	searchTextureByNameOrId(name_or_id: string | number): Promise<Textures | Texture>;
+	searchTextureByNameOrId(
+		name_or_id: string | number
+	): Promise<Textures | Texture>;
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
 	deleteTexture(id: string);

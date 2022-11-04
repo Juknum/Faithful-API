@@ -1,7 +1,6 @@
 import { Controller, Delete, Get, Path, Route, Security, Tags } from "tsoa";
-import { Use, Uses } from "../interfaces";
+import { Use, Uses, Paths } from "../interfaces";
 import UseService from "../service/use.service";
-
 
 @Route("uses")
 @Tags("Uses")
@@ -18,12 +17,26 @@ export class UsesController extends Controller {
 	}
 
 	/**
+	 * Get path's use by id
+	 * @param {String} id_or_name - Use ID or Use Name
+	 * @returns {Promise<Use | Uses>}
+	 */
+	@Get("{id_or_name}/paths")
+	public async getPathUseByIdOrName(
+		@Path() id_or_name: string
+	): Promise<Paths> {
+		return this.service.getPathUseByIdOrName(id_or_name);
+	}
+
+	/**
 	 * Get use by id
 	 * @param {String} id_or_name - Use ID or Use Name
 	 * @returns {Promise<Use | Uses>}
 	 */
 	@Get("{id_or_name}")
-	public async getUseByIdOrName(@Path() id_or_name: string): Promise<Use | Uses> {
+	public async getUseByIdOrName(
+		@Path() id_or_name: string
+	): Promise<Use | Uses> {
 		return this.service.getUseByIdOrName(id_or_name);
 	}
 
@@ -33,7 +46,7 @@ export class UsesController extends Controller {
 	 * @returns {Promise<void>}
 	 */
 	@Delete("{id}")
-	@Security('discord', ['administrator'])
+	@Security("discord", ["administrator"])
 	public async deleteUse(@Path() id: string): Promise<void> {
 		return this.service.deleteUse(id);
 	}

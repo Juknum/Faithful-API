@@ -35,7 +35,10 @@ export class FileChangeController extends Controller {
 	@Post("")
 	@SuccessResponse(201, "File created")
 	@Security("discord", [])
-	public async createFile(@Body() body: FileCreationParam, @Request() request: any): Promise<void> {
+	public async createFile(
+		@Body() body: FileCreationParam,
+		@Request() request: any
+	): Promise<void> {
 		return Promise.resolve();
 	}
 
@@ -49,8 +52,11 @@ export class FileChangeController extends Controller {
 	@Delete("{id}")
 	@SuccessResponse(204)
 	@Security("discord", [])
-	public async deleteFile(@Path() id: number, @Request() request: any): Promise<void> {
-	  return Promise.resolve();
+	public async deleteFile(
+		@Path() id: number,
+		@Request() request: any
+	): Promise<void> {
+		return Promise.resolve();
 	}
 
 	/**
@@ -64,7 +70,11 @@ export class FileChangeController extends Controller {
 	@Put("{id}")
 	@SuccessResponse(201, "File Updated")
 	@Security("discord", [])
-	public async updateFile(@Path() id: number, @Body() body: any, @Request() request: any): Promise<void> {
-	  return Promise.resolve();
+	public async updateFile(
+		@Path() id: number,
+		@Body() body: any,
+		@Request() request: any
+	): Promise<void> {
+		return Promise.resolve();
 	}
 }

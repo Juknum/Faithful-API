@@ -1,9 +1,24 @@
 import { URL } from "url";
-import { Addons, Addon, AddonStatus, AddonAll, AddonRepository, Files, File, FileParent } from "../interfaces";
+import {
+	Addons,
+	Addon,
+	AddonStatus,
+	AddonAll,
+	AddonRepository,
+	Files,
+	File,
+	FileParent,
+} from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import { UserService } from "./user.service";
 import { FileService } from "./file.service";
-import { AddonCreationParam, AddonDataParam, AddonReview, AddonStatsAdmin, AddonStatusApproved } from "../interfaces/addons";
+import {
+	AddonCreationParam,
+	AddonDataParam,
+	AddonReview,
+	AddonStatsAdmin,
+	AddonStatusApproved,
+} from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
@@ -25,7 +40,9 @@ export default class AddonService {
 	 * Util method to get id from
 	 * @param id_or_slug ID or slug of the requested add-on
 	 */
-	public async getIdFromPath(id_or_slug: string): Promise<[number, Addon | undefined]> {
+	public async getIdFromPath(
+		id_or_slug: string
+	): Promise<[number, Addon | undefined]> {
 		const int_id: number = parseInt(id_or_slug, 10);
 
 		// if slug
@@ -39,7 +56,9 @@ export default class AddonService {
 		return [int_id, undefined];
 	}
 
-	public async getAddonFromSlugOrId(id_or_slug: string): Promise<[number, Addon]> {
+	public async getAddonFromSlugOrId(
+		id_or_slug: string
+	): Promise<[number, Addon]> {
 		const idAndAddon = await this.getIdFromPath(id_or_slug);
 		const id = idAndAddon[0];
 		let addon = idAndAddon[1];
@@ -50,7 +69,9 @@ export default class AddonService {
 		return [id, addon];
 	}
 
-	public async getApprovedAddonFromSlugOrId(id_or_slug: string): Promise<[number, Addon]> {
+	public async getApprovedAddonFromSlugOrId(
+		id_or_slug: string
+	): Promise<[number, Addon]> {
 		const [id, addon] = await this.getAddonFromSlugOrId(id_or_slug);
 		if (addon.approval.status === "approved") return [id, addon];
 
@@ -62,7 +83,8 @@ export default class AddonService {
 	}
 
 	getAddon(id: number): Promise<Addon> {
-		if (Number.isNaN(id) || id < 0) return Promise.reject(new Error("Addons IDs are integer greater than 0"));
+		if (Number.isNaN(id) || id < 0)
+			return Promise.reject(new Error("Addons IDs are integer greater than 0"));
 		return this.addonRepo.getAddonById(id);
 	}
 
@@ -71,59 +93,70 @@ export default class AddonService {
 	}
 
 	getFiles(id: number): Promise<Files> {
-		if (Number.isNaN(id) || id < 0) return Promise.reject(new Error("Addons IDs are integer greater than 0"));
+		if (Number.isNaN(id) || id < 0)
+			return Promise.reject(new Error("Addons IDs are integer greater than 0"));
 		return this.addonRepo.getFilesById(id);
 	}
 
 	getAll(id: number): Promise<AddonAll> {
-		if (Number.isNaN(id) || id < 0) return Promise.reject(new Error("Addons IDs are integer greater than 0"));
+		if (Number.isNaN(id) || id < 0)
+			return Promise.reject(new Error("Addons IDs are integer greater than 0"));
 
-		return Promise.all([this.getAddon(id), this.getFiles(id)]).then((results) => ({
-			...results[0],
-			files: results[1],
-		}));
+		return Promise.all([this.getAddon(id), this.getFiles(id)]).then(
+			(results) => ({
+				...results[0],
+				files: results[1],
+			})
+		);
 	}
 
 	getStats(asAdmin: boolean): Promise<AddonStatsAdmin> {
-		return this.getRaw()
-			.then(entries => {
-				let values = Object.values(entries)
+		return this.getRaw().then((entries) => {
+			let values = Object.values(entries);
 
-				if(!asAdmin) values = values.filter(a => a.approval.status === AddonStatusApproved)
-				
-				return values
-					.reduce((acc, val) => {
-						acc[val.approval.status]++;
-						val.options.tags.forEach(t => {
-							acc.numbers[t] = (acc.numbers[t] || 0) + 1
-						})
-						return acc
-					}, {
-						approved: 0,
-						pending: 0,
-						denied: 0,
-						archived: 0,
-						numbers: {},
-					} as AddonStatsAdmin)
-			}
-			)
+			if (!asAdmin)
+				values = values.filter(
+					(a) => a.approval.status === AddonStatusApproved
+				);
+
+			return values.reduce(
+				(acc, val) => {
+					acc[val.approval.status]++;
+					val.options.tags.forEach((t) => {
+						acc.numbers[t] = (acc.numbers[t] || 0) + 1;
+					});
+					return acc;
+				},
+				{
+					approved: 0,
+					pending: 0,
+					denied: 0,
+					archived: 0,
+					numbers: {},
+				} as AddonStatsAdmin
+			);
+		});
 	}
 
 	async getScreenshotsFiles(id): Promise<Files> {
-		return this.getFiles(id)
-			.then(
-				(files: Files) => files.filter((f: File) => f.use === "screenshot" || f.use === "carousel"), // todo: only keep screenshots
-			)
+		return this.getFiles(id).then(
+			(files: Files) =>
+				files.filter(
+					(f: File) => f.use === "screenshot" || f.use === "carousel"
+				) // TODO: only keep screenshots
+		);
 	}
 
 	async getScreenshotsIds(id): Promise<Array<string>> {
-		return this.getScreenshotsFiles(id)
-			.then((files: Files) => Object.values(files).map((f: File) => f.id));
+		return this.getScreenshotsFiles(id).then((files: Files) =>
+			Object.values(files).map((f: File) => f.id)
+		);
 	}
 
 	async getScreenshots(id): Promise<Array<string>> {
-		return this.getScreenshotsFiles(id)
-			.then((files: Files) => Object.values(files).map((f: File) => f.source));
+		return this.getScreenshotsFiles(id).then((files: Files) =>
+			Object.values(files).map((f: File) => f.source)
+		);
 	}
 
 	async getSreenshotURL(id: number, index: number): Promise<string> {
@@ -134,7 +167,9 @@ export default class AddonService {
 			throw new NotFoundError("Files not found");
 		}
 
-		const screenshotFile = files.filter((f) => f.use === "screenshot" || (f as any).use === "carousel")[index]; // todo: only keep screenshots
+		const screenshotFile = files.filter(
+			(f) => f.use === "screenshot" || (f as any).use === "carousel"
+		)[index]; // TODO: only keep screenshots
 
 		// if no header file, not found
 		if (screenshotFile === undefined) {
@@ -143,7 +178,7 @@ export default class AddonService {
 
 		const src = screenshotFile.source;
 		const final = src.startsWith("/") ? process.env.DB_IMAGE_ROOT + src : src;
-		
+
 		return final;
 	}
 
@@ -187,12 +222,14 @@ export default class AddonService {
 
 		// verify existing authors
 		// return value not interesting
-		const authors = await Promise.all(body.authors.map((authorID) => this.userService.getUserById(authorID))).catch(() => {
+		const authors = await Promise.all(
+			body.authors.map((authorID) => this.userService.getUserById(authorID))
+		).catch(() => {
 			throw new BadRequestError("One author ID or more don't exist");
 		});
 
-		authors.forEach(author => {
-			if(!author.username) {
+		authors.forEach((author) => {
+			if (!author.username) {
 				throw new BadRequestError("All authors must have a username");
 			}
 		});
@@ -203,7 +240,9 @@ export default class AddonService {
 		// throw if already existing
 		const existingAddon = await this.getAddonBySlug(slugValue);
 		if (existingAddon) {
-			throw new BadRequestError("The slug corresponding to this addon name already exists");
+			throw new BadRequestError(
+				"The slug corresponding to this addon name already exists"
+			);
 		}
 
 		const { downloads } = body;
@@ -262,12 +301,14 @@ export default class AddonService {
 
 		// verify existing authors
 		// return value not interesting
-		const authors = await Promise.all(body.authors.map((authorID) => this.userService.getUserById(authorID))).catch(() => {
+		const authors = await Promise.all(
+			body.authors.map((authorID) => this.userService.getUserById(authorID))
+		).catch(() => {
 			throw new BadRequestError("One author ID or more don't exist");
 		});
 
-		authors.forEach(author => {
-			if(!author.username) {
+		authors.forEach((author) => {
+			if (!author.username) {
 				throw new BadRequestError("All authors must have a username");
 			}
 		});
@@ -297,7 +338,7 @@ export default class AddonService {
 					type: "addons",
 					id: String(id),
 				},
-				"download",
+				"download"
 			)
 			.catch((err) => {
 				throw new BadRequestError(err);
@@ -315,12 +356,17 @@ export default class AddonService {
 		};
 
 		// update addon, reupload download links
-		return Promise.all([this.addonRepo.update(id, addon), ...files.map((file) => this.fileService.addFile(file))]).then(
-			(results) => results[0],
-		);
+		return Promise.all([
+			this.addonRepo.update(id, addon),
+			...files.map((file) => this.fileService.addFile(file)),
+		]).then((results) => results[0]);
 	}
 
-	public async postHeader(id_or_slug: string, filename: string, buffer: Buffer): Promise<void | File> {
+	public async postHeader(
+		id_or_slug: string,
+		filename: string,
+		buffer: Buffer
+	): Promise<void | File> {
 		// get addonID
 		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
 		const addon_id = id_and_addon[0];
@@ -362,7 +408,11 @@ export default class AddonService {
 		return newFile;
 	}
 
-	public async postScreenshot(id_or_slug: string, filename: string, buffer: Buffer): Promise<void | File> {
+	public async postScreenshot(
+		id_or_slug: string,
+		filename: string,
+		buffer: Buffer
+	): Promise<void | File> {
 		// get addonID
 		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
 		const addon_id = id_and_addon[0];
@@ -370,7 +420,8 @@ export default class AddonService {
 		const { slug } = addon;
 
 		// new random name based on time and random part
-		const newName = new Date().getTime().toString(36) + Math.random().toString(36).slice(2);
+		const newName =
+			new Date().getTime().toString(36) + Math.random().toString(36).slice(2);
 
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/${newName}.${extension}`;
@@ -412,14 +463,21 @@ export default class AddonService {
 		const files = await this.getFiles(id);
 
 		const realFiles = files
-			.filter((f) => f.use === "carousel" || f.use === "header" || f.use === "screenshot")
+			.filter(
+				(f) =>
+					f.use === "carousel" || f.use === "header" || f.use === "screenshot"
+			)
 			.map((f) => f.source.replace(/^http[s]?:\/\/.+?\//, ""))
 			.map((s) => this.fileService.removeFileByPath(s));
 
 		// remove addon
 		// rmeove addon links
 		// remove real files
-		const deletePromises = [this.addonRepo.delete(id), this.fileService.removeFilesByParent(parent), ...realFiles];
+		const deletePromises = [
+			this.addonRepo.delete(id),
+			this.fileService.removeFilesByParent(parent),
+			...realFiles,
+		];
 
 		return Promise.allSettled(deletePromises).then(() => {});
 	}
@@ -437,18 +495,26 @@ export default class AddonService {
 	 * @param id_or_slug ID or slug of the deleted add-on screenshot
 	 * @param index_or_slug Deleted add-on screenshot index or slug
 	 */
-	public async deleteScreenshot(id_or_slug: string, index_or_slug: number | string): Promise<void> {
+	public async deleteScreenshot(
+		id_or_slug: string,
+		index_or_slug: number | string
+	): Promise<void> {
 		// get addonID
 		const [addon_id] = await this.getAddonFromSlugOrId(id_or_slug);
 
 		// get existing screenshots
 		const files = await this.getFiles(addon_id).catch((): Files => []);
-		const screens = files.filter((f) => f.use === "screenshot" || f.use === "carousel");
+		const screens = files.filter(
+			(f) => f.use === "screenshot" || f.use === "carousel"
+		);
 
 		// find precise screen, by id else by index
-		const idedscreen = screens.filter(s => s.id && s.id === String(index_or_slug))[0];
+		const idedscreen = screens.filter(
+			(s) => s.id && s.id === String(index_or_slug)
+		)[0];
 		const screen = idedscreen || screens[index_or_slug];
-		if (screen === undefined) return Promise.reject(new NotFoundError("Screenshot not found"));
+		if (screen === undefined)
+			return Promise.reject(new NotFoundError("Screenshot not found"));
 
 		let { source } = screen;
 
@@ -488,7 +554,8 @@ export default class AddonService {
 		const files = await this.getFiles(addon_id).catch((): Files => []);
 		const header = files.filter((f) => f.use === "header")[0];
 
-		if (header === undefined) return Promise.reject(new NotFoundError("Header not found"));
+		if (header === undefined)
+			return Promise.reject(new NotFoundError("Header not found"));
 
 		let { source } = header;
 

@@ -1,14 +1,29 @@
-import { Contributions, Paths, Texture, Textures, Uses, TextureRepository } from "../interfaces";
-import { Edition, CreatedTextures, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty } from "../interfaces/textures";
+import {
+	Contributions,
+	Paths,
+	Texture,
+	Textures,
+	Uses,
+	TextureRepository,
+} from "../interfaces";
+import {
+	Edition,
+	CreatedTextures,
+	KnownPacks,
+	TextureCreationParam,
+	TextureMCMETA,
+	TextureProperty,
+} from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 import PathService from "./path.service";
 import UseService from "./use.service";
 
 export default class TextureService {
-	private readonly textureRepo: TextureRepository = new TextureFirestormRepository();
+	private readonly textureRepo: TextureRepository =
+		new TextureFirestormRepository();
 
 	private readonly useService = new UseService();
-	
+
 	private readonly pathService = new PathService();
 
 	getRaw(): Promise<Textures> {
@@ -16,12 +31,15 @@ export default class TextureService {
 	}
 
 	getById(id: number, property: TextureProperty): Promise<Texture> {
-		if (Number.isNaN(id) || id < 0) return Promise.reject(new Error("Texture IDs are integer greater than 0"));
+		if (Number.isNaN(id) || id < 0)
+			return Promise.reject(
+				new Error("Texture IDs are integer greater than 0")
+			);
 		return this.textureRepo.getTextureById(id, property);
 	}
 
 	getByNameIdAndTag(tag?: string, search?: string) {
-		return this.textureRepo.getByNameIdAndTag(tag, search)
+		return this.textureRepo.getByNameIdAndTag(tag, search);
 	}
 
 	getVersions(): Promise<Array<string>> {
@@ -46,14 +64,18 @@ export default class TextureService {
 
 	getPropertyByNameOrId(
 		name_or_id: string | number,
-		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
-		return this.textureRepo.searchTexturePropertyByNameOrId(name_or_id, property)
+		property: TextureProperty
+	): Promise<
+		Textures | Texture | Paths | Uses | Contributions | TextureMCMETA
+	> {
+		return this.textureRepo
+			.searchTexturePropertyByNameOrId(name_or_id, property)
 			.catch(() => Promise.reject(new Error("Service failed to make request")));
 	}
 
 	getByNameOrId(name_or_id: string | number): Promise<Textures | Texture> {
-		return this.textureRepo.searchTextureByNameOrId(name_or_id)
+		return this.textureRepo
+			.searchTextureByNameOrId(name_or_id)
 			.catch(() => Promise.reject(new Error("Service failed to make request")));
 	}
 
@@ -66,28 +88,42 @@ export default class TextureService {
 	}
 
 	async createEntireTextures(body: CreatedTextures): Promise<Textures> {
-		const tex = await Promise.all(body.map(t => this.createTexture(t)));
-		const tex_id = tex.map(t => t.id);
+		const tex = await Promise.all(body.map((t) => this.createTexture(t)));
+		const tex_id = tex.map((t) => t.id);
 
 		await Promise.all(
-			body.map(t => t.uses).map((tex_uses, i) => tex_uses.map((u,ui) => {
-				const use_id = tex_id[i] + String.fromCharCode('a'.charCodeAt(0) + ui);
-				return this.useService.createUse({
-					...u,
-					id: use_id
-				})
-			})).flat()
+			body
+				.map((t) => t.uses)
+				.map((tex_uses, i) =>
+					tex_uses.map((u, ui) => {
+						const use_id =
+							tex_id[i] + String.fromCharCode("a".charCodeAt(0) + ui);
+						return this.useService.createUse({
+							...u,
+							id: use_id,
+						});
+					})
+				)
+				.flat()
 		);
 
 		await Promise.all(
-			body.map(t => t.uses).map((tex_uses, i) => tex_uses.map((u, ui) => {
-				const use_id = tex_id[i] + String.fromCharCode('a'.charCodeAt(0) + ui);
+			body
+				.map((t) => t.uses)
+				.map((tex_uses, i) =>
+					tex_uses.map((u, ui) => {
+						const use_id =
+							tex_id[i] + String.fromCharCode("a".charCodeAt(0) + ui);
 
-				return u.paths.map(p => this.pathService.createPath({
-					...p,
-					use: use_id
-				}))
-			})).flat(2)
+						return u.paths.map((p) =>
+							this.pathService.createPath({
+								...p,
+								use: use_id,
+							})
+						);
+					})
+				)
+				.flat(2)
 		);
 
 		return tex;

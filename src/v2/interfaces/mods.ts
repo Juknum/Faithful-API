@@ -15,15 +15,15 @@ export interface Mods extends Array<Mod> {}
 
 export interface PackVersions {
 	[integer: string]: {
-		min: string,
-		max: string
-	}
+		min: string;
+		max: string;
+	};
 }
 
 export interface ModsRepository {
-	getRaw(): Promise<Mods>
-	getPackVersion(): Promise<PackVersions>
-	getThumbnail(id: number): Promise<string>
-	getCurseForgeName(id: number): Promise<string>
-	getNameInDatabase(id: string): Promise<string>
+	getRaw(): Promise<Mods>;
+	getPackVersion(): Promise<PackVersions>;
+	getThumbnail(id: number): Promise<string>;
+	getCurseForgeName(id: number): Promise<string>;
+	getNameInDatabase(id: string): Promise<string>;
 }

@@ -1,7 +1,29 @@
-import { Body, Controller, Delete, Get, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Path,
+	Post,
+	Request,
+	Response,
+	Route,
+	Security,
+	SuccessResponse,
+	Tags,
+} from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
-import { Edition, CreatedTextures, KnownPacks, TextureCreationParam, TextureMCMETA, TextureProperty, TextureAll, TexturesAll } from "../interfaces/textures";
+import {
+	Edition,
+	CreatedTextures,
+	KnownPacks,
+	TextureCreationParam,
+	TextureMCMETA,
+	TextureProperty,
+	TextureAll,
+	TexturesAll,
+} from "../interfaces/textures";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
 
@@ -23,7 +45,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("editions")
 	public async getEditions(): Promise<Array<string>> {
-	  return this.service.getEditions();
+		return this.service.getEditions();
 	}
 
 	/**
@@ -31,7 +53,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("tags")
 	public async getTags(): Promise<Array<string>> {
-	  return this.service.getTags();
+		return this.service.getTags();
 	}
 
 	/**
@@ -40,7 +62,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("resolutions")
 	public async getResolutions(): Promise<Array<number>> {
-	  return this.service.getResolutions();
+		return this.service.getResolutions();
 	}
 
 	/**
@@ -48,7 +70,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("versions")
 	public async getVersions(): Promise<Array<string>> {
-	  return this.service.getVersions();
+		return this.service.getVersions();
 	}
 
 	/**
@@ -58,7 +80,7 @@ export class TextureController extends Controller {
 	 */
 	@Get("versions/{edition}")
 	public getVersionByEdition(@Path() edition: Edition): Promise<Array<string>> {
-	  return this.service.getVersionByEdition(edition);
+		return this.service.getVersionByEdition(edition);
 	}
 
 	/**
@@ -66,13 +88,21 @@ export class TextureController extends Controller {
 	 * @param id_or_name Texture ID or texture name, splitted by "," if multiple
 	 */
 	@Get("{id_or_name}")
-	public async getTexture(@Path() id_or_name: string | number): Promise<Texture | Texture[]> {
-		if(typeof id_or_name === 'string' && id_or_name.includes(',')) {
-			const id_array = id_or_name.split(',');
-			return Promise.allSettled(id_array.map(id => this.service.getByNameOrId(id)))
-				.then(res => res.filter(p => p.status === "fulfilled").map((p: any) => p.value).flat());
+	public async getTexture(
+		@Path() id_or_name: string | number
+	): Promise<Texture | Texture[]> {
+		if (typeof id_or_name === "string" && id_or_name.includes(",")) {
+			const id_array = id_or_name.split(",");
+			return Promise.allSettled(
+				id_array.map((id) => this.service.getByNameOrId(id))
+			).then((res) =>
+				res
+					.filter((p) => p.status === "fulfilled")
+					.map((p: any) => p.value)
+					.flat()
+			);
 		}
-	  return this.service.getByNameOrId(id_or_name);
+		return this.service.getByNameOrId(id_or_name);
 	}
 
 	/**
@@ -83,15 +113,38 @@ export class TextureController extends Controller {
 	@Get("{id_or_name}/{property}")
 	public async getTexturesProperty(
 		@Path() id_or_name: string | number,
-		@Path() property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA | TextureAll | (TextureMCMETA | Textures | Texture | Paths | Uses | Contributions | TexturesAll)[]> {
-		if(typeof id_or_name === 'string' && id_or_name.includes(',')) {
-			const id_array = id_or_name.split(',');
-			return (Promise.allSettled(id_array.map(id => this.service.getPropertyByNameOrId(id, property)))
-				.then(res => res.filter(p => p.status === "fulfilled").map((p: any) => p.value).flat())) as Promise<(Textures | Texture | Paths | Uses | Contributions)[]>;
+		@Path() property: TextureProperty
+	): Promise<
+		| Textures
+		| Texture
+		| Paths
+		| Uses
+		| Contributions
+		| TextureMCMETA
+		| TextureAll
+		| (
+				| TextureMCMETA
+				| Textures
+				| Texture
+				| Paths
+				| Uses
+				| Contributions
+				| TexturesAll
+		  )[]
+	> {
+		if (typeof id_or_name === "string" && id_or_name.includes(",")) {
+			const id_array = id_or_name.split(",");
+			return Promise.allSettled(
+				id_array.map((id) => this.service.getPropertyByNameOrId(id, property))
+			).then((res) =>
+				res
+					.filter((p) => p.status === "fulfilled")
+					.map((p: any) => p.value)
+					.flat()
+			) as Promise<(Textures | Texture | Paths | Uses | Contributions)[]>;
 		}
-		
-	  return this.service.getPropertyByNameOrId(id_or_name, property);
+
+		return this.service.getPropertyByNameOrId(id_or_name, property);
 	}
 
 	/**
@@ -104,23 +157,29 @@ export class TextureController extends Controller {
 		@Path() id: string,
 		@Path() pack: KnownPacks,
 		@Path() mc_version: string,
-		@Request() request: ExRequest,
+		@Request() request: ExRequest
 	): Promise<void> {
-	  const response = (<any>request).res as ExResponse;
-	  response.redirect(await this.service.getURLById(parseInt(id, 10), pack, mc_version));
+		const response = (<any>request).res as ExResponse;
+		response.redirect(
+			await this.service.getURLById(parseInt(id, 10), pack, mc_version)
+		);
 	}
 
 	@Post("")
-	@Security('bot')
-	@Security('discord', ['administrator'])
-	public async createTexture(@Body() body: TextureCreationParam): Promise<Texture> {
+	@Security("bot")
+	@Security("discord", ["administrator"])
+	public async createTexture(
+		@Body() body: TextureCreationParam
+	): Promise<Texture> {
 		return this.service.createTexture(body);
 	}
 
 	@Post("mutiple")
-	@Security('bot')
-	@Security('discord', ['administrator'])
-	public async createMultipleTextures(@Body() body: CreatedTextures): Promise<Textures> {
+	@Security("bot")
+	@Security("discord", ["administrator"])
+	public async createMultipleTextures(
+		@Body() body: CreatedTextures
+	): Promise<Textures> {
 		return this.service.createEntireTextures(body);
 	}
 

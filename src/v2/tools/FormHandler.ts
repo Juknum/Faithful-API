@@ -1,7 +1,12 @@
 import { JsonObject } from "swagger-ui-express";
 import { Controller } from "tsoa";
 import multer from "multer";
-import { Application, NextFunction, Response as ExResponse, Request as ExRequest } from "express";
+import {
+	Application,
+	NextFunction,
+	Response as ExResponse,
+	Request as ExRequest,
+} from "express";
 import { expressAuthentication } from "./authentification";
 import { BadRequestError } from "./ApiError";
 
@@ -14,12 +19,23 @@ const upload = multer({
 	fileFilter(req, file, callback) {
 		if (MIME_TYPES_ACCEPTED.includes(file.mimetype)) callback(null, true);
 		else {
-			callback(new BadRequestError(`Incorrect file mime type provided, ${MIME_TYPES_ACCEPTED.join(" or ")} expected`));
+			callback(
+				new BadRequestError(
+					`Incorrect file mime type provided, ${MIME_TYPES_ACCEPTED.join(
+						" or "
+					)} expected`
+				)
+			);
 		}
 	},
 });
 
-function returnHandler(response: any, statusCode?: number, data?: any, headers: any = {}) {
+function returnHandler(
+	response: any,
+	statusCode?: number,
+	data?: any,
+	headers: any = {}
+) {
 	if (response.headersSent) {
 		return;
 	}
@@ -27,7 +43,12 @@ function returnHandler(response: any, statusCode?: number, data?: any, headers: 
 		response.set(name, headers[name]);
 	});
 	// eslint-disable-next-line no-underscore-dangle
-	if (data && typeof data.pipe === "function" && data.readable && typeof data._read === "function") {
+	if (
+		data &&
+		typeof data.pipe === "function" &&
+		data.readable &&
+		typeof data._read === "function"
+	) {
 		data.pipe(response);
 	} else if (data !== null && data !== undefined) {
 		response.status(statusCode || 200).json(data);
@@ -36,7 +57,13 @@ function returnHandler(response: any, statusCode?: number, data?: any, headers: 
 	}
 }
 
-function promiseHandler(controllerObj: any, promise: any, response: any, successStatus: any, next: any) {
+function promiseHandler(
+	controllerObj: any,
+	promise: any,
+	response: any,
+	successStatus: any,
+	next: any
+) {
 	return Promise.resolve(promise)
 		.then((data: any) => {
 			const statusCode = controllerObj.getStatus() || successStatus;
@@ -62,29 +89,38 @@ export default function formHandler(
 	controller: Controller,
 	method: Function,
 	swaggerDoc: JsonObject,
-	swaggerDocOptions: SwaggerDocOptions,
+	swaggerDocOptions: SwaggerDocOptions
 ): JsonObject {
 	app.post(
 		url,
 		async (req: ExRequest, res: ExResponse, next: NextFunction) => {
-			(req as any).user = await expressAuthentication(req, "discord", ["addon:own"]).catch((err) => next(err));
+			(req as any).user = await expressAuthentication(req, "discord", [
+				"addon:own",
+			]).catch((err) => next(err));
 			next();
 		},
 		upload.single("file"),
 		(req: ExRequest, res: ExResponse, next: NextFunction) => {
 			try {
-				const promise = method.apply(controller, [req.params[Object.keys(req.params)[0]], req.file, req]);
+				const promise = method.apply(controller, [
+					req.params[Object.keys(req.params)[0]],
+					req.file,
+					req,
+				]);
 				promiseHandler(controller, promise, res, 200, next);
 			} catch (error) {
 				next(error);
 			}
-		},
+		}
 	);
 
 	// add doc
-	const pathCorrected = url.replace(swaggerDocOptions.prefix, "").replace(/:([A-ZA-z_]+)/, "{$1}");
+	const pathCorrected = url
+		.replace(swaggerDocOptions.prefix, "")
+		.replace(/:([A-ZA-z_]+)/, "{$1}");
 	if (!("paths" in swaggerDoc)) swaggerDoc.paths = {};
-	if (!(pathCorrected in swaggerDoc.paths)) swaggerDoc.paths[pathCorrected] = {};
+	if (!(pathCorrected in swaggerDoc.paths))
+		swaggerDoc.paths[pathCorrected] = {};
 	swaggerDoc.paths[pathCorrected].post = {
 		operationId: swaggerDocOptions.operationId,
 		responses: {

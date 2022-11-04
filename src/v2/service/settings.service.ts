@@ -2,7 +2,8 @@ import { SettingsRepository } from "../interfaces/settings";
 import SettingsFirestormRepository from "../repository/firestorm/settings.repository";
 
 export class SettingsService {
-	private readonly settingsRepository: SettingsRepository = new SettingsFirestormRepository();
+	private readonly settingsRepository: SettingsRepository =
+		new SettingsFirestormRepository();
 
 	raw(): Promise<any> {
 		return this.settingsRepository.getRaw();

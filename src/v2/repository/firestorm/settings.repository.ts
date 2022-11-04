@@ -1,5 +1,5 @@
-import { settings } from '../../firestorm/index';
-import { SettingsRepository } from '../../interfaces';
+import { settings } from "../../firestorm/index";
+import { SettingsRepository } from "../../interfaces";
 
 export default class SettingsFirestormRepository implements SettingsRepository {
 	getRaw(): Promise<any> {
