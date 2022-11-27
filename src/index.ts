@@ -20,6 +20,7 @@ dotenv.config();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEV = (process.env.DEV || "false") === "true";
 const PORT = process.env.PORT || 8000;
+const BOT_ENDPOINT = process.env.DISCORD_BOT_ENDPOINT;
 
 firestorm.address(process.env.FIRESTORM_URL);
 firestorm.token(process.env.FIRESTORM_TOKEN);
@@ -70,6 +71,7 @@ const options: SwaggerUiOptions = {
 app.listen(PORT, () => {
 	console.log(`DB is located at ${process.env.FIRESTORM_URL}`);
 	console.log(`Server is running at http://localhost:${PORT}`);
+	console.log(`Bot endpoint is set at ${BOT_ENDPOINT}`);
 });
 
 app.use(apiErrorHandler());
