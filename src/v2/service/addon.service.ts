@@ -1,4 +1,5 @@
 import { URL } from "url";
+import { EmbedParam } from "../interfaces/bot";
 import {
 	Addons,
 	Addon,
@@ -12,6 +13,7 @@ import {
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import { UserService } from "./user.service";
 import { FileService } from "./file.service";
+import BotService from "./bot.service";
 import {
 	AddonCreationParam,
 	AddonDataParam,
@@ -30,6 +32,8 @@ function to_slug(value: string) {
 }
 
 export default class AddonService {
+	private readonly botService: BotService = new BotService();
+
 	private readonly userService: UserService = new UserService();
 
 	private readonly fileService: FileService = new FileService();
@@ -345,8 +349,10 @@ export default class AddonService {
 			});
 
 		const addonDataParams: AddonDataParam = body;
+		const savedAddon = await this.getAddon(id);
+		const before = savedAddon.approval.status;
 		const addon: Addon = {
-			...(await this.getAddon(id)),
+			...(savedAddon),
 			...addonDataParams,
 			approval: {
 				status: "pending",
@@ -357,7 +363,7 @@ export default class AddonService {
 
 		// update addon, reupload download links
 		return Promise.all([
-			this.addonRepo.update(id, addon),
+			this.saveUpdate(id, addon, before),
 			...files.map((file) => this.fileService.addFile(file)),
 		]).then((results) => results[0]);
 	}
@@ -373,6 +379,8 @@ export default class AddonService {
 		const addon = id_and_addon[1];
 		const { slug } = addon;
 
+		const before = addon.approval?.status || null;
+
 		// try to remove curent header
 		await this.deleteHeader(String(addon_id)).catch(() => {});
 
@@ -385,7 +393,7 @@ export default class AddonService {
 			author: null,
 			reason: null,
 		};
-		await this.addonRepo.update(addon_id, addon);
+		await this.saveUpdate(addon_id, addon, before);
 
 		// upload file
 		await this.fileService.upload(uploadLocation, filename, buffer, true);
@@ -419,6 +427,8 @@ export default class AddonService {
 		const addon = id_and_addon[1];
 		const { slug } = addon;
 
+		const before = addon.approval?.status || null;
+
 		// new random name based on time and random part
 		const newName =
 			new Date().getTime().toString(36) + Math.random().toString(36).slice(2);
@@ -432,7 +442,7 @@ export default class AddonService {
 			author: null,
 			reason: null,
 		};
-		await this.addonRepo.update(addon_id, addon);
+		await this.saveUpdate(addon_id, addon, before);
 
 		// upload file
 		await this.fileService.upload(uploadLocation, filename, buffer, true);
@@ -485,9 +495,11 @@ export default class AddonService {
 	async review(id: number, review: AddonReview): Promise<void> {
 		const addon = await this.getAddon(id);
 
+		const before = addon.approval?.status || null;
+
 		addon.approval = review;
 
-		this.addonRepo.update(id, addon);
+		this.saveUpdate(id, addon, before);
 	}
 
 	/**
@@ -544,6 +556,8 @@ export default class AddonService {
 		const addon_id = id_and_addon[0];
 		const addon = id_and_addon[1];
 
+		const before = addon.approval?.status || null;
+
 		addon.approval = {
 			reason: null,
 			author: null,
@@ -572,7 +586,7 @@ export default class AddonService {
 			author: null,
 			reason: "Add-on must have a header image",
 		};
-		await this.addonRepo.update(addon_id, addon);
+		await this.saveUpdate(addon_id, addon, before);
 
 		// remove file from file service
 		await this.fileService.removeFileById(header.id);
@@ -581,5 +595,63 @@ export default class AddonService {
 		await this.fileService.remove(source);
 
 		return Promise.resolve();
+	}
+
+	private saveUpdate(id: number, addon: Addon, before: AddonStatus): Promise<Addon> {
+		return this.addonRepo.update(id, addon)
+			.then(async (a) => {
+				const now = a.approval.status;
+				const statusSame = before === now; // "ignore pending to pending"
+
+				if(statusSame) return a;
+				
+				let title = a.name;
+				let name = "Add-on ";
+				let users = [];
+				let description = a.approval.reason ? `Reason: ${a.approval.reason}` : `*No reason provided*`;
+				if(now === 'approved') description = undefined;
+				const url = `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`;
+				if(now === 'pending') {
+					title = `Add-on '${a.name}' pending approval`;
+					name += "update";
+				} else {
+					title = `Add-on '${a.name}' ${now} by ${(await this.userService.getUserById(a.approval.author)).username}`;
+					name += "review";
+					users = a.authors; // notify authors of review
+				}
+				const botMessage: EmbedParam = {
+					destinations: {
+						channels: ["addons-submission"]
+					},
+					embed: {
+						"color": 7784773,
+						"author": {
+							"icon_url": "https://faithfulpack.net/image/pwa/favicon-32x32.png",
+							name,
+						},
+						url,
+						title,
+						description,
+						"footer": {
+							"text": "Made in Mount Doom",
+						},
+					},
+					destinator: ""
+				};
+
+				// send embed to moderators
+				await this.botService.sendEmbed(botMessage).catch(console.error);
+
+				// modify message to fit to users
+				botMessage.destinations = {
+					users,
+				}
+				botMessage.embed.url = `https://webapp.faithfulpack.net/#/addons/submissions`;
+
+				// send embed to users
+				await this.botService.sendEmbed(botMessage).catch(console.error);
+
+				return a;
+			});
 	}
 }
