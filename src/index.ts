@@ -168,7 +168,7 @@ app.use(
 				) || 400;
 			const message =
 				(err.response && err.response.data
-					? err.response.data.error
+					? (err.response.data.error || err.response.data.message)
 					: err.message) || err;
 			const stack = process.env.VERBOSE && err.stack ? err.stack : "";
 
@@ -176,7 +176,7 @@ app.use(
 				console.error("code, message, stack", code, message, stack);
 			}
 
-			let { name } = err;
+			let name = err?.response?.data?.name || err.name;
 
 			if (!name) {
 				try {
@@ -188,7 +188,31 @@ app.use(
 
 			const finalError = new ApiError(name, code, message);
 
+			// modify error to give more context and details with data
+			let modified: {
+				name: string,
+				message: string,
+			} | undefined;
+			if (err?.response?.data !== undefined) {
+				modified = {
+					name: finalError.name,
+					message: finalError.message
+				};
+				finalError.name += `: ${finalError.message}`;
+				finalError.message = err.response.data;
+			}
+
+			// send error to bot
 			await sendError(code, err, req, stack, message);
+
+			// unmodify error to hide details returned as api response
+			if(modified !== undefined) {
+				finalError.name = modified.name;
+				finalError.message = modified.message;
+			}
+
+			// i hate the stack in api response
+			delete finalError.stack;
 
 			apiErrorHandler()(finalError, req, res, next);
 			res.end();

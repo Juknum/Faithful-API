@@ -1,14 +1,12 @@
-import axios from "axios";
 import { Controller, Post, Route, Security, Tags, Body } from "tsoa";
 import { EmbedParam } from "../interfaces";
-import { BadRequestError } from "../tools/ApiError";
-
-const BOT_ENDPOINT = process.env.DISCORD_BOT_ENDPOINT;
-const BOT_SEND_ENDPOINT = `${ BOT_ENDPOINT }send-embed`;
+import BotService from "../service/bot.service";
 
 @Route("bot")
 @Tags("Bot interaction")
 export class BotController extends Controller {
+	private readonly botService = new BotService();
+
 	/**
 	 * Allows API to send 1 embed as a private messages to people
 	 * Check required and optional fields at https://discord.com/developers/docs/resources/channel#embed-object-embed-structure
@@ -18,10 +16,6 @@ export class BotController extends Controller {
 	public async sendEmbed(
 		@Body() body: EmbedParam,
 	): Promise<void> {
-		console.log(body)
-		return axios
-			.post(BOT_SEND_ENDPOINT, body)
-			.then(() => {})
-			.catch(() => Promise.reject(new BadRequestError("Something wrong happened")));
+		return this.botService.sendEmbed(body);
 	}
 }
