@@ -10,3 +10,17 @@
 ![Status](https://status.faithfulpack.net/api/badge/1/status)
 ![Uptime](https://status.faithfulpack.net/api/badge/1/uptime/24?label=24h%20&labelSuffix=Uptime)
 </div>
+
+---
+
+## Requirements
+- NodeJS 16+ https://nodejs.org
+
+## Running
+
+```bash
+npm install
+```
+```bash
+npm run dev
+```

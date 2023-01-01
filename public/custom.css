@@ -1,12 +1,3 @@
-/* darkmode */
-@import url('https://gitcdn.link/cdn/Amoenus/SwaggerDark/master/SwaggerDark.css');
-@import url('https://gitcdn.link/cdn/Amoenus/SwaggerDark/master/SwaggerDark.user.css');
-
-@font-face {
-  font-family: Faithful;
-  src: url("../Faithful.ttf") format("truetype");
-}
-
 html, body {
 	height: 100%;
 	overflow: auto;
@@ -14,12 +5,6 @@ html, body {
 
 * {
 	outline: none !important;
-}
-
-h1, h2, h3,
-.title {
-  font-family: Faithful !important;
-	font-weight: 600;
 }
 
 #swagger-ui {
@@ -53,22 +38,13 @@ h1, h2, h3,
 }
 
 .scheme-container {
-	background: 
-		url(../images/bg_dark_transition_top.png) top repeat-x !important;
 	box-shadow: none !important;
 	margin: 0 !important;
 	padding: 75px 0 20px !important;
 }
 
-.modal-ux-content {
-	background: 
-		url(../images/bg_dark_foreground.png) repeat !important;
-}
-
 .swagger-ui {
 	padding: 0;
-	background: 
-		url(../images/bg_dark_foreground.png) repeat !important;
 }
 
 .arrow {
@@ -91,15 +67,6 @@ body > #swagger-ui > .swagger-ui.swagger-container {
 		padding-bottom: 0;
 	}
 }
-
-html,
-.modal-ux-header,
-[class="wrapper"] ,
-.swagger-ui > div > .information-container {
-	background: 
-		url(../images/bg_dark_background.png) repeat !important;
-}
-
 
 .wrapper {
 	border-radius: 10px;
@@ -156,4 +123,18 @@ html > body > div#swagger-ui > section.swagger-ui.swagger-container > div.swagge
 
 .swagger-ui .info .title small.version-stamp {
 	background-color: #76C945;
+}
+
+@media (prefers-color-scheme: dark) {
+	body, .scheme-container, .modal-ux {
+		background-color: #0c0c0c !important;
+	}
+
+	span, h1, h2, h3, h4, h5, h6, p, td, th, button, label, .parameter__name, .parameter__type {
+		color: #fff !important;
+	}
+
+	svg {
+		fill: #fff;
+	}
 }
