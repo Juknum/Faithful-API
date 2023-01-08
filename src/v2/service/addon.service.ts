@@ -290,8 +290,9 @@ export default class AddonService {
 
 				return Promise.all(files.map((file) => this.fileService.addFile(file)));
 			})
-			.then(() => {
+			.then(async () => {
 				addonCreated.id = addonCreatedId;
+				await this.notifyAddonChange(addonCreated, null).catch(console.error);
 				return addonCreated;
 			});
 	}
@@ -600,58 +601,61 @@ export default class AddonService {
 	private saveUpdate(id: number, addon: Addon, before: AddonStatus): Promise<Addon> {
 		return this.addonRepo.update(id, addon)
 			.then(async (a) => {
-				const now = a.approval.status;
-				const statusSame = before === now; // "ignore pending to pending"
-
-				if(statusSame) return a;
-				
-				let title = a.name;
-				let name = "Add-on ";
-				let users = [];
-				let description = a.approval.reason ? `Reason: ${a.approval.reason}` : `*No reason provided*`;
-				if(now === 'approved') description = undefined;
-				const url = `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`;
-				if(now === 'pending') {
-					title = `Add-on '${a.name}' pending approval`;
-					name += "update";
-				} else {
-					title = `Add-on '${a.name}' ${now} by ${(await this.userService.getUserById(a.approval.author)).username}`;
-					name += "review";
-					users = a.authors; // notify authors of review
-				}
-				const botMessage: EmbedParam = {
-					destinations: {
-						channels: ["addons-submission"]
-					},
-					embed: {
-						"color": 7784773,
-						"author": {
-							"icon_url": "https://faithfulpack.net/image/pwa/favicon-32x32.png",
-							name,
-						},
-						url,
-						title,
-						description,
-						"footer": {
-							"text": "Made in Mount Doom",
-						},
-					},
-					destinator: ""
-				};
-
-				// send embed to moderators
-				await this.botService.sendEmbed(botMessage).catch(console.error);
-
-				// modify message to fit to users
-				botMessage.destinations = {
-					users,
-				}
-				botMessage.embed.url = `https://webapp.faithfulpack.net/#/addons/submissions`;
-
-				// send embed to users
-				await this.botService.sendEmbed(botMessage).catch(console.error);
-
+				await this.notifyAddonChange(a, before).catch(console.error);
 				return a;
-			});
+			})
+	}
+
+	private async notifyAddonChange(a: Addon, before: AddonStatus): Promise<void> {
+		const now = a.approval.status;
+		const statusSame = before === now; // "ignore pending to pending"
+
+		if(statusSame) return;
+	
+		let title = a.name;
+		let name = "Add-on ";
+		let users = [];
+		let description = a.approval.reason ? `Reason: ${a.approval.reason}` : `*No reason provided*`;
+		if(now === 'approved') description = undefined;
+		const url = `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`;
+		if(now === 'pending') {
+			title = `Add-on '${a.name}' pending approval`;
+			name += "update";
+		} else {
+			title = `Add-on '${a.name}' ${now} by ${(await this.userService.getUserById(a.approval.author)).username}`;
+			name += "review";
+			users = a.authors; // notify authors of review
+		}
+		const botMessage: EmbedParam = {
+			destinations: {
+				channels: ["addons-submission"]
+			},
+			embed: {
+				"color": 7784773,
+				"author": {
+					"icon_url": "https://faithfulpack.net/image/pwa/favicon-32x32.png",
+					name,
+				},
+				url,
+				title,
+				description,
+				"footer": {
+					"text": "Made in Mount Doom",
+				},
+			},
+			destinator: ""
+		};
+
+		// send embed to moderators
+		await this.botService.sendEmbed(botMessage).catch(console.error);
+
+		// modify message to fit to users
+		botMessage.destinations = {
+			users,
+		}
+		botMessage.embed.url = `https://webapp.faithfulpack.net/#/addons/submissions`;
+
+		// send embed to users
+		await this.botService.sendEmbed(botMessage).catch(console.error);
 	}
 }
