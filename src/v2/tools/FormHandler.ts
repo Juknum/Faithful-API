@@ -42,11 +42,11 @@ function returnHandler(
 	Object.keys(headers).forEach((name: string) => {
 		response.set(name, headers[name]);
 	});
-	// eslint-disable-next-line no-underscore-dangle
 	if (
 		data &&
 		typeof data.pipe === "function" &&
 		data.readable &&
+		// eslint-disable-next-line no-underscore-dangle
 		typeof data._read === "function"
 	) {
 		data.pipe(response);

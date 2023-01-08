@@ -10,7 +10,7 @@ import {
 import { contributions, users } from "../../firestorm";
 
 export default class ContributionFirestormRepository
-	implements ContributionsRepository
+implements ContributionsRepository
 {
 	getContributionById(id: string): Promise<Contribution> {
 		return contributions.get(id);

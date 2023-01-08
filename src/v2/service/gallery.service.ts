@@ -148,13 +148,13 @@ export default class GalleryService {
 		}
 
 		// TODO: setup pack as query params instead of using given resolution
-		// eslint-disable-next-line no-nested-ternary
-		const pack =
-			res === "16x"
-				? "default"
-				: res === "32x"
-				? "faithful_32x"
-				: "faithful_64x";
+		const RES_TO_PACKS: Record<AcceptedRes, string> = {
+			"16x": "default",
+			"32x": "faithful_32x",
+			"64x": "faithful_64x",
+		};
+
+		const pack = RES_TO_PACKS[res];
 
 		const urls = await this.UrlsFromTextures(
 			pack,
