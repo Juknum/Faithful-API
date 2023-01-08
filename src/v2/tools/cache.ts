@@ -34,6 +34,11 @@ export default {
 		return writeFile(key_to_path(key), JSON.stringify(json));
 	},
 
+	delete(key: string): Promise<void> {
+		const path = key_to_path(key);
+		return unlink(path)
+	},
+
 	handle<T>(key: string, callback: () => T): T {
 		return this.read(key)
 			.catch(() => Promise.all([true, callback()]))

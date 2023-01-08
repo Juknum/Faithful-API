@@ -24,6 +24,7 @@ import {
 import { PermissionError, BadRequestError } from "../tools/ApiError";
 import { UserService } from "../service/user.service";
 import AddonService from "../service/addon.service";
+import cache from "../tools/cache";
 
 @Route("addons")
 @Tags("Addons submission")
@@ -98,6 +99,9 @@ export class AddonChangeController extends Controller {
 		};
 
 		await this.service.review(addonId, review);
+
+		// refresh add-on stats
+		await cache.delete("addon-stats").catch(() => {});
 	}
 
 	/**
