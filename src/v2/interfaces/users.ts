@@ -56,6 +56,7 @@ export interface UserStats {
 
 /* eslint-disable no-unused-vars */
 export interface UserRepository {
+	getNameById(id: string): Promise<UserName>;
 	getWarns(id: string): Promise<User["warns"]>;
 	addWarn(id: string, warn: string): Promise<User>;
 	getRaw(): Promise<Users>;

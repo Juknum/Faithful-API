@@ -26,6 +26,7 @@ import {
 	UserCreationParams,
 	UserStats,
 	UserProfile,
+	UserName,
 } from "../interfaces";
 import { UserService } from "../service/user.service";
 import cache from "../tools/cache";
@@ -146,6 +147,16 @@ export class UserController extends Controller {
 	@Get("{id}/contributions")
 	public async getContributions(@Path() id: string): Promise<Contributions> {
 		return this.userService.getContributions(id);
+	}
+
+	/**
+	 * Get the name for the given ID
+	 * @param {String} id - User ID
+	 * @returns {Promise<UserName>}
+	 */
+	@Get("{id}/name")
+	public async getName(@Path() id: string): Promise<UserName> {
+		return this.userService.getNameById(id);
 	}
 
 	/**

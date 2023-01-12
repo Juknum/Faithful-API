@@ -7,6 +7,7 @@ import {
 	Users,
 	UserCreationParams,
 	UserRepository,
+	UserName,
 } from "../../interfaces";
 
 // eslint-disable-next-line no-underscore-dangle
@@ -23,6 +24,15 @@ function __transformUser(user: any): User {
 }
 
 export default class UserFirestormRepository implements UserRepository {
+	getNameById(id: string): Promise<UserName> {
+		return users.get(id)
+			.then((res) => ({
+				id: res.id,
+				username: res.anonymous ? undefined : res.username,
+				uuid: res.anonymous ? undefined : res.uuid,
+			}))
+	}
+
 	getRaw(): Promise<Users> {
 		return users
 			.read_raw()

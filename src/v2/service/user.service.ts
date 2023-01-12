@@ -7,6 +7,7 @@ import {
 	UserRepository,
 	UserStats,
 	UserProfile,
+	UserName,
 } from "../interfaces";
 import UserFirestormRepository from "../repository/firestorm/user.repository";
 import { BadRequestError } from "../tools/ApiError";
@@ -50,6 +51,10 @@ export class UserService {
 
 	public getNames(): Promise<UserNames> {
 		return this.repository.getNames();
+	}
+
+	public getNameById(id: string): Promise<UserName> {
+		return this.repository.getNameById(id);
 	}
 
 	public getRoles(): Promise<Array<string>> {
