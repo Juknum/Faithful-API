@@ -2,12 +2,14 @@ import { users } from "../../firestorm";
 import {
 	Addons,
 	Contributions,
+	Media,
 	UserNames,
 	User,
 	Users,
 	UserCreationParams,
 	UserRepository,
 	UserName,
+	UserProfile,
 } from "../../interfaces";
 
 // eslint-disable-next-line no-underscore-dangle
@@ -170,5 +172,20 @@ export default class UserFirestormRepository implements UserRepository {
 
 	delete(id: string): Promise<void> {
 		return users.remove(id).then(() => Promise.resolve());
+	}
+
+	getUserProfiles(searched_users: string[]): Promise<UserProfile[]> {
+		return users.searchKeys(searched_users).then(( _users: Array<{
+			id: string;
+			username: string;
+			uuid: string;
+			anonymous: boolean;
+			media: Media[],
+		}>) => _users.map(el => ({
+			id: el.id,
+			username: el.anonymous ? undefined : el.username,
+			uuid: el.anonymous ? undefined : (el.uuid || undefined),
+			media: el.anonymous ? undefined : (el.media || [])
+		})));
 	}
 }

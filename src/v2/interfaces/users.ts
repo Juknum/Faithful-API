@@ -35,9 +35,10 @@ export interface UserName {
 export interface UserNames extends Array<UserName> {}
 
 export interface UserProfile {
-	media: Media[];
-	username: string;
-	uuid: string;
+	id?: string;
+	media: Media[] | undefined;
+	username: string | undefined;
+	uuid: string | undefined;
 }
 
 export interface User extends UserCreationParams {
@@ -56,6 +57,7 @@ export interface UserStats {
 
 /* eslint-disable no-unused-vars */
 export interface UserRepository {
+	getUserProfiles(authors: string[]): Promise<UserProfile[]>;
 	getNameById(id: string): Promise<UserName>;
 	getWarns(id: string): Promise<User["warns"]>;
 	addWarn(id: string, warn: string): Promise<User>;

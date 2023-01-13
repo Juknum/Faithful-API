@@ -21,6 +21,7 @@ import {
 	AddonStatusValues,
 	AddonStats,
 	AddonStatsAdmin,
+	UserProfile,
 } from "../interfaces";
 
 import AddonService from "../service/addon.service";
@@ -164,6 +165,18 @@ export class AddonController extends Controller {
 
 		const response = (<any>request).res as ExResponse;
 		response.redirect(headerFileURL);
+	}
+
+	/**
+	 * Get User profiles for the given add-on
+	 * @param id_or_slug ID or slug of the requested add-on
+	 */
+	@Response<NotFoundError>(404)
+	@Response<PermissionError>(403)
+	@Security("discord", ["addon:approved", "administrator"])
+	@Get("{id_or_slug}/authors")
+	public async getAddonAuthorsProfiles(@Path() id_or_slug: string): Promise<UserProfile[]> {
+		return this.service.getAddonAuthorsProfiles(id_or_slug)
 	}
 
 	/**

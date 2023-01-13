@@ -1,4 +1,5 @@
 import { URL } from "url";
+import { UserProfile } from "../interfaces/users";
 import { EmbedParam } from "../interfaces/bot";
 import {
 	Addons,
@@ -94,6 +95,11 @@ export default class AddonService {
 
 	getAddonAuthors(id: number): Promise<Array<string>> {
 		return this.getAddon(id).then((addon: Addon) => addon.authors);
+	}
+	
+	getAddonAuthorsProfiles(id_or_slug: string): Promise<UserProfile[]> {
+		return this.getAddonFromSlugOrId(id_or_slug)
+			.then(([, addon]) => this.userService.getUserProfiles(addon.authors));
 	}
 
 	getFiles(id: number): Promise<Files> {

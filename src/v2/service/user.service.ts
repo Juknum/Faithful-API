@@ -77,6 +77,10 @@ export class UserService {
 		return this.repository.getContributionsById(id);
 	}
 
+	getUserProfiles(users: string[]): Promise<UserProfile[]> {
+		return this.repository.getUserProfiles(users);
+	}
+
 	public getAddons(id: string): Promise<Addons> {
 		return this.repository.getAddonsApprovedById(id);
 	}
