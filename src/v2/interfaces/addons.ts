@@ -44,17 +44,23 @@ export interface Addon {
 		optifine: boolean; // true if the pack require optifine to work properly
 		tags: AddonTagArray; // Edition + Resolution
 	};
+	embed_description?: string;
+	last_updated?: number;
 	approval: AddonReview;
 }
 export interface Addons extends Array<Addon> {}
 
 export type AddonDataParam = Pick<
 	Addon,
-	"name" | "description" | "authors" | "options"
+	"name" | "description" | "authors" | "options" | "embed_description"
 >;
 
 export interface AddonCreationParam extends AddonDataParam {
 	downloads: AddonDownload[];
+}
+
+export interface AddonUpdateParam extends AddonCreationParam {
+	reason: string
 }
 
 export interface AddonAll extends Addon {

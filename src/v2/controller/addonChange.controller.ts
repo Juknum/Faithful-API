@@ -20,6 +20,7 @@ import {
 	Addon,
 	AddonCreationParam,
 	AddonReviewBody,
+	AddonUpdateParam,
 } from "../interfaces/addons";
 import { PermissionError, BadRequestError } from "../tools/ApiError";
 import { UserService } from "../service/user.service";
@@ -60,7 +61,7 @@ export class AddonChangeController extends Controller {
 	@Security("discord", ["addon:own", "administrator"])
 	public async addonUpdate(
 		@Path() id_or_slug: string,
-		@Body() body: AddonCreationParam,
+		@Body() body: AddonUpdateParam,
 		@Request() request: any
 	): Promise<Addon> {
 		const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
@@ -73,7 +74,7 @@ export class AddonChangeController extends Controller {
 				throw new BadRequestError("Addon author must include the authed user");
 		}
 
-		return this.service.update(id, body);
+		return this.service.update(id, body, body.reason);
 	}
 
 	/**

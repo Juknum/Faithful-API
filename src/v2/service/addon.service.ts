@@ -262,6 +262,7 @@ export default class AddonService {
 
 		const addon: Addon = {
 			...addonDataParams,
+			last_updated: (new Date()).getTime(),
 			slug: slugValue,
 			approval: {
 				status: "pending",
@@ -303,7 +304,7 @@ export default class AddonService {
 			});
 	}
 
-	async update(id: number, body: AddonCreationParam): Promise<Addon> {
+	async update(id: number, body: AddonCreationParam, reason: string): Promise<Addon> {
 		// authentification was already made
 		// tag values have already been verified
 
@@ -361,10 +362,11 @@ export default class AddonService {
 		const addon: Addon = {
 			...(savedAddon),
 			...addonDataParams,
+			last_updated: (new Date().getTime()),
 			approval: {
 				status: "pending",
 				author: null,
-				reason: null,
+				reason,
 			},
 		};
 
