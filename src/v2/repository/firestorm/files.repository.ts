@@ -10,6 +10,10 @@ import {
 } from "../../interfaces/files";
 
 export class FilesFirestormRepository implements FileRepository {
+	addFiles(fileList: Files): Promise<string[]> {
+		return files.addBulk(fileList)
+	}
+
 	addFile(file: File): Promise<string> {
 		return files.add(file);
 	}
@@ -21,11 +25,13 @@ export class FilesFirestormRepository implements FileRepository {
 	getFilesByParent(parent: FileParent): Promise<Files> {
 		return files.search([
 			{
+				// @ts-ignore
 				field: "parent.id",
 				criteria: "==",
 				value: String(parent.id),
 			},
 			{
+				// @ts-ignore
 				field: "parent.type",
 				criteria: "==",
 				value: parent.type,
@@ -70,10 +76,12 @@ export class FilesFirestormRepository implements FileRepository {
 		form.append("file", buffer, filename);
 		form.append("overwrite", String(overwrite === true));
 
+		// @ts-ignore
 		return firestorm.files.upload(form);
 	}
 
 	remove(path: string): Promise<void> {
+		// @ts-ignore
 		return firestorm.files.delete(path).then(() => {});
 	}
 }

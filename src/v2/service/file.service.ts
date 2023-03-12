@@ -1,5 +1,5 @@
 import { FilesFirestormRepository } from "../repository/firestorm/files.repository";
-import { FileRepository, FileParent, FileUse, File } from "../interfaces/files";
+import { FileRepository, FileParent, FileUse, File, Files } from "../interfaces/files";
 
 export class FileService {
 	private readonly repo: FileRepository = new FilesFirestormRepository();
@@ -18,6 +18,10 @@ export class FileService {
 
 	public async addFile(file: File): Promise<string> {
 		return this.repo.addFile(file);
+	}
+
+	public async addFiles(files: Files): Promise<string[]> {
+		return this.repo.addFiles(files);
 	}
 
 	public async removeFileById(id: string) {

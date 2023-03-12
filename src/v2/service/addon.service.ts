@@ -373,7 +373,7 @@ export default class AddonService {
 		// update addon, reupload download links
 		return Promise.all([
 			this.saveUpdate(id, addon, before),
-			...files.map((file) => this.fileService.addFile(file)),
+			this.fileService.addFiles(files),
 		]).then((results) => results[0]);
 	}
 
