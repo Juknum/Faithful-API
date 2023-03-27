@@ -57,6 +57,7 @@ export interface UserStats {
 
 /* eslint-disable no-unused-vars */
 export interface UserRepository {
+	getProfileOrCreate(id: string): User | PromiseLike<User>;
 	getUserProfiles(authors: string[]): Promise<UserProfile[]>;
 	getNameById(id: string): Promise<UserName>;
 	getWarns(id: string): Promise<User["warns"]>;

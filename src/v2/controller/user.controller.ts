@@ -51,6 +51,14 @@ export class UserController extends Controller {
 		await this.userService.setProfileById(request.user, body);
 	}
 
+	@Post("newprofile")
+	@Security("discord", [])
+	public async createProfile(
+		@Request() request: any
+	): Promise<User> {
+		return this.userService.getProfileOrCreate(request.user);
+	}
+
 	/**
 	 * Get the raw collection of users
 	 * @returns {Promise<Users>}

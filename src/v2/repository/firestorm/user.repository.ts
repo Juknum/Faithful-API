@@ -83,6 +83,32 @@ export default class UserFirestormRepository implements UserRepository {
 			});
 	}
 
+	getProfileOrCreate(id: string): User | PromiseLike<User> {
+		return users
+			.get(id)
+			.then((u) => __transformUser(u))
+			.catch((err) => {
+				if (
+					err.isAxiosError &&
+					err.response &&
+					err.response.statusCode === 404
+				) {
+					const empty: User = {
+						anonymous: false,
+						roles: [],
+						username: '',
+						uuid: '',
+						warns: [],
+						id,
+						media: []
+					};
+					return users.set(id, empty).then(() => this.getUserById(id))
+				}
+
+				return Promise.reject(err);
+			});
+	}
+
 	getUsersByName(name: string): Promise<Users> {
 		if (!name || name.length < 3)
 			return Promise.reject(

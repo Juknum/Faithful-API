@@ -97,6 +97,10 @@ export class UserService {
 		return this.repository.getWarns(id);
 	}
 
+	public async getProfileOrCreate(id: string): Promise<User> {
+		return this.repository.getProfileOrCreate(id);
+	}
+
 	public async setProfileById(id: string, body: UserProfile) {
 		const user = await this.getUserById(id);
 
