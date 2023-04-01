@@ -1,5 +1,5 @@
-import { Controller, Delete, Get, Path, Route, Security, Tags } from "tsoa";
-import { Use, Uses, Paths } from "../interfaces";
+import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
+import { Use, Uses, Paths, CreationUse } from "../interfaces";
 import UseService from "../service/use.service";
 
 @Route("uses")
@@ -14,6 +14,21 @@ export class UsesController extends Controller {
 	@Get("raw")
 	public async getRaw(): Promise<Uses> {
 		return this.service.getRaw();
+	}
+
+	/**
+	 * Adds a new texture use to the database for given texture id ad body 
+	 * @param body Texture use to create
+	 * @returns {Promise<Use>} Created use
+	 */
+	@Post("")
+	@Security("discord", ["administrator"])
+	public async CreateUse(
+		@Body() body: CreationUse & { id: string; }
+	): Promise<Use> {
+		return this.service.createUse({
+			...body
+		})
 	}
 
 	/**
@@ -41,7 +56,21 @@ export class UsesController extends Controller {
 	}
 
 	/**
-	 * Delete use by id
+	 * Remove texture use by use ID with its associated paths
+	 * @param {String} id - Use ID
+	 * @returns {Promise<void>}
+	 */
+	@Put("{id}")
+	@Security("discord", ["administrator"])
+	public async changeUse(
+		@Path() id: string,
+		@Body() modifiedUse: CreationUse
+	): Promise<Use> {
+		return this.service.updateUse(id, modifiedUse)
+	}
+
+	/**
+	 * Remove texture use by use ID with its associated paths
 	 * @param {String} id - Use ID
 	 * @returns {Promise<void>}
 	 */

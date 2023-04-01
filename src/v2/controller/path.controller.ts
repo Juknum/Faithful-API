@@ -50,9 +50,12 @@ export class PathsController extends Controller {
 	@Security("discord", ["administrator"])
 	public async updatePath(
 		@URLPath() id: string,
-		@Body() body: Path
+		@Body() body: InputPath | Path
 	): Promise<Path> {
-		return this.service.updatePathById(id, body);
+		return this.service.updatePathById(id, {
+			...body,
+			id
+		});
 	}
 
 	/**

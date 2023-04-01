@@ -1,7 +1,8 @@
+/* eslint-disable arrow-body-style */
 import { Use, UseRepository, Uses } from "~/v2/interfaces";
 import { ID_FIELD } from "firestorm-db";
 import { mapUse, mapUses, unmapUse } from "../../tools/mapping/textures";
-import { uses } from "../../firestorm";
+import { paths as pathsCollection, uses } from "../../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
 	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses> {
@@ -58,11 +59,16 @@ export default class UseFirestormRepository implements UseRepository {
 
 	removeUseById(use_id: string): Promise<void> {
 		return uses
-			.remove(use_id)
-			.then(() => uses.paths())
-			.then((foundPaths) =>
-				foundPaths.removeBulk(foundPaths.map((p) => p[ID_FIELD]))
-			)
+			.get(use_id) // assure you find the texture and get path method
+			.then((gatheredUse) => {
+				return gatheredUse.paths();
+			})
+			.then((foundPaths) => {
+				return Promise.all([
+					uses.remove(use_id),
+					pathsCollection.removeBulk(foundPaths.map((p) => p[ID_FIELD])) // delete all paths
+				]);
+			})
 			.then(() => {});
 	}
 

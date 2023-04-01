@@ -2,6 +2,8 @@ import { readdir, readFile, unlink, writeFile } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
 
+const NO_CACHE = process.env.NO_CACHE === 'true';
+
 const CACHE_DURATION = 86400000; // ONE_DAY
 
 const REWRITE_INDEX = 0;
@@ -17,6 +19,8 @@ const key_to_path = (key: string): string => {
 
 export default {
 	read(key: string): Promise<[boolean, any]> {
+		if(NO_CACHE) return Promise.reject();
+
 		return readFile(key_to_path(key)).then((content) => {
 			const json = JSON.parse(content.toString());
 			const timestamp_str = Object.keys(json)[0];

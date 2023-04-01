@@ -19,6 +19,7 @@ dotenv.config();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEV = (process.env.DEV || "false") === "true";
+const NO_CACHE = process.env.NO_CACHE === 'true';
 const PORT = process.env.PORT || 8000;
 const BOT_ENDPOINT = process.env.DISCORD_BOT_ENDPOINT;
 
@@ -72,6 +73,7 @@ app.listen(PORT, () => {
 	console.log(`DB is located at ${process.env.FIRESTORM_URL}`);
 	console.log(`Server is running at http://localhost:${PORT}`);
 	console.log(`Bot endpoint is set at ${BOT_ENDPOINT}`);
+	if(NO_CACHE) console.log(`Started with no cache`);
 });
 
 app.use(apiErrorHandler());

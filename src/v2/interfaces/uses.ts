@@ -1,6 +1,6 @@
 import { CreationPath } from "./paths";
 
-interface CreationUse {
+export interface CreationUse {
 	name: string; // use name
 	texture: number; // texture id
 	edition: string; // game edition
