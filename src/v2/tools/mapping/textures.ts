@@ -34,7 +34,7 @@ export function unmapUse(use: Use): OldUse {
 	return {
 		textureUseName: use.name,
 		editions: [use.edition],
-		textureID: null,
+		textureID: use.texture,
 		id: use.id,
 	};
 }
