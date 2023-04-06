@@ -53,6 +53,7 @@ export type TextureProperty =
 	| null;
 
 export interface TextureRepository {
+	changeTexture(id: string, body: TextureCreationParam): Promise<Texture>;
 	getRaw(): Promise<Textures>;
 	getByNameIdAndTag(tag?: string, search?: string): Promise<Textures>;
 	getTextureById(id: number, property: TextureProperty): Promise<Texture>;

@@ -63,6 +63,14 @@ export function mapTextures(data: OldTextures): Textures {
 	return data.map(mapTexture);
 }
 
+export function unmapTexture(data: Texture): OldTexture {
+	return {
+		id: data.id,
+		name: String(data.name),
+		type: data.tags
+	};
+}
+
 interface OldCreationPath {
 	useID: string;
 	path: string;

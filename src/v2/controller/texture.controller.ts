@@ -5,6 +5,7 @@ import {
 	Get,
 	Path,
 	Post,
+	Put,
 	Request,
 	Response,
 	Route,
@@ -181,6 +182,16 @@ export class TextureController extends Controller {
 		@Body() body: CreatedTextures
 	): Promise<Textures> {
 		return this.service.createEntireTextures(body);
+	}
+
+	@Put("{id}")
+	@Security("bot")
+	@Security("discord", ["administrator"])
+	public async changeTexture(
+		@Path() id: string,
+		@Body() body: TextureCreationParam
+	): Promise<Texture> {
+		return this.service.changeTexture(id, body);
 	}
 
 	@Delete("{id}")
