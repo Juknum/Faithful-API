@@ -254,8 +254,8 @@ export default class TextureFirestormRepository implements TextureRepository {
 
 		const promises = [];
 		promises.push(textures.remove(id));
-		promises.push(foundUses.removeBulk(foundUses.map((u) => u[ID_FIELD])));
-		promises.push(foundPaths.removeBulk(foundPaths.map((p) => p[ID_FIELD])));
+		promises.push(uses.removeBulk(foundUses.map((u) => u[ID_FIELD])));
+		promises.push(paths.removeBulk(foundPaths.map((p) => p[ID_FIELD])));
 
 		return Promise.all(promises).then(() => {});
 	}

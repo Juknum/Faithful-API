@@ -194,6 +194,11 @@ export class TextureController extends Controller {
 		return this.service.changeTexture(id, body);
 	}
 
+	/**
+	 * Deletes the ENTIRE texture, with uses and paths included
+	 * @param id Texture ID
+	 * @returns nothing
+	 */
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
