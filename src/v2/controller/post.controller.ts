@@ -80,7 +80,7 @@ export class PostController extends Controller {
 		@Request() request: ExRequest
 	): Promise<void> {
 		const post = await this.service.getByIdOrPermalink(id_or_permalink);
-		const headerImg = post["header-img"];
+		const headerImg = post[headerImg];
 
 		const response = (<any>request).res as ExResponse;
 		response.redirect(headerImg, 302);
