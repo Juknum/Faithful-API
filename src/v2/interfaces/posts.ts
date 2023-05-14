@@ -19,7 +19,7 @@ export interface CreateWebsitePost {
 	title: string; // Post main title
 	permalink: string; // link to the post
 	date: string; // date with format MM-DD-YYY
-	headerImg: string; // header image url
+	headerImg?: string; // header image url
 	description: string; // post HTML content
 	published: boolean,
 	downloads?: WebsitePostDownloadRecord; // possible downloads attached

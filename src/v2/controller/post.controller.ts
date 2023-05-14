@@ -80,7 +80,10 @@ export class PostController extends Controller {
 		@Request() request: ExRequest
 	): Promise<void> {
 		const post = await this.service.getByIdOrPermalink(id_or_permalink);
-		const headerImg = post[headerImg];
+		console.log(post)
+		const { headerImg } = post;
+
+		if (!headerImg) throw new NotFoundError("Post header image not found");
 
 		const response = (<any>request).res as ExResponse;
 		response.redirect(headerImg, 302);
