@@ -13,7 +13,8 @@ const VALUE_INDEX = 1;
 const folder = (): string => tmpdir();
 
 const key_to_path = (key: string): string => {
-	const p = join(folder(), `cache-${key}.json`);
+	const escaped_key = key.replace(/(\/|\\)/g, '-');
+	const p = join(folder(), `cache-${escaped_key}.json`);
 	return p;
 };
 
@@ -57,7 +58,10 @@ export default {
 				const value = results[VALUE_INDEX];
 				// write if told
 				if (results[WRITE_INDEX]) {
-					return this.write(key, value).then(() => Promise.resolve(value));
+					return this.write(key, value).then(() => Promise.resolve(value)).catch((...args) => {
+						console.error(...args)
+						return value
+					});
 				}
 				return Promise.resolve(value);
 			});

@@ -64,8 +64,8 @@ export class PostController extends Controller {
 	@Response<NotFoundError>(404)
 	@Get("{id_or_permalink}")
 	public async getPost(@Path() id_or_permalink: string): Promise<WebsitePost> {
-		return cache.handle(`website-post-${id_or_permalink}`,
-			() => this.service.getByIdOrPermalink(id_or_permalink));
+		return cache.handle(`website-post-${encodeURI(id_or_permalink)}`,
+			() => this.service.getByIdOrPermalink(decodeURI(id_or_permalink)));
 	}
 
 	/**
