@@ -389,9 +389,8 @@ export default class AddonService {
 		const { slug } = addon;
 
 		const before = addon.approval?.status || null;
-
 		// try to remove curent header
-		await this.deleteHeader(String(addon_id)).catch(() => {});
+		await this.deleteHeader(String(addon_id), false).catch(() => { });
 
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/header.${extension}`;
@@ -559,7 +558,7 @@ export default class AddonService {
 	 * Deletes the given screenshot at given index
 	 * @param id_or_slug ID or slug of the deleted add-on screenshot
 	 */
-	public async deleteHeader(id_or_slug: string): Promise<void> {
+	public async deleteHeader(id_or_slug: string, notify: Boolean = true): Promise<void> {
 		// get addonID
 		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
 		const addon_id = id_and_addon[0];
@@ -595,7 +594,7 @@ export default class AddonService {
 			author: null,
 			reason: "Add-on must have a header image",
 		};
-		await this.saveUpdate(addon_id, addon, before);
+		await this.saveUpdate(addon_id, addon, before, notify);
 
 		// remove file from file service
 		await this.fileService.removeFileById(header.id);
@@ -606,10 +605,11 @@ export default class AddonService {
 		return Promise.resolve();
 	}
 
-	private saveUpdate(id: number, addon: Addon, before: AddonStatus): Promise<Addon> {
+	private saveUpdate(id: number, addon: Addon, before: AddonStatus, notify: Boolean = true): Promise<Addon> {
 		return this.addonRepo.update(id, addon)
 			.then(async (a) => {
-				await this.notifyAddonChange(a, before).catch(console.error);
+				if (notify)
+					await this.notifyAddonChange(a, before).catch(console.error);
 				return a;
 			})
 	}
@@ -630,7 +630,8 @@ export default class AddonService {
 			title = `Add-on '${a.name}' pending approval`;
 			name += "update";
 		} else {
-			title = `Add-on '${a.name}' ${now} by ${(await this.userService.getUserById(a.approval.author)).username}`;
+			const usernameApproval = (a.approval.author ? await this.userService.getUserById(a.approval.author).catch(() => undefined) : undefined) || "someone";
+			title = `Add-on '${a.name}' ${now} by ${usernameApproval}`;
 			name += "review";
 			users = a.authors; // notify authors of review
 		}

@@ -18,11 +18,11 @@ export default class PostService {
 		const parsed = Number.parseInt(id_or_permalink, 10);
 
 		if (!Number.isNaN(parsed)) {
-			postFound = await this.postRepo.getById(parsed).catch(() => undefined);
+			postFound = await this.getById(parsed).catch(() => undefined);
 		}
 
 		if (postFound === undefined)
-			postFound = await this.postRepo.getByPermalink(id_or_permalink).catch(() => undefined);
+			postFound = await this.getByPermalink(id_or_permalink).catch(() => undefined);
 
 		if (postFound !== undefined)
 			return postFound;
@@ -36,6 +36,10 @@ export default class PostService {
 
 	getById(id: number): Promise<WebsitePost> {
 		return this.postRepo.getById(id).catch(() => Promise.reject(new NotFoundError("Post not found")));
+	}
+
+	getByPermalink(permalink: string): Promise<WebsitePost> {
+		return this.postRepo.getByPermalink(permalink).catch(() => Promise.reject(new NotFoundError("Post not found")));
 	}
 
 	getDownloadsForId(id: number): Promise<WebsitePostDownloadRecord | null> {

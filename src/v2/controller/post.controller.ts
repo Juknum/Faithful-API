@@ -13,6 +13,7 @@ import {
 	Body,
 	Put,
 	Delete,
+	Query,
 } from "tsoa";
 import DOMPurify from 'isomorphic-dompurify';
 import {
@@ -58,28 +59,40 @@ export class PostController extends Controller {
 	}
 
 	/**
-	 * Get any post with id or permalink
-	 * @param id_or_permalink Desired post id or permalink
+	 * Get any post with permalink
+	 * @param permalink Desired post permalink
+	 * @example permalink "/faithful64x/B4"
 	 */
 	@Response<NotFoundError>(404)
-	@Get("{id_or_permalink}")
-	public async getPost(@Path() id_or_permalink: string): Promise<WebsitePost> {
-		return cache.handle(`website-post-${encodeURI(id_or_permalink)}`,
-			() => this.service.getByIdOrPermalink(decodeURI(id_or_permalink)));
+	@Get("bypermalink")
+	public async getPostByPermalink(@Query() permalink: string): Promise<WebsitePost> {
+		return cache.handle(`website-post-${encodeURI(permalink)}`,
+			() => this.service.getByPermalink(permalink));
+	}
+
+	/**
+	 * Get any post with id
+	 * @param id Desired post id
+	 */
+	@Response<NotFoundError>(404)
+	@Get("{id}")
+	public async getPostById(@Path() id: number): Promise<WebsitePost> {
+		return cache.handle(`website-post-${id}`,
+			() => this.service.getById(id));
 	}
 
 	/**
 	 * Get a redirect URL for the requested post header
-	 * @param id_or_permalink ID or permalink of the requested post
+	 * @param id Requested post ID
 	 */
 	@Response<NotFoundError>(404)
-	@Get("{id_or_permalink}/header")
+	@Get("{id}/header")
 	@SuccessResponse(302, "Redirect")
 	public async getHeaderForPost(
-		@Path() id_or_permalink: string,
+		@Path() id: number,
 		@Request() request: ExRequest
 	): Promise<void> {
-		const post = await this.service.getByIdOrPermalink(id_or_permalink);
+		const post = await this.service.getById(id);
 		console.log(post)
 		const { headerImg } = post;
 
