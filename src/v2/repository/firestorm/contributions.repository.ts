@@ -5,7 +5,7 @@ import {
 	ContributionsRepository,
 	ContributionsAuthors,
 	ContributionsPacks,
-	KnownPacksArr,
+	ContributionPacksArr,
 } from "../../interfaces";
 import { contributions, users } from "../../firestorm";
 
@@ -17,9 +17,7 @@ implements ContributionsRepository
 	}
 
 	getPacks(): ContributionsPacks {
-		return KnownPacksArr.filter(
-			(pack: string) => pack !== "default"
-		) as ContributionsPacks;
+		return [...ContributionPacksArr] as ContributionsPacks;
 	}
 
 	searchContributionsFrom(

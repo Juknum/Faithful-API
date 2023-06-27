@@ -35,7 +35,8 @@ export const OurPacksArr = [
 	"classic_faithful_32x_progart",
 	"classic_faithful_64x",
 ] as const;
-export const KnownPacksArr = ["default", ...OurPacksArr] as const;
+export const DefaultPacksArr = ["default", "default_programmer_art"] as const;
+export const KnownPacksArr = [...DefaultPacksArr, ...OurPacksArr] as const;
 
 export interface CreatedTexture extends TextureCreationParam {
 	uses: CreatedUse[];

@@ -1,6 +1,7 @@
 import { OurPacksArr } from "./textures";
 
-export type ContributionsPack = typeof OurPacksArr[number];
+export const ContributionPacksArr = OurPacksArr;
+export type ContributionsPack = typeof ContributionPacksArr[number];
 export type ContributionsPacks = Array<ContributionsPack>;
 export interface ContributionCreationParams {
 	date: number; // unix timestamp
