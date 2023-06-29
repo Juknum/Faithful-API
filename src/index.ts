@@ -58,9 +58,14 @@ app.use(
 	})
 );
 
-const options: SwaggerUiOptions = {
+// @types/swagger-ui-express is not updated
+interface UpdatedSwaggerUiOptions extends Omit<SwaggerUiOptions, "customJs"> {
+	customJs: string | string[]
+}
+
+const options: UpdatedSwaggerUiOptions = {
 	customCssUrl: "/custom.css",
-	customJs: "/custom.js",
+	customJs: ['/custom.js', '/custom_dom.js'],
 	swaggerOptions: {
 		tryItOutEnabled: true,
 	},
@@ -124,7 +129,7 @@ swaggerDoc = formHandler(
 swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
 
 // // TODO: find out what the fuck we are doing
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options as SwaggerUiOptions));
 
 const v1 = require("./v1");
 
