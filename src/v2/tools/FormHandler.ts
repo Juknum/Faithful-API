@@ -14,7 +14,7 @@ const MIME_TYPES_ACCEPTED = ["image/gif", "image/png", "image/jpeg"];
 
 const upload = multer({
 	limits: {
-		fileSize: 500000, // 500KB
+		fileSize: 3000000, // 3MB
 	},
 	fileFilter(req, file, callback) {
 		if (MIME_TYPES_ACCEPTED.includes(file.mimetype)) callback(null, true);
