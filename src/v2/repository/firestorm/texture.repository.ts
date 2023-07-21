@@ -63,6 +63,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 				field: "name",
 				criteria: partial ? "includes" : "==",
 				value: search,
+				ignoreCase: true,
 			});
 		}
 
