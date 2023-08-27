@@ -73,12 +73,7 @@ export const textures = firestorm.collection("textures", (el) => {
 				// eq to [0]
 				[use] = _uses.filter((u: Use) => u.id === path.use);
 
-				// TODO: '|| path.name.includes('assets/realms')' is a temp fix,
-				return `${urls[use.edition]}${version}/${
-					use.assets === null || path.name.includes("assets/realms")
-						? path.name
-						: `assets/${use.assets}/${path.name}`
-				}`;
+				return `${urls[use.edition]}${version}/${path.name}`;
 			})
 			.catch(
 				"https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png"
@@ -110,7 +105,7 @@ export const textures = firestorm.collection("textures", (el) => {
 						`https://raw.githubusercontent.com/CompliBot/Default-Java/${
 							p.versions.sort(MinecraftSorter).reverse()[0]
 						}/${
-							u.assets === null ? p.name : `assets/${u.assets}/${p.name}`
+							p.name
 						}.mcmeta`
 					)
 					.catch(() => null); // avoid crash if mcmeta file cannot be found

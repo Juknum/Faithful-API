@@ -40,13 +40,9 @@ export default class GalleryService {
 				texture_ids
 					.filter((t_id) => texture_to_use[t_id])
 					.map((t_id) => texture_to_use[t_id])
-					.map((use: Use) => {
-						const path_end = use_to_path[use.id].name;
-						if (use.assets === null || path_end.startsWith("assets"))
-							return path_end;
-
-						return `assets/${use.assets}/${path_end}`;
-					})
+					.map((use: Use) =>
+						use_to_path[use.id].name
+					)
 					.map((str) => url + str)
 			);
 	}

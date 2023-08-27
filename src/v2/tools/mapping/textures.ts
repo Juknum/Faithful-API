@@ -25,8 +25,7 @@ export function mapUse(old: OldUse): Use {
 		id: old.id,
 		name: old.textureUseName,
 		texture: Number.parseInt(old.id, 10),
-		edition: old.editions[0],
-		assets: old.editions[0] === "java" ? "minecraft" : null,
+		edition: old.editions[0]
 	};
 }
 
@@ -87,7 +86,7 @@ export function mapPath(old: OldPath): Path {
 	return {
 		id: old.id,
 		use: old.useID,
-		name: old.path.replace("assets/minecraft/", ""), // specified in the use
+		name: old.path, // specified in the use
 		mcmeta: old.mcmeta,
 		versions: old.versions,
 	};
