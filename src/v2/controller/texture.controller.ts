@@ -67,7 +67,7 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get versions through all textures paths
+	 * Get all existing Minecraft versions supported in the database
 	 */
 	@Get("versions")
 	public async getVersions(): Promise<Array<string>> {
@@ -75,7 +75,7 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get versions from the settings collection using an edition
+	 * Get all existing Minecraft versions for a given edition
 	 * @param edition Existing edition inside the settings collection
 	 * @returns
 	 */
@@ -85,7 +85,7 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get a texture using it's ID
+	 * Get a texture by ID or name
 	 * @param id_or_name Texture ID or texture name, splitted by "," if multiple
 	 */
 	@Get("{id_or_name}")

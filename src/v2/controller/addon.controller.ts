@@ -92,6 +92,7 @@ export class AddonController extends Controller {
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
 	@Security("discord", ["administrator"])
+	@Security("bot")
 	@Get("/")
 	public async getRaw(): Promise<Record<string, Addon>> {
 		return this.service.getRaw();
