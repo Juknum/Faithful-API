@@ -98,7 +98,7 @@ export class AddonController extends Controller {
 	}
 
 	/**
-	 * Get all add-ons using their status
+	 * Get all add-ons matching the given status
 	 * @param status Add-on status add-on
 	 */
 	public async getAddonsByStatus(status: AddonStatus): Promise<Addons> {
@@ -106,7 +106,7 @@ export class AddonController extends Controller {
 	}
 
 	/**
-	 * Get all add-ons stats for public
+	 * Get all public add-on statistics
 	 */
 	@Response<NotAvailableError>(408)
 	@Get("stats")
@@ -122,7 +122,7 @@ export class AddonController extends Controller {
 	}
 
 	/**
-	 * Get all add-ons stats for admins
+	 * Get all public and admin-only add-on statistics
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
@@ -133,7 +133,7 @@ export class AddonController extends Controller {
 	}
 
 	/**
-	 * Get any add-on with id or slug (needs to be authentified for non-approved add-on), Get any add-on using their status (needs authentification for non-approved)
+	 * Get any add-on by id, status, or slug (needs to be authenticated for non-approved add-on)
 	 * @param id_or_slug Desired addon id or slug or addons per status
 	 */
 	@Response<PermissionError>(403)
@@ -168,7 +168,7 @@ export class AddonController extends Controller {
 	}
 
 	/**
-	 * Get User profiles for the given add-on
+	 * Get all author profiles for the given add-on
 	 * @param id_or_slug ID or slug of the requested add-on
 	 */
 	@Response<NotFoundError>(404)
@@ -180,7 +180,7 @@ export class AddonController extends Controller {
 	}
 
 	/**
-	 * Get any add-on property with id or slug
+	 * Get any add-on property by id or slug
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
@@ -293,7 +293,7 @@ export class AddonController extends Controller {
 		@Request() request: ExRequest
 	) {
 		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
-		const screenshotURL = await this.service.getSreenshotURL(id, index);
+		const screenshotURL = await this.service.getScreenshotURL(id, index);
 		const response = (<any>request).res as ExResponse;
 		response.redirect(screenshotURL);
 	}

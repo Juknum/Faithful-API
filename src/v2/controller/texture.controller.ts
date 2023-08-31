@@ -42,7 +42,7 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get games editions supported by the database
+	 * Get Minecraft editions supported by the database
 	 */
 	@Get("editions")
 	public async getEditions(): Promise<Array<string>> {
@@ -67,7 +67,7 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get versions trough all textures paths
+	 * Get versions through all textures paths
 	 */
 	@Get("versions")
 	public async getVersions(): Promise<Array<string>> {
@@ -108,7 +108,7 @@ export class TextureController extends Controller {
 
 	/**
 	 * Get more information about all textures that have the given string in their name
-	 * @param id_or_name Searched texture name, splitted by "," if multiple
+	 * @param id_or_name Texture search by name or id (join by ',' if multiple)
 	 * @param property Property from the texture
 	 */
 	@Get("{id_or_name}/{property}")
@@ -149,7 +149,10 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 *
+	 * Get GitHub URL based on specified parameters
+	 * @param id texture id
+	 * @param pack pack to search from
+	 * @param mc_version version to choose from ('latest' to always get the latest version where texture exists)
 	 */
 	@Response<NotFoundError>(404)
 	@Get("{id}/url/{pack}/{mc_version}")
@@ -166,6 +169,10 @@ export class TextureController extends Controller {
 		);
 	}
 
+	/**
+	 * Create a texture
+	 * @param body texture information
+	 */
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
@@ -175,7 +182,11 @@ export class TextureController extends Controller {
 		return this.service.createTexture(body);
 	}
 
-	@Post("mutiple")
+	/**
+	 * Create multiple textures at once
+	 * @param body texture information
+	 */
+	@Post("multiple")
 	@Security("bot")
 	@Security("discord", ["administrator"])
 	public async createMultipleTextures(
@@ -184,6 +195,11 @@ export class TextureController extends Controller {
 		return this.service.createEntireTextures(body);
 	}
 
+	/**
+	 * Edit an existing texture
+	 * @param id texture id
+	 * @param body texture information
+	 */
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])

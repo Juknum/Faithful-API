@@ -28,7 +28,7 @@ export class SettingsController extends Controller {
 	}
 
 	/**
-	 * Gives particular setting from path
+	 * Get particular setting from path
 	 * @param path setting path split by "."
 	 */
 	@SuccessResponse(200)

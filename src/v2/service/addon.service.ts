@@ -96,7 +96,7 @@ export default class AddonService {
 	getAddonAuthors(id: number): Promise<Array<string>> {
 		return this.getAddon(id).then((addon: Addon) => addon.authors);
 	}
-	
+
 	getAddonAuthorsProfiles(id_or_slug: string): Promise<UserProfile[]> {
 		return this.getAddonFromSlugOrId(id_or_slug)
 			.then(([, addon]) => this.userService.getUserProfiles(addon.authors));
@@ -169,7 +169,7 @@ export default class AddonService {
 		);
 	}
 
-	async getSreenshotURL(id: number, index: number): Promise<string> {
+	async getScreenshotURL(id: number, index: number): Promise<string> {
 		const files = await this.getFiles(id);
 
 		// if no files, not found
@@ -619,7 +619,7 @@ export default class AddonService {
 		const statusSame = before === now; // "ignore pending to pending"
 
 		if(statusSame) return;
-	
+
 		let title = a.name;
 		let name = "Add-on ";
 		let users = [];

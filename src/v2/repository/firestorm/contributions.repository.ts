@@ -120,6 +120,14 @@ implements ContributionsRepository
 			.then((id: string) => contributions.get(id));
 	}
 
+	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
+		return contributions
+			.addBulk(params)
+			.then((ids: string[]) =>
+				ids.map(((id) => contributions.get(id)))
+			)
+	}
+
 	updateContribution(
 		id: string,
 		params: ContributionCreationParams

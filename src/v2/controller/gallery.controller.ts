@@ -43,7 +43,7 @@ export class GalleryController extends Controller {
 	}
 
 	/**
-	 * Get modal informations with urls, mcmeta, texture, uses and paths
+	 * Get modal information with urls, mcmeta, texture, uses and paths
 	 * @param id Searched texture name
 	 * @param mc_version Minecraft version needed for the images
 	 */

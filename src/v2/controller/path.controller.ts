@@ -19,7 +19,7 @@ export class PathsController extends Controller {
 	private readonly service: PathService = new PathService();
 
 	/**
-	 * Creates new path from void
+	 * Creates new path
 	 * @param body Input creation data
 	 * @returns path created
 	 */
@@ -31,8 +31,8 @@ export class PathsController extends Controller {
 	}
 
 	/**
-	 * Get path's use by id
-	 * @param {String} id - Use ID or Use Name
+	 * Get path's use by internal id (e.g. 6096bcd96fb8b)
+	 * @param {String} id internal id
 	 * @returns {Promise<Use | Uses>}
 	 */
 	@Get("{id}")
@@ -59,8 +59,8 @@ export class PathsController extends Controller {
 	}
 
 	/**
-	 * Delete use by id
-	 * @param {String} id - Use ID
+	 * Delete use by internal id (e.g. 6096bcd96fb8b)
+	 * @param {String} id internal id
 	 * @returns {Promise<void>}
 	 */
 	@Delete("{id}")

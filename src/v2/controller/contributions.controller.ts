@@ -38,7 +38,7 @@ export class ContributionsController extends Controller {
 	}
 
 	/**
-	 * Get all add-ons stats for public
+	 * Get all general contribution statistics
 	 */
 	@Response<NotAvailableError>(408)
 	@Get("stats")
@@ -47,18 +47,27 @@ export class ContributionsController extends Controller {
 	}
 
 	/**
-	 * Get all resource packs that have been contributed to
+	 * Get all resource packs with contributions
 	 */
 	@Get("packs")
 	public async getPacks(): Promise<ContributionsPacks> {
 		return this.service.getPacks();
 	}
 
+	/**
+	 * Get all users who have contributed to a resource pack before
+	 */
 	@Get("authors")
 	public async getAuthors(): Promise<ContributionsAuthors> {
 		return this.service.getAuthors();
 	}
 
+	/**
+	 * Filter contributions by either pack or contributor
+	 * @param packs list of resource packs joined by '-'
+	 * @param users list of user ids joined by '-'
+	 * @param search contribution to search for
+	 */
 	@Get("search")
 	public async searchWithTextureAndUser(
 		@Query() packs?: string,
@@ -74,14 +83,19 @@ export class ContributionsController extends Controller {
 		return this.service.search(params);
 	}
 
+	/**
+	 * Get texture by internal id (e.g. 61cdce61d3697)
+	 * @param id contribution id
+	 */
 	@Get("{id}")
 	public async getContributionById(id: string): Promise<Contribution> {
 		return this.service.getById(id);
 	}
 
 	/**
-	 * @param {String} users should be the discord users ids joined by '-'
-	 * @param {String} packs should be the resource packs joined by '-'
+	 * Get contributions by user and pack
+	 * @param {String} users list of user ids joined by '-'
+	 * @param {String} packs list of resource packs joined by '-'
 	 */
 	@Get("search/{users}/{packs}")
 	public async searchContributionsFrom(
@@ -96,6 +110,11 @@ export class ContributionsController extends Controller {
 		);
 	}
 
+	/**
+	 * Get all contributions between a given set of timestamps
+	 * @param begin starting timestamp
+	 * @param ends ending timestamp
+	 */
 	@Get("between/{begin}/{ends}")
 	public async getContributionInRange(
 		begin: string,
@@ -104,6 +123,10 @@ export class ContributionsController extends Controller {
 		return this.service.getByDateRange(begin, ends);
 	}
 
+	/**
+	 * Get all contributions from a given date until now
+	 * @param timestamp where to start counting
+	 */
 	@Get("from/{timestamp}")
 	public async getContributionFrom(timestamp: string): Promise<Contributions> {
 		return this.service.getByDateRange(
@@ -112,6 +135,10 @@ export class ContributionsController extends Controller {
 		);
 	}
 
+	/**
+	 * Get all contributions before a given date
+	 * @param timestamp where to stop counting
+	 */
 	@Get("before/{timestamp}")
 	public async getContributionBefore(
 		timestamp: string
@@ -119,22 +146,37 @@ export class ContributionsController extends Controller {
 		return this.service.getByDateRange("0", timestamp);
 	}
 
+	/**
+	 * Add a contribution or multiple contributions
+	 * @param body contribution information
+	 */
 	@Post()
-	@Security("discord", ["administrator"]) // avoid contributions to be set by anybody
+	@Security("discord", ["administrator"])
 	@Security("bot")
 	public async addContribution(
-		@Body() body: ContributionCreationParams
-	): Promise<Contribution> {
-		return this.service.addContribution(body);
+		@Body() body: ContributionCreationParams | ContributionCreationParams[]
+	): Promise<Contribution | Contribution[]> {
+		return Array.isArray(body)
+			? this.service.addContributions(body)
+			: this.service.addContribution(body);
 	}
 
+	/**
+	 * Delete a contribution by internal id (e.g. 61cdce61d3697)
+	 * @param id contribution id
+	 */
 	@Delete("{id}")
-	@Security("discord", ["administrator"]) // avoid contributions to be set by anybody
+	@Security("discord", ["administrator"])
 	@Security("bot")
 	public async deleteContribution(id: string): Promise<void> {
 		return this.service.deleteContribution(id);
 	}
 
+	/**
+	 * Update existing contribution with new information by internal id (e.g. 61cdce61d3697)
+	 * @param id internal id
+	 * @param body new information
+	 */
 	@Put("{id}")
 	@Security("discord", ["administrator"])
 	@Security("bot")

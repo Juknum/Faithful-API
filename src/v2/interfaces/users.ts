@@ -42,7 +42,7 @@ export interface UserProfile {
 }
 
 export interface User extends UserCreationParams {
-	warns: Array<string>; // list of all warns
+	warns?: Array<string>; // list of all warns
 	id: string; // discord user id
 	media: Medias;
 }
@@ -60,8 +60,6 @@ export interface UserRepository {
 	getProfileOrCreate(id: string): User | PromiseLike<User>;
 	getUserProfiles(authors: string[]): Promise<UserProfile[]>;
 	getNameById(id: string): Promise<UserName>;
-	getWarns(id: string): Promise<User["warns"]>;
-	addWarn(id: string, warn: string): Promise<User>;
 	getRaw(): Promise<Users>;
 	getNames(): Promise<any>;
 	getUserById(id: string): Promise<User>;

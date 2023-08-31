@@ -89,14 +89,6 @@ export class UserService {
 		return this.repository.getAddonsById(id);
 	}
 
-	public addWarn(id: string, data: { warn: string }): Promise<User> {
-		return this.repository.addWarn(id, data.warn);
-	}
-
-	public getWarns(id: string): Promise<User["warns"]> {
-		return this.repository.getWarns(id);
-	}
-
 	public async getProfileOrCreate(id: string): Promise<User> {
 		return this.repository.getProfileOrCreate(id);
 	}

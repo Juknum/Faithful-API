@@ -50,7 +50,7 @@ export class AddonChangeController extends Controller {
 	}
 
 	/**
-	 * Update an add-on using it's ID
+	 * Update an add-on
 	 * @param id_or_slug ID or slug of the updated add-on
 	 * @param body
 	 * @param request
@@ -78,7 +78,7 @@ export class AddonChangeController extends Controller {
 	}
 
 	/**
-	 * Set the review value of the add-on using the given ID
+	 * Set the review value of the add-on
 	 * @param id_or_slug ID or slug of the reviewed add-on
 	 * @param data Data containing, the status (pending, approved or denied) & the reason if denied (null otherwise)
 	 * @param request
@@ -106,7 +106,7 @@ export class AddonChangeController extends Controller {
 	}
 
 	/**
-	 * Delete an add-on using it's ID
+	 * Delete an add-on
 	 * @param id_or_slug ID or slug of the deleted add-on
 	 * @param request
 	 */

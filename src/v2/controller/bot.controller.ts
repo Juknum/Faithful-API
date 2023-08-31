@@ -8,7 +8,7 @@ export class BotController extends Controller {
 	private readonly botService = new BotService();
 
 	/**
-	 * Allows API to send 1 embed as a private messages to people
+	 * Allows API to send one embed as a private message to people
 	 * Check required and optional fields at https://discord.com/developers/docs/resources/channel#embed-object-embed-structure
 	 */
 	@Post("/send-embed")

@@ -71,7 +71,7 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Get all user stats for public
+	 * Get all public user stats
 	 */
 	@Response<NotAvailableError>(408)
 	@Get("stats")
@@ -125,7 +125,7 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Get a user by it's ID/username
+	 * Get a user by their ID or username
 	 * @param {String} id_or_username - User ID/Username
 	 * @returns {Promise<User|Users>}
 	 */
@@ -158,7 +158,7 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Get the name for the given ID
+	 * Get the corresponding username for a given user ID
 	 * @param {String} id - User ID
 	 * @returns {Promise<UserName>}
 	 */
@@ -168,7 +168,7 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Get all approved add-ons from that user
+	 * Get all approved add-ons from a given user
 	 * @param {String} id - User ID
 	 * @returns {Promise<Addons>}
 	 */
@@ -178,7 +178,7 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Get all add-ons from that user
+	 * Get all add-ons by a given user
 	 * @param {String} id - User ID
 	 * @returns {Promise<Addons>}
 	 */
@@ -214,32 +214,6 @@ export class UserController extends Controller {
 		@Body() body: UserCreationParams
 	): Promise<User> {
 		return this.userService.create(id, { ...body, id, media: [], warns: [] });
-	}
-
-	/**
-	 * Add a warn to specified the user
-	 * @param {String} id - User ID
-	 * @param {Object<{warn: String}>} body - warn string
-	 */
-	@Put("{id}/warns")
-	@Security("discord", ["administrator"])
-	@Security("bot")
-	public async addWarn(
-		@Path() id: string,
-		@Body() body: { warn: string }
-	): Promise<User> {
-		return this.userService.addWarn(id, body);
-	}
-
-	/**
-	 * Add a warn to specified the user
-	 * @param {String} id - User ID
-	 */
-	@Get("{id}/warns")
-	@Security("discord", ["administrator"])
-	@Security("bot")
-	public async getWarns(@Path() id: string): Promise<User["warns"]> {
-		return this.userService.getWarns(id);
 	}
 
 	/**

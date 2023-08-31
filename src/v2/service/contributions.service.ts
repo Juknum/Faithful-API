@@ -134,6 +134,10 @@ export default class ContributionService {
 		return this.contributionRepo.addContribution(params);
 	}
 
+	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
+		return this.contributionRepo.addContributions(params);
+	}
+
 	deleteContribution(id: string): Promise<void> {
 		return this.contributionRepo.deleteContribution(id);
 	}
