@@ -10,13 +10,21 @@ import {
 	Body,
 	Put,
 } from "tsoa";
-import { Path, InputPath } from "../interfaces";
+import { Path, InputPath, Paths } from "../interfaces";
 import PathService from "../service/path.service";
 
 @Route("paths")
 @Tags("Paths")
 export class PathsController extends Controller {
 	private readonly service: PathService = new PathService();
+
+	/**
+	 * Get the raw collection of paths
+	 */
+	@Get("raw")
+	public async getRaw(): Promise<Paths> {
+		return this.service.getRaw();
+	}
 
 	/**
 	 * Creates new path
@@ -36,7 +44,7 @@ export class PathsController extends Controller {
 	 * @returns {Promise<Use | Uses>}
 	 */
 	@Get("{id}")
-	public async getPathById(@URLPath() id: string): Promise<Path> {
+	public async getPathById(id: string): Promise<Path> {
 		return this.service.getPathById(id);
 	}
 

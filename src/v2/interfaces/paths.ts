@@ -25,4 +25,5 @@ export interface PathRepository {
 	updatePath(path_id: string, path: Path): Promise<Path>;
 	removePathById(path_id: string): Promise<void>;
 	removePathsByBulk(path_ids: string[]): Promise<void>;
+	getRaw(): Promise<Paths>;
 }

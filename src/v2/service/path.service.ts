@@ -2,6 +2,7 @@ import { BadRequestError } from "../tools/ApiError";
 import UseService from "./use.service";
 import { InputPath, Path, PathRepository, Paths } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
+import { mapPath } from "../tools/mapping/textures";
 
 export default class PathService {
 	constructor();
@@ -17,6 +18,14 @@ export default class PathService {
 	private readonly useService: UseService;
 
 	private readonly repository: PathRepository = new PathFirestormRepository();
+
+
+	getRaw(): Promise<Paths> {
+		return this.repository.getRaw()
+			.then((res: any) => Object.values(res)
+			.map((i: any) => mapPath(i)
+			));
+	}
 
 	getPathByUseId(use_id: string): Promise<Paths> {
 		return this.repository.getPathUseById(use_id);
