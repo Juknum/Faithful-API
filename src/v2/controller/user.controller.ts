@@ -64,8 +64,6 @@ export class UserController extends Controller {
 	 * @returns {Promise<Users>}
 	 */
 	@Get("raw")
-	@Security("discord", ["administrator"]) // avoid warns info to be shown
-	@Security("bot")
 	public async getRaw(): Promise<Users> {
 		return this.userService.getRaw();
 	}
@@ -103,8 +101,6 @@ export class UserController extends Controller {
 	 * @returns {Promise<Users>}
 	 */
 	@Get("role/{role}")
-	@Security("discord", ["administrator"]) // avoid warns info to be shown
-	@Security("bot")
 	public async getUsersFromRole(@Path() role: string): Promise<Users> {
 		return this.userService.getUsersFromRole(role, null);
 	}
@@ -115,8 +111,6 @@ export class UserController extends Controller {
 	 * @param {String} username - discord user username
 	 */
 	@Get("role/{role}/{username}")
-	@Security("discord", ["administrator"]) // avoid warns info to be shown
-	@Security("bot")
 	public async getUsersFromRoleAndUsername(
 		@Path() role: string,
 		@Path() username: string
@@ -130,10 +124,8 @@ export class UserController extends Controller {
 	 * @returns {Promise<User|Users>}
 	 */
 	@Get("{id_or_username}")
-	@Security("discord", ["administrator"]) // avoid warns info to be shown
-	@Security("bot")
 	public async getUser(@Path() id_or_username: string): Promise<User | Users> {
-		// can't parse discord ids directly into a number because of floating point numbers precision (lasts bits are lost)
+		// can't parse discord ids directly into a number because precision can be lost
 		const int: Array<number> = id_or_username
 			.split("")
 			.map((s) => parseInt(s, 10));

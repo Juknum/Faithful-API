@@ -14,13 +14,13 @@ import {
 
 // eslint-disable-next-line no-underscore-dangle
 function __transformUser(user: any): User {
+	// falsy checking and remove warns field (unused)
 	return {
 		id: user.id,
 		username: user.username || "",
 		uuid: user.uuid || "",
 		roles: user.roles || [],
 		media: user.media,
-		warns: user.warns || [],
 		anonymous: user.anonymous || false,
 	};
 }
