@@ -86,7 +86,7 @@ export function mapPath(old: OldPath): Path {
 	return {
 		id: old.id,
 		use: old.useID,
-		name: old.path, // specified in the use
+		name: old.path,
 		mcmeta: old.mcmeta,
 		versions: old.versions,
 	};

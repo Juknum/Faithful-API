@@ -10,8 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install modules
-      run: npm i
+      run: pnpm i
     - name: Build additional files
-      run: npm run build
+      run: pnpm build
     - name: Run ESLint
-      run: npm run lint
+      run: pnpm lint
