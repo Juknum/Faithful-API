@@ -21,6 +21,6 @@ jobs:
           cd /var/www/html/api.faithfulpack.net/
           git stash
           git pull
-          pnpm install
-          pnpm build
+          npm install --save
+          npm run build
           pm2 restart "API"

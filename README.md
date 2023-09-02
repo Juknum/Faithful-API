@@ -19,8 +19,8 @@
 ## Running
 
 ```bash
-pnpm install
+npm install
 ```
 ```bash
-pnpm dev
+npm run dev
 ```

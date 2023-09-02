@@ -1,5 +1,5 @@
 {
-    "exec": "pnpm exec",
+    "exec": "npm run exec",
     "watch": [
         "src",
         "public/custom.js",
