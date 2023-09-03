@@ -29,7 +29,7 @@ export class SettingsController extends Controller {
 
 	/**
 	 * Get particular setting from path
-	 * @param path setting path split by "."
+	 * @param path Settings path split by "."
 	 */
 	@SuccessResponse(200)
 	@Response<NotFoundError>(404)
@@ -47,7 +47,7 @@ export class SettingsController extends Controller {
 
 	/**
 	 * Update the whole collection with the sent content
-	 * @param body
+	 * @param body Entire settings JSON
 	 */
 	@SuccessResponse(204)
 	@Response<PermissionError>(403)

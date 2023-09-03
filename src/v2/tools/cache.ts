@@ -4,7 +4,7 @@ import { tmpdir } from "os";
 
 const NO_CACHE = process.env.NO_CACHE === 'true';
 
-const CACHE_DURATION = 86400000; // ONE_DAY
+const CACHE_DURATION = 86400000; // one day
 
 const REWRITE_INDEX = 0;
 const WRITE_INDEX = 0;

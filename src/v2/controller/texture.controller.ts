@@ -59,7 +59,7 @@ export class TextureController extends Controller {
 
 	/**
 	 * Get current contributed resolutions in the database
-	 * integer array of square 2
+	 * Integer array of square 2
 	 */
 	@Get("resolutions")
 	public async getResolutions(): Promise<Array<number>> {
@@ -77,7 +77,6 @@ export class TextureController extends Controller {
 	/**
 	 * Get all existing Minecraft versions for a given edition
 	 * @param edition Existing edition inside the settings collection
-	 * @returns
 	 */
 	@Get("versions/{edition}")
 	public getVersionByEdition(@Path() edition: Edition): Promise<Array<string>> {
@@ -86,7 +85,7 @@ export class TextureController extends Controller {
 
 	/**
 	 * Get a texture by ID or name
-	 * @param id_or_name Texture ID or texture name, splitted by "," if multiple
+	 * @param id_or_name Texture ID or texture name (join by "," if multiple)
 	 */
 	@Get("{id_or_name}")
 	public async getTexture(
@@ -150,9 +149,9 @@ export class TextureController extends Controller {
 
 	/**
 	 * Get GitHub URL based on specified parameters
-	 * @param id texture id
-	 * @param pack pack to search from
-	 * @param mc_version version to choose from ('latest' to always get the latest version where texture exists)
+	 * @param id Texture ID
+	 * @param pack Pack to search from
+	 * @param mc_version Version to choose from ('latest' to always get the latest version where texture exists)
 	 */
 	@Response<NotFoundError>(404)
 	@Get("{id}/url/{pack}/{mc_version}")
@@ -171,7 +170,7 @@ export class TextureController extends Controller {
 
 	/**
 	 * Create a texture
-	 * @param body texture information
+	 * @param body Texture information
 	 */
 	@Post("")
 	@Security("bot")
@@ -184,7 +183,7 @@ export class TextureController extends Controller {
 
 	/**
 	 * Create multiple textures at once
-	 * @param body texture information
+	 * @param body Texture information
 	 */
 	@Post("multiple")
 	@Security("bot")
@@ -197,8 +196,8 @@ export class TextureController extends Controller {
 
 	/**
 	 * Edit an existing texture
-	 * @param id texture id
-	 * @param body texture information
+	 * @param id Texture ID
+	 * @param body Texture information
 	 */
 	@Put("{id}")
 	@Security("bot")
@@ -213,7 +212,6 @@ export class TextureController extends Controller {
 	/**
 	 * Deletes the ENTIRE texture, with uses and paths included
 	 * @param id Texture ID
-	 * @returns nothing
 	 */
 	@Delete("{id}")
 	@Security("bot")

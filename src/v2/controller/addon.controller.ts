@@ -100,7 +100,7 @@ export class AddonController extends Controller {
 
 	/**
 	 * Get all add-ons matching the given status
-	 * @param status Add-on status add-on
+	 * @param status Add-on status
 	 */
 	public async getAddonsByStatus(status: AddonStatus): Promise<Addons> {
 		return this.service.getAddonByStatus(status);
@@ -134,8 +134,8 @@ export class AddonController extends Controller {
 	}
 
 	/**
-	 * Get any add-on by id, status, or slug (needs to be authenticated for non-approved add-on)
-	 * @param id_or_slug Desired addon id or slug or addons per status
+	 * Get any add-on by ID, status, or slug (needs to be authenticated for non-approved add-on)
+	 * @param id_or_slug Requested add-on ID, slug, or status
 	 */
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
@@ -181,7 +181,7 @@ export class AddonController extends Controller {
 	}
 
 	/**
-	 * Get any add-on property by id or slug
+	 * Get any add-on property by ID or slug
 	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)

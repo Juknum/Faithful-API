@@ -61,7 +61,7 @@ export class PostController extends Controller {
 	/**
 	 * Get any post with permalink
 	 * @param permalink Desired post permalink
-	 * @example permalink "/faithful64x/B4"
+	 * @example Permalink "/faithful64x/B4"
 	 */
 	@Response<NotFoundError>(404)
 	@Get("bypermalink")
@@ -71,8 +71,8 @@ export class PostController extends Controller {
 	}
 
 	/**
-	 * Get any post with id
-	 * @param id Desired post id
+	 * Get any post by ID
+	 * @param id Desired post ID
 	 */
 	@Response<NotFoundError>(404)
 	@Get("{id}")
@@ -93,7 +93,6 @@ export class PostController extends Controller {
 		@Request() request: ExRequest
 	): Promise<void> {
 		const post = await this.service.getById(id);
-		console.log(post)
 		const { headerImg } = post;
 
 		if (!headerImg) throw new NotFoundError("Post header image not found");
@@ -129,8 +128,7 @@ export class PostController extends Controller {
 
 	/**
 	 * Creates post and returns the created post
-	 * @param postToCreate 
-	 * @returns 
+	 * @param postToCreate Post information
 	 */
 	@Response<BadRequestError>(400)
 	@Response<PermissionError>(403)
@@ -142,10 +140,10 @@ export class PostController extends Controller {
 	}
 
 	/**
-	 * Updates the post to the given id
-	 * @param id post id
-	 * @param postToCreate body
-	 * @returns updated article
+	 * Updates the post to the given ID
+	 * @param id Post ID
+	 * @param postToCreate Post information
+	 * @returns Updated article
 	 */
 	@Response<BadRequestError>(400)
 	@Response<PermissionError>(403)
@@ -157,9 +155,8 @@ export class PostController extends Controller {
 	}
 
 	/**
-	 * Deletes the post with the given id
-	 * @param id post id
-	 * @returns nothing
+	 * Deletes the post with the given ID
+	 * @param id Post ID
 	 */
 	@Response<BadRequestError>(400)
 	@Response<PermissionError>(403)

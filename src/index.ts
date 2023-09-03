@@ -37,8 +37,8 @@ app.use(
 		extended: true,
 	})
 );
-//! DO NOT DELETE
 
+//! DO NOT DELETE
 app.use(responseTime());
 
 app.use(
@@ -128,7 +128,7 @@ swaggerDoc = formHandler(
 );
 swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
 
-// // TODO: find out what the fuck we are doing
+// TODO: find out what the fuck we are doing
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options as SwaggerUiOptions));
 
 const v1 = require("./v1");

@@ -29,7 +29,6 @@ export class PathsController extends Controller {
 	/**
 	 * Creates new path
 	 * @param body Input creation data
-	 * @returns path created
 	 */
 	@Post("")
 	@Security("bot")
@@ -39,9 +38,8 @@ export class PathsController extends Controller {
 	}
 
 	/**
-	 * Get path's use by internal id (e.g. 6096bcd96fb8b)
-	 * @param {String} id internal id
-	 * @returns {Promise<Use | Uses>}
+	 * Get path's use by internal ID (e.g. 6096bcd96fb8b)
+	 * @param {String} id Internal ID
 	 */
 	@Get("{id}")
 	public async getPathById(id: string): Promise<Path> {
@@ -51,7 +49,6 @@ export class PathsController extends Controller {
 	/**
 	 * Update current path
 	 * @param body Input data
-	 * @returns path modified
 	 */
 	@Put("{id}")
 	@Security("bot")
@@ -68,8 +65,7 @@ export class PathsController extends Controller {
 
 	/**
 	 * Delete use by internal id (e.g. 6096bcd96fb8b)
-	 * @param {String} id internal id
-	 * @returns {Promise<void>}
+	 * @param {String} id Internal ID
 	 */
 	@Delete("{id}")
 	@Security("bot")

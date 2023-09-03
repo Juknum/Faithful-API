@@ -97,7 +97,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get users that have a specific role
-	 * @param {String} role - The role to search for
+	 * @param {String} role The role to search for
 	 * @returns {Promise<Users>}
 	 */
 	@Get("role/{role}")
@@ -107,8 +107,8 @@ export class UserController extends Controller {
 
 	/**
 	 * Get users that have a specific role
-	 * @param {String} role - role name
-	 * @param {String} username - discord user username
+	 * @param {String} role Role name
+	 * @param {String} username Discord user username
 	 */
 	@Get("role/{role}/{username}")
 	public async getUsersFromRoleAndUsername(
@@ -120,7 +120,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get a user by their ID or username
-	 * @param {String} id_or_username - User ID/Username
+	 * @param {String} id_or_username User ID/Username
 	 * @returns {Promise<User|Users>}
 	 */
 	@Get("{id_or_username}")
@@ -141,7 +141,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get all contributions a user has made
-	 * @param {String} id - User ID
+	 * @param {String} id User ID
 	 * @returns {Promise<Contributions>}
 	 */
 	@Get("{id}/contributions")
@@ -151,7 +151,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get the corresponding username for a given user ID
-	 * @param {String} id - User ID
+	 * @param {String} id User ID
 	 * @returns {Promise<UserName>}
 	 */
 	@Get("{id}/name")
@@ -161,7 +161,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get all approved add-ons from a given user
-	 * @param {String} id - User ID
+	 * @param {String} id User ID
 	 * @returns {Promise<Addons>}
 	 */
 	@Get("{id}/addons/approved")
@@ -171,7 +171,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get all add-ons by a given user
-	 * @param {String} id - User ID
+	 * @param {String} id User ID
 	 * @returns {Promise<Addons>}
 	 */
 	@Get("{id}/addons")
@@ -195,7 +195,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Create user data
-	 * @param {UserCreationParams} body - user data
+	 * @param {UserCreationParams} body User data
 	 * @returns {Promise<User>}
 	 */
 	@Post("{id}")
@@ -210,8 +210,8 @@ export class UserController extends Controller {
 
 	/**
 	 * Update user data for the given user ID
-	 * @param {String} id - User ID
-	 * @param {UserCreationParams} body - user data
+	 * @param {String} id User ID
+	 * @param {UserCreationParams} body User data
 	 * @param request
 	 * @returns {Promise<User>}
 	 */
@@ -244,8 +244,8 @@ export class UserController extends Controller {
 
 	/**
 	 * Set roles for a user with the given user ID
-	 * @param {String} id - User ID
-	 * @param {Array<String>} roles - Role names (not IDs!)
+	 * @param {String} id User ID
+	 * @param {Array<String>} roles Role names (not IDs!)
 	 * @returns {Promise<User>}
 	 */
 	@Put("{id}/roles")
@@ -260,7 +260,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Delete the user with the given ID
-	 * @param {String} id - User ID to be deleted
+	 * @param {String} id User ID to be deleted
 	 * @returns {Promise<void>}
 	 */
 	@Delete("{id}")

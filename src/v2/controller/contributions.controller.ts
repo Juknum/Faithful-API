@@ -64,9 +64,9 @@ export class ContributionsController extends Controller {
 
 	/**
 	 * Filter contributions by either pack or contributor
-	 * @param packs list of resource packs joined by '-'
-	 * @param users list of user ids joined by '-'
-	 * @param search contribution to search for
+	 * @param packs List of resource packs joined by '-'
+	 * @param users List of user ids joined by '-'
+	 * @param search Contribution to search for
 	 */
 	@Get("search")
 	public async searchWithTextureAndUser(
@@ -84,8 +84,8 @@ export class ContributionsController extends Controller {
 	}
 
 	/**
-	 * Get texture by internal id (e.g. 61cdce61d3697)
-	 * @param id contribution id
+	 * Get texture by internal ID (e.g. 61cdce61d3697)
+	 * @param id Contribution ID
 	 */
 	@Get("{id}")
 	public async getContributionById(id: string): Promise<Contribution> {
@@ -94,8 +94,8 @@ export class ContributionsController extends Controller {
 
 	/**
 	 * Get contributions by user and pack
-	 * @param {String} users list of user ids joined by '-'
-	 * @param {String} packs list of resource packs joined by '-'
+	 * @param {String} users List of user ids joined by '-'
+	 * @param {String} packs List of resource packs joined by '-'
 	 */
 	@Get("search/{users}/{packs}")
 	public async searchContributionsFrom(
@@ -112,8 +112,8 @@ export class ContributionsController extends Controller {
 
 	/**
 	 * Get all contributions between a given set of timestamps
-	 * @param begin starting timestamp
-	 * @param ends ending timestamp
+	 * @param begin Starting timestamp
+	 * @param ends Ending timestamp
 	 */
 	@Get("between/{begin}/{ends}")
 	public async getContributionInRange(
@@ -125,7 +125,7 @@ export class ContributionsController extends Controller {
 
 	/**
 	 * Get all contributions from a given date until now
-	 * @param timestamp where to start counting
+	 * @param timestamp Where to start counting
 	 */
 	@Get("from/{timestamp}")
 	public async getContributionFrom(timestamp: string): Promise<Contributions> {
@@ -137,7 +137,7 @@ export class ContributionsController extends Controller {
 
 	/**
 	 * Get all contributions before a given date
-	 * @param timestamp where to stop counting
+	 * @param timestamp Where to stop counting
 	 */
 	@Get("before/{timestamp}")
 	public async getContributionBefore(
@@ -148,7 +148,7 @@ export class ContributionsController extends Controller {
 
 	/**
 	 * Add a contribution or multiple contributions
-	 * @param body contribution information
+	 * @param body Contribution information
 	 */
 	@Post()
 	@Security("discord", ["administrator"])
@@ -162,8 +162,8 @@ export class ContributionsController extends Controller {
 	}
 
 	/**
-	 * Delete a contribution by internal id (e.g. 61cdce61d3697)
-	 * @param id contribution id
+	 * Delete a contribution by internal ID (e.g. 61cdce61d3697)
+	 * @param id Contribution ID
 	 */
 	@Delete("{id}")
 	@Security("discord", ["administrator"])
@@ -173,9 +173,9 @@ export class ContributionsController extends Controller {
 	}
 
 	/**
-	 * Update existing contribution with new information by internal id (e.g. 61cdce61d3697)
-	 * @param id internal id
-	 * @param body new information
+	 * Update existing contribution with new information by internal ID (e.g. 61cdce61d3697)
+	 * @param id Internal ID
+	 * @param body New information
 	 */
 	@Put("{id}")
 	@Security("discord", ["administrator"])

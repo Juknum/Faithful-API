@@ -17,7 +17,7 @@ export class UsesController extends Controller {
 	}
 
 	/**
-	 * Adds a new texture use to the database for a given texture id and body
+	 * Adds a new texture use to the database for a given texture ID and body
 	 * @param body Texture use to create
 	 * @returns {Promise<Use>} Created use
 	 */
@@ -32,7 +32,7 @@ export class UsesController extends Controller {
 	}
 
 	/**
-	 * Get a path's use by id
+	 * Get a path's use by ID
 	 * @param {String} id_or_name - Use ID or Use Name
 	 * @returns {Promise<Use | Uses>}
 	 */
@@ -44,8 +44,8 @@ export class UsesController extends Controller {
 	}
 
 	/**
-	 * Get a use by use id
-	 * @param {String} id_or_name - Use ID or Use Name
+	 * Get a use by ID
+	 * @param {String} id_or_name Use ID or Use Name
 	 * @returns {Promise<Use | Uses>}
 	 */
 	@Get("{id_or_name}")
@@ -57,7 +57,7 @@ export class UsesController extends Controller {
 
 	/**
 	 * Update texture use by use ID
-	 * @param {String} id - Use ID
+	 * @param {String} id Use ID
 	 * @returns {Promise<void>}
 	 */
 	@Put("{id}")
@@ -71,7 +71,7 @@ export class UsesController extends Controller {
 
 	/**
 	 * Remove texture use by use ID with its associated paths
-	 * @param {String} id - Use ID
+	 * @param {String} id Use ID
 	 * @returns {Promise<void>}
 	 */
 	@Delete("{id}")
