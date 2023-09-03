@@ -23,7 +23,7 @@ export class UsesController extends Controller {
 	 */
 	@Post("")
 	@Security("discord", ["administrator"])
-	public async CreateUse(
+	public async createUse(
 		@Body() body: CreationUse & { id: string; }
 	): Promise<Use> {
 		return this.service.createUse({

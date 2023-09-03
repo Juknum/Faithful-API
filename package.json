@@ -1,7 +1,7 @@
 {
     "name": "faithful-api",
     "version": "2.0.0",
-    "description": "An API for Faithful Resource Pack textures, add-ons and more",
+    "description": "A public API for Faithful Resource Pack textures, add-ons and more.",
     "scripts": {
         "dev": "npm run spec-and-routes && npm run nodemon",
         "nodemon": "nodemon",
