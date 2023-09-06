@@ -6,13 +6,12 @@ import {
 	ContributionSearch,
 	ContributionsRepository,
 	ContributionStats,
-	DayRecord,
 	PackData,
 	PackPercentile,
 	PackRecord,
 } from "../interfaces/contributions";
 import ContributionFirestormRepository from "../repository/firestorm/contributions.repository";
-import { lastMonth, lastWeek } from "../tools/utils";
+import { lastDay, lastMonth, lastWeek, startOfDay } from "../tools/utils";
 import TextureService from "./texture.service";
 
 export default class ContributionService {
@@ -29,14 +28,18 @@ export default class ContributionService {
 		return this.getRaw().then((cs) => {
 			let total_authors = 0;
 			let total_contributions = 0;
+
 			const authors = {};
+
 			let total_last_week = 0;
 			let total_last_month = 0;
-			const activity = {} as PackRecord;
-			const percentiles = {} as PackPercentile;
+			let total_last_day = 0;
 
-			const last_month = lastMonth();
-			const last_week = lastWeek();
+			const last_month = startOfDay(lastMonth()).getTime();
+			const last_week = startOfDay(lastWeek()).getTime();
+			const last_day = startOfDay(lastDay()).getTime();
+
+			const aggregate: PackRecord = {} as PackRecord;
 
 			cs.forEach((cur) => {
 				total_contributions += 1;
@@ -48,32 +51,35 @@ export default class ContributionService {
 					}
 				});
 
-				if (!(cur.pack in activity)) activity[cur.pack] = {} as DayRecord;
-				if (!(cur.date in activity[cur.pack]))
-					activity[cur.pack][cur.date] = {
-						date: cur.date,
-						count: 0,
-					};
-				activity[cur.pack][cur.date].count++;
+				const { pack, date: timestamp } = cur;
+				//! Group data by the start of date if time dont coincide
+				const start_of_day = startOfDay(timestamp).getTime();
 
-				// last week and last month
-				const date = new Date(cur.date);
-				if (date >= last_week) {
+				aggregate[pack] ||= {};
+				aggregate[pack][start_of_day] ||= {
+					date: start_of_day,
+					count: 0,
+				};
+				aggregate[pack][start_of_day].count++;
+
+				if (timestamp >= last_week) {
 					total_last_week += 1;
 				}
-				if (date >= last_month) {
+				if (timestamp >= last_month) {
 					total_last_month += 1;
+				}
+				if (timestamp >= last_day) {
+					total_last_day += 1;
 				}
 			});
 
 			const final_activity = {} as PackData;
+			const percentiles = {} as PackPercentile;
+			Object.entries(aggregate).forEach(([pack, pack_aggregate]) => {
+				final_activity[pack] = Object.values(pack_aggregate);
 
-			Object.keys(activity).forEach((pack) => {
-				final_activity[pack] = Object.values(activity[pack]);
-
-				const counts = Object.values(activity[pack])
-					.map((e: Record<any, any>) => e.count)
-					.filter((e) => e !== 0)
+				const counts = Object.values(pack_aggregate)
+					.map((e) => e.count) // ? No need to filter 0 as the contruction of the record makes it impossible
 					.sort();
 				percentiles[pack] = counts[Math.round((counts.length * 95) / 100)];
 			});
@@ -81,6 +87,7 @@ export default class ContributionService {
 			return {
 				total_authors,
 				total_contributions,
+				total_last_day,
 				total_last_week,
 				total_last_month,
 				activity: final_activity,
@@ -134,7 +141,9 @@ export default class ContributionService {
 		return this.contributionRepo.addContribution(params);
 	}
 
-	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
+	addContributions(
+		params: ContributionCreationParams[]
+	): Promise<Contribution[]> {
 		return this.contributionRepo.addContributions(params);
 	}
 
