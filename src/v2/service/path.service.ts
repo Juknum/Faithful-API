@@ -22,7 +22,7 @@ export default class PathService {
 	getRaw(): Promise<Paths> {
 		return this.repository
 			.getRaw()
-			.then((res: any) => Object.values(res).map((i: any) => mapPath(i)));
+			.then((res: any) => Object.values(res).map(mapPath));
 	}
 
 	getPathByUseId(use_id: string): Promise<Paths> {

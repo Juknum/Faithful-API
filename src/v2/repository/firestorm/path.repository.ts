@@ -51,7 +51,7 @@ export default class PathFirestormRepository implements PathRepository {
 	}
 
 	getPathById(path_id: string): Promise<Path> {
-		return paths.get(path_id).then((p) => mapPath(p));
+		return paths.get(path_id).then(mapPath);
 	}
 
 	updatePath(path_id: string, path: Path): Promise<Path> {
