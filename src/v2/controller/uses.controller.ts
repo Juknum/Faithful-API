@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Path,
+	Post,
+	Put,
+	Route,
+	Security,
+	Tags,
+} from "tsoa";
 import { Use, Uses, Paths, CreationUse } from "../interfaces";
 import UseService from "../service/use.service";
 
@@ -24,11 +35,11 @@ export class UsesController extends Controller {
 	@Post("")
 	@Security("discord", ["administrator"])
 	public async createUse(
-		@Body() body: CreationUse & { id: string; }
+		@Body() body: CreationUse & { id: string }
 	): Promise<Use> {
 		return this.service.createUse({
-			...body
-		})
+			...body,
+		});
 	}
 
 	/**
@@ -66,7 +77,7 @@ export class UsesController extends Controller {
 		@Path() id: string,
 		@Body() modifiedUse: CreationUse
 	): Promise<Use> {
-		return this.service.updateUse(id, modifiedUse)
+		return this.service.updateUse(id, modifiedUse);
 	}
 
 	/**

@@ -66,7 +66,7 @@ export default class UseFirestormRepository implements UseRepository {
 			.then((foundPaths) => {
 				return Promise.all([
 					uses.remove(use_id),
-					pathsCollection.removeBulk(foundPaths.map((p) => p[ID_FIELD])) // delete all paths
+					pathsCollection.removeBulk(foundPaths.map((p) => p[ID_FIELD])), // delete all paths
 				]);
 			})
 			.then(() => {});

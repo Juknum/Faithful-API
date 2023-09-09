@@ -98,8 +98,9 @@ export default class AddonService {
 	}
 
 	getAddonAuthorsProfiles(id_or_slug: string): Promise<UserProfile[]> {
-		return this.getAddonFromSlugOrId(id_or_slug)
-			.then(([, addon]) => this.userService.getUserProfiles(addon.authors));
+		return this.getAddonFromSlugOrId(id_or_slug).then(([, addon]) =>
+			this.userService.getUserProfiles(addon.authors)
+		);
 	}
 
 	getFiles(id: number): Promise<Files> {
@@ -262,7 +263,7 @@ export default class AddonService {
 
 		const addon: Addon = {
 			...addonDataParams,
-			last_updated: (new Date()).getTime(),
+			last_updated: new Date().getTime(),
 			slug: slugValue,
 			approval: {
 				status: "pending",
@@ -304,7 +305,11 @@ export default class AddonService {
 			});
 	}
 
-	async update(id: number, body: AddonCreationParam, reason: string): Promise<Addon> {
+	async update(
+		id: number,
+		body: AddonCreationParam,
+		reason: string
+	): Promise<Addon> {
 		// authentification was already made
 		// tag values have already been verified
 
@@ -360,9 +365,9 @@ export default class AddonService {
 		const savedAddon = await this.getAddon(id);
 		const before = savedAddon.approval.status;
 		const addon: Addon = {
-			...(savedAddon),
+			...savedAddon,
 			...addonDataParams,
-			last_updated: (new Date().getTime()),
+			last_updated: new Date().getTime(),
 			approval: {
 				status: "pending",
 				author: null,
@@ -390,7 +395,7 @@ export default class AddonService {
 
 		const before = addon.approval?.status || null;
 		// try to remove curent header
-		await this.deleteHeader(String(addon_id), false).catch(() => { });
+		await this.deleteHeader(String(addon_id), false).catch(() => {});
 
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/header.${extension}`;
@@ -558,7 +563,10 @@ export default class AddonService {
 	 * Deletes the given screenshot at given index
 	 * @param id_or_slug ID or slug of the deleted add-on screenshot
 	 */
-	public async deleteHeader(id_or_slug: string, notify: Boolean = true): Promise<void> {
+	public async deleteHeader(
+		id_or_slug: string,
+		notify: Boolean = true
+	): Promise<void> {
 		// get addonID
 		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
 		const addon_id = id_and_addon[0];
@@ -605,54 +613,69 @@ export default class AddonService {
 		return Promise.resolve();
 	}
 
-	private saveUpdate(id: number, addon: Addon, before: AddonStatus, notify: Boolean = true): Promise<Addon> {
-		return this.addonRepo.update(id, addon)
-			.then(async (a) => {
-				if (notify)
-					await this.notifyAddonChange(a, before).catch(console.error);
-				return a;
-			})
+	private saveUpdate(
+		id: number,
+		addon: Addon,
+		before: AddonStatus,
+		notify: Boolean = true
+	): Promise<Addon> {
+		return this.addonRepo.update(id, addon).then(async (a) => {
+			if (notify) await this.notifyAddonChange(a, before).catch(console.error);
+			return a;
+		});
 	}
 
-	private async notifyAddonChange(a: Addon, before: AddonStatus): Promise<void> {
+	private async notifyAddonChange(
+		a: Addon,
+		before: AddonStatus
+	): Promise<void> {
 		const now = a.approval.status;
 		const statusSame = before === now; // "ignore pending to pending"
 
-		if(statusSame) return;
+		if (statusSame) return;
 
 		let title = a.name;
 		let name = "Add-on ";
 		let users = [];
-		let description = a.approval.reason ? `Reason: ${a.approval.reason}` : `*No reason provided*`;
-		if(now === 'approved') description = undefined;
-		const url = `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`;
-		if(now === 'pending') {
+		let description = a.approval.reason
+			? `Reason: ${a.approval.reason}`
+			: `*No reason provided*`;
+		if (now === "approved") description = undefined;
+		const url = `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(
+			a.id
+		)}`;
+		if (now === "pending") {
 			title = `Add-on '${a.name}' pending approval`;
 			name += "update";
 		} else {
-			const usernameApproval = (a.approval.author ? await this.userService.getUserById(a.approval.author).catch(() => undefined) : undefined) || "someone";
+			const usernameApproval =
+				(a.approval.author
+					? await this.userService
+							.getUserById(a.approval.author)
+							.catch(() => undefined)
+					: undefined) || "someone";
 			title = `Add-on '${a.name}' ${now} by ${usernameApproval}`;
 			name += "review";
 			users = a.authors; // notify authors of review
 		}
 		const botMessage: EmbedParam = {
 			destinations: {
-				channels: ["addons-submission"]
+				channels: ["addons-submission"],
 			},
 			embed: {
-				"color": 7784773,
-				"author": {
-					"icon_url": "https://faithfulpack.net/image/pwa/favicon-32x32.png",
+				color: 7784773,
+				author: {
+					icon_url: "https://faithfulpack.net/image/pwa/favicon-32x32.png",
 					name,
 				},
 				url,
 				title,
 				description,
-				"footer": {
-					"text": "Made in Mount Doom",
+				footer: {
+					text: "Made in Mount Doom",
 				},
 			},
-			destinator: ""
+			destinator: "",
 		};
 
 		// send embed to moderators
@@ -661,7 +684,7 @@ export default class AddonService {
 		// modify message to fit to users
 		botMessage.destinations = {
 			users,
-		}
+		};
 		botMessage.embed.url = `https://webapp.faithfulpack.net/#/addons/submissions`;
 
 		// send embed to users

@@ -11,7 +11,7 @@ import {
 
 export class FilesFirestormRepository implements FileRepository {
 	addFiles(fileList: Files): Promise<string[]> {
-		return files.addBulk(fileList)
+		return files.addBulk(fileList);
 	}
 
 	addFile(file: File): Promise<string> {

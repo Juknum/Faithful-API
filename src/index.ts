@@ -19,7 +19,7 @@ dotenv.config();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEV = (process.env.DEV || "false") === "true";
-const NO_CACHE = process.env.NO_CACHE === 'true';
+const NO_CACHE = process.env.NO_CACHE === "true";
 const PORT = process.env.PORT || 8000;
 const BOT_ENDPOINT = process.env.DISCORD_BOT_ENDPOINT;
 
@@ -60,12 +60,12 @@ app.use(
 
 // @types/swagger-ui-express is not updated
 interface UpdatedSwaggerUiOptions extends Omit<SwaggerUiOptions, "customJs"> {
-	customJs: string | string[]
+	customJs: string | string[];
 }
 
 const options: UpdatedSwaggerUiOptions = {
 	customCssUrl: "/custom.css",
-	customJs: ['/custom.js', '/custom_dom.js'],
+	customJs: ["/custom.js", "/custom_dom.js"],
 	swaggerOptions: {
 		tryItOutEnabled: true,
 	},
@@ -78,7 +78,7 @@ app.listen(PORT, () => {
 	console.log(`DB is located at ${process.env.FIRESTORM_URL}`);
 	console.log(`Server is running at http://localhost:${PORT}`);
 	console.log(`Bot endpoint is set at ${BOT_ENDPOINT}`);
-	if(NO_CACHE) console.log(`Started with no cache`);
+	if (NO_CACHE) console.log(`Started with no cache`);
 });
 
 app.use(apiErrorHandler());
@@ -129,7 +129,11 @@ swaggerDoc = formHandler(
 swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
 
 // TODO: find out what the fuck we are doing
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options as SwaggerUiOptions));
+app.use(
+	"/docs",
+	swaggerUi.serve,
+	swaggerUi.setup(swaggerDoc, options as SwaggerUiOptions)
+);
 
 const v1 = require("./v1");
 
@@ -175,7 +179,7 @@ app.use(
 				) || 400;
 			const message =
 				(err.response && err.response.data
-					? (err.response.data.error || err.response.data.message)
+					? err.response.data.error || err.response.data.message
 					: err.message) || err;
 			const stack = process.env.VERBOSE && err.stack ? err.stack : "";
 
@@ -196,14 +200,16 @@ app.use(
 			const finalError = new ApiError(name, code, message);
 
 			// modify error to give more context and details with data
-			let modified: {
-				name: string,
-				message: string,
-			} | undefined;
+			let modified:
+				| {
+						name: string;
+						message: string;
+				  }
+				| undefined;
 			if (err?.response?.data !== undefined) {
 				modified = {
 					name: finalError.name,
-					message: finalError.message
+					message: finalError.message,
 				};
 				finalError.name += `: ${finalError.message}`;
 				finalError.message = err.response.data;
@@ -213,7 +219,7 @@ app.use(
 			await sendError(code, err, req, stack, message);
 
 			// unmodify error to hide details returned as api response
-			if(modified !== undefined) {
+			if (modified !== undefined) {
 				finalError.name = modified.name;
 				finalError.message = modified.message;
 			}

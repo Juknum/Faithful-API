@@ -33,26 +33,27 @@ export default class UseService {
 	}
 
 	getUseByIdOrNameAndCatch(id_or_name: string): Promise<Uses | Use> {
-		return this.getUseByIdOrName(id_or_name)
-			.then((res) => {
-				let found = false;
-				if(Array.isArray(res)) {
-					found = res.length > 0;
-				} else {
-					found = res !== undefined;
-				}
+		return this.getUseByIdOrName(id_or_name).then((res) => {
+			let found = false;
+			if (Array.isArray(res)) {
+				found = res.length > 0;
+			} else {
+				found = res !== undefined;
+			}
 
-				return found ?
-					Promise.resolve(res) :
-					Promise.reject(new NotFoundError(`Use ID not found`));
-			});
+			return found
+				? Promise.resolve(res)
+				: Promise.reject(new NotFoundError(`Use ID not found`));
+		});
 	}
 
 	updateUse(id: string, modifiedUse: CreationUse): Use | PromiseLike<Use> {
-		return this.getUseByIdOrNameAndCatch(id).then(() => this.useRepo.set({
-			id,
-			...modifiedUse,
-		}));
+		return this.getUseByIdOrNameAndCatch(id).then(() =>
+			this.useRepo.set({
+				id,
+				...modifiedUse,
+			})
+		);
 	}
 
 	deleteUse(id: string): Promise<void> {
@@ -67,15 +68,16 @@ export default class UseService {
 		return new Promise((resolve, reject) => {
 			this.getUseByIdOrNameAndCatch(use.id)
 				.then(() => {
-					reject(new BadRequestError("Texture use ID already exists"))
+					reject(new BadRequestError("Texture use ID already exists"));
 				})
 				.catch(() => {
-					this.useRepo.set(use)
+					this.useRepo
+						.set(use)
 						.then((resultUse) => {
-							resolve(resultUse)
+							resolve(resultUse);
 						})
-						.catch((...args) => reject(args))
-				})
-		})
+						.catch((...args) => reject(args));
+				});
+		});
 	}
 }

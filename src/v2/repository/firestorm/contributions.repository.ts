@@ -10,7 +10,7 @@ import {
 import { contributions, users } from "../../firestorm";
 
 export default class ContributionFirestormRepository
-implements ContributionsRepository
+	implements ContributionsRepository
 {
 	getContributionById(id: string): Promise<Contribution> {
 		return contributions.get(id);
@@ -120,12 +120,12 @@ implements ContributionsRepository
 			.then((id: string) => contributions.get(id));
 	}
 
-	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
+	addContributions(
+		params: ContributionCreationParams[]
+	): Promise<Contribution[]> {
 		return contributions
 			.addBulk(params)
-			.then((ids: string[]) =>
-				ids.map(((id) => contributions.get(id)))
-			)
+			.then((ids: string[]) => ids.map((id) => contributions.get(id)));
 	}
 
 	updateContribution(

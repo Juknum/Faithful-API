@@ -3,13 +3,14 @@ import {
 	WebsitePostChangelogRecord,
 	WebsitePost,
 	WebsitePostRepository,
-	CreateWebsitePost
+	CreateWebsitePost,
 } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";
 import PostFirestormRepository from "../repository/firestorm/posts.repository";
 
 export default class PostService {
-	private readonly postRepo: WebsitePostRepository = new PostFirestormRepository();
+	private readonly postRepo: WebsitePostRepository =
+		new PostFirestormRepository();
 
 	public async getByIdOrPermalink(
 		id_or_permalink: string
@@ -22,10 +23,11 @@ export default class PostService {
 		}
 
 		if (postFound === undefined)
-			postFound = await this.getByPermalink(id_or_permalink).catch(() => undefined);
+			postFound = await this.getByPermalink(id_or_permalink).catch(
+				() => undefined
+			);
 
-		if (postFound !== undefined)
-			return postFound;
+		if (postFound !== undefined) return postFound;
 
 		throw new NotFoundError("Post not found");
 	}
@@ -35,19 +37,23 @@ export default class PostService {
 	}
 
 	getById(id: number): Promise<WebsitePost> {
-		return this.postRepo.getById(id).catch(() => Promise.reject(new NotFoundError("Post not found")));
+		return this.postRepo
+			.getById(id)
+			.catch(() => Promise.reject(new NotFoundError("Post not found")));
 	}
 
 	getByPermalink(permalink: string): Promise<WebsitePost> {
-		return this.postRepo.getByPermalink(permalink).catch(() => Promise.reject(new NotFoundError("Post not found")));
+		return this.postRepo
+			.getByPermalink(permalink)
+			.catch(() => Promise.reject(new NotFoundError("Post not found")));
 	}
 
 	getDownloadsForId(id: number): Promise<WebsitePostDownloadRecord | null> {
-		return this.getById(id).then(post => post.downloads || null)
+		return this.getById(id).then((post) => post.downloads || null);
 	}
 
 	getChangelogForId(id: number): Promise<WebsitePostChangelogRecord | null> {
-		return this.getById(id).then(post => post.changelog || null)
+		return this.getById(id).then((post) => post.changelog || null);
 	}
 
 	create(post: CreateWebsitePost): Promise<WebsitePost> {

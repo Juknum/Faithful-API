@@ -2,7 +2,7 @@ import { readdir, readFile, unlink, writeFile } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
 
-const NO_CACHE = process.env.NO_CACHE === 'true';
+const NO_CACHE = process.env.NO_CACHE === "true";
 
 const CACHE_DURATION = 86400000; // one day
 
@@ -13,14 +13,14 @@ const VALUE_INDEX = 1;
 const folder = (): string => tmpdir();
 
 const key_to_path = (key: string): string => {
-	const escaped_key = key.replace(/(\/|\\)/g, '-');
+	const escaped_key = key.replace(/(\/|\\)/g, "-");
 	const p = join(folder(), `cache-${escaped_key}.json`);
 	return p;
 };
 
 export default {
 	read(key: string): Promise<[boolean, any]> {
-		if(NO_CACHE) return Promise.reject();
+		if (NO_CACHE) return Promise.reject();
 
 		return readFile(key_to_path(key)).then((content) => {
 			const json = JSON.parse(content.toString());
@@ -41,7 +41,7 @@ export default {
 
 	delete(key: string): Promise<void> {
 		const path = key_to_path(key);
-		return unlink(path)
+		return unlink(path);
 	},
 
 	handle<T>(key: string, callback: () => T): T {
@@ -58,10 +58,12 @@ export default {
 				const value = results[VALUE_INDEX];
 				// write if told
 				if (results[WRITE_INDEX]) {
-					return this.write(key, value).then(() => Promise.resolve(value)).catch((...args) => {
-						console.error(...args)
-						return value
-					});
+					return this.write(key, value)
+						.then(() => Promise.resolve(value))
+						.catch((...args) => {
+							console.error(...args);
+							return value;
+						});
 				}
 				return Promise.resolve(value);
 			});

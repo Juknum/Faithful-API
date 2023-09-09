@@ -13,7 +13,10 @@ interface WebsitePostDownload {
 	url: string; // download URL
 }
 export type WebsitePostDownloadRecord = Record<string, WebsitePostDownload[]>;
-export type WebsitePostChangelogRecord = Record<string, Record<string, string[]>>;
+export type WebsitePostChangelogRecord = Record<
+	string,
+	Record<string, string[]>
+>;
 
 export interface CreateWebsitePost {
 	title: string; // Post main title
@@ -21,7 +24,7 @@ export interface CreateWebsitePost {
 	date: string; // date with format MM-DD-YYY
 	headerImg?: string; // header image url
 	description: string; // post HTML content
-	published: boolean,
+	published: boolean;
 	downloads?: WebsitePostDownloadRecord; // possible downloads attached
 	changelog?: WebsitePostChangelogRecord; // possible article changelog attached
 }

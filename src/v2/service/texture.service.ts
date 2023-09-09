@@ -129,9 +129,13 @@ export default class TextureService {
 		return tex;
 	}
 
-	changeTexture(id: string, body: TextureCreationParam): Texture | PromiseLike<Texture> {
-		return this.getByNameOrId(id)
-			.then(() => this.textureRepo.changeTexture(id, body));
+	changeTexture(
+		id: string,
+		body: TextureCreationParam
+	): Texture | PromiseLike<Texture> {
+		return this.getByNameOrId(id).then(() =>
+			this.textureRepo.changeTexture(id, body)
+		);
 	}
 
 	deleteTexture(id: string): Promise<void> {

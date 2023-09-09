@@ -25,7 +25,7 @@ export function mapUse(old: OldUse): Use {
 		id: old.id,
 		name: old.textureUseName,
 		texture: Number.parseInt(old.id, 10),
-		edition: old.editions[0]
+		edition: old.editions[0],
 	};
 }
 
@@ -66,7 +66,7 @@ export function unmapTexture(data: Texture): OldTexture {
 	return {
 		id: data.id,
 		name: String(data.name),
-		type: data.tags
+		type: data.tags,
 	};
 }
 

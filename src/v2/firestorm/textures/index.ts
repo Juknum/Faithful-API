@@ -104,9 +104,7 @@ export const textures = firestorm.collection("textures", (el) => {
 					.get(
 						`https://raw.githubusercontent.com/CompliBot/Default-Java/${
 							p.versions.sort(MinecraftSorter).reverse()[0]
-						}/${
-							p.name
-						}.mcmeta`
+						}/${p.name}.mcmeta`
 					)
 					.catch(() => null); // avoid crash if mcmeta file cannot be found
 			})

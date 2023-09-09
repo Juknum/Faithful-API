@@ -19,12 +19,10 @@ export default class PathService {
 
 	private readonly repository: PathRepository = new PathFirestormRepository();
 
-
 	getRaw(): Promise<Paths> {
-		return this.repository.getRaw()
-			.then((res: any) => Object.values(res)
-				.map((i: any) => mapPath(i)
-				));
+		return this.repository
+			.getRaw()
+			.then((res: any) => Object.values(res).map((i: any) => mapPath(i)));
 	}
 
 	getPathByUseId(use_id: string): Promise<Paths> {

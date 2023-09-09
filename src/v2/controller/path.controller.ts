@@ -59,7 +59,7 @@ export class PathsController extends Controller {
 	): Promise<Path> {
 		return this.service.updatePathById(id, {
 			...body,
-			id
+			id,
 		});
 	}
 

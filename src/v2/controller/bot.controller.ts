@@ -13,9 +13,7 @@ export class BotController extends Controller {
 	 */
 	@Post("/send-embed")
 	@Security("bot", ["administrator"])
-	public async sendEmbed(
-		@Body() body: EmbedParam,
-	): Promise<void> {
+	public async sendEmbed(@Body() body: EmbedParam): Promise<void> {
 		return this.botService.sendEmbed(body);
 	}
 }

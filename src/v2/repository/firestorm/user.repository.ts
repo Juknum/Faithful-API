@@ -27,12 +27,11 @@ function __transformUser(user: any): User {
 
 export default class UserFirestormRepository implements UserRepository {
 	getNameById(id: string): Promise<UserName> {
-		return users.get(id)
-			.then((res) => ({
-				id: res.id,
-				username: res.anonymous ? undefined : res.username,
-				uuid: res.anonymous ? undefined : res.uuid,
-			}))
+		return users.get(id).then((res) => ({
+			id: res.id,
+			username: res.anonymous ? undefined : res.username,
+			uuid: res.anonymous ? undefined : res.uuid,
+		}));
 	}
 
 	getRaw(): Promise<Users> {
@@ -96,13 +95,13 @@ export default class UserFirestormRepository implements UserRepository {
 					const empty: User = {
 						anonymous: false,
 						roles: [],
-						username: '',
-						uuid: '',
+						username: "",
+						uuid: "",
 						warns: [],
 						id,
-						media: []
+						media: [],
 					};
-					return users.set(id, empty).then(() => this.getUserById(id))
+					return users.set(id, empty).then(() => this.getUserById(id));
 				}
 
 				return Promise.reject(err);
@@ -187,17 +186,22 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUserProfiles(searched_users: string[]): Promise<UserProfile[]> {
-		return users.searchKeys(searched_users).then(( _users: Array<{
-			id: string;
-			username: string;
-			uuid: string;
-			anonymous: boolean;
-			media: Media[],
-		}>) => _users.map(el => ({
-			id: el.id,
-			username: el.anonymous ? undefined : el.username,
-			uuid: el.anonymous ? undefined : (el.uuid || undefined),
-			media: el.anonymous ? undefined : (el.media || [])
-		})));
+		return users.searchKeys(searched_users).then(
+			(
+				_users: Array<{
+					id: string;
+					username: string;
+					uuid: string;
+					anonymous: boolean;
+					media: Media[];
+				}>
+			) =>
+				_users.map((el) => ({
+					id: el.id,
+					username: el.anonymous ? undefined : el.username,
+					uuid: el.anonymous ? undefined : el.uuid || undefined,
+					media: el.anonymous ? undefined : el.media || [],
+				}))
+		);
 	}
 }

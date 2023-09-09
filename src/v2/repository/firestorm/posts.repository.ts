@@ -1,9 +1,9 @@
-import { ID_FIELD } from 'firestorm-db';
+import { ID_FIELD } from "firestorm-db";
 import { posts } from "../../firestorm";
 import {
 	CreateWebsitePost,
 	WebsitePost as Post,
-	WebsitePostRepository
+	WebsitePostRepository,
 } from "../../interfaces";
 
 export default class PostFirestormRepository implements WebsitePostRepository {
@@ -31,21 +31,19 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 		const { permalink } = postToCreate;
 		return posts
 			.add(postToCreate)
-			.then(() =>
-				this.getByPermalink(permalink)
-			)
+			.then(() => this.getByPermalink(permalink))
 			.then((results) => results[0]);
 	}
 
 	update(id: number, post: CreateWebsitePost): Promise<Post> {
 		const postWithId = {
-			...post
+			...post,
 		};
 		postWithId[ID_FIELD] = String(id);
 		return posts.set(id, postWithId).then(() => posts.get(id));
 	}
 
 	delete(id: number): Promise<void> {
-		return posts.remove(String(id)).then(() => { }); // return nothing
+		return posts.remove(String(id)).then(() => {}); // return nothing
 	}
 }

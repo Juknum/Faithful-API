@@ -53,9 +53,7 @@ export class UserController extends Controller {
 
 	@Post("newprofile")
 	@Security("discord", [])
-	public async createProfile(
-		@Request() request: any
-	): Promise<User> {
+	public async createProfile(@Request() request: any): Promise<User> {
 		return this.userService.getProfileOrCreate(request.user);
 	}
 

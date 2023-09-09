@@ -40,9 +40,7 @@ export default class GalleryService {
 				texture_ids
 					.filter((t_id) => texture_to_use[t_id])
 					.map((t_id) => texture_to_use[t_id])
-					.map((use: Use) =>
-						use_to_path[use.id].name
-					)
+					.map((use: Use) => use_to_path[use.id].name)
 					.map((str) => url + str)
 			);
 	}
