@@ -43,6 +43,7 @@ export class PostController extends Controller {
 	@Response<PermissionError>(403)
 	@Response<NotFoundError>(404)
 	@Security("discord", ["administrator"])
+	@Security("bot")
 	@Get("/raw")
 	public async getRaw(): Promise<Record<string, WebsitePost>> {
 		return this.service.getRaw();
