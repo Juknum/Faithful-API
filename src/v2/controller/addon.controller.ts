@@ -93,7 +93,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	@Get("/")
+	@Get("raw")
 	public async getRaw(): Promise<Record<string, Addon>> {
 		return this.service.getRaw();
 	}
