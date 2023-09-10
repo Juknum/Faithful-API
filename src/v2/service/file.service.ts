@@ -46,4 +46,8 @@ export class FileService {
 	public async remove(path: string) {
 		return this.repo.remove(path);
 	}
+
+	public async getRaw() {
+		return this.repo.getRaw();
+	}
 }

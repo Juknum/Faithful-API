@@ -35,4 +35,5 @@ export interface FileRepository {
 	removeFilesByParent(parent: FileParent): Promise<void>;
 	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<void>;
 	removeFileByPath(path: string): Promise<void>;
+	getRaw(): Promise<Files>;
 }
