@@ -45,13 +45,7 @@ export interface CreatedTexture extends TextureCreationParam {
 export interface CreatedTextures extends Array<CreatedTexture> {}
 export type KnownPacks = typeof KnownPacksArr[number];
 export type Edition = "java" | "bedrock" | "dungeons";
-export type TextureProperty =
-	| "uses"
-	| "paths"
-	| "contributions"
-	| "mcmeta"
-	| "all"
-	| null;
+export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;
 
 export interface TextureRepository {
 	changeTexture(id: string, body: TextureCreationParam): Promise<Texture>;
@@ -65,11 +59,9 @@ export interface TextureRepository {
 	getVersionByEdition(edition: Edition): Promise<Array<string>>;
 	searchTexturePropertyByNameOrId(
 		name_or_id: string | number,
-		property: TextureProperty
+		property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA>;
-	searchTextureByNameOrId(
-		name_or_id: string | number
-	): Promise<Textures | Texture>;
+	searchTextureByNameOrId(name_or_id: string | number): Promise<Textures | Texture>;
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
 	deleteTexture(id: string);

@@ -52,13 +52,13 @@ export default class UserFirestormRepository implements UserRepository {
 						username: string;
 						uuid: string;
 						anonymous: boolean;
-					}>
+					}>,
 				) =>
 					_users.map((el) => ({
 						id: el.id,
 						username: el.anonymous ? undefined : el.username,
 						uuid: el.anonymous ? undefined : el.uuid,
-					}))
+					})),
 			);
 	}
 
@@ -67,11 +67,7 @@ export default class UserFirestormRepository implements UserRepository {
 			.get(id)
 			.then((u) => __transformUser(u))
 			.catch((err) => {
-				if (
-					err.isAxiosError &&
-					err.response &&
-					err.response.statusCode === 404
-				) {
+				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
 					const formattedError = new Error("User not found") as any;
 					formattedError.code = 404;
 
@@ -87,11 +83,7 @@ export default class UserFirestormRepository implements UserRepository {
 			.get(id)
 			.then((u) => __transformUser(u))
 			.catch((err) => {
-				if (
-					err.isAxiosError &&
-					err.response &&
-					err.response.statusCode === 404
-				) {
+				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
 					const empty: User = {
 						anonymous: false,
 						roles: [],
@@ -110,9 +102,7 @@ export default class UserFirestormRepository implements UserRepository {
 
 	getUsersByName(name: string): Promise<Users> {
 		if (!name || name.length < 3)
-			return Promise.reject(
-				new Error("User search requires at least 3 letters")
-			);
+			return Promise.reject(new Error("User search requires at least 3 letters"));
 
 		return users
 			.search([
@@ -127,8 +117,7 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUsersFromRole(role: string, username?: string): Promise<Users> {
-		if (role === "all" && !username)
-			return users.read_raw().then((res: any) => Object.values(res));
+		if (role === "all" && !username) return users.read_raw().then((res: any) => Object.values(res));
 		const options = [];
 
 		if (role !== "all")
@@ -147,9 +136,7 @@ export default class UserFirestormRepository implements UserRepository {
 				ignoreCase: true,
 			});
 
-		return users
-			.search(options)
-			.then((arr: Array<User>) => arr.map((el) => __transformUser(el)));
+		return users.search(options).then((arr: Array<User>) => arr.map((el) => __transformUser(el)));
 	}
 
 	getRoles(): Promise<Array<string>> {
@@ -158,7 +145,7 @@ export default class UserFirestormRepository implements UserRepository {
 				Object.values(obj)
 					.map((el: { roles: Array<string>; id: string }) => el.roles || []) // get roles or none
 					.flat() // flat array
-					.filter((el, index, array) => array.indexOf(el) === index) // remove duplicates
+					.filter((el, index, array) => array.indexOf(el) === index), // remove duplicates
 		);
 	}
 
@@ -194,14 +181,14 @@ export default class UserFirestormRepository implements UserRepository {
 					uuid: string;
 					anonymous: boolean;
 					media: Media[];
-				}>
+				}>,
 			) =>
 				_users.map((el) => ({
 					id: el.id,
 					username: el.anonymous ? undefined : el.username,
 					uuid: el.anonymous ? undefined : el.uuid || undefined,
 					media: el.anonymous ? undefined : el.media || [],
-				}))
+				})),
 		);
 	}
 }

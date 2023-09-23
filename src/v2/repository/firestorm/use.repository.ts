@@ -45,7 +45,7 @@ export default class UseFirestormRepository implements UseRepository {
 							},
 						])
 						.then(mapUses) // TODO: remove this after rewrite
-						.then((out: Uses) => out.filter((use: Use) => use.name !== null)) // remove null names
+						.then((out: Uses) => out.filter((use: Use) => use.name !== null)), // remove null names
 			);
 	}
 
@@ -73,8 +73,6 @@ export default class UseFirestormRepository implements UseRepository {
 	}
 
 	removeUsesByBulk(use_ids: string[]): Promise<void> {
-		return Promise.all(use_ids.map((u_id) => this.removeUseById(u_id))).then(
-			() => {}
-		);
+		return Promise.all(use_ids.map((u_id) => this.removeUseById(u_id))).then(() => {});
 	}
 }

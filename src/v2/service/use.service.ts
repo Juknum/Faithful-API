@@ -20,7 +20,7 @@ export default class UseService {
 
 	getPathUseByIdOrName(id_or_name: string): Promise<Paths> {
 		return this.getUseByIdOrName(id_or_name).then((use: Use) =>
-			this.pathService.getPathByUseId(use.id)
+			this.pathService.getPathByUseId(use.id),
 		);
 	}
 
@@ -41,9 +41,7 @@ export default class UseService {
 				found = res !== undefined;
 			}
 
-			return found
-				? Promise.resolve(res)
-				: Promise.reject(new NotFoundError(`Use ID not found`));
+			return found ? Promise.resolve(res) : Promise.reject(new NotFoundError(`Use ID not found`));
 		});
 	}
 
@@ -52,7 +50,7 @@ export default class UseService {
 			this.useRepo.set({
 				id,
 				...modifiedUse,
-			})
+			}),
 		);
 	}
 

@@ -17,10 +17,7 @@ export interface Paths extends Array<Path> {}
 export interface PathRepository {
 	getPathById(path_id: string): Promise<Path>;
 	getPathUseById(use_id: string): Promise<Paths>;
-	getPathsByUseIdsAndVersion(
-		use_ids: string[],
-		version: string
-	): Promise<Paths>;
+	getPathsByUseIdsAndVersion(use_ids: string[], version: string): Promise<Paths>;
 	createPath(path: InputPath): Promise<Path>;
 	updatePath(path_id: string, path: Path): Promise<Path>;
 	removePathById(path_id: string): Promise<void>;

@@ -88,18 +88,14 @@ export class TextureController extends Controller {
 	 * @param id_or_name Texture ID or texture name (join by "," if multiple)
 	 */
 	@Get("{id_or_name}")
-	public async getTexture(
-		@Path() id_or_name: string | number
-	): Promise<Texture | Texture[]> {
+	public async getTexture(@Path() id_or_name: string | number): Promise<Texture | Texture[]> {
 		if (typeof id_or_name === "string" && id_or_name.includes(",")) {
 			const id_array = id_or_name.split(",");
-			return Promise.allSettled(
-				id_array.map((id) => this.service.getByNameOrId(id))
-			).then((res) =>
+			return Promise.allSettled(id_array.map((id) => this.service.getByNameOrId(id))).then((res) =>
 				res
 					.filter((p) => p.status === "fulfilled")
 					.map((p: any) => p.value)
-					.flat()
+					.flat(),
 			);
 		}
 		return this.service.getByNameOrId(id_or_name);
@@ -113,7 +109,7 @@ export class TextureController extends Controller {
 	@Get("{id_or_name}/{property}")
 	public async getTexturesProperty(
 		@Path() id_or_name: string | number,
-		@Path() property: TextureProperty
+		@Path() property: TextureProperty,
 	): Promise<
 		| Textures
 		| Texture
@@ -122,25 +118,17 @@ export class TextureController extends Controller {
 		| Contributions
 		| TextureMCMETA
 		| TextureAll
-		| (
-				| TextureMCMETA
-				| Textures
-				| Texture
-				| Paths
-				| Uses
-				| Contributions
-				| TexturesAll
-		  )[]
+		| (TextureMCMETA | Textures | Texture | Paths | Uses | Contributions | TexturesAll)[]
 	> {
 		if (typeof id_or_name === "string" && id_or_name.includes(",")) {
 			const id_array = id_or_name.split(",");
 			return Promise.allSettled(
-				id_array.map((id) => this.service.getPropertyByNameOrId(id, property))
+				id_array.map((id) => this.service.getPropertyByNameOrId(id, property)),
 			).then((res) =>
 				res
 					.filter((p) => p.status === "fulfilled")
 					.map((p: any) => p.value)
-					.flat()
+					.flat(),
 			) as Promise<(Textures | Texture | Paths | Uses | Contributions)[]>;
 		}
 
@@ -160,12 +148,10 @@ export class TextureController extends Controller {
 		@Path() id: string,
 		@Path() pack: KnownPacks,
 		@Path() mc_version: string,
-		@Request() request: ExRequest
+		@Request() request: ExRequest,
 	): Promise<void> {
 		const response = (<any>request).res as ExResponse;
-		response.redirect(
-			await this.service.getURLById(parseInt(id, 10), pack, mc_version)
-		);
+		response.redirect(await this.service.getURLById(parseInt(id, 10), pack, mc_version));
 	}
 
 	/**
@@ -175,9 +161,7 @@ export class TextureController extends Controller {
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createTexture(
-		@Body() body: TextureCreationParam
-	): Promise<Texture> {
+	public async createTexture(@Body() body: TextureCreationParam): Promise<Texture> {
 		return this.service.createTexture(body);
 	}
 
@@ -188,9 +172,7 @@ export class TextureController extends Controller {
 	@Post("multiple")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createMultipleTextures(
-		@Body() body: CreatedTextures
-	): Promise<Textures> {
+	public async createMultipleTextures(@Body() body: CreatedTextures): Promise<Textures> {
 		return this.service.createEntireTextures(body);
 	}
 
@@ -204,7 +186,7 @@ export class TextureController extends Controller {
 	@Security("discord", ["administrator"])
 	public async changeTexture(
 		@Path() id: string,
-		@Body() body: TextureCreationParam
+		@Body() body: TextureCreationParam,
 	): Promise<Texture> {
 		return this.service.changeTexture(id, body);
 	}

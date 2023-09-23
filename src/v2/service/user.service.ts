@@ -44,7 +44,7 @@ export class UserService {
 					total_anonymous: 0,
 					total_roles: 0,
 					total_per_roles: {},
-				} as UserStats
+				} as UserStats,
 			);
 		});
 	}

@@ -1,5 +1,10 @@
 {
-	"endOfLine": "lf",
+    "semi": true,
+    "trailingComma": "all",
+    "singleQuote": false,
+    "printWidth": 100,
     "useTabs": true,
+    "bracketSpacing": true,
+    "arrowParens": "always",
     "parser": "typescript"
 }

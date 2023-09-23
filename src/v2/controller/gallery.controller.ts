@@ -25,20 +25,16 @@ export class GalleryController extends Controller {
 		@Path() edition: string,
 		@Path() mc_version: string,
 		@Path() tag: string,
-		@Query() search?: string
+		@Query() search?: string,
 	): Promise<GalleryResult[]> {
-		return cache.handle(
-			`gallery-${res}-${edition}-${mc_version}-${tag}-${search ?? ""}`,
-			() =>
-				this.service.search(
-					res,
-					edition,
-					mc_version,
-					tag.toLowerCase() !== "all" ? tag : undefined,
-					search !== undefined && search.trim() !== ""
-						? search.trim()
-						: undefined
-				)
+		return cache.handle(`gallery-${res}-${edition}-${mc_version}-${tag}-${search ?? ""}`, () =>
+			this.service.search(
+				res,
+				edition,
+				mc_version,
+				tag.toLowerCase() !== "all" ? tag : undefined,
+				search !== undefined && search.trim() !== "" ? search.trim() : undefined,
+			),
 		);
 	}
 
@@ -48,25 +44,17 @@ export class GalleryController extends Controller {
 	 * @param mc_version Minecraft version needed for the images
 	 */
 	@Get("modal/{id}/{mc_version}")
-	public async modal(
-		@Path() id: number,
-		@Path() mc_version: string
-	): Promise<GalleryModalResult> {
+	public async modal(@Path() id: number, @Path() mc_version: string): Promise<GalleryModalResult> {
 		const urls: any[] = (
 			await Promise.allSettled(
-				KnownPacksArr.map((p) =>
-					this.textureService.getURLById(id, p, mc_version)
-				)
+				KnownPacksArr.map((p) => this.textureService.getURLById(id, p, mc_version)),
 			)
 		)
 			.map((e, i) => [KnownPacksArr[i], e])
 			.filter((p: [KnownPacks, any]) => p[1].status === "fulfilled")
 			.map((p: any) => [p[0], p[1].value]);
 
-		const all = (await this.textureService.getPropertyByNameOrId(
-			id,
-			"all"
-		)) as TextureAll;
+		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;
 
 		const texture = (await this.textureService.getByNameOrId(id)) as Texture;
 

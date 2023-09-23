@@ -9,12 +9,9 @@ import { NotFoundError } from "../tools/ApiError";
 import PostFirestormRepository from "../repository/firestorm/posts.repository";
 
 export default class PostService {
-	private readonly postRepo: WebsitePostRepository =
-		new PostFirestormRepository();
+	private readonly postRepo: WebsitePostRepository = new PostFirestormRepository();
 
-	public async getByIdOrPermalink(
-		id_or_permalink: string
-	): Promise<WebsitePost> {
+	public async getByIdOrPermalink(id_or_permalink: string): Promise<WebsitePost> {
 		let postFound: WebsitePost | undefined; // undefined
 		const parsed = Number.parseInt(id_or_permalink, 10);
 
@@ -23,9 +20,7 @@ export default class PostService {
 		}
 
 		if (postFound === undefined)
-			postFound = await this.getByPermalink(id_or_permalink).catch(
-				() => undefined
-			);
+			postFound = await this.getByPermalink(id_or_permalink).catch(() => undefined);
 
 		if (postFound !== undefined) return postFound;
 

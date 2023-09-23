@@ -1,15 +1,4 @@
-import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Path,
-	Post,
-	Put,
-	Route,
-	Security,
-	Tags,
-} from "tsoa";
+import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
 import { Use, Uses, Paths, CreationUse } from "../interfaces";
 import UseService from "../service/use.service";
 
@@ -34,9 +23,7 @@ export class UsesController extends Controller {
 	 */
 	@Post("")
 	@Security("discord", ["administrator"])
-	public async createUse(
-		@Body() body: CreationUse & { id: string }
-	): Promise<Use> {
+	public async createUse(@Body() body: CreationUse & { id: string }): Promise<Use> {
 		return this.service.createUse({
 			...body,
 		});
@@ -48,9 +35,7 @@ export class UsesController extends Controller {
 	 * @returns {Promise<Use | Uses>}
 	 */
 	@Get("{id_or_name}/paths")
-	public async getPathUseByIdOrName(
-		@Path() id_or_name: string
-	): Promise<Paths> {
+	public async getPathUseByIdOrName(@Path() id_or_name: string): Promise<Paths> {
 		return this.service.getPathUseByIdOrName(id_or_name);
 	}
 
@@ -60,9 +45,7 @@ export class UsesController extends Controller {
 	 * @returns {Promise<Use | Uses>}
 	 */
 	@Get("{id_or_name}")
-	public async getUseByIdOrName(
-		@Path() id_or_name: string
-	): Promise<Use | Uses> {
+	public async getUseByIdOrName(@Path() id_or_name: string): Promise<Use | Uses> {
 		return this.service.getUseByIdOrName(id_or_name);
 	}
 
@@ -73,10 +56,7 @@ export class UsesController extends Controller {
 	 */
 	@Put("{id}")
 	@Security("discord", ["administrator"])
-	public async changeUse(
-		@Path() id: string,
-		@Body() modifiedUse: CreationUse
-	): Promise<Use> {
+	public async changeUse(@Path() id: string, @Body() modifiedUse: CreationUse): Promise<Use> {
 		return this.service.updateUse(id, modifiedUse);
 	}
 

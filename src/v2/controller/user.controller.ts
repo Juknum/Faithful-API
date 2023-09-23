@@ -12,11 +12,7 @@ import {
 	Security,
 	Tags,
 } from "tsoa";
-import {
-	BadRequestError,
-	ForbiddenError,
-	NotAvailableError,
-} from "../tools/ApiError";
+import { BadRequestError, ForbiddenError, NotAvailableError } from "../tools/ApiError";
 import {
 	Addons,
 	Contributions,
@@ -44,10 +40,7 @@ export class UserController extends Controller {
 
 	@Post("profile")
 	@Security("discord", [])
-	public async setProfile(
-		@Body() body: UserProfile,
-		@Request() request: any
-	): Promise<void> {
+	public async setProfile(@Body() body: UserProfile, @Request() request: any): Promise<void> {
 		await this.userService.setProfileById(request.user, body);
 	}
 
@@ -111,7 +104,7 @@ export class UserController extends Controller {
 	@Get("role/{role}/{username}")
 	public async getUsersFromRoleAndUsername(
 		@Path() role: string,
-		@Path() username: string
+		@Path() username: string,
 	): Promise<Users> {
 		return this.userService.getUsersFromRole(role, username);
 	}
@@ -124,9 +117,7 @@ export class UserController extends Controller {
 	@Get("{id_or_username}")
 	public async getUser(@Path() id_or_username: string): Promise<User | Users> {
 		// can't parse discord ids directly into a number because precision can be lost
-		const int: Array<number> = id_or_username
-			.split("")
-			.map((s) => parseInt(s, 10));
+		const int: Array<number> = id_or_username.split("").map((s) => parseInt(s, 10));
 		const str: Array<string> = id_or_username.split("");
 		let same: boolean = true;
 		int.forEach((i, index) => {
@@ -175,17 +166,12 @@ export class UserController extends Controller {
 	@Get("{id}/addons")
 	@Security("discord", [])
 	@Security("bot")
-	public async getAllAddons(
-		@Path() id: string,
-		@Request() request: any
-	): Promise<Addons> {
+	public async getAllAddons(@Path() id: string, @Request() request: any): Promise<Addons> {
 		if (id !== request.user) {
 			// check if admin
 			const user = await new UserService().getUserById(request.user);
 			if (!user.roles.includes("Administrator"))
-				throw new BadRequestError(
-					"Addon author must include the authored user"
-				);
+				throw new BadRequestError("Addon author must include the authored user");
 		}
 
 		return this.userService.getAllAddons(id);
@@ -199,10 +185,7 @@ export class UserController extends Controller {
 	@Post("{id}")
 	@Security("discord", [])
 	@Security("bot")
-	public async create(
-		@Path() id: string,
-		@Body() body: UserCreationParams
-	): Promise<User> {
+	public async create(@Path() id: string, @Body() body: UserCreationParams): Promise<User> {
 		return this.userService.create(id, { ...body, id, media: [], warns: [] });
 	}
 
@@ -219,7 +202,7 @@ export class UserController extends Controller {
 	public async set(
 		@Path() id: string,
 		@Body() body: UserCreationParams,
-		@Request() request: any
+		@Request() request: any,
 	): Promise<User> {
 		// the security middleware adds a key user with anything inside when validated, see security middleware Promise return type
 		if (id !== request.user) {
@@ -249,10 +232,7 @@ export class UserController extends Controller {
 	@Put("{id}/roles")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async setRoles(
-		@Path() id: string,
-		@Body() roles: Array<string>
-	): Promise<User> {
+	public async setRoles(@Path() id: string, @Body() roles: Array<string>): Promise<User> {
 		return this.userService.setRoles(id, roles);
 	}
 

@@ -72,7 +72,7 @@ export class ContributionsController extends Controller {
 	public async searchWithTextureAndUser(
 		@Query() packs?: string,
 		@Query() users?: string,
-		@Query() search?: string
+		@Query() search?: string,
 	): Promise<Contributions> {
 		const params: ContributionSearch = {
 			packs: packs && packs !== "all" ? packs.split("-") : null,
@@ -98,16 +98,9 @@ export class ContributionsController extends Controller {
 	 * @param {String} packs List of resource packs joined by '-'
 	 */
 	@Get("search/{users}/{packs}")
-	public async searchContributionsFrom(
-		users: string,
-		packs: string
-	): Promise<Contributions> {
-		if (packs === "all")
-			return this.service.searchContributionsFrom(users.split("-"), null);
-		return this.service.searchContributionsFrom(
-			users.split("-"),
-			packs.split("-")
-		);
+	public async searchContributionsFrom(users: string, packs: string): Promise<Contributions> {
+		if (packs === "all") return this.service.searchContributionsFrom(users.split("-"), null);
+		return this.service.searchContributionsFrom(users.split("-"), packs.split("-"));
 	}
 
 	/**
@@ -116,10 +109,7 @@ export class ContributionsController extends Controller {
 	 * @param ends Ending timestamp
 	 */
 	@Get("between/{begin}/{ends}")
-	public async getContributionInRange(
-		begin: string,
-		ends: string
-	): Promise<Contributions> {
+	public async getContributionInRange(begin: string, ends: string): Promise<Contributions> {
 		return this.service.getByDateRange(begin, ends);
 	}
 
@@ -129,10 +119,7 @@ export class ContributionsController extends Controller {
 	 */
 	@Get("from/{timestamp}")
 	public async getContributionFrom(timestamp: string): Promise<Contributions> {
-		return this.service.getByDateRange(
-			timestamp,
-			new Date().getTime().toString()
-		);
+		return this.service.getByDateRange(timestamp, new Date().getTime().toString());
 	}
 
 	/**
@@ -140,9 +127,7 @@ export class ContributionsController extends Controller {
 	 * @param timestamp Where to stop counting
 	 */
 	@Get("before/{timestamp}")
-	public async getContributionBefore(
-		timestamp: string
-	): Promise<Contributions> {
+	public async getContributionBefore(timestamp: string): Promise<Contributions> {
 		return this.service.getByDateRange("0", timestamp);
 	}
 
@@ -154,7 +139,7 @@ export class ContributionsController extends Controller {
 	@Security("discord", ["administrator"])
 	@Security("bot")
 	public async addContribution(
-		@Body() body: ContributionCreationParams | ContributionCreationParams[]
+		@Body() body: ContributionCreationParams | ContributionCreationParams[],
 	): Promise<Contribution | Contribution[]> {
 		return Array.isArray(body)
 			? this.service.addContributions(body)
@@ -182,7 +167,7 @@ export class ContributionsController extends Controller {
 	@Security("bot")
 	public async updateContribution(
 		id: string,
-		@Body() body: ContributionCreationParams
+		@Body() body: ContributionCreationParams,
 	): Promise<Contribution> {
 		return this.service.updateContribution(id, body);
 	}

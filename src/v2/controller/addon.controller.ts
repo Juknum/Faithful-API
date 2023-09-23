@@ -25,11 +25,7 @@ import {
 } from "../interfaces";
 
 import AddonService from "../service/addon.service";
-import {
-	NotAvailableError,
-	NotFoundError,
-	PermissionError,
-} from "../tools/ApiError";
+import { NotAvailableError, NotFoundError, PermissionError } from "../tools/ApiError";
 import cache from "../tools/cache";
 import { extract } from "../tools/extract";
 
@@ -38,17 +34,11 @@ import { extract } from "../tools/extract";
 export class AddonController extends Controller {
 	private readonly service: AddonService = new AddonService();
 
-	private async getAddonProperty(
-		id: number,
-		property: AddonProperty
-	): Promise<Addon | Files> {
+	private async getAddonProperty(id: number, property: AddonProperty): Promise<Addon | Files> {
 		switch (property) {
 			case "files":
 				return (await this.service.getFiles(id)).map((f) => {
-					if (
-						(f.use === "header" || f.use === "screenshot") &&
-						f.source.startsWith("/")
-					)
+					if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/"))
 						f.source = process.env.DB_IMAGE_ROOT + f.source;
 
 					if (
@@ -65,10 +55,7 @@ export class AddonController extends Controller {
 			default:
 				return this.service.getAll(id).then((addon: AddonAll) => {
 					addon.files = addon.files.map((f) => {
-						if (
-							(f.use === "header" || f.use === "screenshot") &&
-							f.source.startsWith("/")
-						)
+						if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/"))
 							f.source = process.env.DB_IMAGE_ROOT + f.source;
 
 						if (
@@ -117,8 +104,8 @@ export class AddonController extends Controller {
 				extract<AddonStats>({
 					approved: true,
 					numbers: true,
-				})(res)
-			)
+				})(res),
+			),
 		);
 	}
 
@@ -157,12 +144,11 @@ export class AddonController extends Controller {
 	@SuccessResponse(302, "Redirect")
 	public async getHeaderFile(
 		@Path() id_or_slug: string,
-		@Request() request: ExRequest
+		@Request() request: ExRequest,
 	): Promise<void> {
 		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
 		let headerFileURL = await this.service.getHeaderFileURL(id);
-		if (headerFileURL.startsWith("/"))
-			headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
+		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
 
 		const response = (<any>request).res as ExResponse;
 		response.redirect(headerFileURL);
@@ -176,9 +162,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/authors")
-	public async getAddonAuthorsProfiles(
-		@Path() id_or_slug: string
-	): Promise<UserProfile[]> {
+	public async getAddonAuthorsProfiles(@Path() id_or_slug: string): Promise<UserProfile[]> {
 		return this.service.getAddonAuthorsProfiles(id_or_slug);
 	}
 
@@ -191,13 +175,11 @@ export class AddonController extends Controller {
 	@Get("{id_or_slug}/{property}")
 	public async getAddonPropertyById(
 		@Path() id_or_slug: string,
-		property: AddonProperty
+		property: AddonProperty,
 	): Promise<Addon | Files> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
-			.then((value: [number, Addon]) =>
-				this.getAddonProperty(value[0], property)
-			);
+			.then((value: [number, Addon]) => this.getAddonProperty(value[0], property));
 	}
 
 	/**
@@ -208,16 +190,12 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/files/screenshots")
-	public async getScreenshots(
-		@Path() id_or_slug: string
-	): Promise<Array<string>> {
+	public async getScreenshots(@Path() id_or_slug: string): Promise<Array<string>> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
 			.then((value: [number, Addon]) => this.service.getScreenshots(value[0]))
 			.then((screens) =>
-				screens.map((s) =>
-					s.startsWith("/") ? process.env.DB_IMAGE_ROOT + s : s
-				)
+				screens.map((s) => (s.startsWith("/") ? process.env.DB_IMAGE_ROOT + s : s)),
 			);
 	}
 
@@ -229,14 +207,10 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:own", "administrator"])
 	@Get("{id_or_slug}/files/screenshots-ids")
-	public async getScreenshotsIds(
-		@Path() id_or_slug: string
-	): Promise<Array<string>> {
+	public async getScreenshotsIds(@Path() id_or_slug: string): Promise<Array<string>> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
-			.then((value: [number, Addon]) =>
-				this.service.getScreenshotsIds(value[0])
-			);
+			.then((value: [number, Addon]) => this.service.getScreenshotsIds(value[0]));
 	}
 
 	/**
@@ -247,9 +221,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/files/downloads")
-	public async getDownloads(
-		@Path() id_or_slug: string
-	): Promise<Array<AddonDownload>> {
+	public async getDownloads(@Path() id_or_slug: string): Promise<Array<AddonDownload>> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
 			.then((res) => this.service.getFiles(res[0]))
@@ -258,10 +230,7 @@ export class AddonController extends Controller {
 					files
 						.filter((f) => f.use === "download")
 						.map((f) => {
-							if (
-								!f.source.startsWith("https://") &&
-								!f.source.startsWith("http://")
-							)
+							if (!f.source.startsWith("https://") && !f.source.startsWith("http://"))
 								f.source = `http://${f.source}`;
 							return f;
 						})
@@ -275,8 +244,8 @@ export class AddonController extends Controller {
 							acc[file.name].links.push(file.source);
 
 							return acc;
-						}, {})
-				)
+						}, {}),
+				),
 			);
 	}
 
@@ -293,7 +262,7 @@ export class AddonController extends Controller {
 	public async getScreenshot(
 		@Path() id_or_slug: string,
 		@Path() index: number,
-		@Request() request: ExRequest
+		@Request() request: ExRequest,
 	) {
 		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
 		const screenshotURL = await this.service.getScreenshotURL(id, index);
@@ -308,8 +277,7 @@ export class AddonController extends Controller {
 	public async getHeaderURL(@Path() id_or_slug: string): Promise<string> {
 		const id = (await this.service.getAddonFromSlugOrId(id_or_slug))[0];
 		let headerFileURL = await this.service.getHeaderFileURL(id);
-		if (headerFileURL.startsWith("/"))
-			headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
+		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
 
 		return headerFileURL;
 	}

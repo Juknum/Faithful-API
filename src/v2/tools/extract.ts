@@ -12,7 +12,7 @@ export function extract<T>(properties: Record<keyof T, true>) {
 
 export function filterRecord<T>(
 	data: Record<string, T>,
-	predicate: (val: T) => boolean
+	predicate: (val: T) => boolean,
 ): Record<string, T> {
 	return Object.keys(data).reduce((acc, current) => {
 		if (predicate(data[current])) {

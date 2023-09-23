@@ -27,10 +27,7 @@ export default {
 			const timestamp_str = Object.keys(json)[0];
 			const timestamp = Number.parseInt(timestamp_str, 10);
 
-			return [
-				new Date().getTime() - timestamp > CACHE_DURATION,
-				json[timestamp_str],
-			];
+			return [new Date().getTime() - timestamp > CACHE_DURATION, json[timestamp_str]];
 		});
 	},
 	write(key: string, value: any): Promise<void> {
@@ -71,7 +68,7 @@ export default {
 	purge() {
 		const REGEX = /cache-[.]\.json$/;
 		readdir(folder()).then((entries) =>
-			Promise.all(entries.filter((f) => REGEX.test(f)).map((f) => unlink(f)))
+			Promise.all(entries.filter((f) => REGEX.test(f)).map((f) => unlink(f))),
 		);
 	},
 };

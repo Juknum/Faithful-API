@@ -1,10 +1,6 @@
 import { ID_FIELD } from "firestorm-db";
 import { posts } from "../../firestorm";
-import {
-	CreateWebsitePost,
-	WebsitePost as Post,
-	WebsitePostRepository,
-} from "../../interfaces";
+import { CreateWebsitePost, WebsitePost as Post, WebsitePostRepository } from "../../interfaces";
 
 export default class PostFirestormRepository implements WebsitePostRepository {
 	getRaw(): Promise<Record<string, Post>> {

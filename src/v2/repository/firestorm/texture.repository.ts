@@ -17,12 +17,7 @@ import {
 	TextureRepository,
 	Path,
 } from "../../interfaces";
-import {
-	mapTexture,
-	mapTextures,
-	OldUse,
-	unmapTexture,
-} from "../../tools/mapping/textures";
+import { mapTexture, mapTextures, OldUse, unmapTexture } from "../../tools/mapping/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(tag?: string, search?: string): Promise<Textures> {
@@ -32,8 +27,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		}
 
 		// * number id: get + includes tag?
-		const number_id: number =
-			search !== undefined ? Number.parseInt(search, 10) : Number.NaN;
+		const number_id: number = search !== undefined ? Number.parseInt(search, 10) : Number.NaN;
 		if (!Number.isNaN(number_id)) {
 			const tex: Texture = await textures
 				.get(number_id)
@@ -42,8 +36,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 
 			if (tex === undefined) return Promise.resolve([]);
 
-			if (tag === undefined || tex.tags.includes(tag))
-				return Promise.resolve([tex]);
+			if (tag === undefined || tex.tags.includes(tag)) return Promise.resolve([tex]);
 
 			return Promise.resolve([]);
 		}
@@ -72,11 +65,8 @@ export default class TextureFirestormRepository implements TextureRepository {
 			});
 		}
 
-		const results: Textures = await textures
-			.search(criterias)
-			.then(mapTextures);
-		if (results.length && search === undefined && !partial)
-			return Promise.resolve(results);
+		const results: Textures = await textures.search(criterias).then(mapTextures);
+		if (results.length && search === undefined && !partial) return Promise.resolve(results);
 
 		// fallback string search criteria to include if empty results
 		criterias[criterias.length - 1].criteria = "includes";
@@ -95,31 +85,24 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.get(id).then((texture) => texture.url(pack, version));
 	}
 
-	public async searchTextureByNameOrId(
-		name_or_id
-	): Promise<Textures | Texture> {
-		const res = (await this.searchTexturePropertyByNameOrId(
-			name_or_id,
-			null
-		)) as Texture | Textures;
+	public async searchTextureByNameOrId(name_or_id): Promise<Textures | Texture> {
+		const res = (await this.searchTexturePropertyByNameOrId(name_or_id, null)) as
+			| Texture
+			| Textures;
 		return res;
 	}
 
 	public async searchTexturePropertyByNameOrId(
 		name_or_id: string | number,
-		property: TextureProperty
-	): Promise<
-		Textures | Texture | Paths | Uses | Contributions | TextureMCMETA
-	> {
+		property: TextureProperty,
+	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
 		const int_id: number = parseInt(name_or_id as string, 10);
 
 		if (Number.isNaN(int_id) || int_id.toString() !== name_or_id.toString()) {
 			name_or_id = name_or_id.toString();
 
 			if (name_or_id.length < 3)
-				return Promise.reject(
-					new Error("Texture name must be longer than 2 characters.")
-				);
+				return Promise.reject(new Error("Texture name must be longer than 2 characters."));
 
 			/**
 			 * What do we do ? How do we search ?
@@ -140,9 +123,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 				.search([{ field: "name", criteria: "==", value: name_or_id }])
 				.then((res: Textures) => {
 					if (res.length === 0)
-						return textures.search([
-							{ field: "name", criteria: "includes", value: name_or_id },
-						]);
+						return textures.search([{ field: "name", criteria: "includes", value: name_or_id }]);
 					return res;
 				})
 				.then((otherTexturesFound: Textures) => {
@@ -154,14 +135,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return this.getTextureById(int_id, property);
 	}
 
-	public getTextureById(
-		id: number,
-		property: TextureProperty
-	): Promise<Texture> {
+	public getTextureById(id: number, property: TextureProperty): Promise<Texture> {
 		if (Number.isNaN(id) || id < 0)
-			return Promise.reject(
-				new Error("Texture IDs are integer greater than 0.")
-			);
+			return Promise.reject(new Error("Texture IDs are integer greater than 0."));
 		return textures.get(id).then((t) => {
 			if (property === null) return mapTexture(t); // TODO: (DATA 2.0) remove after database rewrite
 			return t[property]();
@@ -179,7 +155,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 						if (!acc.includes(edi)) acc.push(edi);
 					});
 					return acc.sort();
-				}, [])
+				}, []),
 			);
 	}
 
@@ -192,15 +168,14 @@ export default class TextureFirestormRepository implements TextureRepository {
 				(
 					Object.values(response).reduce(
 						(resolutionList: Array<number>, currentContribution: any) => {
-							const { resolution: contributionResolution } =
-								currentContribution;
+							const { resolution: contributionResolution } = currentContribution;
 							if (!resolutionList.includes(contributionResolution))
 								resolutionList.push(contributionResolution);
 							return resolutionList;
 						},
-						[]
+						[],
 					) as Array<number>
-				).sort()
+				).sort(),
 			);
 	}
 
@@ -219,7 +194,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 				)
 					.flat()
 					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort()
+					.sort(),
 			);
 	}
 
@@ -234,7 +209,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 						if (!acc.includes(edi)) acc.push(edi);
 					});
 					return acc.sort().reverse();
-				}, [])
+				}, []),
 			);
 	}
 
@@ -243,8 +218,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 			.collection("settings")
 			.get("versions")
 			.then((versions) => {
-				if (versions[edition] === undefined)
-					throw new NotFoundError("edition not found");
+				if (versions[edition] === undefined) throw new NotFoundError("edition not found");
 				return versions[edition];
 			});
 	}
@@ -266,17 +240,12 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return Promise.all(promises).then(() => {});
 	}
 
-	public async changeTexture(
-		id: string,
-		body: TextureCreationParam
-	): Promise<Texture> {
+	public async changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
 		const unmapped = unmapTexture({
 			id,
 			...body,
 		});
 
-		return textures
-			.set(id, unmapped)
-			.then(() => this.searchTextureByNameOrId(id));
+		return textures.set(id, unmapped).then(() => this.searchTextureByNameOrId(id));
 	}
 }

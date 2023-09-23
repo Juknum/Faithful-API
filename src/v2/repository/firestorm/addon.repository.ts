@@ -1,11 +1,5 @@
 import { addons } from "../../firestorm";
-import {
-	Files,
-	AddonStatus,
-	Addon,
-	Addons,
-	AddonRepository,
-} from "../../interfaces";
+import { Files, AddonStatus, Addon, Addons, AddonRepository } from "../../interfaces";
 
 export default class AddonFirestormRepository implements AddonRepository {
 	getRaw(): Promise<Record<string, Addon>> {
@@ -53,7 +47,7 @@ export default class AddonFirestormRepository implements AddonRepository {
 						criteria: "==",
 						value: slug,
 					},
-				])
+				]),
 			)
 			.then((results) => results[0]);
 	}

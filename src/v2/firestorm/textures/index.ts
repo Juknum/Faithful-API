@@ -1,13 +1,6 @@
 import axios from "axios";
 import firestorm from "firestorm-db";
-import {
-	Paths,
-	Uses,
-	Contributions,
-	TextureAll,
-	Path,
-	Use,
-} from "~/v2/interfaces";
+import { Paths, Uses, Contributions, TextureAll, Path, Use } from "~/v2/interfaces";
 import { KnownPacks, TextureMCMETA } from "~/v2/interfaces/textures";
 import { TextureUse } from "~/v1/firestorm/uses";
 import config from "../config";
@@ -35,11 +28,7 @@ export const textures = firestorm.collection("textures", (el) => {
 	el.paths = async (): Promise<Paths> =>
 		el
 			.uses()
-			.then((_uses) =>
-				Promise.all(
-					_uses.map((_use) => uses.get(_use.id).then((u) => u.paths()))
-				)
-			)
+			.then((_uses) => Promise.all(_uses.map((_use) => uses.get(_use.id).then((u) => u.paths()))))
 			.then((arr) => arr.flat())
 			.then(mapPaths); // TODO: (DATA 2.0) remove after database rewrite
 
@@ -62,10 +51,7 @@ export const textures = firestorm.collection("textures", (el) => {
 				if (version === "latest") {
 					[path] = texturePaths;
 					[version] = path.versions.sort(MinecraftSorter).reverse();
-				} else
-					[path] = texturePaths.filter((p: Path) =>
-						p.versions.includes(version)
-					);
+				} else [path] = texturePaths.filter((p: Path) => p.versions.includes(version));
 
 				return el.uses();
 			})
@@ -76,7 +62,7 @@ export const textures = firestorm.collection("textures", (el) => {
 				return `${urls[use.edition]}${version}/${path.name}`;
 			})
 			.catch(
-				"https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png"
+				"https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png",
 			); // fallback image
 	};
 
@@ -104,7 +90,7 @@ export const textures = firestorm.collection("textures", (el) => {
 					.get(
 						`https://raw.githubusercontent.com/CompliBot/Default-Java/${
 							p.versions.sort(MinecraftSorter).reverse()[0]
-						}/${p.name}.mcmeta`
+						}/${p.name}.mcmeta`,
 					)
 					.catch(() => null); // avoid crash if mcmeta file cannot be found
 			})

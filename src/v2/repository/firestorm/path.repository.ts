@@ -3,10 +3,7 @@ import { mapPath, unmapPath, mapPaths } from "../../tools/mapping/textures";
 import { paths } from "../../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
-	getPathsByUseIdsAndVersion(
-		use_ids: string[],
-		version: string
-	): Promise<Paths> {
+	getPathsByUseIdsAndVersion(use_ids: string[], version: string): Promise<Paths> {
 		return paths
 			.search([
 				{
@@ -55,9 +52,7 @@ export default class PathFirestormRepository implements PathRepository {
 	}
 
 	updatePath(path_id: string, path: Path): Promise<Path> {
-		return paths
-			.set(path_id, unmapPath(path))
-			.then(() => this.getPathById(path_id));
+		return paths.set(path_id, unmapPath(path)).then(() => this.getPathById(path_id));
 	}
 
 	getRaw() {

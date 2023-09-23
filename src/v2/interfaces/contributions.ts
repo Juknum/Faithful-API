@@ -53,24 +53,16 @@ export interface ContributionsAuthors extends Array<ContributionsAuthor> {}
 export interface ContributionsRepository {
 	getContributionById(id: string): Promise<Contribution>;
 	addContribution(params: ContributionCreationParams): Promise<Contribution>;
-	addContributions(
-		params: ContributionCreationParams[]
-	): Promise<Contribution[]>;
+	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]>;
 	deleteContribution(id: string): Promise<void>;
-	updateContribution(
-		id: string,
-		params: ContributionCreationParams
-	): Promise<Contribution>;
+	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution>;
 	getByDateRange(begin: string, ends: string): Promise<Contributions>;
 	getAuthors(): Promise<ContributionsAuthors>;
 	getPacks(): ContributionsPacks;
 	searchByIdAndPacks(
 		texture_ids: Array<string>,
 		packs: Array<string>,
-		users?: Array<string>
+		users?: Array<string>,
 	): Promise<Contributions>;
-	searchContributionsFrom(
-		users: Array<string>,
-		packs: Array<string>
-	): Promise<Contributions>;
+	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions>;
 }

@@ -104,10 +104,7 @@ export default class ContributionService {
 		return this.contributionRepo.getAuthors();
 	}
 
-	searchContributionsFrom(
-		users: Array<string>,
-		packs: Array<string>
-	): Promise<Contributions> {
+	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions> {
 		return this.contributionRepo.searchContributionsFrom(users, packs);
 	}
 
@@ -124,7 +121,7 @@ export default class ContributionService {
 			result = await this.contributionRepo.searchByIdAndPacks(
 				texture_ids,
 				params.packs,
-				params.users
+				params.users,
 			);
 		} else {
 			result = await this.searchContributionsFrom(params.users, params.packs);
@@ -141,9 +138,7 @@ export default class ContributionService {
 		return this.contributionRepo.addContribution(params);
 	}
 
-	addContributions(
-		params: ContributionCreationParams[]
-	): Promise<Contribution[]> {
+	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
 		return this.contributionRepo.addContributions(params);
 	}
 
@@ -151,10 +146,7 @@ export default class ContributionService {
 		return this.contributionRepo.deleteContribution(id);
 	}
 
-	updateContribution(
-		id: string,
-		params: ContributionCreationParams
-	): Promise<Contribution> {
+	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution> {
 		return this.contributionRepo.updateContribution(id, params);
 	}
 

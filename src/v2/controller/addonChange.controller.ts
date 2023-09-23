@@ -42,7 +42,7 @@ export class AddonChangeController extends Controller {
 	@Security("discord", [])
 	public async addonCreate(
 		@Body() body: AddonCreationParam,
-		@Request() request: any
+		@Request() request: any,
 	): Promise<Addon> {
 		if (!body.authors.includes(request.user))
 			throw new BadRequestError("Addon author must include the authed user");
@@ -62,7 +62,7 @@ export class AddonChangeController extends Controller {
 	public async addonUpdate(
 		@Path() id_or_slug: string,
 		@Body() body: AddonUpdateParam,
-		@Request() request: any
+		@Request() request: any,
 	): Promise<Addon> {
 		const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
 
@@ -90,7 +90,7 @@ export class AddonChangeController extends Controller {
 	public async addonReview(
 		@Path() id_or_slug: string,
 		@Body() data: AddonReviewBody,
-		@Request() request: any
+		@Request() request: any,
 	): Promise<void> {
 		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
 
@@ -120,22 +120,15 @@ export class AddonChangeController extends Controller {
 		this.service.delete(addonId);
 	}
 
-	public async postHeader(
-		id_or_slug: string,
-		file: Express.Multer.File
-	): Promise<File | void> {
+	public async postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
 		return this.service.postHeader(id_or_slug, file.originalname, file.buffer);
 	}
 
 	public async addonAddScreenshot(
 		id_or_slug: string,
-		file: Express.Multer.File
+		file: Express.Multer.File,
 	): Promise<File | void> {
-		return this.service.postScreenshot(
-			id_or_slug,
-			file.originalname,
-			file.buffer
-		);
+		return this.service.postScreenshot(id_or_slug, file.originalname, file.buffer);
 	}
 
 	/**
@@ -149,7 +142,7 @@ export class AddonChangeController extends Controller {
 	@Security("discord", ["addon:own", "Administrator"])
 	public async addonDeleteScreenshot(
 		@Path() id_or_slug: string,
-		@Path() index_or_slug: number | string
+		@Path() index_or_slug: number | string,
 	): Promise<void> {
 		return this.service.deleteScreenshot(id_or_slug, index_or_slug);
 	}

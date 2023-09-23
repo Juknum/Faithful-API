@@ -32,9 +32,9 @@ export default class CloudflareClassRepository implements CloudflareRepository {
 						.map((id) =>
 							this.cf.zones.purgeCache(id, {
 								purge_everything: true,
-							})
-						)
-				)
+							}),
+						),
+				),
 			)
 			.then((response) => {
 				if (Array.isArray(response)) {
@@ -66,9 +66,9 @@ export default class CloudflareClassRepository implements CloudflareRepository {
 							"Content-Type": "application/json",
 							Authorization: `Bearer ${TOKEN}`,
 						},
-					}
-				)
-			)
+					},
+				),
+			),
 		);
 
 		const result = responses.map((r) => r.data);

@@ -13,10 +13,7 @@ interface WebsitePostDownload {
 	url: string; // download URL
 }
 export type WebsitePostDownloadRecord = Record<string, WebsitePostDownload[]>;
-export type WebsitePostChangelogRecord = Record<
-	string,
-	Record<string, string[]>
->;
+export type WebsitePostChangelogRecord = Record<string, Record<string, string[]>>;
 
 export interface CreateWebsitePost {
 	title: string; // Post main title

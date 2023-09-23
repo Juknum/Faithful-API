@@ -7,8 +7,7 @@ import config from "../config";
 config();
 
 export const contributions = firestorm.collection("contributions", (el) => {
-	el.getContributors = (): Promise<User> =>
-		users.searchKeys(el.contributors || []);
+	el.getContributors = (): Promise<User> => users.searchKeys(el.contributors || []);
 	el.getTexture = (): Promise<Texture> => textures.get(el.textureID);
 
 	return el;

@@ -1,19 +1,11 @@
 import * as express from "express";
 import axios from "axios";
 import { APIUser } from "discord-api-types/v9";
-import {
-	PermissionError,
-	NotFoundError,
-	ApiError,
-	ForbiddenError,
-} from "./ApiError";
+import { PermissionError, NotFoundError, ApiError, ForbiddenError } from "./ApiError";
 import { UserService } from "../service/user.service";
 import AddonService from "../service/addon.service";
 import { Addon } from "../interfaces";
-import {
-	AddonNotApprovedValues,
-	AddonStatusValues,
-} from "../interfaces/addons";
+import { AddonNotApprovedValues, AddonStatusValues } from "../interfaces/addons";
 
 require("dotenv").config();
 
@@ -24,7 +16,7 @@ const addonService = new AddonService();
 export async function expressAuthentication(
 	request: express.Request,
 	securityName: string,
-	scopes?: string[]
+	scopes?: string[],
 ): Promise<any> {
 	let token: string;
 
@@ -37,11 +29,8 @@ export async function expressAuthentication(
 				// not authed
 				// is not an addon status (is id/slug of addon)
 				if (!AddonStatusValues.includes(request.params.id_or_slug as any)) {
-					const addon = (
-						await addonService.getAddonFromSlugOrId(request.params.id_or_slug)
-					)[1];
-					if (addon.approval.status !== "approved")
-						return Promise.reject(new ForbiddenError());
+					const addon = (await addonService.getAddonFromSlugOrId(request.params.id_or_slug))[1];
+					if (addon.approval.status !== "approved") return Promise.reject(new ForbiddenError());
 
 					//* not authed, not a status, is an id/slug
 					return Promise.resolve(undefined);
@@ -63,17 +52,14 @@ export async function expressAuthentication(
 	}
 
 	if (securityName === "bot") {
-		if (request.headers && request.headers.bot)
-			token = request.headers.bot as string;
+		if (request.headers && request.headers.bot) token = request.headers.bot as string;
 		else return Promise.reject(new Error("Missing bot token in header"));
 
-		if (token === process.env.BOT_PASSWORD)
-			return Promise.resolve("Valid bot password");
+		if (token === process.env.BOT_PASSWORD) return Promise.resolve("Valid bot password");
 		return Promise.reject(new Error("Password did not match"));
 	}
 	if (securityName === "cloudflare") {
-		if (request.headers && request.headers.cloudflare)
-			token = request.headers.cloudflare as string;
+		if (request.headers && request.headers.cloudflare) token = request.headers.cloudflare as string;
 		else return Promise.reject(new Error("Missing cloudflare token in header"));
 
 		if (token === process.env.CLOUDFLARE_PASSWORD)
@@ -81,10 +67,8 @@ export async function expressAuthentication(
 		return Promise.reject(new Error("Password did not match"));
 	}
 	if (securityName === "discord") {
-		if (request.query && request.query.discord)
-			token = request.query.discord as string;
-		else if (request.headers && request.headers.discord)
-			token = request.headers.discord as string;
+		if (request.query && request.query.discord) token = request.query.discord as string;
+		else if (request.headers && request.headers.discord) token = request.headers.discord as string;
 		else return Promise.reject(new Error("Missing discord token in header"));
 
 		const discordUser: APIUser = await axios
@@ -99,8 +83,8 @@ export async function expressAuthentication(
 					new ApiError(
 						"Discord Error",
 						err?.response?.status,
-						err?.response?.data?.message || err.message
-					)
+						err?.response?.data?.message || err.message,
+					),
 			);
 		if (discordUser instanceof ApiError) return Promise.reject(discordUser);
 
@@ -118,15 +102,11 @@ export async function expressAuthentication(
 		) {
 			const { id_or_slug: idOrSlug } = request.params;
 			if ((AddonStatusValues as ReadonlyArray<string>).includes(idOrSlug)) {
-				if (
-					!(AddonNotApprovedValues as ReadonlyArray<string>).includes(idOrSlug)
-				)
+				if (!(AddonNotApprovedValues as ReadonlyArray<string>).includes(idOrSlug))
 					return Promise.resolve(discordID);
 				//* check if D: admin or roles, uses the rest of authentification with roles
 			} else {
-				const addon: Addon = (
-					await addonService.getAddonFromSlugOrId(idOrSlug)
-				)[1];
+				const addon: Addon = (await addonService.getAddonFromSlugOrId(idOrSlug))[1];
 
 				// check if C: author
 				if (addon.authors.includes(discordID)) return discordID;
@@ -136,14 +116,11 @@ export async function expressAuthentication(
 
 		// scopes is roles
 		// adding devs role when developing stuff only
-		if (scopes.length && process.env.DEV.toLowerCase() === "true")
-			scopes.push("Developer");
+		if (scopes.length && process.env.DEV.toLowerCase() === "true") scopes.push("Developer");
 
-		const user: any | undefined = await userService
-			.getUserById(discordID)
-			.catch(() => {});
+		const user: any | undefined = await userService.getUserById(discordID).catch(() => {});
 
-		let roles;
+		let roles: string[];
 		if (user === undefined) {
 			roles = [];
 		} else {
@@ -166,15 +143,10 @@ export async function expressAuthentication(
 
 		// if not respected permission error
 		console.error(
-			`PermissionError on ${discordID}: ${JSON.stringify(
-				roles
-			)}, ${JSON.stringify(scopes)} needed`
+			`PermissionError on ${discordID}: ${JSON.stringify(roles)}, ${JSON.stringify(scopes)} needed`,
 		);
 
-		if (
-			scopes.includes("addon:approved") &&
-			!("id_or_slug" in request.params)
-		) {
+		if (scopes.includes("addon:approved") && !("id_or_slug" in request.params)) {
 			return Promise.resolve(undefined);
 		}
 		return Promise.reject(new PermissionError());

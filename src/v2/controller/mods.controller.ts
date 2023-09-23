@@ -1,13 +1,4 @@
-import {
-	Controller,
-	Get,
-	Path,
-	Request,
-	Route,
-	SuccessResponse,
-	Tags,
-	Response,
-} from "tsoa";
+import { Controller, Get, Path, Request, Route, SuccessResponse, Tags, Response } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
 import { Mods, PackVersions } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";
@@ -35,10 +26,7 @@ export class ModsController extends Controller {
 	@Get("{id}/thumbnail")
 	@Response<NotFoundError>(404)
 	@SuccessResponse(302, "Redirect")
-	public async getThumbnail(
-		@Path() id: string,
-		@Request() request: ExRequest
-	): Promise<void> {
+	public async getThumbnail(@Path() id: string, @Request() request: ExRequest): Promise<void> {
 		const response = (<any>request).res as ExResponse;
 
 		// if id is a number, it's a CurseForge ID
@@ -48,7 +36,7 @@ export class ModsController extends Controller {
 		}
 
 		const url = await cache.handle(`mods-thumbnail-${id}`, () =>
-			this.service.getThumbnail(parseInt(id, 10))
+			this.service.getThumbnail(parseInt(id, 10)),
 		);
 		response.redirect(url);
 	}
@@ -57,13 +45,11 @@ export class ModsController extends Controller {
 	public async getCurseForgeInfo(@Path() id: string): Promise<string> {
 		// if id is a number, it's a CurseForge ID
 		if (Number.isNaN(parseInt(id, 10))) {
-			return cache.handle(`mods-curseforge-name-${id}`, () =>
-				this.service.getNameInDatabase(id)
-			);
+			return cache.handle(`mods-curseforge-name-${id}`, () => this.service.getNameInDatabase(id));
 		}
 
 		return cache.handle(`mods-curseforge-name-${id}`, () =>
-			this.service.getCurseForgeName(parseInt(id, 10))
+			this.service.getCurseForgeName(parseInt(id, 10)),
 		);
 	}
 }

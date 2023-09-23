@@ -30,7 +30,7 @@ export default class GalleryService {
 		mc_version: string,
 		texture_ids: string[],
 		texture_to_use: Record<string, Use>,
-		use_to_path: Record<string, Path>
+		use_to_path: Record<string, Path>,
 	) {
 		return this.settingsService
 			.raw()
@@ -41,7 +41,7 @@ export default class GalleryService {
 					.filter((t_id) => texture_to_use[t_id])
 					.map((t_id) => texture_to_use[t_id])
 					.map((use: Use) => use_to_path[use.id].name)
-					.map((str) => url + str)
+					.map((str) => url + str),
 			);
 	}
 
@@ -50,30 +50,21 @@ export default class GalleryService {
 		edition: string,
 		mc_version: string,
 		tag?: string,
-		search?: string
+		search?: string,
 	): Promise<GalleryResult[]> {
 		// ? it is more optimized to go down when searching because we have less textures than paths
 		// ? texture -> texture found => uses -> uses found => paths -> paths found
 
-		const textures_found = await this.textureService.getByNameIdAndTag(
-			tag,
-			search
-		);
+		const textures_found = await this.textureService.getByNameIdAndTag(tag, search);
 
 		if (textures_found.length === 0) return Promise.resolve([]);
 		const ids = textures_found.map((t) => Number.parseInt(t.id, 10));
 
-		const uses_found = await this.useService.getUsesByIdsAndEdition(
-			ids,
-			edition
-		);
+		const uses_found = await this.useService.getUsesByIdsAndEdition(ids, edition);
 		if (uses_found.length === 0) return Promise.resolve([]);
 		const use_ids = uses_found.map((u) => u.id);
 
-		const paths_found = await this.pathRepo.getPathsByUseIdsAndVersion(
-			use_ids,
-			mc_version
-		);
+		const paths_found = await this.pathRepo.getPathsByUseIdsAndVersion(use_ids, mc_version);
 		if (paths_found.length === 0) return Promise.resolve([]);
 
 		// ? From this we can go up, to filter with the found results
@@ -104,7 +95,7 @@ export default class GalleryService {
 			{
 				use_to_path: {},
 				uses_filtered: [],
-			}
+			},
 		);
 
 		// then filter matching textures
@@ -128,7 +119,7 @@ export default class GalleryService {
 			{
 				texture_to_use: {},
 				textures_filtered: [],
-			}
+			},
 		);
 
 		// TODO: optimize this to take less computation time
@@ -156,7 +147,7 @@ export default class GalleryService {
 			mc_version,
 			ids.map((id) => String(id)),
 			texture_to_use,
-			use_to_path
+			use_to_path,
 		);
 
 		return textures_filtered

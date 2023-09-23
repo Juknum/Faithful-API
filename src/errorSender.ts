@@ -17,7 +17,7 @@ const safeStringify = (obj, indent = 2) => {
 					? undefined // Duplicate reference found, discard key
 					: cache.push(value) && value // Store value in our collection
 				: value,
-		indent
+		indent,
 	);
 	cache = null;
 	return retVal;
@@ -28,7 +28,7 @@ export default async function sendError(
 	err: any,
 	req: Request,
 	stack: string,
-	message?: string
+	message?: string,
 ) {
 	if (!BOT_ENDPOINT || code === 404 || code === 403) return;
 
@@ -55,7 +55,5 @@ export default async function sendError(
 	};
 
 	// ignore errors from this else we are not done
-	await axios
-		.post(BOT_ENDPOINT, JSON.parse(safeStringify(payload)))
-		.catch(() => {});
+	await axios.post(BOT_ENDPOINT, JSON.parse(safeStringify(payload))).catch(() => {});
 }

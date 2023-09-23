@@ -1,12 +1,4 @@
-import {
-	Textures,
-	Texture,
-	Use,
-	Uses,
-	Path,
-	Paths,
-	InputPath,
-} from "~/v2/interfaces";
+import { Textures, Texture, Use, Uses, Path, Paths, InputPath } from "~/v2/interfaces";
 
 export interface OldCreationUse {
 	textureID: number;

@@ -1,11 +1,5 @@
 import { FilesFirestormRepository } from "../repository/firestorm/files.repository";
-import {
-	FileRepository,
-	FileParent,
-	FileUse,
-	File,
-	Files,
-} from "../interfaces/files";
+import { FileRepository, FileParent, FileUse, File, Files } from "../interfaces/files";
 
 export class FileService {
 	private readonly repo: FileRepository = new FilesFirestormRepository();
@@ -34,12 +28,7 @@ export class FileService {
 		return this.repo.removeFileById(id);
 	}
 
-	public async upload(
-		path: string,
-		filename: string,
-		buffer: Buffer,
-		overwrite: Boolean = false
-	) {
+	public async upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean = false) {
 		return this.repo.upload(path, filename, buffer, overwrite);
 	}
 

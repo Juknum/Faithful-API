@@ -1,13 +1,7 @@
 import firestorm from "firestorm-db";
 import FormData from "form-data";
 import { files } from "../../firestorm";
-import {
-	File,
-	FileParent,
-	FileRepository,
-	Files,
-	FileUse,
-} from "../../interfaces/files";
+import { File, FileParent, FileRepository, Files, FileUse } from "../../interfaces/files";
 
 export class FilesFirestormRepository implements FileRepository {
 	addFiles(fileList: Files): Promise<string[]> {
@@ -55,9 +49,7 @@ export class FilesFirestormRepository implements FileRepository {
 
 	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<void> {
 		return this.getFilesByParent(parent)
-			.then((_files: any) =>
-				files.removeBulk(_files.filter((f) => f.use === use).map((f) => f.id))
-			)
+			.then((_files: any) => files.removeBulk(_files.filter((f) => f.use === use).map((f) => f.id)))
 			.then(() => {});
 	}
 
@@ -65,12 +57,7 @@ export class FilesFirestormRepository implements FileRepository {
 		return this.remove(path).finally(() => {});
 	}
 
-	upload(
-		path: string,
-		filename: string,
-		buffer: Buffer,
-		overwrite: Boolean
-	): Promise<void> {
+	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void> {
 		const form = new FormData();
 		form.append("path", path);
 		form.append("file", buffer, filename);

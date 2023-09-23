@@ -20,9 +20,7 @@ export default class PathService {
 	private readonly repository: PathRepository = new PathFirestormRepository();
 
 	getRaw(): Promise<Paths> {
-		return this.repository
-			.getRaw()
-			.then((res: any) => Object.values(res).map(mapPath));
+		return this.repository.getRaw().then((res: any) => Object.values(res).map(mapPath));
 	}
 
 	getPathByUseId(use_id: string): Promise<Paths> {
@@ -41,8 +39,7 @@ export default class PathService {
 	}
 
 	updatePathById(id: string, path: Path) {
-		if (id !== path.id)
-			throw new BadRequestError("Updated ID is different from ID");
+		if (id !== path.id) throw new BadRequestError("Updated ID is different from ID");
 
 		return this.useService
 			.getUseByIdOrName(path.use) // verify use existence

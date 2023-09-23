@@ -1,12 +1,7 @@
 import { JsonObject } from "swagger-ui-express";
 import { Controller } from "tsoa";
 import multer from "multer";
-import {
-	Application,
-	NextFunction,
-	Response as ExResponse,
-	Request as ExRequest,
-} from "express";
+import { Application, NextFunction, Response as ExResponse, Request as ExRequest } from "express";
 import { expressAuthentication } from "./authentification";
 import { BadRequestError } from "./ApiError";
 
@@ -21,21 +16,14 @@ const upload = multer({
 		else {
 			callback(
 				new BadRequestError(
-					`Incorrect file mime type provided, ${MIME_TYPES_ACCEPTED.join(
-						" or "
-					)} expected`
-				)
+					`Incorrect file mime type provided, ${MIME_TYPES_ACCEPTED.join(" or ")} expected`,
+				),
 			);
 		}
 	},
 });
 
-function returnHandler(
-	response: any,
-	statusCode?: number,
-	data?: any,
-	headers: any = {}
-) {
+function returnHandler(response: any, statusCode?: number, data?: any, headers: any = {}) {
 	if (response.headersSent) {
 		return;
 	}
@@ -62,7 +50,7 @@ function promiseHandler(
 	promise: any,
 	response: any,
 	successStatus: any,
-	next: any
+	next: any,
 ) {
 	return Promise.resolve(promise)
 		.then((data: any) => {
@@ -89,14 +77,14 @@ export default function formHandler(
 	controller: Controller,
 	method: Function,
 	swaggerDoc: JsonObject,
-	swaggerDocOptions: SwaggerDocOptions
+	swaggerDocOptions: SwaggerDocOptions,
 ): JsonObject {
 	app.post(
 		url,
 		async (req: ExRequest, res: ExResponse, next: NextFunction) => {
-			(req as any).user = await expressAuthentication(req, "discord", [
-				"addon:own",
-			]).catch((err) => next(err));
+			(req as any).user = await expressAuthentication(req, "discord", ["addon:own"]).catch((err) =>
+				next(err),
+			);
 			next();
 		},
 		upload.single("file"),
@@ -111,16 +99,13 @@ export default function formHandler(
 			} catch (error) {
 				next(error);
 			}
-		}
+		},
 	);
 
 	// add doc
-	const pathCorrected = url
-		.replace(swaggerDocOptions.prefix, "")
-		.replace(/:([A-ZA-z_]+)/, "{$1}");
+	const pathCorrected = url.replace(swaggerDocOptions.prefix, "").replace(/:([A-ZA-z_]+)/, "{$1}");
 	if (!("paths" in swaggerDoc)) swaggerDoc.paths = {};
-	if (!(pathCorrected in swaggerDoc.paths))
-		swaggerDoc.paths[pathCorrected] = {};
+	if (!(pathCorrected in swaggerDoc.paths)) swaggerDoc.paths[pathCorrected] = {};
 	swaggerDoc.paths[pathCorrected].post = {
 		operationId: swaggerDocOptions.operationId,
 		responses: {

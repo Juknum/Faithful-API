@@ -9,9 +9,7 @@ import {
 } from "../../interfaces";
 import { contributions, users } from "../../firestorm";
 
-export default class ContributionFirestormRepository
-	implements ContributionsRepository
-{
+export default class ContributionFirestormRepository implements ContributionsRepository {
 	getContributionById(id: string): Promise<Contribution> {
 		return contributions.get(id);
 	}
@@ -20,31 +18,25 @@ export default class ContributionFirestormRepository
 		return [...ContributionPacksArr] as ContributionsPacks;
 	}
 
-	searchContributionsFrom(
-		authors: Array<string>,
-		packs: Array<string>
-	): Promise<Contributions> {
+	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {
 		const options = authors.map((a) => ({
 			field: "authors",
 			criteria: "array-contains",
 			value: a as any,
 		}));
 
-		if (packs !== null)
-			options.push({ field: "pack", criteria: "in", value: packs });
+		if (packs !== null) options.push({ field: "pack", criteria: "in", value: packs });
 		return contributions
 			.search(options)
 			.then((res: Contributions) =>
-				res.filter((c: Contribution) =>
-					packs === null ? true : packs.includes(c.pack)
-				)
+				res.filter((c: Contribution) => (packs === null ? true : packs.includes(c.pack))),
 			);
 	}
 
 	searchByIdAndPacks(
 		texture_ids: string[],
 		packs?: string[],
-		authors?: string[]
+		authors?: string[],
 	): Promise<Contributions> {
 		const options = [];
 		if (authors) {
@@ -76,17 +68,15 @@ export default class ContributionFirestormRepository
 			.then((obj: any) =>
 				Object.values(obj)
 					.map((o: any) => o.authors)
-					.flat()
+					.flat(),
 			)
 			.then((authors: Array<string>) =>
 				authors.forEach((id: string) => {
 					if (!out[id]) out[id] = { id, contributions: 1 };
 					else out[id].contributions++;
-				})
+				}),
 			)
-			.then(() =>
-				users.select({ fields: ["id", "username", "uuid", "anonymous"] })
-			)
+			.then(() => users.select({ fields: ["id", "username", "uuid", "anonymous"] }))
 			.then((obj: any) => Object.values(obj).map((o: any) => o))
 			.then(
 				(
@@ -95,43 +85,34 @@ export default class ContributionFirestormRepository
 						username: string;
 						uuid: string;
 						anonymous: boolean;
-					}>
+					}>,
 				) =>
-					Object.values(out).map(
-						(author: { id: string; contributions: number }) => {
-							const user = _users.find((u) => u.id === author.id);
+					Object.values(out).map((author: { id: string; contributions: number }) => {
+						const user = _users.find((u) => u.id === author.id);
 
-							if (user)
-								return {
-									...author,
-									username: user.anonymous ? undefined : user.username,
-									uuid: user.anonymous ? undefined : user.uuid,
-								};
+						if (user)
+							return {
+								...author,
+								username: user.anonymous ? undefined : user.username,
+								uuid: user.anonymous ? undefined : user.uuid,
+							};
 
-							return author;
-						}
-					)
+						return author;
+					}),
 			);
 	}
 
 	addContribution(params: ContributionCreationParams): Promise<Contribution> {
-		return contributions
-			.add(params)
-			.then((id: string) => contributions.get(id));
+		return contributions.add(params).then((id: string) => contributions.get(id));
 	}
 
-	addContributions(
-		params: ContributionCreationParams[]
-	): Promise<Contribution[]> {
+	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
 		return contributions
 			.addBulk(params)
 			.then((ids: string[]) => ids.map((id) => contributions.get(id)));
 	}
 
-	updateContribution(
-		id: string,
-		params: ContributionCreationParams
-	): Promise<Contribution> {
+	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution> {
 		return contributions.set(id, params).then(() => contributions.get(id));
 	}
 

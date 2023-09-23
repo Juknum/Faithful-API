@@ -39,8 +39,7 @@ export class SettingsController extends Controller {
 
 		const response = await this.settingsService.get(splitPath);
 
-		if (response === undefined)
-			throw new NotFoundError(`No setting found for key '${path}'`);
+		if (response === undefined) throw new NotFoundError(`No setting found for key '${path}'`);
 
 		return response;
 	}
