@@ -43,7 +43,7 @@ export interface CreatedTexture extends TextureCreationParam {
 }
 
 export interface CreatedTextures extends Array<CreatedTexture> {}
-export type KnownPacks = typeof KnownPacksArr[number];
+export type KnownPacks = (typeof KnownPacksArr)[number];
 export type Edition = "java" | "bedrock" | "dungeons";
 export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;
 

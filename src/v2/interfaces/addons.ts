@@ -12,10 +12,10 @@ export type AddonTagArray = Array<AddonTag[number]>;
 
 export const AddonNotApprovedValues = ["archived", "denied", "pending"] as const;
 export type AddonProperty = "files" | "all";
-export type AddonNotApproved = typeof AddonNotApprovedValues[number];
+export type AddonNotApproved = (typeof AddonNotApprovedValues)[number];
 export const AddonStatusApproved = "approved" as const;
 export const AddonStatusValues = [...AddonNotApprovedValues, AddonStatusApproved] as const;
-export type AddonStatus = typeof AddonStatusValues[number];
+export type AddonStatus = (typeof AddonStatusValues)[number];
 
 export interface AddonReviewBody {
 	status: null | AddonStatus;
