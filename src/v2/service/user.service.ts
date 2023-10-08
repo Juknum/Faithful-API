@@ -65,6 +65,19 @@ export class UserService {
 		return this.repository.getUsersFromRole(role, username);
 	}
 
+	public getUsersByNameOrId(id_or_username: string): Promise<User | Users> {
+		// can't parse discord ids directly into a number because precision can be lost
+		const int = id_or_username.split("").map((s) => parseInt(s, 10));
+		const str = id_or_username.split("");
+		let same = true;
+		int.forEach((i, index) => {
+			same = !!(i.toString() === str[index] && same === true);
+		});
+
+		if (same) return this.getUserById(id_or_username);
+		return this.getUsersByName(id_or_username);
+	}
+
 	public getUserById(id: string): Promise<User> {
 		return this.repository.getUserById(id);
 	}

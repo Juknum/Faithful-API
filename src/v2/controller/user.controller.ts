@@ -116,16 +116,17 @@ export class UserController extends Controller {
 	 */
 	@Get("{id_or_username}")
 	public async getUser(@Path() id_or_username: string): Promise<User | Users> {
-		// can't parse discord ids directly into a number because precision can be lost
-		const int: Array<number> = id_or_username.split("").map((s) => parseInt(s, 10));
-		const str: Array<string> = id_or_username.split("");
-		let same: boolean = true;
-		int.forEach((i, index) => {
-			same = !!(i.toString() === str[index] && same === true);
-		});
+		if (typeof id_or_username === "string" && id_or_username.includes(",")) {
+			const id_array = id_or_username.split(",");
+			return Promise.allSettled(id_array.map((id) => this.userService.getUsersByNameOrId(id))).then((res) => {
+				return res
+					.filter((p) => p.status === "fulfilled")
+					.map((p: any) => p.value)
+					.flat();
+			});
+		}
 
-		if (same) return this.userService.getUserById(id_or_username);
-		return this.userService.getUsersByName(id_or_username);
+		return this.userService.getUsersByNameOrId(id_or_username);
 	}
 
 	/**
