@@ -52,7 +52,6 @@ export class UserController extends Controller {
 
 	/**
 	 * Get the raw collection of users
-	 * @returns {Promise<Users>}
 	 */
 	@Get("raw")
 	public async getRaw(): Promise<Users> {
@@ -70,7 +69,6 @@ export class UserController extends Controller {
 
 	/**
 	 * Get all usernames the database has
-	 * @returns {Promise<UserNames>}
 	 */
 	@Get("names")
 	public async getNames(): Promise<UserNames> {
@@ -79,7 +77,6 @@ export class UserController extends Controller {
 
 	/**
 	 * Get all discord roles the database has
-	 * @returns {Promise<Array<String>>}
 	 */
 	@Get("roles")
 	public async getRoles(): Promise<Array<string>> {
@@ -88,8 +85,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get users that have a specific role
-	 * @param {String} role The role to search for
-	 * @returns {Promise<Users>}
+	 * @param role The role to search for
 	 */
 	@Get("role/{role}")
 	public async getUsersFromRole(@Path() role: string): Promise<Users> {
@@ -98,8 +94,8 @@ export class UserController extends Controller {
 
 	/**
 	 * Get users that have a specific role
-	 * @param {String} role Role name
-	 * @param {String} username Discord user username
+	 * @param role Role name
+	 * @param username Discord user username
 	 */
 	@Get("role/{role}/{username}")
 	public async getUsersFromRoleAndUsername(
@@ -111,19 +107,18 @@ export class UserController extends Controller {
 
 	/**
 	 * Get a user by their ID or username
-	 * @param {String} id_or_username User ID/Username
-	 * @returns {Promise<User|Users>}
+	 * @param id_or_username User ID/Username (join by "," if multiple)
 	 */
 	@Get("{id_or_username}")
 	public async getUser(@Path() id_or_username: string): Promise<User | Users> {
 		if (typeof id_or_username === "string" && id_or_username.includes(",")) {
 			const id_array = id_or_username.split(",");
-			return Promise.allSettled(id_array.map((id) => this.userService.getUsersByNameOrId(id))).then((res) => {
-				return res
+			return Promise.allSettled(id_array.map((id) => this.userService.getUsersByNameOrId(id))).then((res) =>
+				res
 					.filter((p) => p.status === "fulfilled")
 					.map((p: any) => p.value)
-					.flat();
-			});
+					.flat()
+			);
 		}
 
 		return this.userService.getUsersByNameOrId(id_or_username);
@@ -131,8 +126,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get all contributions a user has made
-	 * @param {String} id User ID
-	 * @returns {Promise<Contributions>}
+	 * @param id User ID
 	 */
 	@Get("{id}/contributions")
 	public async getContributions(@Path() id: string): Promise<Contributions> {
@@ -141,8 +135,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get the corresponding username for a given user ID
-	 * @param {String} id User ID
-	 * @returns {Promise<UserName>}
+	 * @param id User ID
 	 */
 	@Get("{id}/name")
 	public async getName(@Path() id: string): Promise<UserName> {
@@ -151,8 +144,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get all approved add-ons from a given user
-	 * @param {String} id User ID
-	 * @returns {Promise<Addons>}
+	 * @param id User ID
 	 */
 	@Get("{id}/addons/approved")
 	public async getAddons(@Path() id: string): Promise<Addons> {
@@ -161,8 +153,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Get all add-ons by a given user
-	 * @param {String} id User ID
-	 * @returns {Promise<Addons>}
+	 * @param id User ID
 	 */
 	@Get("{id}/addons")
 	@Security("discord", [])
@@ -180,8 +171,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Create user data
-	 * @param {UserCreationParams} body User data
-	 * @returns {Promise<User>}
+	 * @param body User data
 	 */
 	@Post("{id}")
 	@Security("discord", [])
@@ -192,10 +182,9 @@ export class UserController extends Controller {
 
 	/**
 	 * Update user data for the given user ID
-	 * @param {String} id User ID
-	 * @param {UserCreationParams} body User data
+	 * @param id User ID
+	 * @param body User data
 	 * @param request
-	 * @returns {Promise<User>}
 	 */
 	@Put("{id}")
 	@Security("discord", [])
@@ -226,9 +215,8 @@ export class UserController extends Controller {
 
 	/**
 	 * Set roles for a user with the given user ID
-	 * @param {String} id User ID
-	 * @param {Array<String>} roles Role names (not IDs!)
-	 * @returns {Promise<User>}
+	 * @param id User ID
+	 * @param roles Role names (not IDs!)
 	 */
 	@Put("{id}/roles")
 	@Security("discord", ["administrator"])
@@ -239,8 +227,7 @@ export class UserController extends Controller {
 
 	/**
 	 * Delete the user with the given ID
-	 * @param {String} id User ID to be deleted
-	 * @returns {Promise<void>}
+	 * @param id User ID to be deleted
 	 */
 	@Delete("{id}")
 	@Security("discord", ["administrator"])
