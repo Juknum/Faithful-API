@@ -1,6 +1,6 @@
 import { URL } from "url";
 import { UserProfile } from "../interfaces/users";
-import { EmbedParam } from "../interfaces/bot";
+import { APIEmbed } from "discord-api-types/v10";
 import {
 	Addons,
 	Addon,
@@ -14,7 +14,6 @@ import {
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import { UserService } from "./user.service";
 import { FileService } from "./file.service";
-import BotService from "./bot.service";
 import {
 	AddonCreationParam,
 	AddonDataParam,
@@ -23,6 +22,7 @@ import {
 	AddonStatusApproved,
 } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
+import axios from "axios";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 function to_slug(value: string) {
@@ -33,8 +33,6 @@ function to_slug(value: string) {
 }
 
 export default class AddonService {
-	private readonly botService: BotService = new BotService();
-
 	private readonly userService: UserService = new UserService();
 
 	private readonly fileService: FileService = new FileService();
@@ -589,6 +587,8 @@ export default class AddonService {
 	}
 
 	private async notifyAddonChange(a: Addon, before: AddonStatus): Promise<void> {
+		// webhook not set up
+		if (!process.env.WEBHOOK_URL) return;
 		const now = a.approval.status;
 		const statusSame = before === now; // "ignore pending to pending"
 
@@ -612,36 +612,20 @@ export default class AddonService {
 			name += "review";
 			users = a.authors; // notify authors of review
 		}
-		const botMessage: EmbedParam = {
-			destinations: {
-				channels: ["addons-submission"],
+		const payload: APIEmbed = {
+			color: 7784773,
+			author: {
+				icon_url: "https://faithfulpack.net/image/pwa/favicon-32x32.png",
+				name,
 			},
-			embed: {
-				color: 7784773,
-				author: {
-					icon_url: "https://faithfulpack.net/image/pwa/favicon-32x32.png",
-					name,
-				},
-				url,
-				title,
-				description,
-				footer: {
-					text: "Made in Mount Doom",
-				},
+			url,
+			title,
+			description,
+			footer: {
+				text: "Made in Mount Doom",
 			},
-			destinator: "",
 		};
 
-		// send embed to moderators
-		await this.botService.sendEmbed(botMessage).catch(console.error);
-
-		// modify message to fit to users
-		botMessage.destinations = {
-			users,
-		};
-		botMessage.embed.url = `https://webapp.faithfulpack.net/#/addons/submissions`;
-
-		// send embed to users
-		await this.botService.sendEmbed(botMessage).catch(console.error);
+		await axios.post(process.env.WEBHOOK_URL, payload);
 	}
 }

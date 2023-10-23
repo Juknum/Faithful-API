@@ -113,11 +113,12 @@ export class UserController extends Controller {
 	public async getUser(@Path() id_or_username: string): Promise<User | Users> {
 		if (typeof id_or_username === "string" && id_or_username.includes(",")) {
 			const id_array = id_or_username.split(",");
-			return Promise.allSettled(id_array.map((id) => this.userService.getUsersByNameOrId(id))).then((res) =>
-				res
-					.filter((p) => p.status === "fulfilled")
-					.map((p: any) => p.value)
-					.flat()
+			return Promise.allSettled(id_array.map((id) => this.userService.getUsersByNameOrId(id))).then(
+				(res) =>
+					res
+						.filter((p) => p.status === "fulfilled")
+						.map((p: any) => p.value)
+						.flat(),
 			);
 		}
 
