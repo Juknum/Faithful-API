@@ -596,7 +596,6 @@ export default class AddonService {
 
 		let title = a.name;
 		let name = "Add-on ";
-		let users = [];
 		let description = a.approval.reason ? `Reason: ${a.approval.reason}` : `*No reason provided*`;
 		if (now === "approved") description = undefined;
 		const url = `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`;
@@ -610,7 +609,6 @@ export default class AddonService {
 					: undefined) || "someone";
 			title = `Add-on '${a.name}' ${now} by ${usernameApproval}`;
 			name += "review";
-			users = a.authors; // notify authors of review
 		}
 		const payload: APIEmbed = {
 			color: 7784773,
