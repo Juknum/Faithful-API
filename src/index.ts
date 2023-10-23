@@ -9,7 +9,6 @@ import cors from "cors";
 
 import * as dotenv from "dotenv";
 import apiErrorHandler from "api-error-handler";
-import sendError from "./errorSender";
 import { RegisterRoutes } from "../build/routes";
 import { ApiError } from "./v2/tools/ApiError";
 import { AddonChangeController } from "./v2/controller/addonChange.controller";
@@ -18,10 +17,8 @@ import formHandler from "./v2/tools/FormHandler";
 dotenv.config();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const DEV = (process.env.DEV || "false") === "true";
 const NO_CACHE = process.env.NO_CACHE === "true";
 const PORT = process.env.PORT || 8000;
-const BOT_ENDPOINT = process.env.DISCORD_BOT_ENDPOINT;
 
 firestorm.address(process.env.FIRESTORM_URL);
 firestorm.token(process.env.FIRESTORM_TOKEN);
@@ -76,7 +73,6 @@ const options: UpdatedSwaggerUiOptions = {
 app.listen(PORT, () => {
 	console.log(`DB is located at ${process.env.FIRESTORM_URL}`);
 	console.log(`Server is running at http://localhost:${PORT}`);
-	console.log(`Bot endpoint is set at ${BOT_ENDPOINT}`);
 	if (NO_CACHE) console.log(`Started with no cache`);
 });
 
@@ -134,7 +130,6 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 		console.warn(warn, err.fields);
 
 		code = 422;
-		await sendError(code, err, req, Error().stack, warn);
 
 		res.status(422).json({
 			message: "Validation Failed",
@@ -188,9 +183,6 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 			finalError.name += `: ${finalError.message}`;
 			finalError.message = err.response.data;
 		}
-
-		// send error to bot
-		await sendError(code, err, req, stack, message);
 
 		// unmodify error to hide details returned as api response
 		if (modified !== undefined) {

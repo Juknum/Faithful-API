@@ -9,7 +9,7 @@ export default class ModpacksFirestormRepository implements ModpacksRepository {
 
 	public getThumbnail(id: number): Promise<string> {
 		return axios(`https://api.curseforge.com/v1/mods/${id}`, {
-			headers: { "x-api-key": process.env.CURSE_FORGE_API_KEY },
+			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
 		}).then((res) => res.data.data.logo.thumbnailUrl);
 	}
 }

@@ -14,7 +14,7 @@ export default class ModsFirestormRepository implements ModsRepository {
 
 	public getThumbnail(id: number): Promise<string> {
 		return axios(`https://api.curseforge.com/v1/mods/${id}`, {
-			headers: { "x-api-key": process.env.CURSE_FORGE_API_KEY },
+			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
 		}).then((res) => {
 			const url = res?.data?.data?.logo?.thumbnailUrl;
 			if (url) {
@@ -28,7 +28,7 @@ export default class ModsFirestormRepository implements ModsRepository {
 
 	public getCurseForgeName(id: number): Promise<string> {
 		return axios(`https://api.curseforge.com/v1/mods/${id}`, {
-			headers: { "x-api-key": process.env.CURSE_FORGE_API_KEY },
+			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
 		}).then((res) => {
 			const name = res?.data?.data?.name;
 			if (name) {
