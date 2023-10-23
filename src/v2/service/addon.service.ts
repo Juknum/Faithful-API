@@ -1,6 +1,6 @@
 import { URL } from "url";
 import { UserProfile } from "../interfaces/users";
-import { APIEmbed } from "discord-api-types/v10";
+import { RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
 import {
 	Addons,
 	Addon,
@@ -610,18 +610,23 @@ export default class AddonService {
 			title = `Add-on '${a.name}' ${now} by ${usernameApproval}`;
 			name += "review";
 		}
-		const payload: APIEmbed = {
-			color: 7784773,
-			author: {
-				icon_url: "https://faithfulpack.net/image/pwa/favicon-32x32.png",
-				name,
-			},
-			url,
-			title,
-			description,
-			footer: {
-				text: "Made in Mount Doom",
-			},
+		const payload: RESTPostAPIChannelMessageJSONBody = {
+			embeds: [
+				{
+					color: 7784773,
+					author: {
+						icon_url: "https://faithfulpack.net/image/pwa/favicon-32x32.png",
+						name,
+					},
+					url,
+					title,
+					description,
+					footer: {
+						text: "Made in Mount Doom",
+					},
+				},
+			],
+			content: "",
 		};
 
 		await axios.post(process.env.WEBHOOK_URL, payload);
