@@ -1,6 +1,6 @@
 import { URL } from "url";
 import { UserProfile } from "../interfaces/users";
-import { RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
+import { APIEmbedField, RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
 import {
 	Addons,
 	Addon,
@@ -596,9 +596,11 @@ export default class AddonService {
 
 		let title = a.name;
 		let name = "Add-on ";
-		let description = a.approval.reason ? `Reason: ${a.approval.reason}` : `*No reason provided*`;
-		if (now === "approved") description = undefined;
-		const url = `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`;
+		let reason: APIEmbedField = {
+			name: "Reason",
+			value: a.approval.reason ?? "*No reason provided*",
+		};
+		if (now === "approved") reason = undefined;
 		if (now === "pending") {
 			title = `Add-on '${a.name}' pending approval`;
 			name += "Update";
@@ -612,17 +614,15 @@ export default class AddonService {
 		const payload: RESTPostAPIChannelMessageJSONBody = {
 			embeds: [
 				{
-					color: 7784773,
-					author: {
-						icon_url: "https://faithfulpack.net/image/pwa/favicon-32x32.png",
-						name,
-					},
-					url,
 					title,
-					description,
-					footer: {
-						text: "Made in Mount Doom",
+					url: `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`,
+					author: {
+						name,
+						icon_url:
+							"https://raw.githubusercontent.com/Faithful-Resource-Pack/Branding/main/role%20icons/14%20-%20Add-On%20Maker.png",
 					},
+					fields: [reason],
+					color: 7784773,
 				},
 			],
 		};
