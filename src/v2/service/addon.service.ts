@@ -586,36 +586,40 @@ export default class AddonService {
 		});
 	}
 
-	private async notifyAddonChange(a: Addon, before: AddonStatus): Promise<void> {
-		// webhook not set up
-		if (!process.env.WEBHOOK_URL) return;
-		const now = a.approval.status;
-		const statusSame = before === now; // "ignore pending to pending"
+	private async notifyAddonChange(addon: Addon, before: AddonStatus): Promise<void> {
+		const status = addon.approval.status;
+		// webhook not set up or status hasn't changed
+		if (!process.env.WEBHOOK_URL || before === status) return;
 
-		if (statusSame) return;
-
-		let title = a.name;
-		let name = "Add-on ";
-		let reason: APIEmbedField[] = [{
-			name: "Reason",
-			value: a.approval.reason ?? "*No reason provided*",
-		}];
-		if (now === "approved") reason = undefined;
-		if (now === "pending") {
-			title = `Add-on '${a.name}' pending approval`;
-			name += "Update";
+		let title: string;
+		let name: string;
+		if (status === "pending") {
+			title = `${addon.name} is pending approval!`;
+			name = "Add-on Update";
 		} else {
-			const usernameApproval = (a.approval.author
-				? await this.userService.getUserById(a.approval.author).catch(() => undefined)
+			const usernameApproval = (addon.approval.author
+				? await this.userService.getUserById(addon.approval.author).catch(() => undefined)
 				: undefined) || { username: "an unknown user" };
-			title = `Add-on '${a.name}' ${now} by ${usernameApproval.username}!`;
-			name += "Review";
+			title = `${addon.name} was ${status} by ${usernameApproval.username}!`;
+			name = "Add-on Review";
 		}
+
+		let reason: APIEmbedField[];
+		if (status !== "approved")
+			reason = [
+				{
+					name: "Reason",
+					value: addon.approval.reason ?? "*No reason provided*",
+				},
+			];
+
 		const payload: RESTPostAPIChannelMessageJSONBody = {
 			embeds: [
 				{
 					title,
-					url: `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`,
+					url: `https://webapp.faithfulpack.net/#/review/addons?status=${status}&id=${String(
+						addon.id,
+					)}`,
 					author: {
 						name,
 						icon_url:
