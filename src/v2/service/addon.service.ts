@@ -601,14 +601,13 @@ export default class AddonService {
 		const url = `https://webapp.faithfulpack.net/#/review/addons?status=${now}&id=${String(a.id)}`;
 		if (now === "pending") {
 			title = `Add-on '${a.name}' pending approval`;
-			name += "update";
+			name += "Update";
 		} else {
-			const usernameApproval =
-				(a.approval.author
-					? await this.userService.getUserById(a.approval.author).catch(() => undefined)
-					: undefined) || "someone";
-			title = `Add-on '${a.name}' ${now} by ${usernameApproval}`;
-			name += "review";
+			const usernameApproval = (a.approval.author
+				? await this.userService.getUserById(a.approval.author).catch(() => undefined)
+				: undefined) || { username: "an unknown user" };
+			title = `Add-on '${a.name}' ${now} by ${usernameApproval.username}!`;
+			name += "Review";
 		}
 		const payload: RESTPostAPIChannelMessageJSONBody = {
 			embeds: [
@@ -626,7 +625,6 @@ export default class AddonService {
 					},
 				},
 			],
-			content: "",
 		};
 
 		await axios.post(process.env.WEBHOOK_URL, payload);
