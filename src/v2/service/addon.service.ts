@@ -596,10 +596,10 @@ export default class AddonService {
 
 		let title = a.name;
 		let name = "Add-on ";
-		let reason: APIEmbedField = {
+		let reason: APIEmbedField[] = [{
 			name: "Reason",
 			value: a.approval.reason ?? "*No reason provided*",
-		};
+		}];
 		if (now === "approved") reason = undefined;
 		if (now === "pending") {
 			title = `Add-on '${a.name}' pending approval`;
@@ -621,7 +621,7 @@ export default class AddonService {
 						icon_url:
 							"https://raw.githubusercontent.com/Faithful-Resource-Pack/Branding/main/role%20icons/14%20-%20Add-On%20Maker.png",
 					},
-					fields: [reason],
+					fields: reason,
 					color: 7784773,
 				},
 			],
