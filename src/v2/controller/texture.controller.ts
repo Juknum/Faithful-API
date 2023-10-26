@@ -17,13 +17,13 @@ import { Request as ExRequest, Response as ExResponse } from "express";
 import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import {
 	Edition,
-	CreatedTextures,
 	KnownPacks,
 	TextureCreationParam,
 	TextureMCMETA,
 	TextureProperty,
 	TextureAll,
 	TexturesAll,
+	EntireTextureToCreate,
 } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
@@ -172,7 +172,7 @@ export class TextureController extends Controller {
 	@Post("multiple")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createMultipleTextures(@Body() body: CreatedTextures): Promise<Textures> {
+	public async createMultipleTextures(@Body() body: EntireTextureToCreate[]): Promise<Textures> {
 		return this.service.createEntireTextures(body);
 	}
 

@@ -1,4 +1,4 @@
-import { CreatedUse, Uses } from "./uses";
+import { EntireUseToCreate, Uses } from "./uses";
 import { Paths } from "./paths";
 import { Contributions } from "./contributions";
 
@@ -38,11 +38,10 @@ export const OurPacksArr = [
 export const DefaultPacksArr = ["default", "progart"] as const;
 export const KnownPacksArr = [...DefaultPacksArr, ...OurPacksArr] as const;
 
-export interface CreatedTexture extends TextureCreationParam {
-	uses: CreatedUse[];
+export interface EntireTextureToCreate extends TextureCreationParam {
+	uses: EntireUseToCreate[];
 }
 
-export interface CreatedTextures extends Array<CreatedTexture> {}
 export type KnownPacks = (typeof KnownPacksArr)[number];
 export type Edition = "java" | "bedrock" | "dungeons";
 export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;

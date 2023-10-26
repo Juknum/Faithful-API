@@ -1,4 +1,4 @@
-import { Textures, Texture, Use, Uses, Path, Paths, InputPath } from "~/v2/interfaces";
+import { Textures, Texture, TextureCreationParam, Use, Uses, Path, Paths, InputPath } from "~/v2/interfaces";
 
 export interface OldCreationUse {
 	textureID: number;
@@ -34,10 +34,13 @@ export function mapUses(data: OldUses): Uses {
 	return data.map(mapUse);
 }
 
-interface OldTexture {
+interface OldCreationTexture {
 	name: string;
-	id: string;
 	type: Array<string>;
+}
+
+interface OldTexture extends OldCreationTexture {
+	id: string;
 }
 interface OldTextures extends Array<OldTexture> {}
 
@@ -52,6 +55,13 @@ export function mapTexture(old: OldTexture): Texture {
 }
 export function mapTextures(data: OldTextures): Textures {
 	return data.map(mapTexture);
+}
+
+export function unmapTextureCreation(data: TextureCreationParam): OldCreationTexture {
+	return {
+		name: String(data.name),
+		type: data.tags
+	}
 }
 
 export function unmapTexture(data: Texture): OldTexture {

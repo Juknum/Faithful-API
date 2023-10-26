@@ -1,9 +1,16 @@
 import { CreationPath } from "./paths";
 
-export interface CreationUse {
+export interface BaseUse {
 	name: string; // use name
-	texture: number; // texture id
 	edition: string; // game edition
+}
+
+export interface CreationUse extends BaseUse {
+	texture: number; // texture id
+}
+
+export interface EntireUseToCreate extends BaseUse {
+	paths: CreationPath[]; // all the paths to be created
 }
 
 export interface Use extends CreationUse {
@@ -11,10 +18,6 @@ export interface Use extends CreationUse {
 }
 
 export interface Uses extends Array<Use> {}
-
-export interface CreatedUse extends CreationUse {
-	paths: CreationPath[];
-}
 
 export interface UseRepository {
 	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses>;

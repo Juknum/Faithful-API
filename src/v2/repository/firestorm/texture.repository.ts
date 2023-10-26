@@ -17,7 +17,7 @@ import {
 	TextureRepository,
 	Path,
 } from "../../interfaces";
-import { mapTexture, mapTextures, OldUse, unmapTexture } from "../../tools/mapping/textures";
+import { mapTexture, mapTextures, OldUse, unmapTexture, unmapTextureCreation } from "../../tools/mapping/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(tag?: string, search?: string): Promise<Textures> {
@@ -182,12 +182,12 @@ export default class TextureFirestormRepository implements TextureRepository {
 	public getTags(): Promise<Array<string>> {
 		return textures
 			.select({
-				fields: ["type"], // TODO: change with tags
+				fields: ["type", "tags"], // TODO: change with tags
 			})
 			.then((res: any) =>
 				(
 					Object.values(res).reduce((acc: Array<string>, cur: any) => {
-						const types = cur.type;
+						const types = cur.type || cur.tags;
 						acc.push(types);
 						return acc;
 					}, []) as Array<string>
@@ -224,7 +224,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public createTexture(texture: TextureCreationParam): Promise<Texture> {
-		return textures.add(texture).then((id: string) => textures.get(id));
+		return textures.add(unmapTextureCreation(texture)).then((id: string) => this.searchTextureByNameOrId(id));
 	}
 
 	public async deleteTexture(id: string): Promise<void> {
