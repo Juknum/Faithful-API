@@ -52,7 +52,7 @@ export class GalleryController extends Controller {
 		)
 			.map((e, i) => [KnownPacksArr[i], e])
 			.filter((p: [KnownPacks, any]) => p[1].status === "fulfilled")
-			.map((p: any) => [p[0], p[1].value]);
+			.reduce((acc: any, p: any) => ({ ...acc, [p[0]]: p[1].value }), {});
 
 		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;
 
