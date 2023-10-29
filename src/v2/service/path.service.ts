@@ -46,6 +46,11 @@ export default class PathService {
 			.then(() => this.repository.updatePath(id, path));
 	}
 
+	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void> {
+		return this.repository.modifyVersion(old_version, new_version);
+	}
+
+
 	removePathById(path_id: string): Promise<void> {
 		return this.repository.removePathById(path_id);
 	}

@@ -79,7 +79,7 @@ interface OldCreationPath {
 	mcmeta: boolean;
 }
 
-interface OldPath extends OldCreationPath {
+export interface OldPath extends OldCreationPath {
 	id: string;
 }
 interface OldPaths extends Array<OldPath> {}
