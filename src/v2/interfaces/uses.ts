@@ -21,6 +21,7 @@ export interface Uses extends Array<Use> {}
 
 export interface UseRepository {
 	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses>;
+	getUsesByEdition(edition: string): Promise<Uses>;
 	getRaw(): Promise<Uses>;
 	getUseByIdOrName(id_or_name: string): Promise<Uses | Use>;
 	deleteUse(id: string): Promise<void>;

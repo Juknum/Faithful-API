@@ -10,7 +10,7 @@ import {
 	Body,
 	Put,
 } from "tsoa";
-import { Path, InputPath, Paths } from "../interfaces";
+import { Path, InputPath, Paths, PathNewVersionParam } from "../interfaces";
 import PathService from "../service/path.service";
 
 @Route("paths")
@@ -65,6 +65,13 @@ export class PathsController extends Controller {
 	@Security("discord", ["administrator"])
 	public async modifyVersion(@URLPath() old_version: string, @URLPath() new_version: string): Promise<void> {
 		return this.service.modifyVersion(old_version, new_version);
+	}
+
+	@Post("versions/add")
+	@Security("bot")
+	@Security("discord", ["administrator"])
+	public async addVersion(@Body() body: PathNewVersionParam): Promise<void> {
+		return this.service.addVersion(body);
 	}
 
 	/**

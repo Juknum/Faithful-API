@@ -18,6 +18,19 @@ export default class TextureService {
 
 	private readonly pathService = new PathService();
 
+
+	// eslint-disable-next-line no-use-before-define
+	static instance: TextureService | null = null;
+
+	static getInstance() {
+		if(TextureService.instance === null) TextureService.instance = new TextureService();
+		return TextureService.instance;
+	}
+
+	constructor() {
+		TextureService.instance = this;
+	}
+
 	getRaw(): Promise<Textures> {
 		return this.textureRepo.getRaw();
 	}

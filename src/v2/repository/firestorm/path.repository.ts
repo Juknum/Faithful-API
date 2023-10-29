@@ -77,6 +77,23 @@ export default class PathFirestormRepository implements PathRepository {
 			.then(() => {})
 	}
 
+	addNewVersionToVersion(version: string, newVersion: string): void | PromiseLike<void> {
+		return this.getRaw()
+			.then(r => {
+				const old: OldPath[] = Object.values(r);
+				const filtered = old.filter(p => p.versions.includes(version));
+				const edits = filtered.map(p => ({
+					id: p.id,
+					field: 'versions',
+					operation: 'array-push',
+					value: newVersion
+				}));
+
+				return paths.editFieldBulk(edits)
+			})
+			.then(() => {})
+	}
+
 	getRaw() {
 		return paths.read_raw();
 	}

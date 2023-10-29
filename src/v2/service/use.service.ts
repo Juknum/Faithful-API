@@ -2,6 +2,7 @@ import { UseRepository, Use, Uses, Paths, CreationUse } from "../interfaces";
 import UseFirestormRepository from "../repository/firestorm/use.repository";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import PathService from "./path.service";
+import TextureService from "./texture.service";
 
 export default class UseService {
 	constructor();
@@ -60,6 +61,10 @@ export default class UseService {
 
 	getUsesByIdsAndEdition(id_arr: number[], edition: string): Promise<Uses> {
 		return this.useRepo.getUsesByIdAndEdition(id_arr, edition);
+	}
+
+	getUsesByEdition(edition: string): Promise<Uses> {
+		return this.useRepo.getUsesByEdition(edition);
 	}
 
 	createUse(use: Use): Promise<Use> {
