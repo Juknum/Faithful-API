@@ -6,6 +6,7 @@ import {
 	Path,
 	Post,
 	Put,
+	Query,
 	Request,
 	Response,
 	Route,
@@ -81,6 +82,12 @@ export class TextureController extends Controller {
 	@Get("versions/{edition}")
 	public getVersionByEdition(@Path() edition: Edition): Promise<Array<string>> {
 		return this.service.getVersionByEdition(edition);
+	}
+
+
+	@Get("search")
+	public searchTexture(@Query() tag?: string, @Query() name?: string): Promise<Texture[]> {
+		return this.service.searchByNameIdAndTag(tag, name);
 	}
 
 	/**

@@ -20,7 +20,7 @@ import {
 import { mapTexture, mapTextures, OldUse, unmapTexture, unmapTextureCreation } from "../../tools/mapping/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
-	async getByNameIdAndTag(tag?: string, search?: string): Promise<Textures> {
+	async getByNameIdAndTag(tag: string|undefined, search: string|undefined, forcePartial: boolean = false): Promise<Textures> {
 		// * none, read raw
 		if (tag === undefined && search === undefined) {
 			return this.getRaw();
@@ -53,9 +53,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 		}
 
 		// with search
-		let partial = false;
+		let partial = false || forcePartial;
 		if (search !== undefined) {
-			partial = search.startsWith("_") || search.endsWith("_");
+			partial = search.startsWith("_") || search.endsWith("_") || forcePartial;
 
 			criterias.push({
 				field: "name",

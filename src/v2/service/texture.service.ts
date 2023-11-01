@@ -41,8 +41,12 @@ export default class TextureService {
 		return this.textureRepo.getTextureById(id, property);
 	}
 
-	getByNameIdAndTag(tag?: string, search?: string) {
+	getByNameIdAndTag(tag: string|undefined, search: string|undefined) {
 		return this.textureRepo.getByNameIdAndTag(tag, search);
+	}
+
+	searchByNameIdAndTag(tag: string|undefined, search: string|undefined): Promise<Texture[]> {
+		return this.textureRepo.getByNameIdAndTag(tag, search, true);
 	}
 
 	getVersions(): Promise<Array<string>> {
