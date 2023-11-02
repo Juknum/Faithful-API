@@ -62,36 +62,36 @@ export default class PathFirestormRepository implements PathRepository {
 	 */
 	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void> {
 		return this.getRaw()
-			.then(r => {
+			.then((r) => {
 				const old: OldPath[] = Object.values(r);
-				const filtered = old.filter(p => p.versions.includes(old_version));
-				const edits = filtered.map(p => ({
+				const filtered = old.filter((p) => p.versions.includes(old_version));
+				const edits = filtered.map((p) => ({
 					id: p.id,
-					field: 'versions',
-					operation: 'set',
-					value: p.versions.map(v => v === old_version ? new_version : v)
+					field: "versions",
+					operation: "set",
+					value: p.versions.map((v) => (v === old_version ? new_version : v)),
 				}));
 
-				return paths.editFieldBulk(edits)
+				return paths.editFieldBulk(edits);
 			})
-			.then(() => {})
+			.then(() => {});
 	}
 
 	addNewVersionToVersion(version: string, newVersion: string): void | PromiseLike<void> {
 		return this.getRaw()
-			.then(r => {
+			.then((r) => {
 				const old: OldPath[] = Object.values(r);
-				const filtered = old.filter(p => p.versions.includes(version));
-				const edits = filtered.map(p => ({
+				const filtered = old.filter((p) => p.versions.includes(version));
+				const edits = filtered.map((p) => ({
 					id: p.id,
-					field: 'versions',
-					operation: 'array-push',
-					value: newVersion
+					field: "versions",
+					operation: "array-push",
+					value: newVersion,
 				}));
 
-				return paths.editFieldBulk(edits)
+				return paths.editFieldBulk(edits);
 			})
-			.then(() => {})
+			.then(() => {});
 	}
 
 	getRaw() {

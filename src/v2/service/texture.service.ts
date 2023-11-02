@@ -18,12 +18,11 @@ export default class TextureService {
 
 	private readonly pathService = new PathService();
 
-
 	// eslint-disable-next-line no-use-before-define
 	static instance: TextureService | null = null;
 
 	static getInstance() {
-		if(TextureService.instance === null) TextureService.instance = new TextureService();
+		if (TextureService.instance === null) TextureService.instance = new TextureService();
 		return TextureService.instance;
 	}
 
@@ -41,11 +40,11 @@ export default class TextureService {
 		return this.textureRepo.getTextureById(id, property);
 	}
 
-	getByNameIdAndTag(tag: string|undefined, search: string|undefined) {
+	getByNameIdAndTag(tag: string | undefined, search: string | undefined) {
 		return this.textureRepo.getByNameIdAndTag(tag, search);
 	}
 
-	searchByNameIdAndTag(tag: string|undefined, search: string|undefined): Promise<Texture[]> {
+	searchByNameIdAndTag(tag: string | undefined, search: string | undefined): Promise<Texture[]> {
 		return this.textureRepo.getByNameIdAndTag(tag, search, true);
 	}
 
@@ -79,8 +78,7 @@ export default class TextureService {
 	}
 
 	getByNameOrId(name_or_id: string | number): Promise<Textures | Texture> {
-		return this.textureRepo
-			.searchTextureByNameOrId(name_or_id);
+		return this.textureRepo.searchTextureByNameOrId(name_or_id);
 	}
 
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string> {
@@ -99,31 +97,39 @@ export default class TextureService {
 		const texture_id = created_texture.id;
 
 		// create uses
-		const uses_created = await Promise.all(input.uses.map(async (u, ui) => {
-			const use_id = String(texture_id) + String.fromCharCode("a".charCodeAt(0) + ui);
-			return this.useService.createUse({
-				name: u.name,
-				edition: u.edition,
-				texture: Number.parseInt(texture_id, 10),
-				id: use_id,
-			})
-		}));
+		const uses_created = await Promise.all(
+			input.uses.map(async (u, ui) => {
+				const use_id = String(texture_id) + String.fromCharCode("a".charCodeAt(0) + ui);
+				return this.useService.createUse({
+					name: u.name,
+					edition: u.edition,
+					texture: Number.parseInt(texture_id, 10),
+					id: use_id,
+				});
+			}),
+		);
 
 		// create paths
-		await Promise.all(uses_created.map(async (u, ui) => {
-			const use_id_created = u.id;
-			return Promise.all(input.uses[ui].paths.map((p) => this.pathService.createPath({
-				...p,
-				use: use_id_created
-			})));
-		}));
+		await Promise.all(
+			uses_created.map(async (u, ui) => {
+				const use_id_created = u.id;
+				return Promise.all(
+					input.uses[ui].paths.map((p) =>
+						this.pathService.createPath({
+							...p,
+							use: use_id_created,
+						}),
+					),
+				);
+			}),
+		);
 
 		return created_texture;
 	}
 
 	async createEntireTextures(body: EntireTextureToCreate[]): Promise<Textures> {
 		// create textures
-		return Promise.all(body.map(t => this.createEntireTexture(t)));
+		return Promise.all(body.map((t) => this.createEntireTexture(t)));
 	}
 
 	changeTexture(id: string, body: TextureCreationParam): Texture | PromiseLike<Texture> {

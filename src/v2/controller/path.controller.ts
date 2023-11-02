@@ -63,7 +63,10 @@ export class PathsController extends Controller {
 	@Put("versions/modify/{old_version}/{new_version}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async modifyVersion(@URLPath() old_version: string, @URLPath() new_version: string): Promise<void> {
+	public async modifyVersion(
+		@URLPath() old_version: string,
+		@URLPath() new_version: string,
+	): Promise<void> {
 		return this.service.modifyVersion(old_version, new_version);
 	}
 

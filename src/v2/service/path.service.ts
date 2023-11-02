@@ -55,9 +55,10 @@ export default class PathService {
 		const versions = await TextureService.getInstance().getVersionByEdition(body.edition);
 
 		// check existing version to the paths provided
-		if(!versions.includes(body.version)) return Promise.reject(new BadRequestError("Incorrect input path version provided"));
+		if (!versions.includes(body.version))
+			return Promise.reject(new BadRequestError("Incorrect input path version provided"));
 
-		return this.repository.addNewVersionToVersion(body.version, body.newVersion)
+		return this.repository.addNewVersionToVersion(body.version, body.newVersion);
 	}
 
 	removePathById(path_id: string): Promise<void> {

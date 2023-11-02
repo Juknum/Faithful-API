@@ -17,10 +17,20 @@ import {
 	TextureRepository,
 	Path,
 } from "../../interfaces";
-import { mapTexture, mapTextures, OldUse, unmapTexture, unmapTextureCreation } from "../../tools/mapping/textures";
+import {
+	mapTexture,
+	mapTextures,
+	OldUse,
+	unmapTexture,
+	unmapTextureCreation,
+} from "../../tools/mapping/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
-	async getByNameIdAndTag(tag: string|undefined, search: string|undefined, forcePartial: boolean = false): Promise<Textures> {
+	async getByNameIdAndTag(
+		tag: string | undefined,
+		search: string | undefined,
+		forcePartial: boolean = false,
+	): Promise<Textures> {
 		// * none, read raw
 		if (tag === undefined && search === undefined) {
 			return this.getRaw();
@@ -224,7 +234,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public createTexture(texture: TextureCreationParam): Promise<Texture> {
-		return textures.add(unmapTextureCreation(texture)).then((id: string) => this.searchTextureByNameOrId(id));
+		return textures
+			.add(unmapTextureCreation(texture))
+			.then((id: string) => this.searchTextureByNameOrId(id));
 	}
 
 	public async deleteTexture(id: string): Promise<void> {
