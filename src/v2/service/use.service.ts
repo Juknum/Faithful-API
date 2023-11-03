@@ -2,7 +2,6 @@ import { UseRepository, Use, Uses, Paths, CreationUse } from "../interfaces";
 import UseFirestormRepository from "../repository/firestorm/use.repository";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import PathService from "./path.service";
-import TextureService from "./texture.service";
 
 export default class UseService {
 	constructor();

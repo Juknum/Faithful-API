@@ -5,6 +5,7 @@ import { FileService } from "../service/file.service";
 @Tags("Files")
 export class FileController extends Controller {
 	private readonly service: FileService = new FileService();
+
 	/**
 	 * Get the raw collection of files
 	 */

@@ -1,10 +1,10 @@
 import firestorm from "firestorm-db";
 import { Texture } from "~/v2/interfaces";
+import { OldPaths } from "~/v2/tools/mapping/textures";
 import config from "../config";
 
 import { textures } from ".";
 import { paths } from "./paths";
-import { OldPaths } from "~/v2/tools/mapping/textures";
 
 config();
 

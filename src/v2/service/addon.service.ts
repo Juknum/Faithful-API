@@ -1,6 +1,7 @@
 import { URL } from "url";
-import { UserProfile } from "../interfaces/users";
 import { APIEmbedField, RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
+import axios from "axios";
+import { UserProfile } from "../interfaces/users";
 import {
 	Addons,
 	Addon,
@@ -22,7 +23,6 @@ import {
 	AddonStatusApproved,
 } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
-import axios from "axios";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 function to_slug(value: string) {
@@ -587,7 +587,7 @@ export default class AddonService {
 	}
 
 	private async notifyAddonChange(addon: Addon, before: AddonStatus): Promise<void> {
-		const status = addon.approval.status;
+		const { status } = addon.approval;
 		// webhook not set up or status hasn't changed
 		if (!process.env.WEBHOOK_URL || before === status) return;
 

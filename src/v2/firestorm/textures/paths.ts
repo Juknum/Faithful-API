@@ -1,9 +1,9 @@
 import firestorm from "firestorm-db";
 import { Texture } from "~/v2/interfaces";
+import { OldUse } from "~/v2/tools/mapping/textures";
 import config from "../config";
 
 import { uses } from "./uses";
-import { OldUse } from "~/v2/tools/mapping/textures";
 
 config();
 
