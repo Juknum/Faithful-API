@@ -14,6 +14,7 @@ export interface ContributionCreationParams {
 export interface Contribution extends ContributionCreationParams {
 	id: string; // contribution unique id
 }
+
 export interface Contributions extends Array<Contribution> {}
 export interface ContributionsAuthor {
 	id: string; // discord user id

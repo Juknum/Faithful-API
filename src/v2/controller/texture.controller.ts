@@ -6,6 +6,7 @@ import {
 	Path,
 	Post,
 	Put,
+	Query,
 	Request,
 	Response,
 	Route,
@@ -17,13 +18,13 @@ import { Request as ExRequest, Response as ExResponse } from "express";
 import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import {
 	Edition,
-	CreatedTextures,
 	KnownPacks,
 	TextureCreationParam,
 	TextureMCMETA,
 	TextureProperty,
 	TextureAll,
 	TexturesAll,
+	EntireTextureToCreate,
 } from "../interfaces/textures";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
@@ -81,6 +82,11 @@ export class TextureController extends Controller {
 	@Get("versions/{edition}")
 	public getVersionByEdition(@Path() edition: Edition): Promise<Array<string>> {
 		return this.service.getVersionByEdition(edition);
+	}
+
+	@Get("search")
+	public searchTexture(@Query() tag?: string, @Query() name?: string): Promise<Texture[]> {
+		return this.service.searchByNameIdAndTag(tag, name);
 	}
 
 	/**
@@ -172,7 +178,7 @@ export class TextureController extends Controller {
 	@Post("multiple")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createMultipleTextures(@Body() body: CreatedTextures): Promise<Textures> {
+	public async createMultipleTextures(@Body() body: EntireTextureToCreate[]): Promise<Textures> {
 		return this.service.createEntireTextures(body);
 	}
 

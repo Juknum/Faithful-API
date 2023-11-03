@@ -1,8 +1,9 @@
 import { BadRequestError } from "../tools/ApiError";
 import UseService from "./use.service";
-import { InputPath, Path, PathRepository, Paths } from "../interfaces";
+import { InputPath, Path, PathNewVersionParam, PathRepository, Paths } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import { mapPath } from "../tools/mapping/textures";
+import TextureService from "./texture.service";
 
 export default class PathService {
 	constructor();
@@ -11,7 +12,7 @@ export default class PathService {
 
 	constructor(...args: any[]) {
 		// eslint-disable-next-line prefer-destructuring
-		if (args.length) this.useService = args[0];
+		if (args.length > 0) this.useService = args[0];
 		else this.useService = new UseService(this);
 	}
 
@@ -44,6 +45,20 @@ export default class PathService {
 		return this.useService
 			.getUseByIdOrName(path.use) // verify use existence
 			.then(() => this.repository.updatePath(id, path));
+	}
+
+	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void> {
+		return this.repository.modifyVersion(old_version, new_version);
+	}
+
+	async addVersion(body: PathNewVersionParam): Promise<void> {
+		const versions = await TextureService.getInstance().getVersionByEdition(body.edition);
+
+		// check existing version to the paths provided
+		if (!versions.includes(body.version))
+			return Promise.reject(new BadRequestError("Incorrect input path version provided"));
+
+		return this.repository.addNewVersionToVersion(body.version, body.newVersion);
 	}
 
 	removePathById(path_id: string): Promise<void> {

@@ -1,7 +1,7 @@
 import { Contributions, Paths, Texture, Textures, Uses, TextureRepository } from "../interfaces";
 import {
 	Edition,
-	CreatedTextures,
+	EntireTextureToCreate,
 	KnownPacks,
 	TextureCreationParam,
 	TextureMCMETA,
@@ -18,6 +18,18 @@ export default class TextureService {
 
 	private readonly pathService = new PathService();
 
+	// eslint-disable-next-line no-use-before-define
+	static instance: TextureService | null = null;
+
+	static getInstance() {
+		if (TextureService.instance === null) TextureService.instance = new TextureService();
+		return TextureService.instance;
+	}
+
+	constructor() {
+		TextureService.instance = this;
+	}
+
 	getRaw(): Promise<Textures> {
 		return this.textureRepo.getRaw();
 	}
@@ -28,8 +40,12 @@ export default class TextureService {
 		return this.textureRepo.getTextureById(id, property);
 	}
 
-	getByNameIdAndTag(tag?: string, search?: string) {
+	getByNameIdAndTag(tag: string | undefined, search: string | undefined) {
 		return this.textureRepo.getByNameIdAndTag(tag, search);
+	}
+
+	searchByNameIdAndTag(tag: string | undefined, search: string | undefined): Promise<Texture[]> {
+		return this.textureRepo.getByNameIdAndTag(tag, search, true);
 	}
 
 	getVersions(): Promise<Array<string>> {
@@ -62,9 +78,7 @@ export default class TextureService {
 	}
 
 	getByNameOrId(name_or_id: string | number): Promise<Textures | Texture> {
-		return this.textureRepo
-			.searchTextureByNameOrId(name_or_id)
-			.catch(() => Promise.reject(new Error("Service failed to make request")));
+		return this.textureRepo.searchTextureByNameOrId(name_or_id);
 	}
 
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string> {
@@ -75,44 +89,47 @@ export default class TextureService {
 		return this.textureRepo.createTexture(texture);
 	}
 
-	async createEntireTextures(body: CreatedTextures): Promise<Textures> {
-		const tex = await Promise.all(body.map((t) => this.createTexture(t)));
-		const tex_id = tex.map((t) => t.id);
+	async createEntireTexture(input: EntireTextureToCreate): Promise<Texture> {
+		const created_texture = await this.createTexture({
+			name: input.name,
+			tags: input.tags,
+		});
+		const texture_id = created_texture.id;
 
-		await Promise.all(
-			body
-				.map((t) => t.uses)
-				.map((tex_uses, i) =>
-					tex_uses.map((u, ui) => {
-						const use_id = tex_id[i] + String.fromCharCode("a".charCodeAt(0) + ui);
-						return this.useService.createUse({
-							...u,
-							id: use_id,
-						});
-					}),
-				)
-				.flat(),
+		// create uses
+		const uses_created = await Promise.all(
+			input.uses.map(async (u, ui) => {
+				const use_id = String(texture_id) + String.fromCharCode("a".charCodeAt(0) + ui);
+				return this.useService.createUse({
+					name: u.name,
+					edition: u.edition,
+					texture: Number.parseInt(texture_id, 10),
+					id: use_id,
+				});
+			}),
 		);
 
+		// create paths
 		await Promise.all(
-			body
-				.map((t) => t.uses)
-				.map((tex_uses, i) =>
-					tex_uses.map((u, ui) => {
-						const use_id = tex_id[i] + String.fromCharCode("a".charCodeAt(0) + ui);
-
-						return u.paths.map((p) =>
-							this.pathService.createPath({
-								...p,
-								use: use_id,
-							}),
-						);
-					}),
-				)
-				.flat(2),
+			uses_created.map(async (u, ui) => {
+				const use_id_created = u.id;
+				return Promise.all(
+					input.uses[ui].paths.map((p) =>
+						this.pathService.createPath({
+							...p,
+							use: use_id_created,
+						}),
+					),
+				);
+			}),
 		);
 
-		return tex;
+		return created_texture;
+	}
+
+	async createEntireTextures(body: EntireTextureToCreate[]): Promise<Textures> {
+		// create textures
+		return Promise.all(body.map((t) => this.createEntireTexture(t)));
 	}
 
 	changeTexture(id: string, body: TextureCreationParam): Texture | PromiseLike<Texture> {

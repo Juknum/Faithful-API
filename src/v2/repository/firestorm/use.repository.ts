@@ -5,6 +5,18 @@ import { mapUse, mapUses, unmapUse } from "../../tools/mapping/textures";
 import { paths as pathsCollection, uses } from "../../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
+	getUsesByEdition(edition: string): Promise<Uses> {
+		return uses
+			.search([
+				{
+					field: "editions",
+					criteria: "array-contains",
+					value: edition,
+				},
+			])
+			.then(mapUses); // TODO: remove this after rewrite
+	}
+
 	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses> {
 		return uses
 			.search([

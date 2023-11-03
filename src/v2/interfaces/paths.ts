@@ -1,3 +1,5 @@
+import { Edition } from "./textures";
+
 export interface CreationPath {
 	name: string; // texture path ('textures/block/stone.png')
 	versions: Array<string>; // MC versions
@@ -15,12 +17,20 @@ export interface Path extends InputPath {
 export interface Paths extends Array<Path> {}
 
 export interface PathRepository {
+	addNewVersionToVersion(version: string, newVersion: string): void | PromiseLike<void>;
 	getPathById(path_id: string): Promise<Path>;
 	getPathUseById(use_id: string): Promise<Paths>;
 	getPathsByUseIdsAndVersion(use_ids: string[], version: string): Promise<Paths>;
 	createPath(path: InputPath): Promise<Path>;
 	updatePath(path_id: string, path: Path): Promise<Path>;
+	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void>;
 	removePathById(path_id: string): Promise<void>;
 	removePathsByBulk(path_ids: string[]): Promise<void>;
 	getRaw(): Promise<Paths>;
+}
+
+export interface PathNewVersionParam {
+	edition: Edition;
+	version: string;
+	newVersion: string;
 }
