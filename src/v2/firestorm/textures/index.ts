@@ -88,7 +88,7 @@ export const textures = firestorm.collection("textures", (el) => {
 				if (u === null || p === null) return null;
 				return axios
 					.get(
-						`https://raw.githubusercontent.com/CompliBot/Default-Java/${
+						`https://raw.githubusercontent.com/Faithful-Pack/Default-Java/${
 							p.versions.sort(MinecraftSorter).reverse()[0]
 						}/${p.name}.mcmeta`,
 					)
