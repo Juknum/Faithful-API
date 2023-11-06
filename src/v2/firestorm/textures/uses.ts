@@ -1,19 +1,19 @@
 import firestorm from "firestorm-db";
-import { OldPaths, OldTexture } from "~/v2/tools/mapping/textures";
 import config from "../config";
 
 import { textures } from ".";
 import { paths } from "./paths";
+import { Paths, Texture } from "~/v2/interfaces";
 
 config();
 
 export const uses = firestorm.collection("uses", (el) => {
-	el.texture = (): Promise<OldTexture> => textures.get(el.textureID);
+	el.getTexture = (): Promise<Texture> => textures.get(el.textureID);
 
-	el.paths = (): Promise<OldPaths> =>
+	el.getPaths = (): Promise<Paths> =>
 		paths.search([
 			{
-				field: "useID",
+				field: "use",
 				criteria: "==",
 				value: el[firestorm.ID_FIELD],
 			},

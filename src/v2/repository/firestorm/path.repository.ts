@@ -1,42 +1,34 @@
 import { InputPath, Path, Paths, PathRepository } from "~/v2/interfaces";
-import { mapPath, unmapPath, mapPaths, OldPath } from "../../tools/mapping/textures";
 import { paths } from "../../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
 	getPathsByUseIdsAndVersion(use_ids: string[], version: string): Promise<Paths> {
-		return paths
-			.search([
-				{
-					field: "useID",
-					criteria: "in",
-					value: use_ids,
-				},
-				{
-					field: "versions",
-					criteria: "array-contains",
-					value: version,
-				},
-			])
-			.then(mapPaths);
+		return paths.search([
+			{
+				field: "use",
+				criteria: "in",
+				value: use_ids,
+			},
+			{
+				field: "versions",
+				criteria: "array-contains",
+				value: version,
+			},
+		]);
 	}
 
 	getPathUseById(use_id: string): Promise<Paths> {
-		return paths
-			.search([
-				{
-					field: "useID",
-					criteria: "==",
-					value: use_id,
-				},
-			])
-			.then(mapPaths);
+		return paths.search([
+			{
+				field: "use",
+				criteria: "==",
+				value: use_id,
+			},
+		]);
 	}
 
 	createPath(path: InputPath): Promise<Path> {
-		return paths
-			.add(unmapPath(path))
-			.then((id) => paths.get(id))
-			.then(mapPath);
+		return paths.then((id) => paths.get(id));
 	}
 
 	removePathById(path_id: string): Promise<void> {
@@ -48,11 +40,11 @@ export default class PathFirestormRepository implements PathRepository {
 	}
 
 	getPathById(path_id: string): Promise<Path> {
-		return paths.get(path_id).then(mapPath);
+		return paths.get(path_id);
 	}
 
 	updatePath(path_id: string, path: Path): Promise<Path> {
-		return paths.set(path_id, unmapPath(path)).then(() => this.getPathById(path_id));
+		return paths.set(path_id, path).then(() => this.getPathById(path_id));
 	}
 
 	/**
@@ -63,7 +55,7 @@ export default class PathFirestormRepository implements PathRepository {
 	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void> {
 		return this.getRaw()
 			.then((r) => {
-				const old: OldPath[] = Object.values(r);
+				const old: Path[] = Object.values(r);
 				const filtered = old.filter((p) => p.versions.includes(old_version));
 				const edits = filtered.map((p) => ({
 					id: p.id,
@@ -80,7 +72,7 @@ export default class PathFirestormRepository implements PathRepository {
 	addNewVersionToVersion(version: string, newVersion: string): void | PromiseLike<void> {
 		return this.getRaw()
 			.then((r) => {
-				const old: OldPath[] = Object.values(r);
+				const old: Path[] = Object.values(r);
 				const filtered = old.filter((p) => p.versions.includes(version));
 				const edits = filtered.map((p) => ({
 					id: p.id,

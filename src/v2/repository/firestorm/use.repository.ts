@@ -1,64 +1,52 @@
 /* eslint-disable arrow-body-style */
 import { Use, UseRepository, Uses } from "~/v2/interfaces";
 import { ID_FIELD } from "firestorm-db";
-import { mapUse, mapUses, unmapUse } from "../../tools/mapping/textures";
 import { paths as pathsCollection, uses } from "../../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
 	getUsesByEdition(edition: string): Promise<Uses> {
-		return uses
-			.search([
-				{
-					field: "editions",
-					criteria: "array-contains",
-					value: edition,
-				},
-			])
-			.then(mapUses); // TODO: remove this after rewrite
+		return uses.search([
+			{
+				field: "edition",
+				criteria: "==",
+				value: edition,
+			},
+		]);
 	}
 
 	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses> {
-		return uses
-			.search([
-				{
-					field: "textureID",
-					criteria: "in",
-					value: id_arr,
-				},
-				{
-					field: "editions",
-					criteria: "array-contains",
-					value: edition,
-				},
-			])
-			.then(mapUses); // TODO: remove this after rewrite
+		return uses.search([
+			{
+				field: "texture",
+				criteria: "in",
+				value: id_arr,
+			},
+			{
+				field: "edition",
+				criteria: "==",
+				value: edition,
+			},
+		]);
 	}
 
 	getRaw(): Promise<Uses> {
-		return uses
-			.read_raw()
-			.then((res: any) => Object.values(res))
-			.then(mapUses);
+		return uses.read_raw().then((res: any) => Object.values(res));
 	}
 
 	getUseByIdOrName(id_or_name: string): Promise<Uses | Use> {
-		return uses
-			.get(id_or_name)
-			.then(mapUse) // TODO: remove this after rewrite
-			.catch(
-				() =>
-					uses
-						.search([
-							{
-								field: "textureUseName", // TODO: use "name" after rewrite
-								criteria: "includes",
-								value: id_or_name,
-								ignoreCase: true,
-							},
-						])
-						.then(mapUses) // TODO: remove this after rewrite
-						.then((out: Uses) => out.filter((use: Use) => use.name !== null)), // remove null names
-			);
+		return uses.get(id_or_name).catch(
+			() =>
+				uses
+					.search([
+						{
+							field: "name",
+							criteria: "includes",
+							value: id_or_name,
+							ignoreCase: true,
+						},
+					])
+					.then((out: Uses) => out.filter((use: Use) => use.name !== null)), // remove null names
+		);
 	}
 
 	deleteUse(id: string): Promise<void> {
@@ -66,14 +54,14 @@ export default class UseFirestormRepository implements UseRepository {
 	}
 
 	set(use: Use): Promise<Use> {
-		return uses.set(use.id, unmapUse(use));
+		return uses.set(use.id, use);
 	}
 
 	removeUseById(use_id: string): Promise<void> {
 		return uses
 			.get(use_id) // assure you find the texture and get path method
 			.then((gatheredUse) => {
-				return gatheredUse.paths();
+				return gatheredUse.getPaths();
 			})
 			.then((foundPaths) => {
 				return Promise.all([

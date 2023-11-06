@@ -1,18 +1,18 @@
 import firestorm from "firestorm-db";
-import { OldTexture, OldUse } from "~/v2/tools/mapping/textures";
 import config from "../config";
 
 import { uses } from "./uses";
+import { Texture, Use } from "~/v2/interfaces";
 
 config();
 
 export const paths = firestorm.collection("paths", (el) => {
-	el.use = async (): Promise<OldUse> => uses.get(el.useID);
+	el.getUse = async (): Promise<Use> => uses.get(el.useID);
 
-	el.texture = (): Promise<OldTexture> =>
+	el.getTexture = (): Promise<Texture> =>
 		new Promise((resolve, reject) => {
-			el.use()
-				.then((use) => resolve(use.texture()))
+			el.getUse()
+				.then((use) => resolve(use.getTexture()))
 				.catch((err) => {
 					reject(err);
 				});

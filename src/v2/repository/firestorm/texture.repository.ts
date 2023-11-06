@@ -16,14 +16,8 @@ import {
 	Uses,
 	TextureRepository,
 	Path,
+	Use,
 } from "../../interfaces";
-import {
-	mapTexture,
-	mapTextures,
-	OldUse,
-	unmapTexture,
-	unmapTextureCreation,
-} from "../../tools/mapping/textures";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(
@@ -39,10 +33,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		// * number id: get + includes tag?
 		const number_id: number = search !== undefined ? Number.parseInt(search, 10) : Number.NaN;
 		if (!Number.isNaN(number_id)) {
-			const tex: Texture = await textures
-				.get(number_id)
-				.then(mapTexture)
-				.catch(() => undefined);
+			const tex: Texture = await textures.get(number_id).catch(() => undefined);
 
 			if (tex === undefined) return Promise.resolve([]);
 
@@ -56,7 +47,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 
 		if (tag !== undefined) {
 			criterias.push({
-				field: "type", // TODO: replace with tags
+				field: "tags",
 				criteria: "array-contains",
 				value: tag,
 			});
@@ -75,20 +66,17 @@ export default class TextureFirestormRepository implements TextureRepository {
 			});
 		}
 
-		const results: Textures = await textures.search(criterias).then(mapTextures);
+		const results: Textures = await textures.search(criterias);
 		if (results.length && search === undefined && !partial) return Promise.resolve(results);
 
 		// fallback string search criteria to include if empty results
 		criterias[criterias.length - 1].criteria = "includes";
 
-		return textures.search(criterias).then(mapTextures);
+		return textures.search(criterias);
 	}
 
 	public getRaw() {
-		return textures
-			.read_raw()
-			.then((res: any) => Object.values(res))
-			.then(mapTextures);
+		return textures.read_raw().then((res: any) => Object.values(res));
 	}
 
 	public getURLById(id: number, pack: KnownPacks, version: string) {
@@ -124,7 +112,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 				return textures
 					.search([{ field: "name", criteria: "includes", value: name_or_id }])
 					.then((texturesFound: Textures) => {
-						if (property === null) return mapTextures(texturesFound as any); // TODO: (DATA 2.0) use only textures after database rewrite
+						if (property === null) return texturesFound;
 						return Promise.all(texturesFound.map((t) => t[property]()));
 					});
 			}
@@ -137,7 +125,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 					return res;
 				})
 				.then((otherTexturesFound: Textures) => {
-					if (property === null) return mapTextures(otherTexturesFound as any); // TODO: (DATA 2.0) use only textures after database rewrite
+					if (property === null) return otherTexturesFound;
 					return Promise.all(otherTexturesFound.map((t) => t[property]()));
 				});
 		}
@@ -147,9 +135,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 
 	public getTextureById(id: number, property: TextureProperty): Promise<Texture> {
 		if (Number.isNaN(id) || id < 0)
-			return Promise.reject(new Error("Texture IDs are integer greater than 0."));
+			return Promise.reject(new Error("Texture IDs must be integers greater than 0."));
 		return textures.get(id).then((t) => {
-			if (property === null) return mapTexture(t); // TODO: (DATA 2.0) remove after database rewrite
+			if (property === null) return t;
 			return t[property]();
 		});
 	}
@@ -157,13 +145,11 @@ export default class TextureFirestormRepository implements TextureRepository {
 	public getEditions() {
 		return uses
 			.select({
-				fields: ["editions"],
+				fields: ["edition"],
 			})
 			.then((res) =>
-				Object.values(res).reduce((acc: Array<string>, cur: OldUse) => {
-					(cur.editions || []).forEach((edi) => {
-						if (!acc.includes(edi)) acc.push(edi);
-					});
+				Object.values(res).reduce((acc: Array<string>, cur: Use) => {
+					if (!acc.includes(cur.edition)) acc.push(cur.edition);
 					return acc.sort();
 				}, []),
 			);
@@ -192,7 +178,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	public getTags(): Promise<Array<string>> {
 		return textures
 			.select({
-				fields: ["type", "tags"], // TODO: change with tags
+				fields: ["tags"],
 			})
 			.then((res: any) =>
 				(
@@ -234,9 +220,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public createTexture(texture: TextureCreationParam): Promise<Texture> {
-		return textures
-			.add(unmapTextureCreation(texture))
-			.then((id: string) => this.searchTextureByNameOrId(id));
+		return textures.add(texture).then((id: string) => this.searchTextureByNameOrId(id));
 	}
 
 	public async deleteTexture(id: string): Promise<void> {
@@ -253,10 +237,10 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public async changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
-		const unmapped = unmapTexture({
+		const unmapped = {
 			id,
 			...body,
-		});
+		};
 
 		return textures.set(id, unmapped).then(() => this.searchTextureByNameOrId(id));
 	}

@@ -2,12 +2,10 @@ import axios from "axios";
 import firestorm from "firestorm-db";
 import { Paths, Uses, Contributions, TextureAll, Path, Use } from "~/v2/interfaces";
 import { KnownPacks, TextureMCMETA } from "~/v2/interfaces/textures";
-import { TextureUse } from "~/v1/firestorm/uses";
 import config from "../config";
 
 import { uses } from "./uses";
 import { contributions } from "..";
-import { mapPaths, mapTexture, mapUses } from "../../tools/mapping/textures";
 import { settings } from "../settings";
 import { MinecraftSorter } from "../../tools/sorter";
 
@@ -15,22 +13,19 @@ config();
 
 export const textures = firestorm.collection("textures", (el) => {
 	el.uses = async (): Promise<Uses> =>
-		uses
-			.search([
-				{
-					field: "textureID", // TODO: (DATA 2.0) to be replaced by texture
-					criteria: "==",
-					value: el[firestorm.ID_FIELD],
-				},
-			])
-			.then(mapUses); // TODO: (DATA 2.0) remove after database rewrite
+		uses.search([
+			{
+				field: "texture",
+				criteria: "==",
+				value: el[firestorm.ID_FIELD],
+			},
+		]);
 
 	el.paths = async (): Promise<Paths> =>
 		el
 			.uses()
-			.then((_uses) => Promise.all(_uses.map((_use) => uses.get(_use.id).then((u) => u.paths()))))
-			.then((arr) => arr.flat())
-			.then(mapPaths); // TODO: (DATA 2.0) remove after database rewrite
+			.then((_uses) => Promise.all(_uses.map((_use) => uses.get(_use.id).then((u) => u.getPaths()))))
+			.then((arr) => arr.flat());
 
 	el.url = async (pack: KnownPacks, version: string): Promise<string> => {
 		// https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png  // fallback image
@@ -95,10 +90,11 @@ export const textures = firestorm.collection("textures", (el) => {
 			.catch({});
 
 	el.all = async (): Promise<TextureAll> => {
-		const output = mapTexture(el) as any;
+		const output = { id: el.id, name: el.name, tags: el.tags } as TextureAll;
 		return el
 			.uses()
-			.then((tUses: TextureUse[]) => {
+			.then((tUses: Use[]) => {
+				console.log(tUses);
 				output.uses = tUses;
 				return el.paths();
 			})
