@@ -13,7 +13,7 @@ export interface Textures extends Array<Texture> {}
 
 export interface TextureMCMETA {
 	animation: {
-		interpolate?: true;
+		interpolate?: boolean;
 		frametime?: number;
 		frames?: Array<number | { index: number; time: number }>;
 	};

@@ -60,10 +60,7 @@ export const textures = firestorm.collection("textures", (el) => {
 				[use] = _uses.filter((u: Use) => u.id === path.use);
 
 				return `${urls[use.edition]}${version}/${path.name}`;
-			})
-			.catch(
-				"https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png",
-			); // fallback image
+			});
 	};
 
 	el.contributions = async (): Promise<Contributions> =>

@@ -48,10 +48,11 @@ interface OldCreationTexture {
 	type: Array<string>;
 }
 
-interface OldTexture extends OldCreationTexture {
+export interface OldTexture extends OldCreationTexture {
 	id: string;
 }
-interface OldTextures extends Array<OldTexture> {}
+
+export interface OldTextures extends Array<OldTexture> {}
 
 export function mapTexture(old: OldTexture): Texture {
 	if (old.type === undefined) return old as any; // already converted texture
