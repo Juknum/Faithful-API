@@ -1,8 +1,8 @@
 import firestorm from "firestorm-db";
+import { Texture, Use } from "~/v2/interfaces";
 import config from "../config";
 
 import { uses } from "./uses";
-import { Texture, Use } from "~/v2/interfaces";
 
 config();
 

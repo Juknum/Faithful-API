@@ -8,7 +8,7 @@ config();
 
 export const users = firestorm.collection("users", (el) => {
 	el.contributions = async (): Promise<Contributions> =>
-		await contributions.search([
+		contributions.search([
 			{
 				field: "authors",
 				criteria: "array-contains",

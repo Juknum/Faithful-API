@@ -28,7 +28,7 @@ export default class PathFirestormRepository implements PathRepository {
 	}
 
 	createPath(path: InputPath): Promise<Path> {
-		return paths.then((id) => paths.get(id));
+		return paths.add(path).then((id) => paths.get(id));
 	}
 
 	removePathById(path_id: string): Promise<void> {

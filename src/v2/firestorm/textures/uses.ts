@@ -1,9 +1,9 @@
 import firestorm from "firestorm-db";
+import { Paths, Texture } from "~/v2/interfaces";
 import config from "../config";
 
 import { textures } from ".";
 import { paths } from "./paths";
-import { Paths, Texture } from "~/v2/interfaces";
 
 config();
 

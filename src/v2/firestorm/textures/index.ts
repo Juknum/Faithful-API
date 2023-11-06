@@ -24,7 +24,9 @@ export const textures = firestorm.collection("textures", (el) => {
 	el.paths = async (): Promise<Paths> =>
 		el
 			.uses()
-			.then((_uses) => Promise.all(_uses.map((_use) => uses.get(_use.id).then((u) => u.getPaths()))))
+			.then((_uses) =>
+				Promise.all(_uses.map((_use) => uses.get(_use.id).then((u) => u.getPaths()))),
+			)
 			.then((arr) => arr.flat());
 
 	el.url = async (pack: KnownPacks, version: string): Promise<string> => {
