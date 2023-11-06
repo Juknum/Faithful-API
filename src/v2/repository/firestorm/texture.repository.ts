@@ -182,11 +182,10 @@ export default class TextureFirestormRepository implements TextureRepository {
 			})
 			.then((res: any) =>
 				(
-					Object.values(res).reduce((acc: Array<string>, cur: any) => {
-						const types = cur.type || cur.tags;
-						acc.push(types);
-						return acc;
-					}, []) as Array<string>
+					Object.values(res).reduce(
+						(acc: Array<string>, cur: any) => [...acc, cur.tags],
+						[],
+					) as Array<string>
 				)
 					.flat()
 					.filter((e, i, a) => a.indexOf(e) === i)
