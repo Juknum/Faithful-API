@@ -74,7 +74,8 @@ export default class UseService {
 				})
 				.catch(() => {
 					this.useRepo
-						.set(use)
+						// really weird fix for the id somehow becoming undefined
+						.set(structuredClone(use))
 						.then(() => this.getUseByIdOrName(use.id))
 						.then((res) => resolve(res as Use))
 						.catch((...args) => reject(args));
