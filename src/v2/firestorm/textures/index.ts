@@ -96,7 +96,6 @@ export const textures = firestorm.collection("textures", (el) => {
 		return el
 			.uses()
 			.then((tUses: Use[]) => {
-				console.log(tUses);
 				output.uses = tUses;
 				return el.paths();
 			})
