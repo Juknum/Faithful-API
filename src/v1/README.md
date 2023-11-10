@@ -1,8 +1,12 @@
+## Important Note
+
+The v1 Faithful API has been deprecated. Most endpoints no longer work properly, and those that do are subject to breaking change without warning. Please switch to our v2 API if you haven't already done so.
+
 # API v1
 
-## I. Firestorm Collections  
+## I. Firestorm Collections
 
-### 1. Raw data  
+### 1. Raw data
 
 Fetch the entire content of a firestorm-db collection:
 
@@ -23,7 +27,7 @@ Get  basic information about a unique texture: HTTP/1.1
 GET  /v1/texture/{id}/{attribute?} HTTP/1.1
 ```
 
-Get  info about one or more texture at once: HTTP/1.1
+Get info about one or more texture at once: HTTP/1.1
 
 ```get
 GET  /v1/textures/{id1,id2,id3}/{attribute?} HTTP/1.1
@@ -119,7 +123,7 @@ GET  /v1/textures/{id1,id2,id3}/{attribute?} HTTP/1.1
 
 ### 3. Firestorm Contributions
 
-Get  basic information about a unique contribution: HTTP/1.1
+Get basic information about a unique contribution: HTTP/1.1
 
 ```get
 GET  /v1/contribution/{id} HTTP/1.1
@@ -145,7 +149,7 @@ GET  /v1/contribution/{id} HTTP/1.1
 
 ### 3. Firestorm Addons
 
-Get  basic information about a unique addon: HTTP/1.1
+Get basic information about a unique addon: HTTP/1.1
 
 ```get
 GET  /v1/addon/{id}/{attribute?} HTTP/1.1
