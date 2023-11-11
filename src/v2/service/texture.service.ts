@@ -36,7 +36,7 @@ export default class TextureService {
 
 	getById(id: number, property: TextureProperty): Promise<Texture> {
 		if (Number.isNaN(id) || id < 0)
-			return Promise.reject(new Error("Texture IDs are integer greater than 0"));
+			return Promise.reject(new Error("Texture IDs are integers greater than 0"));
 		return this.textureRepo.getTextureById(id, property);
 	}
 

@@ -110,7 +110,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 			 */
 			if (name_or_id.startsWith("_") || name_or_id.endsWith("_")) {
 				return textures
-					.search([{ field: "name", criteria: "includes", value: name_or_id }])
+					.search([{ field: "name", criteria: "includes", value: name_or_id, ignoreCase: true }])
 					.then((texturesFound: Textures) => {
 						if (property === null) return texturesFound;
 						return Promise.all(texturesFound.map((t) => t[property]()));
@@ -118,10 +118,10 @@ export default class TextureFirestormRepository implements TextureRepository {
 			}
 
 			return textures
-				.search([{ field: "name", criteria: "==", value: name_or_id }])
+				.search([{ field: "name", criteria: "==", value: name_or_id, ignoreCase: true }])
 				.then((res: Textures) => {
 					if (res.length === 0)
-						return textures.search([{ field: "name", criteria: "includes", value: name_or_id }]);
+						return textures.search([{ field: "name", criteria: "includes", value: name_or_id, ignoreCase: true }]);
 					return res;
 				})
 				.then((otherTexturesFound: Textures) => {
