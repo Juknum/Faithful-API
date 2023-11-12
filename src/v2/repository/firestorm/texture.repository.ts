@@ -121,7 +121,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 				.search([{ field: "name", criteria: "==", value: name_or_id, ignoreCase: true }])
 				.then((res: Textures) => {
 					if (res.length === 0)
-						return textures.search([{ field: "name", criteria: "includes", value: name_or_id, ignoreCase: true }]);
+						return textures.search([
+							{ field: "name", criteria: "includes", value: name_or_id, ignoreCase: true },
+						]);
 					return res;
 				})
 				.then((otherTexturesFound: Textures) => {

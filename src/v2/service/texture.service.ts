@@ -111,7 +111,7 @@ export default class TextureService {
 
 		// create paths
 		await Promise.all(
-			uses_created.map(async (u, ui) => {
+			uses_created.map((u, ui) => {
 				const use_id_created = u.id;
 				return Promise.all(
 					input.uses[ui].paths.map((p) =>

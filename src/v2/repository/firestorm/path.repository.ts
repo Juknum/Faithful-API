@@ -28,7 +28,8 @@ export default class PathFirestormRepository implements PathRepository {
 	}
 
 	createPath(path: InputPath): Promise<Path> {
-		return paths.add(path).then((id) => paths.get(id));
+		// breaks without structuredClone, not sure why
+		return paths.add(structuredClone(path)).then((id) => paths.get(id));
 	}
 
 	removePathById(path_id: string): Promise<void> {
@@ -44,7 +45,8 @@ export default class PathFirestormRepository implements PathRepository {
 	}
 
 	updatePath(path_id: string, path: Path): Promise<Path> {
-		return paths.set(path_id, path).then(() => this.getPathById(path_id));
+		// breaks without structuredClone, not sure why
+		return paths.set(path_id, structuredClone(path)).then(() => this.getPathById(path_id));
 	}
 
 	/**

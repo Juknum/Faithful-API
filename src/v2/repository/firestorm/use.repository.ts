@@ -54,7 +54,8 @@ export default class UseFirestormRepository implements UseRepository {
 	}
 
 	set(use: Use): Promise<Use> {
-		return uses.set(use.id, use);
+		// breaks without structuredClone, not sure why
+		return uses.set(use.id, structuredClone(use));
 	}
 
 	removeUseById(use_id: string): Promise<void> {
