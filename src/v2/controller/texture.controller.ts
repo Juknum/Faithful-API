@@ -85,7 +85,7 @@ export class TextureController extends Controller {
 	}
 
 	@Get("search")
-	public searchTexture(@Query() tag?: string, @Query() name?: string): Promise<Texture[]> {
+	public searchTexture(@Query() tag?: string, @Query() name?: string): Promise<Textures> {
 		return this.service.searchByNameIdAndTag(tag, name);
 	}
 
@@ -94,7 +94,7 @@ export class TextureController extends Controller {
 	 * @param id_or_name Texture ID or texture name (join by "," if multiple)
 	 */
 	@Get("{id_or_name}")
-	public async getTexture(@Path() id_or_name: string | number): Promise<Texture | Texture[]> {
+	public async getTexture(@Path() id_or_name: string | number): Promise<Texture | Textures> {
 		if (typeof id_or_name === "string" && id_or_name.includes(",")) {
 			const id_array = id_or_name.split(",");
 			return Promise.allSettled(id_array.map((id) => this.service.getByNameOrId(id))).then((res) =>

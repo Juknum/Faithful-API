@@ -162,9 +162,9 @@ export default class AddonService {
 			throw new NotFoundError("Files not found");
 		}
 
-		const screenshotFile = files.filter(
-			(f) => f.use === "screenshot" || (f as any).use === "carousel",
-		)[index]; // TODO: only keep screenshots
+		const screenshotFile = files.filter((f) => f.use === "screenshot" || f.use === "carousel")[
+			index
+		]; // TODO: only keep screenshots
 
 		// if no header file, not found
 		if (screenshotFile === undefined) {
@@ -209,7 +209,7 @@ export default class AddonService {
 	 * @returns {Addon | PromiseLike<Addon>} created addon
 	 */
 	async create(body: AddonCreationParam): Promise<Addon> {
-		// authentification was already made
+		// authentication was already made
 		// tag values have already been verified
 
 		// remove double authors
@@ -288,7 +288,7 @@ export default class AddonService {
 	}
 
 	async update(id: number, body: AddonCreationParam, reason: string): Promise<Addon> {
-		// authentification was already made
+		// authentication was already made
 		// tag values have already been verified
 
 		// remove double authors

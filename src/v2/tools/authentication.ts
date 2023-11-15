@@ -104,13 +104,13 @@ export async function expressAuthentication(
 			if ((AddonStatusValues as ReadonlyArray<string>).includes(idOrSlug)) {
 				if (!(AddonNotApprovedValues as ReadonlyArray<string>).includes(idOrSlug))
 					return Promise.resolve(discordID);
-				//* check if D: admin or roles, uses the rest of authentification with roles
+				//* check if D: admin or roles, uses the rest of authentication with roles
 			} else {
 				const addon: Addon = (await addonService.getAddonFromSlugOrId(idOrSlug))[1];
 
 				// check if C: author
 				if (addon.authors.includes(discordID)) return discordID;
-				//* else if not author check if D: admin or roles, uses the rest of authentification with roles
+				//* else if not author check if D: admin or roles, uses the rest of authentication with roles
 			}
 		}
 
@@ -118,14 +118,14 @@ export async function expressAuthentication(
 		// adding devs role when developing stuff only
 		if (scopes.length && process.env.DEV.toLowerCase() === "true") scopes.push("Developer");
 
-		const user: any | undefined = await userService.getUserById(discordID).catch(() => {});
+		const user = await userService.getUserById(discordID).catch(() => {});
 
 		let roles: string[];
 		if (user === undefined) {
 			roles = [];
 		} else {
 			// if cannot find the user, put []
-			if (user) roles = user.roles || user.type; // TODO: replace by class and getRoles()
+			if (user) roles = user.roles; // TODO: replace by class and getRoles()
 			if (!Array.isArray(roles)) {
 				roles = [];
 			}
@@ -135,11 +135,8 @@ export async function expressAuthentication(
 		scopes = scopes.map((e) => e.toLowerCase()); // eslint-disable-line no-param-reassign
 
 		// check user roles and scopes
-		let i = 0;
-		while (i < scopes.length) {
+		for (let i = 0; i < scopes.length; ++i)
 			if (roles.includes(scopes[i])) return Promise.resolve(discordID); // return prematurely if has correct role
-			i += 1;
-		}
 
 		// if not respected permission error
 		console.error(

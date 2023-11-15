@@ -143,9 +143,9 @@ export default class UserFirestormRepository implements UserRepository {
 
 	getRoles(): Promise<Array<string>> {
 		return users.select({ fields: ["roles"] }).then(
-			(obj: any) =>
+			(obj: Record<string, { roles: Array<string> }>) =>
 				Object.values(obj)
-					.map((el: { roles: Array<string>; id: string }) => el.roles || []) // get roles or none
+					.map((el) => el.roles || []) // get roles or none
 					.flat() // flat array
 					.filter((el, index, array) => array.indexOf(el) === index), // remove duplicates
 		);

@@ -2,7 +2,7 @@ import { JsonObject } from "swagger-ui-express";
 import { Controller } from "tsoa";
 import multer from "multer";
 import { Application, NextFunction, Response as ExResponse, Request as ExRequest } from "express";
-import { expressAuthentication } from "./authentification";
+import { expressAuthentication } from "./authentication";
 import { BadRequestError } from "./ApiError";
 
 const MIME_TYPES_ACCEPTED = ["image/gif", "image/png", "image/jpeg"];

@@ -45,14 +45,17 @@ export class GalleryController extends Controller {
 	 */
 	@Get("modal/{id}/{mc_version}")
 	public async modal(@Path() id: number, @Path() mc_version: string): Promise<GalleryModalResult> {
-		const urls: any[] = (
+		const urls: Record<KnownPacks, URL> = (
 			await Promise.allSettled(
 				KnownPacksArr.map((p) => this.textureService.getURLById(id, p, mc_version)),
 			)
 		)
 			.map((e, i) => [KnownPacksArr[i], e])
-			.filter((p: [KnownPacks, any]) => p[1].status === "fulfilled")
-			.reduce((acc: any, p: any) => ({ ...acc, [p[0]]: p[1].value }), {});
+			.filter((p: [KnownPacks, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
+			.reduce(
+				(acc, p: [KnownPacks, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
+				{} as Record<KnownPacks, URL>,
+			);
 
 		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;
 
