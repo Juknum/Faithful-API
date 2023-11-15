@@ -54,7 +54,7 @@ export class UserController extends Controller {
 	 * Get the raw collection of users
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Users> {
+	public async getRaw(): Promise<Record<string, User>> {
 		return this.userService.getRaw();
 	}
 

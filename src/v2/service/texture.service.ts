@@ -30,7 +30,7 @@ export default class TextureService {
 		TextureService.instance = this;
 	}
 
-	getRaw(): Promise<Textures> {
+	getRaw(): Promise<Record<string, Texture>> {
 		return this.textureRepo.getRaw();
 	}
 

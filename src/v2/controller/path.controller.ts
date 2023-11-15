@@ -10,7 +10,7 @@ import {
 	Body,
 	Put,
 } from "tsoa";
-import { Path, InputPath, Paths, PathNewVersionParam } from "../interfaces";
+import { Path, InputPath, PathNewVersionParam } from "../interfaces";
 import PathService from "../service/path.service";
 
 @Route("paths")
@@ -22,7 +22,7 @@ export class PathsController extends Controller {
 	 * Get the raw collection of paths
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Paths> {
+	public async getRaw(): Promise<Record<string, Path>> {
 		return this.service.getRaw();
 	}
 

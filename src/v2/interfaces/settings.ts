@@ -1,4 +1,4 @@
 export interface SettingsRepository {
-	getRaw(): Promise<any>;
+	getRaw(): Promise<Record<string, any>>;
 	update(body: any): Promise<void>;
 }

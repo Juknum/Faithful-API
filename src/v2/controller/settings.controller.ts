@@ -23,7 +23,7 @@ export class SettingsController extends Controller {
 	 */
 	@SuccessResponse(200)
 	@Get("raw")
-	public async getRaw(): Promise<any> {
+	public async getRaw(): Promise<Record<string, any>> {
 		return this.settingsService.raw();
 	}
 

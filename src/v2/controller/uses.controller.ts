@@ -12,7 +12,7 @@ export class UsesController extends Controller {
 	 * @returns {Promise<Uses>}
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Uses> {
+	public async getRaw(): Promise<Record<string, Use>> {
 		return this.service.getRaw();
 	}
 

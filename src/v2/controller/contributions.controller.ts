@@ -33,7 +33,7 @@ export class ContributionsController extends Controller {
 	 * Get the raw collection of contributions
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Contributions> {
+	public async getRaw(): Promise<Record<string, Contribution>> {
 		return this.service.getRaw();
 	}
 

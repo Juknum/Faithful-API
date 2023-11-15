@@ -38,7 +38,7 @@ export class TextureController extends Controller {
 	 * Get the raw collection of textures
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Textures> {
+	public async getRaw(): Promise<Record<string, Texture>> {
 		return this.service.getRaw();
 	}
 

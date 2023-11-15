@@ -27,7 +27,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	): Promise<Textures> {
 		// * none, read raw
 		if (tag === undefined && search === undefined) {
-			return this.getRaw();
+			return this.getRaw().then((res: any) => Object.values(res));
 		}
 
 		// * number id: get + includes tag?
@@ -75,8 +75,8 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.search(criterias);
 	}
 
-	public getRaw() {
-		return textures.read_raw().then((res: any) => Object.values(res));
+	public getRaw(): Promise<Record<string, Texture>> {
+		return textures.read_raw();
 	}
 
 	public getURLById(id: number, pack: KnownPacks, version: string) {

@@ -24,7 +24,7 @@ export default class UseService {
 		);
 	}
 
-	getRaw(): Promise<Uses> {
+	getRaw(): Promise<Record<string, Use>> {
 		return this.useRepo.getRaw();
 	}
 

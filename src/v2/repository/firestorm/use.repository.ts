@@ -29,8 +29,8 @@ export default class UseFirestormRepository implements UseRepository {
 		]);
 	}
 
-	getRaw(): Promise<Uses> {
-		return uses.read_raw().then((res: any) => Object.values(res));
+	getRaw(): Promise<Record<string, Use>> {
+		return uses.read_raw();
 	}
 
 	getUseByIdOrName(id_or_name: string): Promise<Uses | Use> {

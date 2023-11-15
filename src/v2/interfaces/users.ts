@@ -60,7 +60,7 @@ export interface UserRepository {
 	getProfileOrCreate(id: string): User | PromiseLike<User>;
 	getUserProfiles(authors: string[]): Promise<UserProfile[]>;
 	getNameById(id: string): Promise<UserName>;
-	getRaw(): Promise<Users>;
+	getRaw(): Promise<Record<string, User>>;
 	getNames(): Promise<any>;
 	getUserById(id: string): Promise<User>;
 	getUsersByName(name: string): Promise<Users>;

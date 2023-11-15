@@ -15,38 +15,40 @@ import { BadRequestError } from "../tools/ApiError";
 export class UserService {
 	private repository: UserRepository = new UserFirestormRepository();
 
-	public getRaw(): Promise<Users> {
+	public getRaw(): Promise<Record<string, User>> {
 		return this.repository.getRaw();
 	}
 
 	public getStats(): Promise<UserStats> {
-		return this.getRaw().then((users) => {
-			const all_roles = [] as string[];
-			return users.reduce(
-				(acc, user) => {
-					acc.total++;
-					if (user.anonymous) acc.total_anonymous++;
+		return this.getRaw()
+			.then((raw) => Object.values(raw))
+			.then((users) => {
+				const all_roles = [] as string[];
+				return users.reduce(
+					(acc, user) => {
+						acc.total++;
+						if (user.anonymous) acc.total_anonymous++;
 
-					user.roles.forEach((role) => {
-						if (!all_roles.includes(role)) {
-							all_roles.push(role);
-							acc.total_roles++;
+						user.roles.forEach((role) => {
+							if (!all_roles.includes(role)) {
+								all_roles.push(role);
+								acc.total_roles++;
 
-							acc.total_per_roles[role] = 0;
-						}
-						acc.total_per_roles[role]++;
-					});
+								acc.total_per_roles[role] = 0;
+							}
+							acc.total_per_roles[role]++;
+						});
 
-					return acc;
-				},
-				{
-					total: 0,
-					total_anonymous: 0,
-					total_roles: 0,
-					total_per_roles: {},
-				} as UserStats,
-			);
-		});
+						return acc;
+					},
+					{
+						total: 0,
+						total_anonymous: 0,
+						total_roles: 0,
+						total_per_roles: {},
+					} as UserStats,
+				);
+			});
 	}
 
 	public getNames(): Promise<UserNames> {

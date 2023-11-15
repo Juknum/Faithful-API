@@ -13,17 +13,15 @@ import {
 } from "../../interfaces";
 
 // eslint-disable-next-line no-underscore-dangle
-function __transformUser(user: any): User {
+const __transformUser = (user: any): User => ({
 	// falsy checking and remove warns field (unused)
-	return {
-		id: user.id,
-		username: user.username || "",
-		uuid: user.uuid || "",
-		roles: user.roles || [],
-		media: user.media,
-		anonymous: user.anonymous || false,
-	};
-}
+	id: user.id,
+	username: user.username || "",
+	uuid: user.uuid || "",
+	roles: user.roles || [],
+	media: user.media,
+	anonymous: user.anonymous || false,
+});
 
 export default class UserFirestormRepository implements UserRepository {
 	getNameById(id: string): Promise<UserName> {
@@ -34,11 +32,15 @@ export default class UserFirestormRepository implements UserRepository {
 		}));
 	}
 
-	getRaw(): Promise<Users> {
-		return users
-			.read_raw()
-			.then((res: any) => Object.values(res))
-			.then((arr: Array<User>) => arr.map((el) => __transformUser(el)));
+	getRaw(): Promise<Record<string, User>> {
+		return (
+			users
+				.read_raw()
+				.then((res: Record<string, User>) => Object.entries(res))
+				// convert to entries to map, convert back to object after mapping done
+				.then((arr: [string, User][]) => arr.map(([key, el]) => [key, __transformUser(el)]))
+				.then((arr: [string, User][]) => Object.fromEntries(arr))
+		);
 	}
 
 	getNames(): Promise<UserNames> {

@@ -48,7 +48,7 @@ export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "a
 
 export interface TextureRepository {
 	changeTexture(id: string, body: TextureCreationParam): Promise<Texture>;
-	getRaw(): Promise<Textures>;
+	getRaw(): Promise<Record<string, Texture>>;
 	getByNameIdAndTag(
 		tag: string | undefined,
 		search: string | undefined,

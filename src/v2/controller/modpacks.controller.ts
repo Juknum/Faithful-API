@@ -1,6 +1,6 @@
 import { Controller, Get, Path, Request, Route, SuccessResponse, Tags } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
-import { Modpacks } from "../interfaces";
+import { Modpack } from "../interfaces";
 import ModpacksService from "../service/modpacks.service";
 import cache from "../tools/cache";
 
@@ -13,7 +13,7 @@ export class ModpacksController extends Controller {
 	 * Get the raw collection of mods
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Modpacks> {
+	public async getRaw(): Promise<Record<string, Modpack>> {
 		return this.service.getRaw();
 	}
 

@@ -72,7 +72,7 @@ export class FilesFirestormRepository implements FileRepository {
 		return firestorm.files.delete(path).then(() => {});
 	}
 
-	getRaw(): Promise<Files> {
+	getRaw(): Promise<Record<string, File>> {
 		return files.read_raw();
 	}
 }

@@ -88,7 +88,7 @@ export default class PathFirestormRepository implements PathRepository {
 			.then(() => {});
 	}
 
-	getRaw() {
+	getRaw(): Promise<Record<string, Path>> {
 		return paths.read_raw();
 	}
 }

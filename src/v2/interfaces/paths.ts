@@ -26,7 +26,7 @@ export interface PathRepository {
 	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void>;
 	removePathById(path_id: string): Promise<void>;
 	removePathsByBulk(path_ids: string[]): Promise<void>;
-	getRaw(): Promise<Paths>;
+	getRaw(): Promise<Record<string, Path>>;
 }
 
 export interface PathNewVersionParam {

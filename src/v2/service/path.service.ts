@@ -19,8 +19,8 @@ export default class PathService {
 
 	private readonly repository: PathRepository = new PathFirestormRepository();
 
-	getRaw(): Promise<Paths> {
-		return this.repository.getRaw().then((res: any) => Object.values(res));
+	getRaw(): Promise<Record<string, Path>> {
+		return this.repository.getRaw();
 	}
 
 	getPathByUseId(use_id: string): Promise<Paths> {

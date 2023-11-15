@@ -4,7 +4,7 @@ import SettingsFirestormRepository from "../repository/firestorm/settings.reposi
 export class SettingsService {
 	private readonly settingsRepository: SettingsRepository = new SettingsFirestormRepository();
 
-	raw(): Promise<any> {
+	raw(): Promise<Record<string, any>> {
 		return this.settingsRepository.getRaw();
 	}
 
