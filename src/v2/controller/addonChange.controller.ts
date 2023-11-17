@@ -30,7 +30,7 @@ import cache from "../tools/cache";
 @Route("addons")
 @Tags("Addons submission")
 export class AddonChangeController extends Controller {
-	private readonly service: AddonService = new AddonService();
+	private readonly service = new AddonService();
 
 	/**
 	 * Create an add-on

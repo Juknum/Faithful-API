@@ -5,7 +5,7 @@ import UseService from "../service/use.service";
 @Route("uses")
 @Tags("Uses")
 export class UsesController extends Controller {
-	private readonly service: UseService = new UseService();
+	private readonly service = new UseService();
 
 	/**
 	 * Get the raw collection of uses

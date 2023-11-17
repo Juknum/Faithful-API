@@ -5,7 +5,7 @@ import { File } from "../interfaces";
 @Route("files")
 @Tags("Files")
 export class FileController extends Controller {
-	private readonly service: FileService = new FileService();
+	private readonly service = new FileService();
 
 	/**
 	 * Get the raw collection of files

@@ -1,9 +1,9 @@
-import { Modpack, ModpacksRepository } from "~/v2/interfaces";
+import { Modpack } from "~/v2/interfaces";
 import { modpacks } from "../firestorm";
 import ModpacksFirestormRepository from "../repository/firestorm/modpacks.repository";
 
 export default class ModpacksService {
-	private readonly modsRepo: ModpacksRepository = new ModpacksFirestormRepository();
+	private readonly modsRepo = new ModpacksFirestormRepository();
 
 	getRaw(): Promise<Record<string, Modpack>> {
 		return modpacks.read_raw();

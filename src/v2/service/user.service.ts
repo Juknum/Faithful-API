@@ -4,7 +4,6 @@ import {
 	UserNames,
 	User,
 	Users,
-	UserRepository,
 	UserStats,
 	UserProfile,
 	UserName,
@@ -13,7 +12,7 @@ import UserFirestormRepository from "../repository/firestorm/user.repository";
 import { BadRequestError } from "../tools/ApiError";
 
 export class UserService {
-	private repository: UserRepository = new UserFirestormRepository();
+	private readonly repository = new UserFirestormRepository();
 
 	public getRaw(): Promise<Record<string, User>> {
 		return this.repository.getRaw();

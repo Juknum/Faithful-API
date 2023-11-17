@@ -1,10 +1,10 @@
-import { Mod, ModsRepository, PackVersions } from "~/v2/interfaces";
+import { Mod, PackVersions } from "~/v2/interfaces";
 import { mods } from "../firestorm";
 import { pack_versions } from "../firestorm/modding/pack_versions";
 import ModsFirestormRepository from "../repository/firestorm/mods.repository";
 
 export default class ModsService {
-	private readonly modsRepo: ModsRepository = new ModsFirestormRepository();
+	private readonly modsRepo = new ModsFirestormRepository();
 
 	getRaw(): Promise<Record<string, Mod>> {
 		return mods.read_raw();

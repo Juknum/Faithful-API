@@ -1,4 +1,4 @@
-import { Contributions, Paths, Texture, Textures, Uses, TextureRepository } from "../interfaces";
+import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
@@ -12,7 +12,7 @@ import PathService from "./path.service";
 import UseService from "./use.service";
 
 export default class TextureService {
-	private readonly textureRepo: TextureRepository = new TextureFirestormRepository();
+	private readonly textureRepo = new TextureFirestormRepository();
 
 	private readonly useService = new UseService();
 

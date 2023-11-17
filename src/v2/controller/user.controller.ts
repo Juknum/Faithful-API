@@ -30,7 +30,7 @@ import cache from "../tools/cache";
 @Route("users")
 @Tags("Users")
 export class UserController extends Controller {
-	private userService: UserService = new UserService();
+	private userService = new UserService();
 
 	@Get("profile")
 	@Security("discord", [])

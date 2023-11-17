@@ -21,5 +21,5 @@ export interface GalleryModalResult {
 	uses: Uses;
 	paths: Paths;
 	mcmeta: TextureMCMETA;
-	urls: Record<KnownPacks, URL>;
+	urls: Record<KnownPacks, string>;
 }

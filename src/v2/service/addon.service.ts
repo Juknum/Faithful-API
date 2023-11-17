@@ -2,16 +2,7 @@ import { URL } from "url";
 import { APIEmbedField, RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
 import axios from "axios";
 import { UserProfile } from "../interfaces/users";
-import {
-	Addons,
-	Addon,
-	AddonStatus,
-	AddonAll,
-	AddonRepository,
-	Files,
-	File,
-	FileParent,
-} from "../interfaces";
+import { Addons, Addon, AddonStatus, AddonAll, Files, File, FileParent } from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import { UserService } from "./user.service";
 import { FileService } from "./file.service";
@@ -33,11 +24,11 @@ function to_slug(value: string) {
 }
 
 export default class AddonService {
-	private readonly userService: UserService = new UserService();
+	private readonly userService = new UserService();
 
-	private readonly fileService: FileService = new FileService();
+	private readonly fileService = new FileService();
 
-	private readonly addonRepo: AddonRepository = new AddonFirestormRepository();
+	private readonly addonRepo = new AddonFirestormRepository();
 
 	/**
 	 * Util method to get id from

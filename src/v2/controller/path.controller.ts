@@ -16,7 +16,7 @@ import PathService from "../service/path.service";
 @Route("paths")
 @Tags("Paths")
 export class PathsController extends Controller {
-	private readonly service: PathService = new PathService();
+	private readonly service = new PathService();
 
 	/**
 	 * Get the raw collection of paths

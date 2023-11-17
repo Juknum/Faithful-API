@@ -32,7 +32,7 @@ import { NotFoundError } from "../tools/ApiError";
 @Route("textures")
 @Tags("Textures")
 export class TextureController extends Controller {
-	private readonly service: TextureService = new TextureService();
+	private readonly service = new TextureService();
 
 	/**
 	 * Get the raw collection of textures

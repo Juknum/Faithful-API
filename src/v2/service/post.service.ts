@@ -2,14 +2,13 @@ import {
 	WebsitePostDownloadRecord,
 	WebsitePostChangelogRecord,
 	WebsitePost,
-	WebsitePostRepository,
 	CreateWebsitePost,
 } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";
 import PostFirestormRepository from "../repository/firestorm/posts.repository";
 
 export default class PostService {
-	private readonly postRepo: WebsitePostRepository = new PostFirestormRepository();
+	private readonly postRepo = new PostFirestormRepository();
 
 	public async getByIdOrPermalink(id_or_permalink: string): Promise<WebsitePost> {
 		let postFound: WebsitePost | undefined; // undefined

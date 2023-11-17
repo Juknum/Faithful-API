@@ -27,7 +27,7 @@ import cache from "../tools/cache";
 @Route("contributions")
 @Tags("Contributions")
 export class ContributionsController extends Controller {
-	private readonly service: ContributionService = new ContributionService();
+	private readonly service = new ContributionService();
 
 	/**
 	 * Get the raw collection of contributions

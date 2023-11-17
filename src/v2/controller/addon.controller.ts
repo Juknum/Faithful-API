@@ -32,7 +32,7 @@ import { extract } from "../tools/extract";
 @Route("addons")
 @Tags("Addons")
 export class AddonController extends Controller {
-	private readonly service: AddonService = new AddonService();
+	private readonly service = new AddonService();
 
 	private async getAddonProperty(id: number, property: AddonProperty): Promise<Addon | Files> {
 		switch (property) {

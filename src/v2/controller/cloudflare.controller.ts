@@ -5,7 +5,7 @@ import CloudflareService from "../service/cloudflare.service";
 @Route("cloudflare")
 @Tags("Cloudflare")
 export class CloudflareController extends Controller {
-	private readonly service: CloudflareService = new CloudflareService();
+	private readonly service = new CloudflareService();
 
 	/**
 	 * Purge entire CloudFlare cache for faithfulpack.net, including its subdomains.

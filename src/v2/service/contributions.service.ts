@@ -4,7 +4,6 @@ import {
 	ContributionCreationParams,
 	ContributionsAuthors,
 	ContributionSearch,
-	ContributionsRepository,
 	ContributionStats,
 	PackData,
 	PackPercentile,
@@ -15,10 +14,9 @@ import { lastDay, lastMonth, lastWeek, startOfDay } from "../tools/utils";
 import TextureService from "./texture.service";
 
 export default class ContributionService {
-	private readonly contributionRepo: ContributionsRepository =
-		new ContributionFirestormRepository();
+	private readonly contributionRepo = new ContributionFirestormRepository();
 
-	private readonly textureService: TextureService = new TextureService();
+	private readonly textureService = new TextureService();
 
 	getRaw(): Promise<Record<string, Contribution>> {
 		return contributions.read_raw();

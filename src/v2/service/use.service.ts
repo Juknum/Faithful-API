@@ -1,4 +1,4 @@
-import { UseRepository, Use, Uses, Paths, CreationUse } from "../interfaces";
+import { Use, Uses, Paths, CreationUse } from "../interfaces";
 import UseFirestormRepository from "../repository/firestorm/use.repository";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import PathService from "./path.service";
@@ -14,7 +14,7 @@ export default class UseService {
 		else this.pathService = new PathService(this);
 	}
 
-	private readonly useRepo: UseRepository = new UseFirestormRepository();
+	private readonly useRepo = new UseFirestormRepository();
 
 	private readonly pathService: PathService;
 

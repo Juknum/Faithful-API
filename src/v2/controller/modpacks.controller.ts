@@ -7,7 +7,7 @@ import cache from "../tools/cache";
 @Route("modpacks")
 @Tags("Modpacks")
 export class ModpacksController extends Controller {
-	private readonly service: ModpacksService = new ModpacksService();
+	private readonly service = new ModpacksService();
 
 	/**
 	 * Get the raw collection of mods

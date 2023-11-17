@@ -8,7 +8,7 @@ import cache from "../tools/cache";
 @Route("mods")
 @Tags("Mods")
 export class ModsController extends Controller {
-	private readonly service: ModsService = new ModsService();
+	private readonly service = new ModsService();
 
 	/**
 	 * Get the raw collection of mods

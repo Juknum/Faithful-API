@@ -15,9 +15,9 @@ import cache from "../tools/cache";
 @Route("gallery")
 @Tags("Gallery")
 export class GalleryController extends Controller {
-	private readonly textureService: TextureService = new TextureService();
+	private readonly textureService = new TextureService();
 
-	private readonly service: GalleryService = new GalleryService();
+	private readonly service = new GalleryService();
 
 	@Get("{res}/{edition}/{mc_version}/{tag}/")
 	public async search(
@@ -45,7 +45,7 @@ export class GalleryController extends Controller {
 	 */
 	@Get("modal/{id}/{mc_version}")
 	public async modal(@Path() id: number, @Path() mc_version: string): Promise<GalleryModalResult> {
-		const urls: Record<KnownPacks, URL> = (
+		const urls: Record<KnownPacks, string> = (
 			await Promise.allSettled(
 				KnownPacksArr.map((p) => this.textureService.getURLById(id, p, mc_version)),
 			)
@@ -54,7 +54,7 @@ export class GalleryController extends Controller {
 			.filter((p: [KnownPacks, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
 			.reduce(
 				(acc, p: [KnownPacks, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
-				{} as Record<KnownPacks, URL>,
+				{} as Record<KnownPacks, string>,
 			);
 
 		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;

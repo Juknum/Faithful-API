@@ -1,28 +1,20 @@
 /* eslint-disable no-await-in-loop */
 
 import { textures } from "../firestorm";
-import {
-	AcceptedRes,
-	GalleryResult,
-	Path,
-	PathRepository,
-	TextureMCMETA,
-	Textures,
-	Use,
-} from "../interfaces";
+import { AcceptedRes, GalleryResult, Path, TextureMCMETA, Textures, Use } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import { SettingsService } from "./settings.service";
 import TextureService from "./texture.service";
 import UseService from "./use.service";
 
 export default class GalleryService {
-	private readonly pathRepo: PathRepository = new PathFirestormRepository();
+	private readonly pathRepo = new PathFirestormRepository();
 
-	private readonly useService: UseService = new UseService();
+	private readonly useService = new UseService();
 
-	private readonly textureService: TextureService = new TextureService();
+	private readonly textureService = new TextureService();
 
-	private readonly settingsService: SettingsService = new SettingsService();
+	private readonly settingsService = new SettingsService();
 
 	async UrlsFromTextures(
 		pack: string,

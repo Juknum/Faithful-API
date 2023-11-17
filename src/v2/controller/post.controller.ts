@@ -31,7 +31,7 @@ import { filterRecord } from "../tools/extract";
 @Route("posts")
 @Tags("Posts")
 export class PostController extends Controller {
-	private readonly service: PostService = new PostService();
+	private readonly service = new PostService();
 
 	/**
 	 * Get the raw collection
