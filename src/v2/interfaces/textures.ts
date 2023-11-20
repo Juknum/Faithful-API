@@ -67,5 +67,5 @@ export interface TextureRepository {
 	searchTextureByNameOrId(name_or_id: string | number): Promise<Textures | Texture>;
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
-	deleteTexture(id: string);
+	deleteTexture(id: string): Promise<void>;
 }
