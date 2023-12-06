@@ -3,6 +3,7 @@ import UseService from "./use.service";
 import { InputPath, Path, PathNewVersionParam, Paths } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import TextureService from "./texture.service";
+import { settings } from "../firestorm";
 
 export default class PathService {
 	private readonly useService: UseService;
@@ -56,6 +57,13 @@ export default class PathService {
 		// check existing version to the paths provided
 		if (!versions.includes(body.version))
 			return Promise.reject(new BadRequestError("Incorrect input path version provided"));
+
+		settings.editField({
+			id: "versions",
+			field: body.edition,
+			operation: "array-push",
+			value: body.newVersion,
+		});
 
 		return this.repository.addNewVersionToVersion(body.version, body.newVersion);
 	}
