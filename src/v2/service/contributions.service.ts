@@ -142,7 +142,7 @@ export default class ContributionService {
 		return this.contributionRepo.addContributions(params);
 	}
 
-	deleteContribution(id: string): Promise<void> {
+	deleteContribution(id: string): Promise<string> {
 		return this.contributionRepo.deleteContribution(id);
 	}
 

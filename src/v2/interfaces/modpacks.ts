@@ -14,6 +14,6 @@ export interface Modpack {
 export interface Modpacks extends Array<Modpack> {}
 
 export interface ModpacksRepository {
-	getRaw(): Promise<Modpacks>;
+	getRaw(): Promise<Record<string, Modpack>>;
 	getThumbnail(id: number): Promise<string>;
 }

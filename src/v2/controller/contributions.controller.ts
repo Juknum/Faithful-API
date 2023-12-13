@@ -153,7 +153,7 @@ export class ContributionsController extends Controller {
 	@Delete("{id}")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async deleteContribution(id: string): Promise<void> {
+	public async deleteContribution(id: string): Promise<string> {
 		return this.service.deleteContribution(id);
 	}
 

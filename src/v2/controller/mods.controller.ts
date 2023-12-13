@@ -1,6 +1,6 @@
 import { Controller, Get, Path, Request, Route, SuccessResponse, Tags, Response } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
-import { Mod, PackVersions } from "../interfaces";
+import { Mod } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";
 import ModsService from "../service/mods.service";
 import cache from "../tools/cache";
@@ -16,11 +16,6 @@ export class ModsController extends Controller {
 	@Get("raw")
 	public async getRaw(): Promise<Record<string, Mod>> {
 		return this.service.getRaw();
-	}
-
-	@Get("pack_versions")
-	public async getPackVersions(): Promise<PackVersions> {
-		return this.service.getPackVersions();
 	}
 
 	@Get("{id}/thumbnail")

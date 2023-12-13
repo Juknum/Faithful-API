@@ -8,5 +8,4 @@ export * from "./addons";
 export * from "./settings";
 export * from "./modding";
 export * from "./modding/modpacks";
-export * from "./modding/pack_versions";
 export * from "./posts";

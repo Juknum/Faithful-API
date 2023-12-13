@@ -3,4 +3,5 @@ import config from "./config";
 
 config();
 
-export const settings = firestorm.collection("settings");
+// no defined set of keys that can exist at any point in time
+export const settings = firestorm.collection<Record<string, any>>("settings");

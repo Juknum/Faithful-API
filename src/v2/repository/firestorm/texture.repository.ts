@@ -83,11 +83,14 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.get(id).then((texture) => texture.url(pack, version));
 	}
 
-	public async searchTextureByNameOrId(name_or_id): Promise<Textures | Texture> {
+	// AlwaysID is a typescript hack to make sure the correct types are always returned
+	public async searchTextureByNameOrId<AlwaysID extends boolean>(
+		name_or_id: string | number,
+	): Promise<AlwaysID extends true ? Texture : Texture | Textures> {
 		const res = (await this.searchTexturePropertyByNameOrId(name_or_id, null)) as
 			| Texture
 			| Textures;
-		return res;
+		return res as any;
 	}
 
 	public async searchTexturePropertyByNameOrId(
@@ -138,7 +141,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	public getTextureById(id: number, property: TextureProperty): Promise<Texture> {
 		if (Number.isNaN(id) || id < 0)
 			return Promise.reject(new Error("Texture IDs must be integers greater than 0."));
-		return textures.get(id).then((t) => {
+		return textures.get(id).then((t: Texture) => {
 			if (property === null) return t;
 			return t[property]();
 		});
@@ -221,7 +224,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public createTexture(texture: TextureCreationParam): Promise<Texture> {
-		return textures.add(texture).then((id: string) => this.searchTextureByNameOrId(id));
+		return textures.add(texture).then((id: string) => this.searchTextureByNameOrId<true>(id));
 	}
 
 	public async deleteTexture(id: string): Promise<void> {
@@ -243,6 +246,6 @@ export default class TextureFirestormRepository implements TextureRepository {
 			...body,
 		};
 
-		return textures.set(id, unmapped).then(() => this.searchTextureByNameOrId(id));
+		return textures.set(id, unmapped).then(() => this.searchTextureByNameOrId<true>(id));
 	}
 }

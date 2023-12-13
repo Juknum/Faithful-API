@@ -1,4 +1,4 @@
-import { CreationPath } from "./paths";
+import { CreationPath, Paths } from "./paths";
 
 export interface BaseUse {
 	name: string; // use name
@@ -18,6 +18,10 @@ export interface Use extends CreationUse {
 }
 
 export interface Uses extends Array<Use> {}
+
+export interface FirestormUse extends Use {
+	getPaths(): Promise<Paths>;
+}
 
 export interface UseRepository {
 	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses>;

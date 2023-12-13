@@ -143,7 +143,7 @@ export default class UserFirestormRepository implements UserRepository {
 
 	getRoles(): Promise<Array<string>> {
 		return users.select({ fields: ["roles"] }).then(
-			(obj: Record<string, { roles: Array<string> }>) =>
+			(obj) =>
 				Object.values(obj)
 					.map((el) => el.roles || []) // get roles or none
 					.flat() // flat array
@@ -167,7 +167,8 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	update(id: string, user: UserCreationParams): Promise<User> {
-		return users.set(id, user).then(() => this.getUserById(id));
+		/** @todo fix weird user types here */
+		return users.set(id, user as any).then(() => this.getUserById(id));
 	}
 
 	delete(id: string): Promise<void> {

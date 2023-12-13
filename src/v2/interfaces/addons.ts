@@ -72,6 +72,11 @@ export interface AddonStatsAdmin extends AddonStats {
 	archived: number;
 }
 
+export interface FirestormAddon extends Addon {
+	files(): Promise<Files>;
+	all(): Promise<AddonAll>;
+}
+
 export interface AddonRepository {
 	getRaw(): Promise<Record<string, Addon>>;
 	getAddonById(id: number): Promise<Addon>;

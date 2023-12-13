@@ -19,7 +19,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	}
 
 	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {
-		const options = authors.map((a) => ({
+		const options: any[] = authors.map((a) => ({
 			field: "authors",
 			criteria: "array-contains",
 			value: a as any,
@@ -87,7 +87,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 						anonymous: boolean;
 					}>,
 				) =>
-					Object.values(out).map((author: { id: string; contributions: number }) => {
+					Object.values(out).map((author: any) => {
 						const user = _users.find((u) => u.id === author.id);
 
 						if (user)
@@ -109,14 +109,14 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
 		return contributions
 			.addBulk(params)
-			.then((ids: string[]) => ids.map((id) => contributions.get(id)));
+			.then((ids: string[]) => Promise.all(ids.map((id) => contributions.get(id))));
 	}
 
 	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution> {
 		return contributions.set(id, params).then(() => contributions.get(id));
 	}
 
-	deleteContribution(id: string): Promise<void> {
+	deleteContribution(id: string): Promise<string> {
 		return contributions.remove(id);
 	}
 

@@ -46,6 +46,15 @@ export type KnownPacks = (typeof KnownPacksArr)[number];
 export type Edition = "java" | "bedrock" | "dungeons";
 export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;
 
+export interface FirestormTexture extends Texture {
+	uses(): Promise<Uses>;
+	paths(): Promise<Paths>;
+	url(pack: KnownPacks, version: string): Promise<string>;
+	contributions(): Promise<Contributions>;
+	mcmeta(): Promise<TextureMCMETA>;
+	all(): Promise<TextureAll>;
+}
+
 export interface TextureRepository {
 	changeTexture(id: string, body: TextureCreationParam): Promise<Texture>;
 	getRaw(): Promise<Record<string, Texture>>;
@@ -64,7 +73,10 @@ export interface TextureRepository {
 		name_or_id: string | number,
 		property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA>;
-	searchTextureByNameOrId(name_or_id: string | number): Promise<Textures | Texture>;
+	searchTextureByNameOrId(
+		name_or_id: string | number,
+		alwaysID: boolean,
+	): Promise<Textures | Texture>;
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
 	deleteTexture(id: string): Promise<void>;

@@ -62,7 +62,7 @@ export default class PathFirestormRepository implements PathRepository {
 				const edits = filtered.map((p) => ({
 					id: p.id,
 					field: "versions",
-					operation: "set",
+					operation: "set" as const,
 					value: p.versions.map((v) => (v === old_version ? new_version : v)),
 				}));
 
@@ -76,12 +76,15 @@ export default class PathFirestormRepository implements PathRepository {
 			.then((r) => {
 				const old: Path[] = Object.values(r);
 				const filtered = old.filter((p) => p.versions.includes(version));
-				const edits = filtered.map((p) => ({
-					id: p.id,
-					field: "versions",
-					operation: "array-push",
-					value: newVersion,
-				}));
+				const edits = filtered.map(
+					(p) =>
+						({
+							id: p.id,
+							field: "versions",
+							operation: "array-push",
+							value: newVersion,
+						}) as const,
+				);
 
 				return paths.editFieldBulk(edits);
 			})

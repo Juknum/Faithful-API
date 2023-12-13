@@ -16,6 +16,8 @@ export interface Path extends InputPath {
 
 export interface Paths extends Array<Path> {}
 
+export interface FirestormPath extends Path {}
+
 export interface PathRepository {
 	addNewVersionToVersion(version: string, newVersion: string): void | PromiseLike<void>;
 	getPathById(path_id: string): Promise<Path>;
