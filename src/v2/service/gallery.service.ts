@@ -16,7 +16,7 @@ export default class GalleryService {
 
 	private readonly settingsService = new SettingsService();
 
-	async UrlsFromTextures(
+	async urlsFromTextures(
 		pack: string,
 		edition: string,
 		mc_version: string,
@@ -133,7 +133,7 @@ export default class GalleryService {
 
 		const pack = RES_TO_PACKS[res];
 
-		const urls = await this.UrlsFromTextures(
+		const urls = await this.urlsFromTextures(
 			pack,
 			edition,
 			mc_version,
