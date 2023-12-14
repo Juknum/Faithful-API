@@ -13,6 +13,8 @@ export interface Mod {
 
 export interface Mods extends Array<Mod> {}
 
+export interface FirestormMod extends Mod {};
+
 export interface ModsRepository {
 	getRaw(): Promise<Record<string, Mod>>;
 	getThumbnail(id: number): Promise<string>;
