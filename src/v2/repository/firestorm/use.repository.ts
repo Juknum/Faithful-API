@@ -30,7 +30,7 @@ export default class UseFirestormRepository implements UseRepository {
 	}
 
 	getRaw(): Promise<Record<string, Use>> {
-		return uses.read_raw();
+		return uses.readRaw();
 	}
 
 	getUseByIdOrName(id_or_name: string): Promise<Uses | Use> {

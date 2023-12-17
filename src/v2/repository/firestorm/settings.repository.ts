@@ -3,10 +3,10 @@ import { SettingsRepository } from "../../interfaces";
 
 export default class SettingsFirestormRepository implements SettingsRepository {
 	getRaw(): Promise<Record<string, any>> {
-		return settings.read_raw();
+		return settings.readRaw();
 	}
 
 	update(body: any): Promise<void> {
-		return settings.write_raw(body).then(() => {});
+		return settings.writeRaw(body).then(() => {});
 	}
 }

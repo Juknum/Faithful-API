@@ -6,7 +6,7 @@ export default class ModsService {
 	private readonly modsRepo = new ModsFirestormRepository();
 
 	getRaw(): Promise<Record<string, Mod>> {
-		return mods.read_raw();
+		return mods.readRaw();
 	}
 
 	getThumbnail(id: number): Promise<string> {

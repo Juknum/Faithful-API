@@ -4,7 +4,7 @@ import { CreateWebsitePost, WebsitePost as Post, WebsitePostRepository } from ".
 
 export default class PostFirestormRepository implements WebsitePostRepository {
 	getRaw(): Promise<Record<string, Post>> {
-		return posts.read_raw();
+		return posts.readRaw();
 	}
 
 	getById(id: number): Promise<Post> {

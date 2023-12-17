@@ -19,7 +19,7 @@ export default class ContributionService {
 	private readonly textureService = new TextureService();
 
 	getRaw(): Promise<Record<string, Contribution>> {
-		return contributions.read_raw();
+		return contributions.readRaw();
 	}
 
 	getStats(): Promise<ContributionStats> {

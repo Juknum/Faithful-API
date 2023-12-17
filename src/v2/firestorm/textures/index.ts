@@ -38,7 +38,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 		let use: Use;
 
 		return settings
-			.read_raw()
+			.readRaw()
 			.then((settings_file: Record<string, any>) => {
 				urls = settings_file.repositories.raw[pack];
 				return el.paths();

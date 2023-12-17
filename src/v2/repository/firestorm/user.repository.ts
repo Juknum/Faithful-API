@@ -35,7 +35,7 @@ export default class UserFirestormRepository implements UserRepository {
 	getRaw(): Promise<Record<string, User>> {
 		return (
 			users
-				.read_raw()
+				.readRaw()
 				.then((res: Record<string, User>) => Object.entries(res))
 				// convert to entries to map, convert back to object after mapping done
 				.then((arr: [string, User][]) => arr.map(([key, el]) => [key, __transformUser(el)]))
@@ -119,7 +119,7 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUsersFromRole(role: string, username?: string): Promise<Users> {
-		if (role === "all" && !username) return users.read_raw().then((res: any) => Object.values(res));
+		if (role === "all" && !username) return users.readRaw().then((res: any) => Object.values(res));
 		const options = [];
 
 		if (role !== "all")

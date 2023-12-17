@@ -4,7 +4,7 @@ import { Modpack, ModpacksRepository } from "../../interfaces";
 
 export default class ModpacksFirestormRepository implements ModpacksRepository {
 	public getRaw(): Promise<Record<string, Modpack>> {
-		return modpacks.read_raw();
+		return modpacks.readRaw();
 	}
 
 	public getThumbnail(id: number): Promise<string> {

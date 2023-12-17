@@ -76,7 +76,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public getRaw(): Promise<Record<string, Texture>> {
-		return textures.read_raw();
+		return textures.readRaw();
 	}
 
 	public getURLById(id: number, pack: KnownPacks, version: string) {
