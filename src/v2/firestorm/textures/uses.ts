@@ -1,15 +1,11 @@
 import firestorm from "firestorm-db";
-import { Paths, Texture } from "~/v2/interfaces";
+import { Paths, FirestormUse } from "~/v2/interfaces";
 import config from "../config";
-
-import { textures } from ".";
 import { paths } from "./paths";
 
 config();
 
-export const uses = firestorm.collection("uses", (el) => {
-	el.getTexture = (): Promise<Texture> => textures.get(el.textureID);
-
+export const uses = firestorm.collection<FirestormUse>("uses", (el) => {
 	el.getPaths = (): Promise<Paths> =>
 		paths.search([
 			{

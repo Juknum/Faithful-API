@@ -1,11 +1,11 @@
 import firestorm from "firestorm-db";
-import { AddonAll, Files } from "~/v2/interfaces";
+import { FirestormAddon, AddonAll, Files } from "~/v2/interfaces";
 import config from "../config";
 import { files } from "../posts/files";
 
 config();
 
-export const addons = firestorm.collection("addons", (el) => {
+export const addons = firestorm.collection<FirestormAddon>("addons", (el) => {
 	el.files = (): Promise<Files> =>
 		files.search([
 			{
@@ -21,7 +21,8 @@ export const addons = firestorm.collection("addons", (el) => {
 		]);
 
 	el.all = (): Promise<AddonAll> => {
-		const output = el;
+		// files isn't defined yet so ts throws an error before it gets set
+		const output = el as any;
 		return el.files().then((res) => {
 			output.files = res;
 			return output;

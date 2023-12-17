@@ -46,6 +46,7 @@ export interface User extends UserCreationParams {
 	id: string; // discord user id
 	media: Medias;
 }
+
 export interface Users extends Array<User> {}
 
 export interface UserStats {
@@ -53,6 +54,11 @@ export interface UserStats {
 	total_anonymous: number;
 	total_roles: number;
 	total_per_roles: Record<string, number>;
+}
+
+export interface FirestormUser extends User {
+	contributions(): Promise<Contributions>;
+	addons(): Promise<Addons>;
 }
 
 /* eslint-disable no-unused-vars */

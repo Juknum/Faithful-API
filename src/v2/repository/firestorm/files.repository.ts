@@ -73,6 +73,6 @@ export class FilesFirestormRepository implements FileRepository {
 	}
 
 	getRaw(): Promise<Record<string, File>> {
-		return files.read_raw();
+		return files.readRaw();
 	}
 }

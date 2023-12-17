@@ -1,7 +1,7 @@
 import axios from "axios";
 import firestorm from "firestorm-db";
 import { Paths, Uses, Contributions, TextureAll, Path, Use } from "~/v2/interfaces";
-import { KnownPacks, TextureMCMETA } from "~/v2/interfaces/textures";
+import { KnownPacks, FirestormTexture, TextureMCMETA } from "~/v2/interfaces/textures";
 import config from "../config";
 
 import { uses } from "./uses";
@@ -11,7 +11,7 @@ import { MinecraftSorter } from "../../tools/sorter";
 
 config();
 
-export const textures = firestorm.collection("textures", (el) => {
+export const textures = firestorm.collection<FirestormTexture>("textures", (el) => {
 	el.uses = async (): Promise<Uses> =>
 		uses.search([
 			{
@@ -38,7 +38,7 @@ export const textures = firestorm.collection("textures", (el) => {
 		let use: Use;
 
 		return settings
-			.read_raw()
+			.readRaw()
 			.then((settings_file: Record<string, any>) => {
 				urls = settings_file.repositories.raw[pack];
 				return el.paths();
@@ -89,7 +89,7 @@ export const textures = firestorm.collection("textures", (el) => {
 					.catch(() => null); // avoid crash if mcmeta file cannot be found
 			})
 			.then((res: any | null) => (res ? res.data : {}))
-			.catch({});
+			.catch(() => {});
 
 	el.all = async (): Promise<TextureAll> => {
 		const output = { id: el.id, name: el.name, tags: el.tags } as TextureAll;

@@ -3,7 +3,7 @@ import { Files, AddonStatus, Addon, Addons, AddonRepository } from "../../interf
 
 export default class AddonFirestormRepository implements AddonRepository {
 	getRaw(): Promise<Record<string, Addon>> {
-		return addons.read_raw();
+		return addons.readRaw();
 	}
 
 	getAddonById(id: number): Promise<Addon> {

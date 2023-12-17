@@ -1,10 +1,10 @@
 import axios from "axios";
 import { modpacks } from "../../firestorm";
-import { Modpacks, ModpacksRepository } from "../../interfaces";
+import { Modpack, ModpacksRepository } from "../../interfaces";
 
 export default class ModpacksFirestormRepository implements ModpacksRepository {
-	public getRaw(): Promise<Modpacks> {
-		return modpacks.read_raw();
+	public getRaw(): Promise<Record<string, Modpack>> {
+		return modpacks.readRaw();
 	}
 
 	public getThumbnail(id: number): Promise<string> {

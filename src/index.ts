@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import status from "statuses";
 import * as firestorm from "firestorm-db";
 import express, { Application, Request, Response, NextFunction } from "express";
@@ -6,15 +8,11 @@ import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 import { ValidateError } from "tsoa";
 import responseTime from "response-time";
 import cors from "cors";
-
-import * as dotenv from "dotenv";
 import apiErrorHandler from "api-error-handler";
 import { RegisterRoutes } from "../build/routes";
 import { ApiError } from "./v2/tools/ApiError";
 import { AddonChangeController } from "./v2/controller/addonChange.controller";
 import formHandler from "./v2/tools/FormHandler";
-
-dotenv.config();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NO_CACHE = process.env.NO_CACHE === "true";

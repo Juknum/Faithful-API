@@ -1,15 +1,11 @@
 import axios from "axios";
 import { NotFoundError } from "../../tools/ApiError";
-import { mods, pack_versions } from "../../firestorm";
-import { Mod, Mods, ModsRepository, PackVersions } from "../../interfaces";
+import { mods } from "../../firestorm";
+import { Mod, ModsRepository } from "../../interfaces";
 
 export default class ModsFirestormRepository implements ModsRepository {
-	public getRaw(): Promise<Mods> {
-		return mods.read_raw();
-	}
-
-	public getPackVersion(): Promise<PackVersions> {
-		return pack_versions.read_raw();
+	public getRaw(): Promise<Record<string, Mod>> {
+		return mods.readRaw();
 	}
 
 	public getThumbnail(id: number): Promise<string> {

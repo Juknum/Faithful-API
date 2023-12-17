@@ -30,7 +30,7 @@ export default class UseFirestormRepository implements UseRepository {
 	}
 
 	getRaw(): Promise<Record<string, Use>> {
-		return uses.read_raw();
+		return uses.readRaw();
 	}
 
 	getUseByIdOrName(id_or_name: string): Promise<Uses | Use> {
@@ -55,7 +55,7 @@ export default class UseFirestormRepository implements UseRepository {
 
 	set(use: Use): Promise<Use> {
 		// breaks without structuredClone, not sure why
-		return uses.set(use.id, structuredClone(use));
+		return uses.set(use.id, structuredClone(use)).then((id) => uses.get(id));
 	}
 
 	removeUseById(use_id: string): Promise<void> {

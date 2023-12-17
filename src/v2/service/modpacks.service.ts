@@ -6,7 +6,7 @@ export default class ModpacksService {
 	private readonly modsRepo = new ModpacksFirestormRepository();
 
 	getRaw(): Promise<Record<string, Modpack>> {
-		return modpacks.read_raw();
+		return modpacks.readRaw();
 	}
 
 	getThumbnail(id: number): Promise<string> {

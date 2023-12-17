@@ -19,7 +19,7 @@ export default class ContributionService {
 	private readonly textureService = new TextureService();
 
 	getRaw(): Promise<Record<string, Contribution>> {
-		return contributions.read_raw();
+		return contributions.readRaw();
 	}
 
 	getStats(): Promise<ContributionStats> {
@@ -142,7 +142,7 @@ export default class ContributionService {
 		return this.contributionRepo.addContributions(params);
 	}
 
-	deleteContribution(id: string): Promise<void> {
+	deleteContribution(id: string): Promise<string> {
 		return this.contributionRepo.deleteContribution(id);
 	}
 

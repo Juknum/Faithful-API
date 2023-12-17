@@ -13,16 +13,10 @@ export interface Mod {
 
 export interface Mods extends Array<Mod> {}
 
-export interface PackVersions {
-	[integer: string]: {
-		min: string;
-		max: string;
-	};
-}
+export interface FirestormMod extends Mod {};
 
 export interface ModsRepository {
-	getRaw(): Promise<Mods>;
-	getPackVersion(): Promise<PackVersions>;
+	getRaw(): Promise<Record<string, Mod>>;
 	getThumbnail(id: number): Promise<string>;
 	getCurseForgeName(id: number): Promise<string>;
 	getNameInDatabase(id: string): Promise<string>;

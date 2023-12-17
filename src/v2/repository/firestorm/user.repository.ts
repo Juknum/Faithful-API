@@ -35,7 +35,7 @@ export default class UserFirestormRepository implements UserRepository {
 	getRaw(): Promise<Record<string, User>> {
 		return (
 			users
-				.read_raw()
+				.readRaw()
 				.then((res: Record<string, User>) => Object.entries(res))
 				// convert to entries to map, convert back to object after mapping done
 				.then((arr: [string, User][]) => arr.map(([key, el]) => [key, __transformUser(el)]))
@@ -119,7 +119,7 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUsersFromRole(role: string, username?: string): Promise<Users> {
-		if (role === "all" && !username) return users.read_raw().then((res: any) => Object.values(res));
+		if (role === "all" && !username) return users.readRaw().then((res: any) => Object.values(res));
 		const options = [];
 
 		if (role !== "all")
@@ -143,7 +143,7 @@ export default class UserFirestormRepository implements UserRepository {
 
 	getRoles(): Promise<Array<string>> {
 		return users.select({ fields: ["roles"] }).then(
-			(obj: Record<string, { roles: Array<string> }>) =>
+			(obj) =>
 				Object.values(obj)
 					.map((el) => el.roles || []) // get roles or none
 					.flat() // flat array
@@ -167,7 +167,8 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	update(id: string, user: UserCreationParams): Promise<User> {
-		return users.set(id, user).then(() => this.getUserById(id));
+		/** @todo fix weird user types here */
+		return users.set(id, user as any).then(() => this.getUserById(id));
 	}
 
 	delete(id: string): Promise<void> {

@@ -30,6 +30,8 @@ export interface WebsitePost extends CreateWebsitePost {
 	id: string;
 }
 
+export interface FirestormPost extends WebsitePost {};
+
 export interface WebsitePostRepository {
 	getRaw(): Promise<Record<string, WebsitePost>>;
 	getById(id: number): Promise<WebsitePost>;
