@@ -13,7 +13,7 @@ export interface Modpack {
 
 export interface Modpacks extends Array<Modpack> {}
 
-export interface FirestormModpack extends Modpack {};
+export interface FirestormModpack extends Modpack {}
 
 export interface ModpacksRepository {
 	getRaw(): Promise<Record<string, Modpack>>;
