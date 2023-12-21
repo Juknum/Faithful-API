@@ -30,6 +30,7 @@ export interface UseRepository {
 	getUseByIdOrName(id_or_name: string): Promise<Uses | Use>;
 	deleteUse(id: string): Promise<void>;
 	set(use: Use): Promise<Use>;
+	setMultiple(uses: Use[]): Promise<Use[]>;
 	removeUseById(use_id: string): Promise<void>;
 	removeUsesByBulk(use_ids: string[]): Promise<void>;
 }
