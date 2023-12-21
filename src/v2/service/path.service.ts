@@ -1,6 +1,6 @@
 import { BadRequestError } from "../tools/ApiError";
 import UseService from "./use.service";
-import { InputPath, Path, PathNewVersionParam, Paths } from "../interfaces";
+import { InputPath, Path, PathNewVersionParam, PathRepository, Paths } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import TextureService from "./texture.service";
 import { settings } from "../firestorm";
@@ -33,6 +33,10 @@ export default class PathService {
 		return this.useService
 			.getUseByIdOrName(path.use) // verify use existence
 			.then(() => this.repository.createPath(path));
+	}
+
+	async createMultiplePaths(paths: InputPath[]): Promise<Path[]> {
+		return this.repository.createPathBulk(paths);
 	}
 
 	getPathById(id: string): Promise<Path> {

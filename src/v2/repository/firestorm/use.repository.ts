@@ -55,7 +55,12 @@ export default class UseFirestormRepository implements UseRepository {
 
 	set(use: Use): Promise<Use> {
 		// breaks without structuredClone, not sure why
-		return uses.set(use.id, structuredClone(use)).then((id) => uses.get(id));
+		return uses.set(use.id, structuredClone(use)).then(() => uses.get(use.id));
+	}
+
+	setMultiple(useArray: Use[]): Promise<Use[]> {
+		const use_ids = useArray.map((u) => u.id);
+		return uses.setBulk(use_ids, useArray).then(() => uses.searchKeys(use_ids));
 	}
 
 	removeUseById(use_id: string): Promise<void> {
