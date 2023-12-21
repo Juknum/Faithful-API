@@ -36,40 +36,40 @@ export class AddonController extends Controller {
 
 	private async getAddonProperty(id: number, property: AddonProperty): Promise<Addon | Files> {
 		switch (property) {
-		case "files":
-			return (await this.service.getFiles(id)).map((f) => {
-				if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/"))
-					f.source = process.env.DB_IMAGE_ROOT + f.source;
-
-				if (
-					f.use === "download" &&
-						!f.source.startsWith("https://") &&
-						!f.source.startsWith("http://")
-				)
-					f.source = `http://${f.source}`;
-
-				return f;
-			});
-
-		case "all":
-		default:
-			return this.service.getAll(id).then((addon: AddonAll) => {
-				addon.files = addon.files.map((f) => {
+			case "files":
+				return (await this.service.getFiles(id)).map((f) => {
 					if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/"))
 						f.source = process.env.DB_IMAGE_ROOT + f.source;
 
 					if (
 						f.use === "download" &&
-							!f.source.startsWith("https://") &&
-							!f.source.startsWith("http://")
+						!f.source.startsWith("https://") &&
+						!f.source.startsWith("http://")
 					)
 						f.source = `http://${f.source}`;
 
 					return f;
 				});
 
-				return addon;
-			});
+			case "all":
+			default:
+				return this.service.getAll(id).then((addon: AddonAll) => {
+					addon.files = addon.files.map((f) => {
+						if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/"))
+							f.source = process.env.DB_IMAGE_ROOT + f.source;
+
+						if (
+							f.use === "download" &&
+							!f.source.startsWith("https://") &&
+							!f.source.startsWith("http://")
+						)
+							f.source = `http://${f.source}`;
+
+						return f;
+					});
+
+					return addon;
+				});
 		}
 	}
 
@@ -175,7 +175,7 @@ export class AddonController extends Controller {
 	@Get("{id_or_slug}/{property}")
 	public async getAddonPropertyById(
 		@Path() id_or_slug: string,
-			property: AddonProperty,
+		property: AddonProperty,
 	): Promise<Addon | Files> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)

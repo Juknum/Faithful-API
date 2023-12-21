@@ -97,28 +97,31 @@ export default class TextureService {
 		const texture_id = created_texture.id;
 
 		// create uses
-		const [use_ids, full_uses_to_create]: [string[], Use[]] = input.uses.reduce((acc,u,ui) => {
-			const use_id = String(texture_id) + String.fromCharCode("a".charCodeAt(0) + ui);
-			const use = {
-				name: u.name,
-				edition: u.edition,
-				texture: Number.parseInt(texture_id, 10),
-				id: use_id,
-			}
-			acc[0].push(use_id)
-			acc[1].push(use)
-			return acc
-		}, [[],[]]);
+		const [use_ids, full_uses_to_create]: [string[], Use[]] = input.uses.reduce(
+			(acc, u, ui) => {
+				const use_id = String(texture_id) + String.fromCharCode("a".charCodeAt(0) + ui);
+				const use = {
+					name: u.name,
+					edition: u.edition,
+					texture: Number.parseInt(texture_id, 10),
+					id: use_id,
+				};
+				acc[0].push(use_id);
+				acc[1].push(use);
+				return acc;
+			},
+			[[], []],
+		);
 		await this.useService.createMultipleUses(full_uses_to_create);
 
 		// create paths
 		const paths_to_add = input.uses.reduce((acc, u, ui) => {
-			const paths: InputPath[] = u.paths.map(p => ({
+			const paths: InputPath[] = u.paths.map((p) => ({
 				...p,
-				use: use_ids[ui]
-			}))
-			return [ ...acc, ...paths ]
-		}, [] as InputPath[])
+				use: use_ids[ui],
+			}));
+			return [...acc, ...paths];
+		}, [] as InputPath[]);
 		await this.pathService.createMultiplePaths(paths_to_add);
 
 		return created_texture;

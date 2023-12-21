@@ -83,11 +83,15 @@ export default class UseService {
 	}
 
 	createMultipleUses(uses: Use[]): Promise<Use[]> {
-		return Promise.all(uses.map(u => new Promise((resolve, reject) => {
-			this.getUseByIdOrNameAndCatch(u.id)
-				.then(() => reject())
-				.catch(() => resolve(undefined))
-		})))
-			.then(() => this.useRepo.setMultiple(uses))
+		return Promise.all(
+			uses.map(
+				(u) =>
+					new Promise((resolve, reject) => {
+						this.getUseByIdOrNameAndCatch(u.id)
+							.then(() => reject())
+							.catch(() => resolve(undefined));
+					}),
+			),
+		).then(() => this.useRepo.setMultiple(uses));
 	}
 }

@@ -59,7 +59,7 @@ export default class UseFirestormRepository implements UseRepository {
 	}
 
 	setMultiple(useArray: Use[]): Promise<Use[]> {
-		const use_ids = useArray.map(u => u.id);
+		const use_ids = useArray.map((u) => u.id);
 		return uses.setBulk(use_ids, useArray).then(() => uses.searchKeys(use_ids));
 	}
 
