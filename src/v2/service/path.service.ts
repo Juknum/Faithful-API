@@ -18,7 +18,7 @@ export default class PathService {
 		else this.useService = new UseService(this);
 	}
 
-	private readonly repository: PathRepository = new PathFirestormRepository();
+	private readonly repository = new PathFirestormRepository();
 
 	getRaw(): Promise<Record<string, Path>> {
 		return this.repository.getRaw();
