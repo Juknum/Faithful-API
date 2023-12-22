@@ -3,9 +3,9 @@ import {
 	AcceptedRes,
 	GalleryModalResult,
 	GalleryResult,
-	KnownPacksArr,
+	AnyPackArr,
 	TextureAll,
-	KnownPacks,
+	AnyPack,
 	Texture,
 } from "../interfaces";
 import GalleryService from "../service/gallery.service";
@@ -45,16 +45,16 @@ export class GalleryController extends Controller {
 	 */
 	@Get("modal/{id}/{mc_version}")
 	public async modal(@Path() id: number, @Path() mc_version: string): Promise<GalleryModalResult> {
-		const urls: Record<KnownPacks, string> = (
+		const urls: Record<AnyPack, string> = (
 			await Promise.allSettled(
-				KnownPacksArr.map((p) => this.textureService.getURLById(id, p, mc_version)),
+				AnyPackArr.map((p) => this.textureService.getURLById(id, p, mc_version)),
 			)
 		)
-			.map((e, i) => [KnownPacksArr[i], e])
-			.filter((p: [KnownPacks, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
+			.map((e, i) => [AnyPackArr[i], e])
+			.filter((p: [AnyPack, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
 			.reduce(
-				(acc, p: [KnownPacks, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
-				{} as Record<KnownPacks, string>,
+				(acc, p: [AnyPack, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
+				{} as Record<AnyPack, string>,
 			);
 
 		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;

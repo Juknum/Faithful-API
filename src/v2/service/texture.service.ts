@@ -1,8 +1,7 @@
-import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
+import { AnyPack, Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
-	KnownPacks,
 	TextureCreationParam,
 	TextureMCMETA,
 	TextureProperty,
@@ -81,7 +80,7 @@ export default class TextureService {
 		return this.textureRepo.searchTextureByNameOrId(name_or_id);
 	}
 
-	getURLById(id: number, pack: KnownPacks, version: string): Promise<string> {
+	getURLById(id: number, pack: AnyPack, version: string): Promise<string> {
 		return this.textureRepo.getURLById(id, pack, version);
 	}
 

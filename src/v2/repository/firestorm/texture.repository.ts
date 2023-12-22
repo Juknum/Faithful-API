@@ -1,11 +1,11 @@
 import firestorm, { ID_FIELD } from "firestorm-db";
 import {
 	Edition,
-	KnownPacks,
+	AnyPack,
 	TextureCreationParam,
 	TextureMCMETA,
 	TextureProperty,
-} from "~/v2/interfaces/textures";
+} from "~/v2/interfaces";
 import { NotFoundError } from "../../tools/ApiError";
 import { textures, paths, uses, contributions } from "../../firestorm";
 import {
@@ -79,7 +79,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.readRaw();
 	}
 
-	public getURLById(id: number, pack: KnownPacks, version: string) {
+	public getURLById(id: number, pack: AnyPack, version: string) {
 		return textures.get(id).then((texture) => texture.url(pack, version));
 	}
 

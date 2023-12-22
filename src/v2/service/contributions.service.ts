@@ -1,5 +1,5 @@
 import { contributions } from "../firestorm";
-import { Contribution, Contributions, ContributionsPacks } from "../interfaces";
+import { Contribution, Contributions, FaithfulPack } from "../interfaces";
 import {
 	ContributionCreationParams,
 	ContributionsAuthors,
@@ -96,7 +96,7 @@ export default class ContributionService {
 			});
 	}
 
-	getPacks(): ContributionsPacks {
+	getPacks(): FaithfulPack[] {
 		return this.contributionRepo.getPacks();
 	}
 
@@ -112,9 +112,7 @@ export default class ContributionService {
 		let result: Contributions;
 		if (params.search) {
 			let res = await this.textureService.getByNameOrId(params.search);
-			if (!Array.isArray(res)) {
-				res = [res];
-			}
+			if (!Array.isArray(res)) res = [res];
 
 			const texture_ids = res.map((t) => t.id);
 

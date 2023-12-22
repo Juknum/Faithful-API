@@ -18,14 +18,14 @@ import { Request as ExRequest, Response as ExResponse } from "express";
 import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import {
 	Edition,
-	KnownPacks,
+	AnyPack,
 	TextureCreationParam,
 	TextureMCMETA,
 	TextureProperty,
 	TextureAll,
 	TexturesAll,
 	EntireTextureToCreate,
-} from "../interfaces/textures";
+} from "../interfaces";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
 
@@ -152,7 +152,7 @@ export class TextureController extends Controller {
 	@SuccessResponse(302, "Redirect")
 	public async getTextureURL(
 		@Path() id: string,
-		@Path() pack: KnownPacks,
+		@Path() pack: AnyPack,
 		@Path() mc_version: string,
 		@Request() request: ExRequest,
 	): Promise<void> {

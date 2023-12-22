@@ -1,6 +1,7 @@
 import { Uses } from "./uses";
-import { KnownPacks, Texture, TextureMCMETA } from "./textures";
+import { Texture, TextureMCMETA } from "./textures";
 import { Contributions } from "./contributions";
+import { AnyPack } from "./packs";
 import { Paths } from "./paths";
 
 export interface GalleryResult {
@@ -21,5 +22,5 @@ export interface GalleryModalResult {
 	uses: Uses;
 	paths: Paths;
 	mcmeta: TextureMCMETA;
-	urls: Record<KnownPacks, string>;
+	urls: Record<AnyPack, string>;
 }
