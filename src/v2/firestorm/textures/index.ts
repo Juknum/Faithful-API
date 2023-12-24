@@ -1,7 +1,16 @@
 import axios from "axios";
 import firestorm from "firestorm-db";
-import { Paths, Uses, Contributions, TextureAll, Path, Use } from "~/v2/interfaces";
-import { AnyPack, FirestormTexture, TextureMCMETA } from "~/v2/interfaces";
+import {
+	Paths,
+	Uses,
+	Contributions,
+	TextureAll,
+	Path,
+	Use,
+	AnyPack,
+	FirestormTexture,
+	TextureMCMETA,
+} from "~/v2/interfaces";
 import config from "../config";
 
 import { uses } from "./uses";

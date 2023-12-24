@@ -1,4 +1,13 @@
-import { AnyPack, Contributions, Paths, Texture, Textures, Use, Uses } from "../interfaces";
+import {
+	AnyPack,
+	Contributions,
+	Paths,
+	Texture,
+	Textures,
+	Use,
+	InputPath,
+	Uses,
+} from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,

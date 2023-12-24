@@ -5,10 +5,6 @@ import {
 	TextureCreationParam,
 	TextureMCMETA,
 	TextureProperty,
-} from "~/v2/interfaces";
-import { NotFoundError } from "../../tools/ApiError";
-import { textures, paths, uses, contributions } from "../../firestorm";
-import {
 	Contributions,
 	Paths,
 	Texture,
@@ -17,7 +13,9 @@ import {
 	TextureRepository,
 	Path,
 	Use,
-} from "../../interfaces";
+} from "~/v2/interfaces";
+import { NotFoundError } from "../../tools/ApiError";
+import { textures, paths, uses, contributions } from "../../firestorm";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(

@@ -15,8 +15,12 @@ import {
 	Tags,
 } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
-import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import {
+	Contributions,
+	Paths,
+	Texture,
+	Textures,
+	Uses,
 	Edition,
 	AnyPack,
 	TextureCreationParam,

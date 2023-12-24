@@ -1,6 +1,6 @@
 import firestorm from "firestorm-db";
-import config from "../config";
 import { FirestormPack } from "~/v2/interfaces";
+import config from "../config";
 
 config();
 
