@@ -66,7 +66,7 @@ function promiseHandler(
 
 interface SwaggerDocOptions {
 	prefix: string;
-	security: { [key: string]: string[] };
+	security: Record<string, string[]>;
 	operationId: string;
 	description: string;
 }

@@ -95,11 +95,11 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 		const output = { id: el.id, name: el.name, tags: el.tags } as TextureAll;
 		return el
 			.uses()
-			.then((tUses: Use[]) => {
+			.then((tUses: Uses) => {
 				output.uses = tUses;
 				return el.paths();
 			})
-			.then((tPaths: Path[]) => {
+			.then((tPaths: Paths) => {
 				output.paths = tPaths;
 				return el.mcmeta();
 			})

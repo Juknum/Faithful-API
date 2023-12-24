@@ -82,7 +82,7 @@ export default class UseService {
 		});
 	}
 
-	createMultipleUses(uses: Use[]): Promise<Use[]> {
+	createMultipleUses(uses: Uses): Promise<Uses> {
 		return Promise.all(
 			uses.map(
 				(u) =>
