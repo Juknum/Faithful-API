@@ -24,6 +24,7 @@ export interface PathRepository {
 	getPathUseById(use_id: string): Promise<Paths>;
 	getPathsByUseIdsAndVersion(use_ids: string[], version: string): Promise<Paths>;
 	createPath(path: InputPath): Promise<Path>;
+	createPathBulk(paths: InputPath[]): Promise<Paths>;
 	updatePath(path_id: string, path: Path): Promise<Path>;
 	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void>;
 	removePathById(path_id: string): Promise<void>;

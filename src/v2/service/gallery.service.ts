@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 
 import { textures } from "../firestorm";
-import { AcceptedRes, GalleryResult, Path, TextureMCMETA, Textures, Use } from "../interfaces";
+import { AcceptedRes, GalleryResult, Path, TextureMCMETA, Textures, Use, Uses } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import { SettingsService } from "./settings.service";
 import TextureService from "./texture.service";
@@ -72,7 +72,7 @@ export default class GalleryService {
 			uses_filtered,
 		}: {
 			use_to_path: Record<string, Path>;
-			uses_filtered: Use[];
+			uses_filtered: Uses;
 		} = uses_found.reduce(
 			(acc, u) => {
 				const path = paths_found.find((p) => p.use === u.id);

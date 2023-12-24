@@ -35,6 +35,10 @@ export default class PathService {
 			.then(() => this.repository.createPath(path));
 	}
 
+	async createMultiplePaths(paths: InputPath[]): Promise<Paths> {
+		return this.repository.createPathBulk(paths);
+	}
+
 	getPathById(id: string): Promise<Path> {
 		return this.repository.getPathById(id);
 	}

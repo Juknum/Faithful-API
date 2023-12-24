@@ -1,4 +1,4 @@
-import { AnyPack, Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
+import { AnyPack, Contributions, Paths, Texture, Textures, Use, Uses } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
@@ -96,32 +96,32 @@ export default class TextureService {
 		const texture_id = created_texture.id;
 
 		// create uses
-		const uses_created = await Promise.all(
-			input.uses.map(async (u, ui) => {
+		const [use_ids, full_uses_to_create]: [string[], Use[]] = input.uses.reduce(
+			(acc, u, ui) => {
 				const use_id = String(texture_id) + String.fromCharCode("a".charCodeAt(0) + ui);
-				return this.useService.createUse({
+				const use = {
 					name: u.name,
 					edition: u.edition,
 					texture: Number.parseInt(texture_id, 10),
 					id: use_id,
-				});
-			}),
+				};
+				acc[0].push(use_id);
+				acc[1].push(use);
+				return acc;
+			},
+			[[], []],
 		);
+		await this.useService.createMultipleUses(full_uses_to_create);
 
 		// create paths
-		await Promise.all(
-			uses_created.map((u, ui) => {
-				const use_id_created = u.id;
-				return Promise.all(
-					input.uses[ui].paths.map((p) =>
-						this.pathService.createPath({
-							...p,
-							use: use_id_created,
-						}),
-					),
-				);
-			}),
-		);
+		const paths_to_add = input.uses.reduce((acc, u, ui) => {
+			const paths: InputPath[] = u.paths.map((p) => ({
+				...p,
+				use: use_ids[ui],
+			}));
+			return [...acc, ...paths];
+		}, [] as InputPath[]);
+		await this.pathService.createMultiplePaths(paths_to_add);
 
 		return created_texture;
 	}
