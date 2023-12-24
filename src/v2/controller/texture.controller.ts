@@ -55,7 +55,7 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get all the tags from all textures (Block, UI, ...)
+	 * Get all the tags from all textures (Block, UI, etc)
 	 */
 	@Get("tags")
 	public async getTags(): Promise<Array<string>> {

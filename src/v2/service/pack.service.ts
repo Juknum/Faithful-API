@@ -1,4 +1,4 @@
-import { Pack } from "../interfaces";
+import { Pack, PackTag, Packs } from "../interfaces";
 import PackFirestormRepository from "../repository/firestorm/packs.repository";
 
 export class PackService {
@@ -8,15 +8,23 @@ export class PackService {
 		return this.repository.getRaw();
 	}
 
-	public getById(id: string) {
+	public getById(id: string): Promise<Pack> {
 		return this.repository.getById(id);
 	}
 
-	public async create(id: string, pack: Pack): Promise<Pack> {
+	public searchByTag(tag: PackTag): Promise<Packs> {
+		return this.repository.searchByTag(tag);
+	}
+
+	public getAllTags(): Promise<PackTag[]> {
+		return this.repository.getAllTags();
+	}
+
+	public create(id: string, pack: Pack): Promise<Pack> {
 		return this.repository.update(id, pack);
 	}
 
-	public async update(id: string, pack: Pack): Promise<Pack> {
+	public update(id: string, pack: Pack): Promise<Pack> {
 		return this.repository.update(id, pack);
 	}
 

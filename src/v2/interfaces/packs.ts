@@ -26,11 +26,11 @@ export interface PackGitHub {
 	org: string;
 }
 
-export type PackTags = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "progart";
+export type PackTag = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "progart";
 
 export interface Pack {
 	id: AnyPack;
-	tags: PackTags[];
+	tags: PackTag[];
 	display_name: string;
 	resolution: number;
 	submission?: {
@@ -50,6 +50,8 @@ export interface FirestormPack extends Pack {}
 export interface PackRepository {
 	getRaw(): Promise<Record<string, Pack>>;
 	getById(id: string): Promise<Pack>;
+	getAllTags(): Promise<PackTag[]>;
+	searchByTag(tag: PackTag): Promise<Packs>;
 	create(packId: string, packToCreate: Pack): Promise<Pack>;
 	update(packId: string, newPack: Pack): Promise<Pack>;
 	delete(packId: string): Promise<void>;
