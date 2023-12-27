@@ -54,13 +54,9 @@ export class PackController extends Controller {
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async update(
-		@Path() id: string,
-		@Body() body: Pack,
-	): Promise<Pack> {
+	public async update(@Path() id: string, @Body() body: Pack): Promise<Pack> {
 		return this.service.update(id, body);
 	}
-
 
 	/**
 	 * Deletes the entire pack

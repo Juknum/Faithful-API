@@ -1,5 +1,5 @@
 import firestorm from "firestorm-db";
-import config from "../config";
+import config from "./config";
 
 config();
 

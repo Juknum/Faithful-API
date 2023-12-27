@@ -1,3 +1,4 @@
+import { Submission } from "./submissions";
 import { Edition } from "./textures";
 
 export const FaithfulPacksArr = [
@@ -15,12 +16,6 @@ export type FaithfulPack = (typeof FaithfulPacksArr)[number];
 export type DefaultPack = (typeof DefaultPacksArr)[number];
 export type AnyPack = (typeof AnyPackArr)[number];
 
-export interface SubmissionChannels {
-	submit: string;
-	council?: string; // not used if council disabled
-	results: string;
-}
-
 export interface PackGitHub {
 	repo: string;
 	org: string;
@@ -33,19 +28,14 @@ export interface Pack {
 	tags: PackTag[];
 	display_name: string;
 	resolution: number;
-	submission?: {
-		channels: SubmissionChannels;
-		council_enabled: boolean;
-		time_to_results: number;
-		time_to_council?: number; // not used if council disabled
-		contributor_role?: string;
-	};
 	github: Record<Edition, PackGitHub>;
 }
 
 export interface Packs extends Array<Pack> {}
 
-export interface FirestormPack extends Pack {}
+export interface FirestormPack extends Pack {
+	submission(): Promise<Submission>;
+}
 
 export interface PackRepository {
 	getRaw(): Promise<Record<string, Pack>>;
