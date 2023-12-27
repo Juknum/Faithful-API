@@ -25,8 +25,8 @@ export type PackTag = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "p
 
 export interface Pack {
 	id: AnyPack;
+	name: string;
 	tags: PackTag[];
-	display_name: string;
 	resolution: number;
 	github: Record<Edition, PackGitHub>;
 }
