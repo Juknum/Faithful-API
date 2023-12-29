@@ -62,25 +62,20 @@ export default class ContributionService {
 					};
 					aggregate[pack][start_of_day].count++;
 
-					if (timestamp >= last_week) {
-						total_last_week += 1;
-					}
-					if (timestamp >= last_month) {
-						total_last_month += 1;
-					}
-					if (timestamp >= last_day) {
-						total_last_day += 1;
-					}
+					if (timestamp >= last_week) total_last_week += 1;
+					if (timestamp >= last_month) total_last_month += 1;
+					if (timestamp >= last_day) total_last_day += 1;
 				});
 
-				const final_activity = {} as PackData;
+				const finalActivity = {} as PackData;
 				const percentiles = {} as PackPercentile;
-				Object.entries(aggregate).forEach(([pack, pack_aggregate]) => {
-					final_activity[pack] = Object.values(pack_aggregate);
+				Object.entries(aggregate).forEach(([pack, packAggregate]) => {
+					finalActivity[pack] = Object.values(packAggregate);
 
-					const counts = Object.values(pack_aggregate)
+					const counts = Object.values(packAggregate)
 						.map((e) => e.count) // ? No need to filter 0 as the contruction of the record makes it impossible
 						.sort();
+
 					percentiles[pack] = counts[Math.round((counts.length * 95) / 100)];
 				});
 
@@ -90,7 +85,7 @@ export default class ContributionService {
 					total_last_day,
 					total_last_week,
 					total_last_month,
-					activity: final_activity,
+					activity: finalActivity,
 					percentiles,
 				};
 			});
@@ -116,10 +111,10 @@ export default class ContributionService {
 				res = [res];
 			}
 
-			const texture_ids = res.map((t) => t.id);
+			const textureIDs = res.map((t) => t.id);
 
 			result = await this.contributionRepo.searchByIdAndPacks(
-				texture_ids,
+				textureIDs,
 				params.packs,
 				params.users,
 			);

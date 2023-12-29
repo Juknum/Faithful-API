@@ -2,12 +2,12 @@ import { InputPath, Path, Paths, PathRepository } from "~/v2/interfaces";
 import { paths } from "../../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
-	getPathsByUseIdsAndVersion(use_ids: string[], version: string): Promise<Paths> {
+	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths> {
 		return paths.search([
 			{
 				field: "use",
 				criteria: "in",
-				value: use_ids,
+				value: useIDs,
 			},
 			{
 				field: "versions",
@@ -17,12 +17,12 @@ export default class PathFirestormRepository implements PathRepository {
 		]);
 	}
 
-	getPathUseById(use_id: string): Promise<Paths> {
+	getPathUseById(useID: string): Promise<Paths> {
 		return paths.search([
 			{
 				field: "use",
 				criteria: "==",
-				value: use_id,
+				value: useID,
 			},
 		]);
 	}
@@ -36,38 +36,38 @@ export default class PathFirestormRepository implements PathRepository {
 		return paths.addBulk(pathArray).then((ids) => paths.searchKeys(ids));
 	}
 
-	removePathById(path_id: string): Promise<void> {
-		return paths.remove(path_id).then(() => {});
+	removePathById(pathID: string): Promise<void> {
+		return paths.remove(pathID).then(() => {});
 	}
 
-	removePathsByBulk(path_ids: string[]): Promise<void> {
-		return paths.removeBulk(path_ids).then(() => {});
+	removePathsByBulk(pathIDs: string[]): Promise<void> {
+		return paths.removeBulk(pathIDs).then(() => {});
 	}
 
-	getPathById(path_id: string): Promise<Path> {
-		return paths.get(path_id);
+	getPathById(pathID: string): Promise<Path> {
+		return paths.get(pathID);
 	}
 
-	updatePath(path_id: string, path: Path): Promise<Path> {
+	updatePath(pathID: string, path: Path): Promise<Path> {
 		// breaks without structuredClone, not sure why
-		return paths.set(path_id, structuredClone(path)).then(() => this.getPathById(path_id));
+		return paths.set(pathID, structuredClone(path)).then(() => this.getPathById(pathID));
 	}
 
 	/**
 	 * Changes all the old version presence in all paths with the new one
-	 * @param old_version old version to remove on paths versions array
-	 * @param new_version new version to replace the old version
+	 * @param oldVersion old version to remove on paths versions array
+	 * @param newVersion new version to replace the old version
 	 */
-	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void> {
+	modifyVersion(oldVersion: string, newVersion: string): void | PromiseLike<void> {
 		return this.getRaw()
 			.then((r) => {
 				const old: Paths = Object.values(r);
-				const filtered = old.filter((p) => p.versions.includes(old_version));
+				const filtered = old.filter((p) => p.versions.includes(oldVersion));
 				const edits = filtered.map((p) => ({
 					id: p.id,
 					field: "versions",
 					operation: "set" as const,
-					value: p.versions.map((v) => (v === old_version ? new_version : v)),
+					value: p.versions.map((v) => (v === oldVersion ? newVersion : v)),
 				}));
 
 				return paths.editFieldBulk(edits);

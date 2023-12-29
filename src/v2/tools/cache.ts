@@ -10,11 +10,11 @@ const REWRITE_INDEX = 0;
 const WRITE_INDEX = 0;
 const VALUE_INDEX = 1;
 
-const folder = (): string => tmpdir();
+const folder = () => tmpdir();
 
-const key_to_path = (key: string): string => {
-	const escaped_key = key.replace(/(\/|\\)/g, "-");
-	const p = join(folder(), `cache-${escaped_key}.json`);
+const keyToPath = (key: string): string => {
+	const escapedKey = key.replace(/(\/|\\)/g, "-");
+	const p = join(folder(), `cache-${escapedKey}.json`);
 	return p;
 };
 
@@ -22,22 +22,22 @@ export default {
 	read(key: string): Promise<[boolean, any]> {
 		if (NO_CACHE) return Promise.reject();
 
-		return readFile(key_to_path(key)).then((content) => {
+		return readFile(keyToPath(key)).then((content) => {
 			const json = JSON.parse(content.toString());
-			const timestamp_str = Object.keys(json)[0];
-			const timestamp = Number.parseInt(timestamp_str, 10);
+			const timestampStr = Object.keys(json)[0];
+			const timestamp = Number.parseInt(timestampStr, 10);
 
-			return [new Date().getTime() - timestamp > CACHE_DURATION, json[timestamp_str]];
+			return [new Date().getTime() - timestamp > CACHE_DURATION, json[timestampStr]];
 		});
 	},
 	write(key: string, value: any): Promise<void> {
 		const json = {};
 		json[new Date().getTime()] = value;
-		return writeFile(key_to_path(key), JSON.stringify(json));
+		return writeFile(keyToPath(key), JSON.stringify(json));
 	},
 
 	delete(key: string): Promise<void> {
-		const path = key_to_path(key);
+		const path = keyToPath(key);
 		return unlink(path);
 	},
 

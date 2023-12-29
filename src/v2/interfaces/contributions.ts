@@ -63,7 +63,7 @@ export interface ContributionsRepository {
 	getAuthors(): Promise<ContributionsAuthors>;
 	getPacks(): ContributionsPacks;
 	searchByIdAndPacks(
-		texture_ids: Array<string>,
+		textureIDs: Array<string>,
 		packs: Array<string>,
 		users?: Array<string>,
 	): Promise<Contributions>;

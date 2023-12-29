@@ -14,12 +14,12 @@ export default class UseFirestormRepository implements UseRepository {
 		]);
 	}
 
-	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses> {
+	getUsesByIdAndEdition(idArr: number[], edition: string): Promise<Uses> {
 		return uses.search([
 			{
 				field: "texture",
 				criteria: "in",
-				value: id_arr,
+				value: idArr,
 			},
 			{
 				field: "edition",
@@ -33,15 +33,15 @@ export default class UseFirestormRepository implements UseRepository {
 		return uses.readRaw();
 	}
 
-	getUseByIdOrName(id_or_name: string): Promise<Uses | Use> {
-		return uses.get(id_or_name).catch(
+	getUseByIdOrName(idOrName: string): Promise<Uses | Use> {
+		return uses.get(idOrName).catch(
 			() =>
 				uses
 					.search([
 						{
 							field: "name",
 							criteria: "includes",
-							value: id_or_name,
+							value: idOrName,
 							ignoreCase: true,
 						},
 					])
@@ -59,26 +59,26 @@ export default class UseFirestormRepository implements UseRepository {
 	}
 
 	setMultiple(useArray: Uses): Promise<Uses> {
-		const use_ids = useArray.map((u) => u.id);
-		return uses.setBulk(use_ids, useArray).then(() => uses.searchKeys(use_ids));
+		const useIDs = useArray.map((u) => u.id);
+		return uses.setBulk(useIDs, useArray).then(() => uses.searchKeys(useIDs));
 	}
 
-	removeUseById(use_id: string): Promise<void> {
+	removeUseById(useID: string): Promise<void> {
 		return uses
-			.get(use_id) // assure you find the texture and get path method
+			.get(useID) // assure you find the texture and get path method
 			.then((gatheredUse) => {
 				return gatheredUse.getPaths();
 			})
 			.then((foundPaths) => {
 				return Promise.all([
-					uses.remove(use_id),
+					uses.remove(useID),
 					pathsCollection.removeBulk(foundPaths.map((p) => p[ID_FIELD])), // delete all paths
 				]);
 			})
 			.then(() => {});
 	}
 
-	removeUsesByBulk(use_ids: string[]): Promise<void> {
-		return Promise.all(use_ids.map((u_id) => this.removeUseById(u_id))).then(() => {});
+	removeUsesByBulk(useIDs: string[]): Promise<void> {
+		return Promise.all(useIDs.map((useID) => this.removeUseById(useID))).then(() => {});
 	}
 }

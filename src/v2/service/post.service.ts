@@ -10,16 +10,16 @@ import PostFirestormRepository from "../repository/firestorm/posts.repository";
 export default class PostService {
 	private readonly postRepo = new PostFirestormRepository();
 
-	public async getByIdOrPermalink(id_or_permalink: string): Promise<WebsitePost> {
+	public async getByIdOrPermalink(idOrPermalink: string): Promise<WebsitePost> {
 		let postFound: WebsitePost | undefined; // undefined
-		const parsed = Number.parseInt(id_or_permalink, 10);
+		const parsed = Number.parseInt(idOrPermalink, 10);
 
 		if (!Number.isNaN(parsed)) {
 			postFound = await this.getById(parsed).catch(() => undefined);
 		}
 
 		if (postFound === undefined)
-			postFound = await this.getByPermalink(id_or_permalink).catch(() => undefined);
+			postFound = await this.getByPermalink(idOrPermalink).catch(() => undefined);
 
 		if (postFound !== undefined) return postFound;
 

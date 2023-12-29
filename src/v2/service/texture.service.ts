@@ -69,16 +69,16 @@ export default class TextureService {
 	}
 
 	getPropertyByNameOrId(
-		name_or_id: string | number,
+		nameOrID: string | number,
 		property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
 		return this.textureRepo
-			.searchTexturePropertyByNameOrId(name_or_id, property)
+			.searchTexturePropertyByNameOrId(nameOrID, property)
 			.catch(() => Promise.reject(new Error("Service failed to make request")));
 	}
 
-	getByNameOrId(name_or_id: string | number): Promise<Textures | Texture> {
-		return this.textureRepo.searchTextureByNameOrId(name_or_id);
+	getByNameOrId(nameOrID: string | number): Promise<Textures | Texture> {
+		return this.textureRepo.searchTextureByNameOrId(nameOrID);
 	}
 
 	getURLById(id: number, pack: KnownPacks, version: string): Promise<string> {
@@ -90,41 +90,41 @@ export default class TextureService {
 	}
 
 	async createEntireTexture(input: EntireTextureToCreate): Promise<Texture> {
-		const created_texture = await this.createTexture({
+		const createdTexture = await this.createTexture({
 			name: input.name,
 			tags: input.tags,
 		});
-		const texture_id = created_texture.id;
+		const textureID = createdTexture.id;
 
 		// create uses
-		const [use_ids, full_uses_to_create]: [string[], Use[]] = input.uses.reduce(
+		const [useIDs, fullUsesToCreate]: [string[], Use[]] = input.uses.reduce(
 			(acc, u, ui) => {
-				const use_id = String(texture_id) + String.fromCharCode("a".charCodeAt(0) + ui);
+				const useID = String(textureID) + String.fromCharCode("a".charCodeAt(0) + ui);
 				const use = {
 					name: u.name,
 					edition: u.edition,
-					texture: Number.parseInt(texture_id, 10),
-					id: use_id,
+					texture: Number.parseInt(textureID, 10),
+					id: useID,
 				};
-				acc[0].push(use_id);
+				acc[0].push(useID);
 				acc[1].push(use);
 				return acc;
 			},
 			[[], []],
 		);
-		await this.useService.createMultipleUses(full_uses_to_create);
+		await this.useService.createMultipleUses(fullUsesToCreate);
 
 		// create paths
-		const paths_to_add = input.uses.reduce((acc, u, ui) => {
+		const pathsToAdd = input.uses.reduce((acc, u, ui) => {
 			const paths: InputPath[] = u.paths.map((p) => ({
 				...p,
-				use: use_ids[ui],
+				use: useIDs[ui],
 			}));
 			return [...acc, ...paths];
 		}, [] as InputPath[]);
-		await this.pathService.createMultiplePaths(paths_to_add);
+		await this.pathService.createMultiplePaths(pathsToAdd);
 
-		return created_texture;
+		return createdTexture;
 	}
 
 	async createEntireTextures(body: EntireTextureToCreate[]): Promise<Textures> {

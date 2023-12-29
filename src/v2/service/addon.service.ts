@@ -16,7 +16,7 @@ import {
 import AddonFirestormRepository from "../repository/firestorm/addon.repository";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
-function to_slug(value: string) {
+function toSlug(value: string) {
 	return value
 		.split("")
 		.filter((c) => /[a-zA-Z0-9_-]/.test(c))
@@ -32,24 +32,24 @@ export default class AddonService {
 
 	/**
 	 * Util method to get id from
-	 * @param id_or_slug ID or slug of the requested add-on
+	 * @param idOrSlug ID or slug of the requested add-on
 	 */
-	public async getIdFromPath(id_or_slug: string): Promise<[number, Addon | undefined]> {
-		const int_id: number = parseInt(id_or_slug, 10);
+	public async getIdFromPath(idOrSlug: string): Promise<[number, Addon | undefined]> {
+		const intID: number = parseInt(idOrSlug, 10);
 
 		// if slug
-		if (Number.isNaN(int_id) || int_id.toString() !== id_or_slug) {
-			const addon = await this.getAddonBySlug(id_or_slug);
-			if (!addon) throw new NotFoundError("Addon not found");
+		if (Number.isNaN(intID) || intID.toString() !== idOrSlug) {
+			const addon = await this.getAddonBySlug(idOrSlug);
+			if (!addon) throw new NotFoundError("Add-on not found");
 			return [addon.id as number, addon];
 		}
 
 		// else if id
-		return [int_id, undefined];
+		return [intID, undefined];
 	}
 
-	public async getAddonFromSlugOrId(id_or_slug: string): Promise<[number, Addon]> {
-		const idAndAddon = await this.getIdFromPath(id_or_slug);
+	public async getAddonFromSlugOrId(idOrSlug: string): Promise<[number, Addon]> {
+		const idAndAddon = await this.getIdFromPath(idOrSlug);
 		const id = idAndAddon[0];
 		let addon = idAndAddon[1];
 
@@ -59,8 +59,8 @@ export default class AddonService {
 		return [id, addon];
 	}
 
-	public async getApprovedAddonFromSlugOrId(id_or_slug: string): Promise<[number, Addon]> {
-		const [id, addon] = await this.getAddonFromSlugOrId(id_or_slug);
+	public async getApprovedAddonFromSlugOrId(idOrSlug: string): Promise<[number, Addon]> {
+		const [id, addon] = await this.getAddonFromSlugOrId(idOrSlug);
 		if (addon.approval.status === "approved") return [id, addon];
 
 		throw new NotFoundError("This add-on is not publicly available");
@@ -80,8 +80,8 @@ export default class AddonService {
 		return this.getAddon(id).then((addon: Addon) => addon.authors);
 	}
 
-	getAddonAuthorsProfiles(id_or_slug: string): Promise<UserProfile[]> {
-		return this.getAddonFromSlugOrId(id_or_slug).then(([, addon]) =>
+	getAddonAuthorsProfiles(idOrSlug: string): Promise<UserProfile[]> {
+		return this.getAddonFromSlugOrId(idOrSlug).then(([, addon]) =>
 			this.userService.getUserProfiles(addon.authors),
 		);
 	}
@@ -221,7 +221,7 @@ export default class AddonService {
 		});
 
 		// get the slug
-		const slugValue = to_slug(body.name);
+		const slugValue = toSlug(body.name);
 
 		// throw if already existing
 		const existingAddon = await this.getAddonBySlug(slugValue);
@@ -351,19 +351,19 @@ export default class AddonService {
 	}
 
 	public async postHeader(
-		id_or_slug: string,
+		idOrSlug: string,
 		filename: string,
 		buffer: Buffer,
 	): Promise<void | File> {
 		// get addonID
-		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
-		const addon_id = id_and_addon[0];
-		const addon = id_and_addon[1];
+		const idAndAddon = await this.getAddonFromSlugOrId(idOrSlug);
+		const addonID = idAndAddon[0];
+		const addon = idAndAddon[1];
 		const { slug } = addon;
 
 		const before = addon.approval?.status || null;
 		// try to remove curent header
-		await this.deleteHeader(String(addon_id), false).catch(() => {});
+		await this.deleteHeader(String(addonID), false).catch(() => {});
 
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/header.${extension}`;
@@ -374,7 +374,7 @@ export default class AddonService {
 			author: null,
 			reason: null,
 		};
-		await this.saveUpdate(addon_id, addon, before);
+		await this.saveUpdate(addonID, addon, before);
 
 		// upload file
 		await this.fileService.upload(uploadLocation, filename, buffer, true);
@@ -383,7 +383,7 @@ export default class AddonService {
 			name: "header",
 			use: "header",
 			parent: {
-				id: String(addon_id),
+				id: String(addonID),
 				type: "addons",
 			},
 			type: "url",
@@ -398,14 +398,14 @@ export default class AddonService {
 	}
 
 	public async postScreenshot(
-		id_or_slug: string,
+		idOrSlug: string,
 		filename: string,
 		buffer: Buffer,
 	): Promise<void | File> {
-		// get addonID
-		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
-		const addon_id = id_and_addon[0];
-		const addon = id_and_addon[1];
+		// get add-on ID
+		const idAndAddon = await this.getAddonFromSlugOrId(idOrSlug);
+		const addonID = idAndAddon[0];
+		const addon = idAndAddon[1];
 		const { slug } = addon;
 
 		const before = addon.approval?.status || null;
@@ -422,7 +422,7 @@ export default class AddonService {
 			author: null,
 			reason: null,
 		};
-		await this.saveUpdate(addon_id, addon, before);
+		await this.saveUpdate(addonID, addon, before);
 
 		// upload file
 		await this.fileService.upload(uploadLocation, filename, buffer, true);
@@ -431,7 +431,7 @@ export default class AddonService {
 			name: `screen${newName}`,
 			use: "screenshot",
 			parent: {
-				id: String(addon_id),
+				id: String(addonID),
 				type: "addons",
 			},
 			type: "url",
@@ -481,20 +481,20 @@ export default class AddonService {
 
 	/**
 	 * Deletes the given screenshot at given index
-	 * @param id_or_slug ID or slug of the deleted add-on screenshot
-	 * @param index_or_slug Deleted add-on screenshot index or slug
+	 * @param idOrSlug ID or slug of the deleted add-on screenshot
+	 * @param indexOrSlug Deleted add-on screenshot index or slug
 	 */
-	public async deleteScreenshot(id_or_slug: string, index_or_slug: number | string): Promise<void> {
+	public async deleteScreenshot(idOrSlug: string, indexOrSlug: number | string): Promise<void> {
 		// get addonID
-		const [addon_id] = await this.getAddonFromSlugOrId(id_or_slug);
+		const [addonID] = await this.getAddonFromSlugOrId(idOrSlug);
 
 		// get existing screenshots
-		const files = await this.getFiles(addon_id).catch((): Files => []);
+		const files = await this.getFiles(addonID).catch((): Files => []);
 		const screens = files.filter((f) => f.use === "screenshot" || f.use === "carousel");
 
 		// find precise screen, by id else by index
-		const idedscreen = screens.filter((s) => s.id && s.id === String(index_or_slug))[0];
-		const screen = idedscreen || screens[index_or_slug];
+		const idedscreen = screens.filter((s) => s.id && s.id === String(indexOrSlug))[0];
+		const screen = idedscreen || screens[indexOrSlug];
 		if (screen === undefined) return Promise.reject(new NotFoundError("Screenshot not found"));
 
 		let { source } = screen;
@@ -517,13 +517,13 @@ export default class AddonService {
 
 	/**
 	 * Deletes the given screenshot at given index
-	 * @param id_or_slug ID or slug of the deleted add-on screenshot
+	 * @param idOrSlug ID or slug of the deleted add-on screenshot
 	 */
-	public async deleteHeader(id_or_slug: string, notify: Boolean = true): Promise<void> {
+	public async deleteHeader(idOrSlug: string, notify: Boolean = true): Promise<void> {
 		// get addonID
-		const id_and_addon = await this.getAddonFromSlugOrId(id_or_slug);
-		const addon_id = id_and_addon[0];
-		const addon = id_and_addon[1];
+		const idAndAddon = await this.getAddonFromSlugOrId(idOrSlug);
+		const addonID = idAndAddon[0];
+		const addon = idAndAddon[1];
 
 		const before = addon.approval?.status || null;
 
@@ -534,7 +534,7 @@ export default class AddonService {
 		};
 
 		// get existing screenshots
-		const files = await this.getFiles(addon_id).catch((): Files => []);
+		const files = await this.getFiles(addonID).catch((): Files => []);
 		const header = files.filter((f) => f.use === "header")[0];
 
 		if (header === undefined) return Promise.reject(new NotFoundError("Header not found"));
@@ -554,7 +554,7 @@ export default class AddonService {
 			author: null,
 			reason: "Add-on must have a header image",
 		};
-		await this.saveUpdate(addon_id, addon, before, notify);
+		await this.saveUpdate(addonID, addon, before, notify);
 
 		// remove file from file service
 		await this.fileService.removeFileById(header.id);

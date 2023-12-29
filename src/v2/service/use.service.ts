@@ -18,8 +18,8 @@ export default class UseService {
 
 	private readonly pathService: PathService;
 
-	getPathUseByIdOrName(id_or_name: string): Promise<Paths> {
-		return this.getUseByIdOrName(id_or_name).then((use: Use) =>
+	getPathUseByIdOrName(idOrName: string): Promise<Paths> {
+		return this.getUseByIdOrName(idOrName).then((use: Use) =>
 			this.pathService.getPathByUseId(use.id),
 		);
 	}
@@ -28,12 +28,12 @@ export default class UseService {
 		return this.useRepo.getRaw();
 	}
 
-	getUseByIdOrName(id_or_name: string): Promise<Uses | Use> {
-		return this.useRepo.getUseByIdOrName(id_or_name);
+	getUseByIdOrName(idOrName: string): Promise<Uses | Use> {
+		return this.useRepo.getUseByIdOrName(idOrName);
 	}
 
-	getUseByIdOrNameAndCatch(id_or_name: string): Promise<Uses | Use> {
-		return this.getUseByIdOrName(id_or_name).then((res) => {
+	getUseByIdOrNameAndCatch(idOrName: string): Promise<Uses | Use> {
+		return this.getUseByIdOrName(idOrName).then((res) => {
 			let found = false;
 			if (Array.isArray(res)) {
 				found = res.length > 0;
@@ -58,8 +58,8 @@ export default class UseService {
 		return this.useRepo.deleteUse(id);
 	}
 
-	getUsesByIdsAndEdition(id_arr: number[], edition: string): Promise<Uses> {
-		return this.useRepo.getUsesByIdAndEdition(id_arr, edition);
+	getUsesByIdsAndEdition(idArr: number[], edition: string): Promise<Uses> {
+		return this.useRepo.getUsesByIdAndEdition(idArr, edition);
 	}
 
 	getUsesByEdition(edition: string): Promise<Uses> {

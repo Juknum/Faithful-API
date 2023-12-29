@@ -31,9 +31,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 		}
 
 		// * number id: get + includes tag?
-		const number_id: number = search !== undefined ? Number.parseInt(search, 10) : Number.NaN;
-		if (!Number.isNaN(number_id)) {
-			const tex: Texture = await textures.get(number_id).catch(() => undefined);
+		const numberID: number = search !== undefined ? Number.parseInt(search, 10) : Number.NaN;
+		if (!Number.isNaN(numberID)) {
+			const tex: Texture = await textures.get(numberID).catch(() => undefined);
 
 			if (tex === undefined) return Promise.resolve([]);
 
@@ -85,24 +85,22 @@ export default class TextureFirestormRepository implements TextureRepository {
 
 	// AlwaysID is a typescript hack to make sure the correct types are always returned
 	public async searchTextureByNameOrId<AlwaysID extends boolean>(
-		name_or_id: string | number,
+		nameOrID: string | number,
 	): Promise<AlwaysID extends true ? Texture : Texture | Textures> {
-		const res = (await this.searchTexturePropertyByNameOrId(name_or_id, null)) as
-			| Texture
-			| Textures;
+		const res = (await this.searchTexturePropertyByNameOrId(nameOrID, null)) as Texture | Textures;
 		return res as any;
 	}
 
 	public async searchTexturePropertyByNameOrId(
-		name_or_id: string | number,
+		nameOrID: string | number,
 		property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
-		const int_id: number = parseInt(name_or_id as string, 10);
+		const intID: number = parseInt(nameOrID as string, 10);
 
-		if (Number.isNaN(int_id) || int_id.toString() !== name_or_id.toString()) {
-			name_or_id = name_or_id.toString();
+		if (Number.isNaN(intID) || intID.toString() !== nameOrID.toString()) {
+			nameOrID = nameOrID.toString();
 
-			if (name_or_id.length < 3)
+			if (nameOrID.length < 3)
 				return Promise.reject(new Error("Texture name must be longer than 2 characters."));
 
 			/**
@@ -111,9 +109,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 			 * - if not, the name is considered as full                              => exact match mode
 			 * 		- if no results for the exact match, use the include mode instead
 			 */
-			if (name_or_id.startsWith("_") || name_or_id.endsWith("_")) {
+			if (nameOrID.startsWith("_") || nameOrID.endsWith("_")) {
 				return textures
-					.search([{ field: "name", criteria: "includes", value: name_or_id, ignoreCase: true }])
+					.search([{ field: "name", criteria: "includes", value: nameOrID, ignoreCase: true }])
 					.then((texturesFound: Textures) => {
 						if (property === null) return texturesFound;
 						return Promise.all(texturesFound.map((t) => t[property]()));
@@ -121,11 +119,11 @@ export default class TextureFirestormRepository implements TextureRepository {
 			}
 
 			return textures
-				.search([{ field: "name", criteria: "==", value: name_or_id, ignoreCase: true }])
+				.search([{ field: "name", criteria: "==", value: nameOrID, ignoreCase: true }])
 				.then((res: Textures) => {
 					if (res.length === 0)
 						return textures.search([
-							{ field: "name", criteria: "includes", value: name_or_id, ignoreCase: true },
+							{ field: "name", criteria: "includes", value: nameOrID, ignoreCase: true },
 						]);
 					return res;
 				})
@@ -135,7 +133,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 				});
 		}
 
-		return this.getTextureById(int_id, property);
+		return this.getTextureById(intID, property);
 	}
 
 	public getTextureById(id: number, property: TextureProperty): Promise<Texture> {
