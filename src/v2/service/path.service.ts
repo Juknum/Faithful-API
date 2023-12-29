@@ -51,7 +51,18 @@ export default class PathService {
 			.then(() => this.repository.updatePath(id, path));
 	}
 
-	modifyVersion(old_version: string, new_version: string): void | PromiseLike<void> {
+	async modifyVersion(old_version: string, new_version: string): Promise<void> {
+		const allVersions = await settings.get("versions");
+		const edition = Object.entries(allVersions).find(([_, v]) => v.includes(old_version))?.[0];
+
+		settings.editField({
+			id: "versions",
+			field: edition,
+			operation: "set",
+			// map old version to new version, keep the rest the same
+			value: allVersions[edition].map((v: string) => (v == old_version ? new_version : v)),
+		});
+
 		return this.repository.modifyVersion(old_version, new_version);
 	}
 
@@ -62,11 +73,16 @@ export default class PathService {
 		if (!versions.includes(body.version))
 			return Promise.reject(new BadRequestError("Incorrect input path version provided"));
 
+		const versionArray: string[] = (await settings.get("versions"))[body.edition];
+
+		// add to start of array, array-push would add to end and mess up ordering otherwise
+		versionArray.unshift(body.newVersion);
+
 		settings.editField({
 			id: "versions",
 			field: body.edition,
-			operation: "array-push",
-			value: body.newVersion,
+			operation: "set",
+			value: versionArray,
 		});
 
 		return this.repository.addNewVersionToVersion(body.version, body.newVersion);

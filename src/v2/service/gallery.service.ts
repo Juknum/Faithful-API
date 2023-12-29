@@ -1,7 +1,15 @@
 /* eslint-disable no-await-in-loop */
 
 import { textures } from "../firestorm";
-import { AcceptedRes, GalleryResult, Path, TextureMCMETA, Textures, Use, Uses } from "../interfaces";
+import {
+	AcceptedRes,
+	GalleryResult,
+	Path,
+	TextureMCMETA,
+	Textures,
+	Use,
+	Uses,
+} from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import { SettingsService } from "./settings.service";
 import TextureService from "./texture.service";
