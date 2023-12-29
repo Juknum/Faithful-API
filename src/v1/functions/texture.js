@@ -23,8 +23,8 @@ module.exports = {
 			.then((uses) => {
 				return Promise.all(uses.map((use) => use.paths()));
 			})
-			.then((array_of_paths) => {
-				return parseArr(array_of_paths.map((el) => parseArr(el)));
+			.then((arrayOfPaths) => {
+				return parseArr(arrayOfPaths.map((el) => parseArr(el)));
 			});
 	},
 	contributions: function (id) {

@@ -59,11 +59,11 @@ export interface TextureRepository {
 	getTags(): Promise<Array<string>>;
 	getVersionByEdition(edition: Edition): Promise<Array<string>>;
 	searchTexturePropertyByNameOrId(
-		name_or_id: string | number,
+		nameOrID: string | number,
 		property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA>;
 	searchTextureByNameOrId(
-		name_or_id: string | number,
+		nameOrID: string | number,
 		alwaysID: boolean,
 	): Promise<Textures | Texture>;
 	getURLById(id: number, pack: AnyPack, version: string): Promise<string>;

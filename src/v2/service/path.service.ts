@@ -24,8 +24,8 @@ export default class PathService {
 		return this.repository.getRaw();
 	}
 
-	getPathByUseId(use_id: string): Promise<Paths> {
-		return this.repository.getPathUseById(use_id);
+	getPathByUseId(useID: string): Promise<Paths> {
+		return this.repository.getPathUseById(useID);
 	}
 
 	async createPath(path: InputPath): Promise<Path> {
@@ -51,19 +51,19 @@ export default class PathService {
 			.then(() => this.repository.updatePath(id, path));
 	}
 
-	async modifyVersion(old_version: string, new_version: string): Promise<void> {
+	async modifyVersion(oldVersion: string, newVersion: string): Promise<void> {
 		const allVersions = await settings.get("versions");
-		const edition = Object.entries(allVersions).find(([_, v]) => v.includes(old_version))?.[0];
+		const edition = Object.entries(allVersions).find((v) => v[1].includes(oldVersion))?.[0];
 
 		settings.editField({
 			id: "versions",
 			field: edition,
 			operation: "set",
 			// map old version to new version, keep the rest the same
-			value: allVersions[edition].map((v: string) => (v == old_version ? new_version : v)),
+			value: allVersions[edition].map((v: string) => (v === oldVersion ? newVersion : v)),
 		});
 
-		return this.repository.modifyVersion(old_version, new_version);
+		return this.repository.modifyVersion(oldVersion, newVersion);
 	}
 
 	async addVersion(body: PathNewVersionParam): Promise<void> {
@@ -88,11 +88,11 @@ export default class PathService {
 		return this.repository.addNewVersionToVersion(body.version, body.newVersion);
 	}
 
-	removePathById(path_id: string): Promise<void> {
-		return this.repository.removePathById(path_id);
+	removePathById(pathID: string): Promise<void> {
+		return this.repository.removePathById(pathID);
 	}
 
-	removePathByBulk(path_ids: string[]): Promise<void> {
-		return this.repository.removePathsByBulk(path_ids);
+	removePathByBulk(pathIDs: string[]): Promise<void> {
+		return this.repository.removePathsByBulk(pathIDs);
 	}
 }

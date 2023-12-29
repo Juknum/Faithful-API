@@ -24,13 +24,13 @@ export interface FirestormUse extends Use {
 }
 
 export interface UseRepository {
-	getUsesByIdAndEdition(id_arr: number[], edition: string): Promise<Uses>;
+	getUsesByIdAndEdition(idArr: number[], edition: string): Promise<Uses>;
 	getUsesByEdition(edition: string): Promise<Uses>;
 	getRaw(): Promise<Record<string, Use>>;
-	getUseByIdOrName(id_or_name: string): Promise<Uses | Use>;
+	getUseByIdOrName(idOrName: string): Promise<Uses | Use>;
 	deleteUse(id: string): Promise<void>;
 	set(use: Use): Promise<Use>;
 	setMultiple(uses: Uses): Promise<Uses>;
-	removeUseById(use_id: string): Promise<void>;
-	removeUsesByBulk(use_ids: string[]): Promise<void>;
+	removeUseById(useID: string): Promise<void>;
+	removeUsesByBulk(useIDs: string[]): Promise<void>;
 }

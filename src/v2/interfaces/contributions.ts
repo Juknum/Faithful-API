@@ -61,7 +61,7 @@ export interface ContributionsRepository {
 	getAuthors(): Promise<ContributionsAuthors>;
 	getPacks(): FaithfulPack[];
 	searchByIdAndPacks(
-		texture_ids: Array<string>,
+		textureIDs: Array<string>,
 		packs: Array<string>,
 		users?: Array<string>,
 	): Promise<Contributions>;

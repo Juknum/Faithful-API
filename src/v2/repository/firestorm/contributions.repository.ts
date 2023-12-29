@@ -34,7 +34,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	}
 
 	searchByIdAndPacks(
-		texture_ids: string[],
+		textureIDs: string[],
 		packs?: string[],
 		authors?: string[],
 	): Promise<Contributions> {
@@ -54,7 +54,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		options.push({
 			field: "texture",
 			criteria: "in",
-			value: texture_ids,
+			value: textureIDs,
 		});
 
 		return contributions.search(options);

@@ -175,8 +175,8 @@ export default class UserFirestormRepository implements UserRepository {
 		return users.remove(id).then(() => Promise.resolve());
 	}
 
-	getUserProfiles(searched_users: string[]): Promise<UserProfile[]> {
-		return users.searchKeys(searched_users).then(
+	getUserProfiles(searchedUsers: string[]): Promise<UserProfile[]> {
+		return users.searchKeys(searchedUsers).then(
 			(
 				_users: Array<{
 					id: string;

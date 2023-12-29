@@ -27,20 +27,20 @@ export default class GalleryService {
 	async urlsFromTextures(
 		pack: string,
 		edition: string,
-		mc_version: string,
-		texture_ids: string[],
-		texture_to_use: Record<string, Use>,
-		use_to_path: Record<string, Path>,
+		mcVersion: string,
+		textureIDs: string[],
+		textureToUse: Record<string, Use>,
+		useToPath: Record<string, Path>,
 	) {
 		return this.settingsService
 			.raw()
 			.then((settings) => settings.repositories.raw[pack])
-			.then((urls) => `${urls[edition]}${mc_version}/`)
+			.then((urls) => `${urls[edition]}${mcVersion}/`)
 			.then((url) =>
-				texture_ids
-					.filter((t_id) => texture_to_use[t_id])
-					.map((t_id) => texture_to_use[t_id])
-					.map((use: Use) => use_to_path[use.id].name)
+				textureIDs
+					.filter((textureID) => textureToUse[textureID])
+					.map((textureID) => textureToUse[textureID])
+					.map((use: Use) => useToPath[use.id].name)
 					.map((str) => url + str),
 			);
 	}
@@ -48,24 +48,24 @@ export default class GalleryService {
 	async search(
 		res: AcceptedRes,
 		edition: string,
-		mc_version: string,
+		mcVersion: string,
 		tag?: string,
 		search?: string,
 	): Promise<GalleryResult[]> {
 		// ? it is more optimized to go down when searching because we have less textures than paths
 		// ? texture -> texture found => uses -> uses found => paths -> paths found
 
-		const textures_found = await this.textureService.getByNameIdAndTag(tag, search);
+		const texturesFound = await this.textureService.getByNameIdAndTag(tag, search);
 
-		if (textures_found.length === 0) return Promise.resolve([]);
-		const ids = textures_found.map((t) => Number.parseInt(t.id, 10));
+		if (texturesFound.length === 0) return Promise.resolve([]);
+		const ids = texturesFound.map((t) => Number.parseInt(t.id, 10));
 
-		const uses_found = await this.useService.getUsesByIdsAndEdition(ids, edition);
-		if (uses_found.length === 0) return Promise.resolve([]);
-		const use_ids = uses_found.map((u) => u.id);
+		const usesFound = await this.useService.getUsesByIdsAndEdition(ids, edition);
+		if (usesFound.length === 0) return Promise.resolve([]);
+		const useIDs = usesFound.map((u) => u.id);
 
-		const paths_found = await this.pathRepo.getPathsByUseIdsAndVersion(use_ids, mc_version);
-		if (paths_found.length === 0) return Promise.resolve([]);
+		const pathsFound = await this.pathRepo.getPathsByUseIdsAndVersion(useIDs, mcVersion);
+		if (pathsFound.length === 0) return Promise.resolve([]);
 
 		// ? From this we can go up, to filter with the found results
 		// ? because a texture may not have a matching use or a use a matching path
@@ -76,57 +76,57 @@ export default class GalleryService {
 
 		// first filter with matching uses
 		const {
-			use_to_path,
-			uses_filtered,
+			useToPath,
+			usesFiltered,
 		}: {
-			use_to_path: Record<string, Path>;
-			uses_filtered: Uses;
-		} = uses_found.reduce(
+			useToPath: Record<string, Path>;
+			usesFiltered: Uses;
+		} = usesFound.reduce(
 			(acc, u) => {
-				const path = paths_found.find((p) => p.use === u.id);
+				const path = pathsFound.find((p) => p.use === u.id);
 
 				if (path) {
-					acc.use_to_path[u.id] = path;
-					acc.uses_filtered.push(u);
+					acc.useToPath[u.id] = path;
+					acc.usesFiltered.push(u);
 				}
 
 				return acc;
 			},
 			{
-				use_to_path: {},
-				uses_filtered: [],
+				useToPath: {},
+				usesFiltered: [],
 			},
 		);
 
 		// then filter matching textures
 		const {
-			texture_to_use,
-			textures_filtered,
+			textureToUse,
+			texturesFiltered,
 		}: {
-			texture_to_use: Record<string, Use>;
-			textures_filtered: Textures;
-		} = textures_found.reduce(
+			textureToUse: Record<string, Use>;
+			texturesFiltered: Textures;
+		} = texturesFound.reduce(
 			(acc, t) => {
-				const use = uses_filtered.find((u) => String(u.texture) === t.id);
+				const use = usesFiltered.find((u) => String(u.texture) === t.id);
 
-				if (use && use_to_path[use.id]) {
-					acc.texture_to_use[String(t.id)] = use;
-					acc.textures_filtered.push(t);
+				if (use && useToPath[use.id]) {
+					acc.textureToUse[String(t.id)] = use;
+					acc.texturesFiltered.push(t);
 				}
 
 				return acc;
 			},
 			{
-				texture_to_use: {},
-				textures_filtered: [],
+				textureToUse: {},
+				texturesFiltered: [],
 			},
 		);
 
 		// TODO: optimize this to take less computation time
-		const animations: { [key: string]: TextureMCMETA } = {};
+		const animations: Record<string, TextureMCMETA> = {};
 		// eslint-disable-next-line no-restricted-syntax
-		for (const useId of Object.keys(use_to_path)) {
-			if (use_to_path[useId] && use_to_path[useId].mcmeta === true) {
+		for (const useId of Object.keys(useToPath)) {
+			if (useToPath[useId] && useToPath[useId].mcmeta === true) {
 				const t = await textures.get(Number.parseInt(useId, 10));
 				animations[`${Number.parseInt(useId, 10)}`] = await t.mcmeta();
 			}
@@ -144,27 +144,27 @@ export default class GalleryService {
 		const urls = await this.urlsFromTextures(
 			pack,
 			edition,
-			mc_version,
+			mcVersion,
 			ids.map((id) => String(id)),
-			texture_to_use,
-			use_to_path,
+			textureToUse,
+			useToPath,
 		);
 
-		return textures_filtered
+		return texturesFiltered
 			.map((t, i) => {
-				const t_id = t.id;
-				const u_id = texture_to_use[t_id].id;
+				const textureID = t.id;
+				const useID = textureToUse[textureID].id;
 
-				const path = use_to_path[u_id];
+				const path = useToPath[useID];
 
 				return {
 					name: String(t.name),
 					tags: t.tags,
 					pathID: path.id,
-					textureID: t_id,
-					mcmeta: animations[t_id] ?? null,
+					textureID,
+					mcmeta: animations[textureID] ?? null,
 					url: urls[i],
-					useID: u_id,
+					useID,
 				};
 			})
 			.sort((a, b) => {
