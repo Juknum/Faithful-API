@@ -46,9 +46,7 @@ export default {
 			.catch(() => Promise.all([true, callback()]))
 			.then((results: [boolean, any]) => {
 				// get new value if outdated
-				if (results[REWRITE_INDEX]) {
-					return Promise.all([true, callback()]);
-				}
+				if (results[REWRITE_INDEX]) return Promise.all([true, callback()]);
 				return Promise.all(results);
 			})
 			.then((results: [boolean, any]) => {

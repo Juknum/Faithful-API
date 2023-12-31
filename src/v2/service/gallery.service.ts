@@ -2,8 +2,9 @@
 
 import { textures } from "../firestorm";
 import {
-	AcceptedRes,
+	Edition,
 	GalleryResult,
+	KnownPacks,
 	Path,
 	TextureMCMETA,
 	Textures,
@@ -25,8 +26,8 @@ export default class GalleryService {
 	private readonly settingsService = new SettingsService();
 
 	async urlsFromTextures(
-		pack: string,
-		edition: string,
+		pack: KnownPacks,
+		edition: Edition,
 		mcVersion: string,
 		textureIDs: string[],
 		textureToUse: Record<string, Use>,
@@ -46,8 +47,8 @@ export default class GalleryService {
 	}
 
 	async search(
-		res: AcceptedRes,
-		edition: string,
+		pack: KnownPacks,
+		edition: Edition,
 		mcVersion: string,
 		tag?: string,
 		search?: string,
@@ -75,13 +76,7 @@ export default class GalleryService {
 		// * make two in one with reduce
 
 		// first filter with matching uses
-		const {
-			useToPath,
-			usesFiltered,
-		}: {
-			useToPath: Record<string, Path>;
-			usesFiltered: Uses;
-		} = usesFound.reduce(
+		const { useToPath, usesFiltered } = usesFound.reduce(
 			(acc, u) => {
 				const path = pathsFound.find((p) => p.use === u.id);
 
@@ -93,19 +88,13 @@ export default class GalleryService {
 				return acc;
 			},
 			{
-				useToPath: {},
-				usesFiltered: [],
+				useToPath: {} as Record<string, Path>,
+				usesFiltered: [] as Uses,
 			},
 		);
 
 		// then filter matching textures
-		const {
-			textureToUse,
-			texturesFiltered,
-		}: {
-			textureToUse: Record<string, Use>;
-			texturesFiltered: Textures;
-		} = texturesFound.reduce(
+		const { textureToUse, texturesFiltered } = texturesFound.reduce(
 			(acc, t) => {
 				const use = usesFiltered.find((u) => String(u.texture) === t.id);
 
@@ -117,8 +106,8 @@ export default class GalleryService {
 				return acc;
 			},
 			{
-				textureToUse: {},
-				texturesFiltered: [],
+				textureToUse: {} as Record<string, Use>,
+				texturesFiltered: [] as Textures,
 			},
 		);
 
@@ -131,15 +120,6 @@ export default class GalleryService {
 				animations[`${Number.parseInt(useId, 10)}`] = await t.mcmeta();
 			}
 		}
-
-		// TODO: setup pack as query params instead of using given resolution
-		const RES_TO_PACKS: Record<AcceptedRes, string> = {
-			"16x": "default",
-			"32x": "faithful_32x",
-			"64x": "faithful_64x",
-		};
-
-		const pack = RES_TO_PACKS[res];
 
 		const urls = await this.urlsFromTextures(
 			pack,
