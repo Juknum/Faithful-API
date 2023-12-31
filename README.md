@@ -14,7 +14,7 @@
 ---
 
 ## Requirements
-- NodeJS 16+ https://nodejs.org
+- NodeJS 18+ https://nodejs.org
 
 ## Running
 
