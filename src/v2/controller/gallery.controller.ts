@@ -7,6 +7,7 @@ import {
 	TextureAll,
 	AnyPack,
 	Texture,
+	Edition,
 } from "../interfaces";
 import GalleryService from "../service/gallery.service";
 import TextureService from "../service/texture.service";
@@ -19,17 +20,26 @@ export class GalleryController extends Controller {
 
 	private readonly service = new GalleryService();
 
-	@Get("{res}/{edition}/{mc_version}/{tag}/")
+	@Get("{pack}/{edition}/{mc_version}/{tag}/")
 	public async search(
-		@Path() res: AcceptedRes,
-		@Path() edition: string,
+		@Path() pack: AcceptedRes | AnyPack,
+		@Path() edition: Edition,
 		@Path() mc_version: string,
 		@Path() tag: string,
 		@Query() search?: string,
 	): Promise<GalleryResult[]> {
-		return cache.handle(`gallery-${res}-${edition}-${mc_version}-${tag}-${search ?? ""}`, () =>
+		const RES_TO_PACKS: Record<AcceptedRes, string> = {
+			"16x": "default",
+			"32x": "faithful_32x",
+			"64x": "faithful_64x",
+		};
+
+		// legacy translation layer
+		const packID: AnyPack = Object.keys(RES_TO_PACKS).includes(pack) ? RES_TO_PACKS[pack] : pack;
+
+		return cache.handle(`gallery-${packID}-${edition}-${mc_version}-${tag}-${search ?? ""}`, () =>
 			this.service.search(
-				res,
+				packID,
 				edition,
 				mc_version,
 				tag.toLowerCase() !== "all" ? tag : undefined,
