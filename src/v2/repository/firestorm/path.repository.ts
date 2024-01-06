@@ -32,7 +32,7 @@ export default class PathFirestormRepository implements PathRepository {
 		return paths.add(structuredClone(path)).then((id) => ({ ...structuredClone(path), id }));
 	}
 
-	createPathBulk(pathArray: InputPath[]): Promise<Path[]> {
+	createPathBulk(pathArray: InputPath[]): Promise<Paths> {
 		return paths.addBulk(pathArray).then((ids) => paths.searchKeys(ids));
 	}
 

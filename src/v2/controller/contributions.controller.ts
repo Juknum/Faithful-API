@@ -140,7 +140,7 @@ export class ContributionsController extends Controller {
 	@Security("bot")
 	public async addContribution(
 		@Body() body: ContributionCreationParams | ContributionCreationParams[],
-	): Promise<Contribution | Contribution[]> {
+	): Promise<Contribution | Contributions> {
 		return Array.isArray(body)
 			? this.service.addContributions(body)
 			: this.service.addContribution(body);
