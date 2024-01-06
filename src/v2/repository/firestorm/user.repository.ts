@@ -2,7 +2,6 @@ import { users } from "../../firestorm";
 import {
 	Addons,
 	Contributions,
-	Media,
 	UserNames,
 	User,
 	Users,
@@ -10,6 +9,7 @@ import {
 	UserRepository,
 	UserName,
 	UserProfile,
+	Medias,
 } from "../../interfaces";
 
 // eslint-disable-next-line no-underscore-dangle
@@ -115,7 +115,7 @@ export default class UserFirestormRepository implements UserRepository {
 					ignoreCase: true,
 				},
 			])
-			.then((arr: Array<User>) => arr.map((el) => __transformUser(el)));
+			.then((arr: Users) => arr.map((el) => __transformUser(el)));
 	}
 
 	getUsersFromRole(role: string, username?: string): Promise<Users> {
@@ -138,7 +138,7 @@ export default class UserFirestormRepository implements UserRepository {
 				ignoreCase: true,
 			});
 
-		return users.search(options).then((arr: Array<User>) => arr.map((el) => __transformUser(el)));
+		return users.search(options).then((arr: Users) => arr.map((el) => __transformUser(el)));
 	}
 
 	getRoles(): Promise<Array<string>> {
@@ -183,7 +183,7 @@ export default class UserFirestormRepository implements UserRepository {
 					username: string;
 					uuid: string;
 					anonymous: boolean;
-					media: Media[];
+					media: Medias;
 				}>,
 			) =>
 				_users.map((el) => ({

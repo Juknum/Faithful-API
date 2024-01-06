@@ -133,7 +133,7 @@ export default class ContributionService {
 		return this.contributionRepo.addContribution(params);
 	}
 
-	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
+	addContributions(params: ContributionCreationParams[]): Promise<Contributions> {
 		return this.contributionRepo.addContributions(params);
 	}
 

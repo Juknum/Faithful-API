@@ -1,4 +1,4 @@
-import { Contributions, InputPath, Paths, Texture, Textures, Use, Uses } from "../interfaces";
+import { Contributions, InputPath, Paths, Texture, Textures, Uses } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
@@ -97,7 +97,7 @@ export default class TextureService {
 		const textureID = createdTexture.id;
 
 		// create uses
-		const [useIDs, fullUsesToCreate]: [string[], Use[]] = input.uses.reduce(
+		const [useIDs, fullUsesToCreate]: [string[], Uses] = input.uses.reduce(
 			(acc, u, ui) => {
 				const useID = String(textureID) + String.fromCharCode("a".charCodeAt(0) + ui);
 				const use = {
