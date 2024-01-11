@@ -20,6 +20,16 @@ export class PackService {
 		return this.repository.getAllTags();
 	}
 
+	public serializeDisplayName(displayName: string): string {
+		return displayName
+			.toLowerCase()
+			.trim()
+			.replace(/ /g, "_")
+			.replace(/\W/g, "") // remove special characters
+			.replace(/jappa/g, "") // backwards compatibility
+			.replace(/programmer art/g, "progart");
+	}
+
 	public create(id: string, pack: Pack): Promise<Pack> {
 		return this.repository.update(id, pack);
 	}
