@@ -167,8 +167,7 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	update(id: string, user: UserCreationParams): Promise<User> {
-		/** @todo fix weird user types here */
-		return users.set(id, user as any).then(() => this.getUserById(id));
+		return users.set(id, user).then(() => this.getUserById(id));
 	}
 
 	delete(id: string): Promise<void> {
@@ -183,7 +182,7 @@ export default class UserFirestormRepository implements UserRepository {
 					username: string;
 					uuid: string;
 					anonymous: boolean;
-					media: Medias;
+					media?: Medias;
 				}>,
 			) =>
 				_users.map((el) => ({

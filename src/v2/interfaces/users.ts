@@ -36,7 +36,7 @@ export interface UserNames extends Array<UserName> {}
 
 export interface UserProfile {
 	id?: string;
-	media: Media[] | undefined;
+	media?: Medias;
 	username: string | undefined;
 	uuid: string | undefined;
 }
@@ -44,7 +44,7 @@ export interface UserProfile {
 export interface User extends UserCreationParams {
 	warns?: Array<string>; // list of all warns
 	id: string; // discord user id
-	media: Medias;
+	media?: Medias;
 }
 
 export interface Users extends Array<User> {}
