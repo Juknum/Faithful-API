@@ -16,6 +16,14 @@ export class PackController extends Controller {
 	}
 
 	/**
+	 * Get all the tags from all packs (faithful, progart, etc)
+	 */
+	@Get("tags")
+	public async getAllTags(): Promise<PackTag[]> {
+		return this.service.getAllTags();
+	}
+
+	/**
 	 * Get a pack by ID
 	 */
 	@Get("{pack_id}")
@@ -29,14 +37,6 @@ export class PackController extends Controller {
 	@Get("search/{tag}")
 	public async getTag(tag: PackTag): Promise<Packs> {
 		return this.service.searchByTag(tag);
-	}
-
-	/**
-	 * Get all the tags from all packs (faithful, progart, etc)
-	 */
-	@Get("tags")
-	public async getTags(): Promise<PackTag[]> {
-		return this.service.getAllTags();
 	}
 
 	@Post("")
