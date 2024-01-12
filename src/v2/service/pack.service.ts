@@ -1,4 +1,4 @@
-import { Pack, PackTag, Packs } from "../interfaces";
+import { Pack, PackTag, Packs, CreationPack } from "../interfaces";
 import PackFirestormRepository from "../repository/firestorm/packs.repository";
 
 export class PackService {
@@ -30,8 +30,8 @@ export class PackService {
 			.replace(/programmer art/g, "progart");
 	}
 
-	public create(id: string, pack: Pack): Promise<Pack> {
-		return this.repository.update(id, pack);
+	public create(id: string, pack: CreationPack): Promise<Pack> {
+		return this.repository.create(id, pack);
 	}
 
 	public update(id: string, pack: Pack): Promise<Pack> {

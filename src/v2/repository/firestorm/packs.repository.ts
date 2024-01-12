@@ -1,5 +1,5 @@
 import { ID_FIELD } from "firestorm-db";
-import { PackRepository, Pack, PackTag, Packs } from "~/v2/interfaces";
+import { PackRepository, Pack, PackTag, Packs, CreationPack } from "~/v2/interfaces";
 import { packs } from "../../firestorm/packs";
 
 export default class PackFirestormRepository implements PackRepository {
@@ -39,13 +39,13 @@ export default class PackFirestormRepository implements PackRepository {
 			);
 	}
 
-	create(packId: string, packToCreate: Pack): Promise<Pack> {
-		return packs.set(packId, packToCreate).then((id) => packs.get(id));
+	create(packId: string, packToCreate: CreationPack): Promise<Pack> {
+		return packs.set(packId, packToCreate).then(() => packs.get(packId));
 	}
 
-	update(packId: string, newPack: Pack): Promise<Pack> {
+	update(packId: string, newPack: CreationPack): Promise<Pack> {
 		const packWithId = { ...newPack, [ID_FIELD]: packId };
-		return packs.set(packId, packWithId).then((id) => packs.get(id));
+		return packs.set(packId, packWithId).then(() => packs.get(packId));
 	}
 
 	delete(packId: string): Promise<void> {

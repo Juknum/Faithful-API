@@ -23,12 +23,17 @@ export interface PackGitHub {
 
 export type PackTag = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "progart";
 
-export interface Pack {
-	id: AnyPack;
+export interface CreationPack {
+	id: string;
 	name: string;
 	tags: PackTag[];
 	resolution: number;
-	github: Record<Edition, PackGitHub>;
+	// you don't need a bedrock repo if you don't have one
+	github: Partial<Record<Edition, PackGitHub>>;
+}
+
+export interface Pack extends CreationPack {
+	id: AnyPack;
 }
 
 export interface Packs extends Array<Pack> {}

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
 import { PackService } from "../service/pack.service";
-import { Pack, PackTag, Packs } from "../interfaces";
+import { CreationPack, Pack, PackTag, Packs } from "../interfaces";
 
 @Route("packs")
 @Tags("Packs")
@@ -42,7 +42,7 @@ export class PackController extends Controller {
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createPack(@Body() body: Pack): Promise<Pack> {
+	public async createPack(@Body() body: CreationPack): Promise<Pack> {
 		return this.service.create(body.id, body);
 	}
 
