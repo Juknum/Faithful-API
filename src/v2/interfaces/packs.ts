@@ -24,6 +24,7 @@ export interface PackGitHub {
 export type PackTag = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "progart";
 
 export interface CreationPack {
+	// pack ID not declared yet so it's just a regular string
 	id: string;
 	name: string;
 	tags: PackTag[];
@@ -33,7 +34,12 @@ export interface CreationPack {
 }
 
 export interface Pack extends CreationPack {
+	// override since now you know what packs exist
 	id: AnyPack;
+}
+
+export interface PackAll extends Pack {
+	submission?: Submission;
 }
 
 export interface Packs extends Array<Pack> {}

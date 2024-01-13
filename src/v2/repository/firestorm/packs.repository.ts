@@ -1,6 +1,7 @@
 import { ID_FIELD } from "firestorm-db";
-import { PackRepository, Pack, PackTag, Packs, CreationPack } from "~/v2/interfaces";
+import { PackRepository, Pack, PackTag, Packs, CreationPack, AnyPack, PackAll } from "~/v2/interfaces";
 import { packs } from "../../firestorm/packs";
+import { submissions } from "~/v2/firestorm";
 
 export default class PackFirestormRepository implements PackRepository {
 	getRaw(): Promise<Record<string, Pack>> {
@@ -9,6 +10,13 @@ export default class PackFirestormRepository implements PackRepository {
 
 	getById(id: string): Promise<Pack> {
 		return packs.get(id);
+	}
+
+	async getWithSubmission(id: AnyPack): Promise<PackAll> {
+		const pack = await packs.get(id);
+		const submission = await submissions.get(id).catch(() => undefined);
+		if (!submission) return { ...pack, submission: null };
+		return { ...pack, submission };
 	}
 
 	searchByTag(tag: PackTag): Promise<Packs> {
