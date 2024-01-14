@@ -1,7 +1,15 @@
 import { ID_FIELD } from "firestorm-db";
-import { PackRepository, Pack, PackTag, Packs, CreationPack, AnyPack, PackAll } from "~/v2/interfaces";
+import {
+	PackRepository,
+	Pack,
+	PackTag,
+	Packs,
+	CreationPack,
+	AnyPack,
+	PackAll,
+} from "~/v2/interfaces";
 import { packs } from "../../firestorm/packs";
-import { submissions } from "~/v2/firestorm";
+import { submissions } from "../../firestorm";
 
 export default class PackFirestormRepository implements PackRepository {
 	getRaw(): Promise<Record<string, Pack>> {

@@ -54,7 +54,7 @@ export default class AddonService {
 		let addon = idAndAddon[1];
 
 		if (!addon) addon = await this.getAddon(id);
-		if (!addon) throw new NotFoundError("Addon not found");
+		if (!addon) throw new NotFoundError("Add-on not found");
 
 		return [id, addon];
 	}
@@ -211,7 +211,7 @@ export default class AddonService {
 		const authors = await Promise.all(
 			body.authors.map((authorID) => this.userService.getUserById(authorID)),
 		).catch(() => {
-			throw new BadRequestError("One author ID or more don't exist");
+			throw new BadRequestError("One author ID or more doesn't exist");
 		});
 
 		authors.forEach((author) => {
@@ -225,9 +225,8 @@ export default class AddonService {
 
 		// throw if already existing
 		const existingAddon = await this.getAddonBySlug(slugValue);
-		if (existingAddon) {
+		if (existingAddon)
 			throw new BadRequestError("The slug corresponding to this addon name already exists");
-		}
 
 		const { downloads } = body;
 		delete body.downloads;
@@ -290,7 +289,7 @@ export default class AddonService {
 		const authors = await Promise.all(
 			body.authors.map((authorID) => this.userService.getUserById(authorID)),
 		).catch(() => {
-			throw new BadRequestError("One author ID or more don't exist");
+			throw new BadRequestError("One author ID or more doesn't exist");
 		});
 
 		authors.forEach((author) => {

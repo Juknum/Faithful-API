@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
 import { SubmissionService } from "../service/submission.service";
-import { CreationSubmission, Submission } from "../interfaces";
+import { CreationSubmission, FaithfulPack, Submission } from "../interfaces";
 
 @Route("submissions")
 @Tags("Submissions")
@@ -19,7 +19,7 @@ export class SubmissionController extends Controller {
 	 * Get a submission pack by ID
 	 */
 	@Get("{pack_id}")
-	public async getPack(@Path() pack_id: string): Promise<Submission> {
+	public async getPack(@Path() pack_id: FaithfulPack): Promise<Submission> {
 		return this.service.getById(pack_id);
 	}
 
@@ -38,7 +38,7 @@ export class SubmissionController extends Controller {
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async update(@Path() id: string, @Body() body: Submission): Promise<Submission> {
+	public async update(@Path() id: FaithfulPack, @Body() body: Submission): Promise<Submission> {
 		return this.service.update(id, body);
 	}
 
@@ -49,7 +49,7 @@ export class SubmissionController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async delete(id: string): Promise<void> {
+	public async delete(id: FaithfulPack): Promise<void> {
 		return this.service.delete(id);
 	}
 }
