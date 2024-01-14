@@ -162,7 +162,6 @@ export class TextureController extends Controller {
 	): Promise<void> {
 		const response = (<any>request).res as ExResponse;
 		const url = await this.service.getURLById(parseInt(id, 10), pack, mc_version);
-		if (!url) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
 		response.redirect(url);
 	}
 
