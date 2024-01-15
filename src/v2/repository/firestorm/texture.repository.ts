@@ -82,14 +82,13 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	// AlwaysID is a typescript hack to make sure the correct types are always returned
-	public async searchTextureByNameOrId<AlwaysID extends boolean>(
+	public searchTextureByNameOrId<AlwaysID extends boolean>(
 		nameOrID: string | number,
 	): Promise<AlwaysID extends true ? Texture : Texture | Textures> {
-		const res = (await this.searchTexturePropertyByNameOrId(nameOrID, null)) as Texture | Textures;
-		return res as any;
+		return this.searchTexturePropertyByNameOrId(nameOrID, null) as any;
 	}
 
-	public async searchTexturePropertyByNameOrId(
+	public searchTexturePropertyByNameOrId(
 		nameOrID: string | number,
 		property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA> {
@@ -236,11 +235,8 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return Promise.all(promises).then(() => {});
 	}
 
-	public async changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
-		const unmapped = {
-			id,
-			...body,
-		};
+	public changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
+		const unmapped = { id, ...body };
 
 		return textures.set(id, unmapped).then(() => this.searchTextureByNameOrId<true>(id));
 	}

@@ -107,9 +107,9 @@ export default class PackFirestormRepository implements PackRepository {
 		return packs.set(packId, packWithId).then(() => packs.get(packId));
 	}
 
-	async delete(packId: AnyPack): Promise<void> {
+	delete(packId: AnyPack): Promise<void> {
 		// try removing submission data if exists too
 		this.submissionRepo.delete(packId as FaithfulPack).catch(() => {});
-		packs.remove(packId);
+		return packs.remove(packId).then(() => {});
 	}
 }

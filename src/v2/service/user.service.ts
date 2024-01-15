@@ -91,7 +91,7 @@ export class UserService {
 		return this.repository.getContributionsById(id);
 	}
 
-	getUserProfiles(users: string[]): Promise<UserProfile[]> {
+	public getUserProfiles(users: string[]): Promise<UserProfile[]> {
 		return this.repository.getUserProfiles(users);
 	}
 
@@ -103,11 +103,11 @@ export class UserService {
 		return this.repository.getAddonsById(id);
 	}
 
-	public async getProfileOrCreate(id: string): Promise<User> {
+	public getProfileOrCreate(id: string): Promise<User> {
 		return this.repository.getProfileOrCreate(id);
 	}
 
-	public async setProfileById(id: string, body: UserProfile) {
+	public async setProfileById(id: string, body: UserProfile): Promise<void> {
 		const user = await this.getUserById(id);
 
 		const username = (body.username || "").trim();
@@ -124,17 +124,17 @@ export class UserService {
 
 	//! We don't make verifications here, it's in the controllers
 
-	public async setRoles(id: string, roles: string[]) {
+	public async setRoles(id: string, roles: string[]): Promise<User> {
 		const user = await this.getUserById(id);
 		user.roles = roles;
 		return this.update(id, user);
 	}
 
-	public async create(id: string, user: User): Promise<User> {
+	public create(id: string, user: User): Promise<User> {
 		return this.repository.update(id, user);
 	}
 
-	public async update(id: string, user: User): Promise<User> {
+	public update(id: string, user: User): Promise<User> {
 		return this.repository.update(id, user);
 	}
 

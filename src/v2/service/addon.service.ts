@@ -127,19 +127,19 @@ export default class AddonService {
 		});
 	}
 
-	async getScreenshotsFiles(id): Promise<Files> {
+	getScreenshotsFiles(id): Promise<Files> {
 		return this.getFiles(id).then(
 			(files: Files) => files.filter((f: File) => f.use === "screenshot" || f.use === "carousel"), // TODO: only keep screenshots
 		);
 	}
 
-	async getScreenshotsIds(id): Promise<Array<string>> {
+	getScreenshotsIds(id): Promise<Array<string>> {
 		return this.getScreenshotsFiles(id).then((files: Files) =>
 			Object.values(files).map((f: File) => f.id),
 		);
 	}
 
-	async getScreenshots(id): Promise<Array<string>> {
+	getScreenshots(id): Promise<Array<string>> {
 		return this.getScreenshotsFiles(id).then((files: Files) =>
 			Object.values(files).map((f: File) => f.source),
 		);
@@ -563,16 +563,15 @@ export default class AddonService {
 		return Promise.resolve();
 	}
 
-	private saveUpdate(
+	private async saveUpdate(
 		id: number,
 		addon: Addon,
 		before: AddonStatus,
 		notify: Boolean = true,
 	): Promise<Addon> {
-		return this.addonRepo.update(id, addon).then(async (a) => {
-			if (notify) await this.notifyAddonChange(a, before).catch(console.error);
-			return a;
-		});
+		const a = await this.addonRepo.update(id, addon);
+		if (notify) await this.notifyAddonChange(a, before).catch(console.error);
+		return a;
 	}
 
 	private async notifyAddonChange(addon: Addon, before: AddonStatus): Promise<void> {

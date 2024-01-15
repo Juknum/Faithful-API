@@ -23,7 +23,7 @@ export class PackService {
 		return this.repository.getById(id);
 	}
 
-	public async search(params: PackSearch): Promise<Packs> {
+	public search(params: PackSearch): Promise<Packs> {
 		return this.repository.search(params);
 	}
 

@@ -126,7 +126,7 @@ export default class TextureService {
 		return createdTexture;
 	}
 
-	async createEntireTextures(body: EntireTextureToCreate[]): Promise<Textures> {
+	createEntireTextures(body: EntireTextureToCreate[]): Promise<Textures> {
 		// create textures
 		return Promise.all(body.map((t) => this.createEntireTexture(t)));
 	}

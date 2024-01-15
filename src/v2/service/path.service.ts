@@ -28,14 +28,14 @@ export default class PathService {
 		return this.repository.getPathUseById(useID);
 	}
 
-	async createPath(path: InputPath): Promise<Path> {
+	createPath(path: InputPath): Promise<Path> {
 		// verify use existence
 		return this.useService
 			.getUseByIdOrName(path.use) // verify use existence
 			.then(() => this.repository.createPath(path));
 	}
 
-	async createMultiplePaths(paths: InputPath[]): Promise<Paths> {
+	createMultiplePaths(paths: InputPath[]): Promise<Paths> {
 		return this.repository.createPathBulk(paths);
 	}
 
