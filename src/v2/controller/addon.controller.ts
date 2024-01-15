@@ -175,7 +175,7 @@ export class AddonController extends Controller {
 	@Get("{id_or_slug}/{property}")
 	public async getAddonPropertyById(
 		@Path() id_or_slug: string,
-		property: AddonProperty,
+		@Path() property: AddonProperty,
 	): Promise<Addon | Files> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
