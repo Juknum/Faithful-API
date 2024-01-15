@@ -197,7 +197,6 @@ export default class AddonService {
 	/**
 	 * Check body and adds a new addon
 	 * @param body Body which will be controlled
-	 * @returns {Addon | PromiseLike<Addon>} created addon
 	 */
 	async create(body: AddonCreationParam): Promise<Addon> {
 		// authentication was already made

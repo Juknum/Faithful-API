@@ -10,13 +10,13 @@ import {
 	Submission,
 	FaithfulPack,
 	CreationPackAll,
-	FirstCreationSubmission,
 } from "~/v2/interfaces";
 import { packs } from "../../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
 
 export default class PackFirestormRepository implements PackRepository {
 	private readonly submissionRepo = new SubmissionFirestormRepository();
+
 	getRaw(): Promise<Record<string, Pack>> {
 		return packs.readRaw();
 	}
@@ -68,9 +68,9 @@ export default class PackFirestormRepository implements PackRepository {
 			// submission is stored separately so we get rid of it from main json
 			const submissionData = { id: packId, ...data.submission };
 			delete data.submission;
-			await this.submissionRepo
-				.create(packId, submissionData as Submission)
-				.then((submission) => (out.submission = submission));
+			await this.submissionRepo.create(packId, submissionData as Submission).then((submission) => {
+				out.submission = submission;
+			});
 		}
 
 		return packs.set(packId, data).then(() => ({ id: packId, ...data, ...out }));
@@ -81,7 +81,9 @@ export default class PackFirestormRepository implements PackRepository {
 		return packs.set(packId, packWithId).then(() => packs.get(packId));
 	}
 
-	delete(packId: AnyPack): Promise<void> {
-		return packs.remove(packId).then(() => {}); // return nothing
+	async delete(packId: AnyPack): Promise<void> {
+		// try removing submission data if exists too
+		this.submissionRepo.delete(packId as FaithfulPack).catch(() => {});
+		packs.remove(packId);
 	}
 }

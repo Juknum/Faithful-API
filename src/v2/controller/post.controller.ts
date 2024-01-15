@@ -135,7 +135,6 @@ export class PostController extends Controller {
 	 * Updates the post to the given ID
 	 * @param id Post ID
 	 * @param postToCreate Post information
-	 * @returns Updated article
 	 */
 	@Response<BadRequestError>(400)
 	@Response<PermissionError>(403)

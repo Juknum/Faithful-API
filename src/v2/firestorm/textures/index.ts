@@ -11,6 +11,7 @@ import {
 	FirestormTexture,
 	MCMETA,
 	PackGitHub,
+	Edition,
 } from "~/v2/interfaces";
 import config from "../config";
 
@@ -42,13 +43,13 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 	el.url = async (pack: AnyPack, version: string): Promise<string> => {
 		const baseURL = "https://raw.githubusercontent.com";
 
-		let urls: Record<string, PackGitHub>;
+		let urls: Partial<Record<Edition, PackGitHub>>;
 		let path: Path;
 
 		return packs
 			.readRaw()
-			.then((packs) => {
-				urls = packs[pack].github;
+			.then((p) => {
+				urls = p[pack].github;
 				return el.paths();
 			})
 			.then((texturePaths: Paths) => {
@@ -61,7 +62,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 				return el.uses();
 			})
 			.then((_uses: Uses) => {
-				const edition = _uses.find((u: Use) => u.id === path.use).edition;
+				const { edition } = _uses.find((u: Use) => u.id === path.use);
 				if (!urls[edition])
 					throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
 				return `${baseURL}/${urls[edition].org}/${urls[edition].repo}/${version}/${path.name}`;

@@ -33,12 +33,17 @@ export class PackController extends Controller {
 
 	/**
 	 * Get a pack by ID
+	 * @param pack_id Supported pack
 	 */
 	@Get("{pack_id}")
 	public async getPack(@Path() pack_id: AnyPack): Promise<Pack> {
 		return this.service.getById(pack_id);
 	}
 
+	/**
+	 * Get a pack and its associated submission information by ID
+	 * @param pack_id Pack with submission support
+	 */
 	@Get("{pack_id}/all")
 	public async getWithSubmission(@Path() pack_id: FaithfulPack): Promise<PackAll> {
 		return this.service.getWithSubmission(pack_id);
@@ -46,12 +51,17 @@ export class PackController extends Controller {
 
 	/**
 	 * Search for packs by their tags
+	 * @param tag Pack tag to search by
 	 */
 	@Get("search/{tag}")
 	public async getTag(tag: PackTag): Promise<Packs> {
 		return this.service.searchByTag(tag);
 	}
 
+	/**
+	 * Create a pack or pack and submission at the same time
+	 * @param body Pack (or pack and submission) to add
+	 */
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])

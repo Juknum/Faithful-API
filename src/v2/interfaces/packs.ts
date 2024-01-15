@@ -24,7 +24,7 @@ export interface PackGitHub {
 export type PackTag = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "progart";
 
 export interface CreationPack {
-	// you can automatically serialize pack names so it's not needed
+	// either can be specified manually or serialized automatically
 	id?: string;
 	name: string;
 	tags: PackTag[];

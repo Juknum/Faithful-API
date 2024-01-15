@@ -23,6 +23,10 @@ export class SubmissionController extends Controller {
 		return this.service.getById(pack_id);
 	}
 
+	/**
+	 * Add submission support to an existing pack
+	 * @param body Pack information
+	 */
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])

@@ -5,6 +5,7 @@ import { PackService } from "./pack.service";
 
 export class SubmissionService {
 	private readonly packService = new PackService();
+
 	private readonly repository = new SubmissionFirestormRepository();
 
 	public getRaw(): Promise<Record<string, Submission>> {
