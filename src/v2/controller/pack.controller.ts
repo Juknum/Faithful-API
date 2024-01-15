@@ -40,6 +40,11 @@ export class PackController extends Controller {
 		return this.service.getById(pack_id);
 	}
 
+	@Put("rename/{old_pack}/{new_pack}")
+	public async renamePack(@Path() old_pack: AnyPack, @Path() new_pack: string): Promise<void> {
+		return this.service.renamePack(old_pack, new_pack);
+	}
+
 	/**
 	 * Get a pack and its associated submission information by ID
 	 * @param pack_id Pack with submission support

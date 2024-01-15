@@ -1,4 +1,13 @@
-import { Pack, PackTag, Packs, AnyPack, FaithfulPack, CreationPackAll } from "../interfaces";
+import { contributions } from "../firestorm";
+import {
+	Pack,
+	PackTag,
+	Packs,
+	AnyPack,
+	FaithfulPack,
+	CreationPackAll,
+	Contributions,
+} from "../interfaces";
 import PackFirestormRepository from "../repository/firestorm/packs.repository";
 
 export class PackService {
@@ -22,6 +31,26 @@ export class PackService {
 
 	public getAllTags(): Promise<PackTag[]> {
 		return this.repository.getAllTags();
+	}
+
+	public renamePack(oldPack: AnyPack, newPack: string): Promise<void> {
+		this.repository.renamePack(oldPack, newPack);
+
+		return contributions
+			.readRaw()
+			.then((r) => {
+				const old: Contributions = Object.values(r);
+				const filtered = old.filter((c) => c.pack === oldPack);
+				const edits = filtered.map((p) => ({
+					id: p.id,
+					field: "pack",
+					operation: "set" as const,
+					value: newPack,
+				}));
+
+				return contributions.editFieldBulk(edits);
+			})
+			.then(() => {});
 	}
 
 	public serializeDisplayName(name: string): string {

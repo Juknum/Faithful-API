@@ -62,6 +62,16 @@ export default class PackFirestormRepository implements PackRepository {
 			);
 	}
 
+	async renamePack(oldPack: AnyPack, newPack: string) {
+		const data: CreationPackAll = await this.getById(oldPack);
+		data.id = newPack;
+		const submission = await this.submissionRepo.getById(oldPack as FaithfulPack).catch(() => null);
+		if (submission) data.submission = submission;
+		this.delete(oldPack);
+		this.submissionRepo.delete(oldPack as FaithfulPack);
+		this.create(newPack, data);
+	}
+
 	async create(packId: string, data: CreationPackAll): Promise<CreationPackAll> {
 		const out = {} as CreationPackAll;
 		if (data.submission) {
