@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags }
 import { PackService } from "../service/pack.service";
 import {
 	AnyPack,
-	CreationPack,
 	CreationPackAll,
 	FaithfulPack,
 	Pack,
@@ -56,15 +55,8 @@ export class PackController extends Controller {
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async create(@Body() body: CreationPack): Promise<Pack> {
+	public async create(@Body() body: CreationPackAll): Promise<CreationPackAll> {
 		return this.service.create(body);
-	}
-
-	@Post("submission")
-	@Security("bot")
-	@Security("discord", ["administrator"])
-	public async createWithSubmission(@Body() body: CreationPackAll): Promise<CreationPackAll> {
-		return this.service.createWithSubmission(body);
 	}
 
 	/**

@@ -10,6 +10,7 @@ import {
 	Submission,
 	FaithfulPack,
 	CreationPackAll,
+	FirstCreationSubmission,
 } from "~/v2/interfaces";
 import { packs } from "../../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
@@ -61,21 +62,18 @@ export default class PackFirestormRepository implements PackRepository {
 			);
 	}
 
-	create(packId: string, packToCreate: CreationPack): Promise<Pack> {
-		return packs.set(packId, packToCreate).then(() => packs.get(packId));
-	}
+	async create(packId: string, data: CreationPackAll): Promise<CreationPackAll> {
+		const out = {} as CreationPackAll;
+		if (data.submission) {
+			// submission is stored separately so we get rid of it from main json
+			const submissionData = { id: packId, ...data.submission };
+			delete data.submission;
+			await this.submissionRepo
+				.create(packId, submissionData as Submission)
+				.then((submission) => (out.submission = submission));
+		}
 
-	createWithSubmission(packId: string, data: CreationPackAll): Promise<CreationPackAll> {
-		const submissionData = data.submission;
-		delete data.submission;
-		const packData = data;
-		this.create(packId, packData);
-		// no associated pack object found
-		if (!Object.keys(submissionData)) return;
-
-		return this.submissionRepo
-			.create(packId, submissionData as Submission)
-			.then((submission) => ({ id: packId, ...packData, submission }));
+		return packs.set(packId, data).then(() => ({ id: packId, ...data, ...out }));
 	}
 
 	update(packId: AnyPack, newPack: CreationPack): Promise<Pack> {

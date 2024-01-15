@@ -58,7 +58,7 @@ export interface PackRepository {
 	getWithSubmission(id: FaithfulPack): Promise<PackAll>;
 	getAllTags(): Promise<PackTag[]>;
 	searchByTag(tag: PackTag): Promise<Packs>;
-	create(packId: string, packToCreate: Pack): Promise<Pack>;
+	create(packId: string, packToCreate: CreationPackAll): Promise<CreationPackAll>;
 	update(packId: AnyPack, newPack: Pack): Promise<Pack>;
 	delete(packId: AnyPack): Promise<void>;
 }
