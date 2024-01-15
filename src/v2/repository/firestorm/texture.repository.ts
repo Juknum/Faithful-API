@@ -3,7 +3,7 @@ import {
 	Edition,
 	AnyPack,
 	TextureCreationParam,
-	TextureMCMETA,
+	MCMETA,
 	TextureProperty,
 	Contributions,
 	Paths,
@@ -92,7 +92,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	public async searchTexturePropertyByNameOrId(
 		nameOrID: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
+	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA> {
 		const intID: number = parseInt(nameOrID as string, 10);
 
 		if (Number.isNaN(intID) || intID.toString() !== nameOrID.toString()) {

@@ -7,11 +7,15 @@ import {
 	CreationPack,
 	AnyPack,
 	PackAll,
+	Submission,
+	FaithfulPack,
+	CreationPackAll,
 } from "~/v2/interfaces";
-import { packs } from "../../firestorm/packs";
-import { submissions } from "../../firestorm";
+import { packs } from "../../firestorm";
+import SubmissionFirestormRepository from "./submissions.repository";
 
 export default class PackFirestormRepository implements PackRepository {
+	private readonly submissionRepo = new SubmissionFirestormRepository();
 	getRaw(): Promise<Record<string, Pack>> {
 		return packs.readRaw();
 	}
@@ -20,10 +24,12 @@ export default class PackFirestormRepository implements PackRepository {
 		return packs.get(id);
 	}
 
-	async getWithSubmission(id: AnyPack): Promise<PackAll> {
+	async getWithSubmission(id: FaithfulPack): Promise<PackAll> {
 		const pack = await packs.get(id);
-		const submission = await submissions.get(id).catch(() => undefined);
-		if (!submission) return { ...pack, submission: null };
+		const submission = await this.submissionRepo.getById(id).catch(() => null);
+
+		// faithful pack with no submission information found
+		if (!submission) return { ...pack, submission: {} };
 		return { ...pack, submission };
 	}
 
@@ -59,12 +65,25 @@ export default class PackFirestormRepository implements PackRepository {
 		return packs.set(packId, packToCreate).then(() => packs.get(packId));
 	}
 
-	update(packId: string, newPack: CreationPack): Promise<Pack> {
+	createWithSubmission(packId: string, data: CreationPackAll): Promise<CreationPackAll> {
+		const submissionData = data.submission;
+		delete data.submission;
+		const packData = data;
+		this.create(packId, packData);
+		// no associated pack object found
+		if (!Object.keys(submissionData)) return;
+
+		return this.submissionRepo
+			.create(packId, submissionData as Submission)
+			.then((submission) => ({ id: packId, ...packData, submission }));
+	}
+
+	update(packId: AnyPack, newPack: CreationPack): Promise<Pack> {
 		const packWithId = { ...newPack, [ID_FIELD]: packId };
 		return packs.set(packId, packWithId).then(() => packs.get(packId));
 	}
 
-	delete(packId: string): Promise<void> {
+	delete(packId: AnyPack): Promise<void> {
 		return packs.remove(packId).then(() => {}); // return nothing
 	}
 }

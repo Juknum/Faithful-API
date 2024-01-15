@@ -9,7 +9,7 @@ import {
 	Use,
 	AnyPack,
 	FirestormTexture,
-	TextureMCMETA,
+	MCMETA,
 	PackGitHub,
 } from "~/v2/interfaces";
 import config from "../config";
@@ -77,7 +77,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			},
 		]);
 
-	el.mcmeta = async (): Promise<TextureMCMETA> =>
+	el.mcmeta = async (): Promise<MCMETA> =>
 		el
 			.paths()
 			.then((ps: Paths) => ps.find((path: Path) => path.mcmeta) || null)
@@ -111,7 +111,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 				output.paths = tPaths;
 				return el.mcmeta();
 			})
-			.then((mcmeta: TextureMCMETA) => {
+			.then((mcmeta: MCMETA) => {
 				output.mcmeta = mcmeta;
 				return el.contributions();
 			})

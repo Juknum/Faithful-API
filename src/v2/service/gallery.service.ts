@@ -1,16 +1,7 @@
 /* eslint-disable no-await-in-loop */
 
 import { textures } from "../firestorm";
-import {
-	Edition,
-	GalleryResult,
-	AnyPack,
-	Path,
-	TextureMCMETA,
-	Textures,
-	Use,
-	Uses,
-} from "../interfaces";
+import { Edition, GalleryResult, AnyPack, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import { NotFoundError } from "../tools/ApiError";
 import { PackService } from "./pack.service";
@@ -112,7 +103,7 @@ export default class GalleryService {
 		);
 
 		// TODO: optimize this to take less computation time
-		const animations: Record<string, TextureMCMETA> = {};
+		const animations: Record<string, MCMETA> = {};
 		// eslint-disable-next-line no-restricted-syntax
 		for (const useId of Object.keys(useToPath)) {
 			if (useToPath[useId] && useToPath[useId].mcmeta === true) {

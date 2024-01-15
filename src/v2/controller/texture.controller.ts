@@ -24,7 +24,7 @@ import {
 	Edition,
 	AnyPack,
 	TextureCreationParam,
-	TextureMCMETA,
+	MCMETA,
 	TextureProperty,
 	TextureAll,
 	TexturesAll,
@@ -126,9 +126,9 @@ export class TextureController extends Controller {
 		| Paths
 		| Uses
 		| Contributions
-		| TextureMCMETA
+		| MCMETA
 		| TextureAll
-		| (TextureMCMETA | Textures | Texture | Paths | Uses | Contributions | TexturesAll)[]
+		| (MCMETA | Textures | Texture | Paths | Uses | Contributions | TexturesAll)[]
 	> {
 		if (typeof id_or_name === "string" && id_or_name.includes(",")) {
 			const id_array = id_or_name.split(",");

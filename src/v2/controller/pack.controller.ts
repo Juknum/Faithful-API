@@ -1,6 +1,15 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
 import { PackService } from "../service/pack.service";
-import { AnyPack, CreationPack, Pack, PackTag, Packs } from "../interfaces";
+import {
+	AnyPack,
+	CreationPack,
+	CreationPackAll,
+	FaithfulPack,
+	Pack,
+	PackAll,
+	PackTag,
+	Packs,
+} from "../interfaces";
 
 @Route("packs")
 @Tags("Packs")
@@ -31,6 +40,11 @@ export class PackController extends Controller {
 		return this.service.getById(pack_id);
 	}
 
+	@Get("{pack_id}/all")
+	public async getWithSubmission(@Path() pack_id: FaithfulPack): Promise<PackAll> {
+		return this.service.getWithSubmission(pack_id);
+	}
+
 	/**
 	 * Search for packs by their tags
 	 */
@@ -42,8 +56,15 @@ export class PackController extends Controller {
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createPack(@Body() body: CreationPack): Promise<Pack> {
-		return this.service.create(body.id, body);
+	public async create(@Body() body: CreationPack): Promise<Pack> {
+		return this.service.create(body);
+	}
+
+	@Post("submission")
+	@Security("bot")
+	@Security("discord", ["administrator"])
+	public async createWithSubmission(@Body() body: CreationPackAll): Promise<CreationPackAll> {
+		return this.service.createWithSubmission(body);
 	}
 
 	/**

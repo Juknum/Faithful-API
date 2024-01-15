@@ -3,7 +3,7 @@ import {
 	Edition,
 	EntireTextureToCreate,
 	TextureCreationParam,
-	TextureMCMETA,
+	MCMETA,
 	TextureProperty,
 } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
@@ -70,7 +70,7 @@ export default class TextureService {
 	getPropertyByNameOrId(
 		nameOrID: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
+	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA> {
 		return this.textureRepo
 			.searchTexturePropertyByNameOrId(nameOrID, property)
 			.catch(() => Promise.reject(new Error("Service failed to make request")));

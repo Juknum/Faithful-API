@@ -1,5 +1,10 @@
 import { ID_FIELD } from "firestorm-db";
-import { SubmissionRepository, Submission, CreationSubmission } from "~/v2/interfaces";
+import {
+	SubmissionRepository,
+	Submission,
+	CreationSubmission,
+	FaithfulPack,
+} from "~/v2/interfaces";
 import { submissions } from "../../firestorm/packs/submissions";
 
 export default class SubmissionFirestormRepository implements SubmissionRepository {
@@ -7,7 +12,7 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 		return submissions.readRaw();
 	}
 
-	getById(id: string): Promise<Submission> {
+	getById(id: FaithfulPack): Promise<Submission> {
 		return submissions.get(id);
 	}
 
@@ -15,12 +20,12 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 		return submissions.set(packId, packToCreate).then(() => submissions.get(packId));
 	}
 
-	update(packId: string, newPack: Submission): Promise<Submission> {
+	update(packId: FaithfulPack, newPack: Submission): Promise<Submission> {
 		const packWithId = { ...newPack, [ID_FIELD]: packId };
 		return submissions.set(packId, packWithId).then(() => submissions.get(packId));
 	}
 
-	delete(packId: string): Promise<void> {
+	delete(packId: FaithfulPack): Promise<void> {
 		return submissions.remove(packId).then(() => {}); // return nothing
 	}
 }

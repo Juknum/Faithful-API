@@ -1,4 +1,13 @@
-import { Pack, PackTag, Packs, CreationPack } from "../interfaces";
+import {
+	Pack,
+	PackTag,
+	Packs,
+	CreationPack,
+	AnyPack,
+	FaithfulPack,
+	PackAll,
+	CreationPackAll,
+} from "../interfaces";
 import PackFirestormRepository from "../repository/firestorm/packs.repository";
 
 export class PackService {
@@ -8,7 +17,7 @@ export class PackService {
 		return this.repository.getRaw();
 	}
 
-	public getById(id: string): Promise<Pack> {
+	public getById(id: AnyPack): Promise<Pack> {
 		return this.repository.getById(id);
 	}
 
@@ -16,12 +25,16 @@ export class PackService {
 		return this.repository.searchByTag(tag);
 	}
 
+	public getWithSubmission(id: FaithfulPack) {
+		return this.repository.getWithSubmission(id);
+	}
+
 	public getAllTags(): Promise<PackTag[]> {
 		return this.repository.getAllTags();
 	}
 
-	public serializeDisplayName(displayName: string): string {
-		return displayName
+	public serializeDisplayName(name: string): string {
+		return name
 			.toLowerCase()
 			.trim()
 			.replace(/ /g, "_")
@@ -30,15 +43,23 @@ export class PackService {
 			.replace(/programmer art/g, "progart");
 	}
 
-	public create(id: string, pack: CreationPack): Promise<Pack> {
-		return this.repository.create(id, pack);
+	public create(pack: CreationPack): Promise<Pack> {
+		if (!pack.id) pack.id = this.serializeDisplayName(pack.name);
+		return this.repository.create(pack.id, pack);
 	}
 
-	public update(id: string, pack: Pack): Promise<Pack> {
+	public createWithSubmission(body: CreationPackAll): Promise<CreationPackAll> {
+		if (!body.id) body.id = this.serializeDisplayName(body.name);
+		if (body.submission && !body.submission.id)
+			body.submission.id = this.serializeDisplayName(body.name);
+		return this.repository.createWithSubmission(body.id, body);
+	}
+
+	public update(id: AnyPack, pack: Pack): Promise<Pack> {
 		return this.repository.update(id, pack);
 	}
 
-	public delete(id: string): Promise<void> {
+	public delete(id: AnyPack): Promise<void> {
 		return this.repository.delete(id);
 	}
 }

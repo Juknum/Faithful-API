@@ -1,26 +1,35 @@
-import { Submission, CreationSubmission } from "../interfaces";
+import { Submission, CreationSubmission, FaithfulPack, AnyPack } from "../interfaces";
 import SubmissionFirestormRepository from "../repository/firestorm/submissions.repository";
+import { BadRequestError } from "../tools/ApiError";
+import { PackService } from "./pack.service";
 
 export class SubmissionService {
+	private readonly packService = new PackService();
 	private readonly repository = new SubmissionFirestormRepository();
 
 	public getRaw(): Promise<Record<string, Submission>> {
 		return this.repository.getRaw();
 	}
 
-	public getById(id: string): Promise<Submission> {
+	public getById(id: FaithfulPack): Promise<Submission> {
 		return this.repository.getById(id);
 	}
 
-	public create(id: string, pack: CreationSubmission): Promise<Submission> {
-		return this.repository.create(id, pack);
+	public create(id: AnyPack, pack: CreationSubmission): Promise<Submission> {
+		return this.packService
+			.getById(id) // verify parent pack exists already
+			.then(() => this.repository.create(id, pack));
 	}
 
-	public update(id: string, pack: Submission): Promise<Submission> {
-		return this.repository.update(id, pack);
+	public update(id: FaithfulPack, pack: Submission): Promise<Submission> {
+		if (id !== pack.id) throw new BadRequestError("Updated ID is different from ID");
+
+		return this.packService
+			.getById(id) // verify parent pack exists already
+			.then(() => this.repository.update(id, pack));
 	}
 
-	public delete(id: string): Promise<void> {
+	public delete(id: FaithfulPack): Promise<void> {
 		return this.repository.delete(id);
 	}
 }

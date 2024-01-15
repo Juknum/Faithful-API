@@ -12,8 +12,8 @@ export interface Texture extends TextureCreationParam {
 }
 export interface Textures extends Array<Texture> {}
 
-export interface TextureMCMETA {
-	animation: {
+export interface MCMETA {
+	animation?: {
 		interpolate?: boolean;
 		frametime?: number;
 		frames?: Array<number | { index: number; time: number }>;
@@ -23,7 +23,7 @@ export interface TextureMCMETA {
 export interface TextureAll extends Texture {
 	uses: Uses;
 	paths: Paths;
-	mcmeta: TextureMCMETA;
+	mcmeta: MCMETA;
 	contributions: Contributions;
 }
 export interface TexturesAll extends Array<TextureAll> {}
@@ -40,7 +40,7 @@ export interface FirestormTexture extends Texture {
 	paths(): Promise<Paths>;
 	url(pack: AnyPack, version: string): Promise<string>;
 	contributions(): Promise<Contributions>;
-	mcmeta(): Promise<TextureMCMETA>;
+	mcmeta(): Promise<MCMETA>;
 	all(): Promise<TextureAll>;
 }
 
@@ -61,7 +61,7 @@ export interface TextureRepository {
 	searchTexturePropertyByNameOrId(
 		nameOrID: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA>;
+	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA>;
 	searchTextureByNameOrId(
 		nameOrID: string | number,
 		alwaysID: boolean,

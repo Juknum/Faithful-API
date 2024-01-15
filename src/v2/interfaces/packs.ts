@@ -1,4 +1,4 @@
-import { Submission } from "./submissions";
+import { FirstCreationSubmission, Submission } from "./submissions";
 import { Edition } from "./textures";
 
 export const FaithfulPacksArr = [
@@ -24,12 +24,12 @@ export interface PackGitHub {
 export type PackTag = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "progart";
 
 export interface CreationPack {
-	// pack ID not declared yet so it's just a regular string
-	id: string;
+	// you can automatically serialize pack names so it's not needed
+	id?: string;
 	name: string;
 	tags: PackTag[];
 	resolution: number;
-	// you don't need a bedrock repo if you don't have one
+	// not all editions are required
 	github: Partial<Record<Edition, PackGitHub>>;
 }
 
@@ -39,7 +39,11 @@ export interface Pack extends CreationPack {
 }
 
 export interface PackAll extends Pack {
-	submission?: Submission;
+	submission: Submission | {};
+}
+
+export interface CreationPackAll extends CreationPack {
+	submission?: FirstCreationSubmission;
 }
 
 export interface Packs extends Array<Pack> {}
@@ -50,10 +54,11 @@ export interface FirestormPack extends Pack {
 
 export interface PackRepository {
 	getRaw(): Promise<Record<string, Pack>>;
-	getById(id: string): Promise<Pack>;
+	getById(id: AnyPack): Promise<Pack>;
+	getWithSubmission(id: FaithfulPack): Promise<PackAll>;
 	getAllTags(): Promise<PackTag[]>;
 	searchByTag(tag: PackTag): Promise<Packs>;
 	create(packId: string, packToCreate: Pack): Promise<Pack>;
-	update(packId: string, newPack: Pack): Promise<Pack>;
-	delete(packId: string): Promise<void>;
+	update(packId: AnyPack, newPack: Pack): Promise<Pack>;
+	delete(packId: AnyPack): Promise<void>;
 }
