@@ -4,9 +4,11 @@ import {
 	PackTag,
 	Packs,
 	AnyPack,
+	PackSearch,
 	FaithfulPack,
 	CreationPackAll,
 	Contributions,
+	PackAll,
 } from "../interfaces";
 import PackFirestormRepository from "../repository/firestorm/packs.repository";
 
@@ -21,11 +23,11 @@ export class PackService {
 		return this.repository.getById(id);
 	}
 
-	public searchByTag(tag: PackTag): Promise<Packs> {
-		return this.repository.searchByTag(tag);
+	public async search(params: PackSearch): Promise<Packs> {
+		return this.repository.search(params);
 	}
 
-	public getWithSubmission(id: FaithfulPack) {
+	public getWithSubmission(id: FaithfulPack): Promise<PackAll> {
 		return this.repository.getWithSubmission(id);
 	}
 

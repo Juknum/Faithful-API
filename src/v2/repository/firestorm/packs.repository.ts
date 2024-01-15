@@ -1,4 +1,4 @@
-import { ID_FIELD } from "firestorm-db";
+import { ID_FIELD, SearchOption } from "firestorm-db";
 import {
 	PackRepository,
 	Pack,
@@ -10,6 +10,7 @@ import {
 	Submission,
 	FaithfulPack,
 	CreationPackAll,
+	PackSearch,
 } from "~/v2/interfaces";
 import { packs } from "../../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
@@ -34,16 +35,6 @@ export default class PackFirestormRepository implements PackRepository {
 		return { ...pack, submission };
 	}
 
-	searchByTag(tag: PackTag): Promise<Packs> {
-		return packs.search([
-			{
-				field: "tags",
-				criteria: "array-contains",
-				value: tag,
-			},
-		]);
-	}
-
 	getAllTags(): Promise<PackTag[]> {
 		return packs
 			.select({
@@ -62,7 +53,32 @@ export default class PackFirestormRepository implements PackRepository {
 			);
 	}
 
-	async renamePack(oldPack: AnyPack, newPack: string) {
+	search(params: PackSearch): Promise<Packs> {
+		const { tag, name, resolution } = params;
+		const options: SearchOption<Pack>[] = [];
+		if (name)
+			options.push({
+				field: "name",
+				criteria: "==",
+				value: name,
+				ignoreCase: true,
+			});
+		if (tag)
+			options.push({
+				field: "tags",
+				criteria: "array-contains",
+				value: tag,
+			});
+		if (resolution)
+			options.push({
+				field: "resolution",
+				criteria: "==",
+				value: resolution,
+			});
+		return packs.search(options);
+	}
+
+	async renamePack(oldPack: AnyPack, newPack: string): Promise<void> {
 		const data: CreationPackAll = await this.getById(oldPack);
 		data.id = newPack;
 		const submission = await this.submissionRepo.getById(oldPack as FaithfulPack).catch(() => null);

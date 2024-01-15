@@ -46,6 +46,12 @@ export interface CreationPackAll extends CreationPack {
 	submission?: FirstCreationSubmission;
 }
 
+export interface PackSearch {
+	tag?: PackTag;
+	name?: string;
+	resolution?: number;
+}
+
 export interface Packs extends Array<Pack> {}
 
 export interface FirestormPack extends Pack {
@@ -57,7 +63,8 @@ export interface PackRepository {
 	getById(id: AnyPack): Promise<Pack>;
 	getWithSubmission(id: FaithfulPack): Promise<PackAll>;
 	getAllTags(): Promise<PackTag[]>;
-	searchByTag(tag: PackTag): Promise<Packs>;
+	search(params: PackSearch): Promise<Packs>;
+	renamePack(oldPack: AnyPack, newPack: string): Promise<void>;
 	create(packId: string, packToCreate: CreationPackAll): Promise<CreationPackAll>;
 	update(packId: AnyPack, newPack: Pack): Promise<Pack>;
 	delete(packId: AnyPack): Promise<void>;

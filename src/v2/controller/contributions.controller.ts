@@ -94,8 +94,8 @@ export class ContributionsController extends Controller {
 
 	/**
 	 * Get contributions by user and pack
-	 * @param {String} users List of user ids joined by '-'
-	 * @param {String} packs List of resource packs joined by '-'
+	 * @param users List of user ids joined by '-'
+	 * @param packs List of resource packs joined by '-'
 	 */
 	@Get("search/{users}/{packs}")
 	public async searchContributionsFrom(users: string, packs: string): Promise<Contributions> {

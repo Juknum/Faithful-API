@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Delete, Get, Path, Post, Put, Query, Route, Security, Tags } from "tsoa";
 import { PackService } from "../service/pack.service";
 import {
 	AnyPack,
@@ -32,6 +32,21 @@ export class PackController extends Controller {
 	}
 
 	/**
+	 * Search for packs by property (AND logic, needs to match all criteria to be shown)
+	 * @param tag Pack tag to search by
+	 * @param name Display name to search by
+	 * @param resolution Resolution to search by
+	 */
+	@Get("search")
+	public async searchPacks(
+		@Query() tag?: PackTag,
+		@Query() name?: string,
+		@Query() resolution?: number,
+	): Promise<Packs> {
+		return this.service.search({ tag, name, resolution });
+	}
+
+	/**
 	 * Get a pack by ID
 	 * @param pack_id Supported pack
 	 */
@@ -40,6 +55,11 @@ export class PackController extends Controller {
 		return this.service.getById(pack_id);
 	}
 
+	/**
+	 * Change a pack ID and all its contributions if possible
+	 * @param old_pack pack ID to replace
+	 * @param new_pack pack ID to replace with
+	 */
 	@Put("rename/{old_pack}/{new_pack}")
 	public async renamePack(@Path() old_pack: AnyPack, @Path() new_pack: string): Promise<void> {
 		return this.service.renamePack(old_pack, new_pack);
@@ -52,15 +72,6 @@ export class PackController extends Controller {
 	@Get("{pack_id}/all")
 	public async getWithSubmission(@Path() pack_id: FaithfulPack): Promise<PackAll> {
 		return this.service.getWithSubmission(pack_id);
-	}
-
-	/**
-	 * Search for packs by their tags
-	 * @param tag Pack tag to search by
-	 */
-	@Get("search/{tag}")
-	public async getTag(tag: PackTag): Promise<Packs> {
-		return this.service.searchByTag(tag);
 	}
 
 	/**
