@@ -1,13 +1,24 @@
 import axios from "axios";
 import firestorm from "firestorm-db";
-import { Paths, Uses, Contributions, TextureAll, Path, Use } from "~/v2/interfaces";
-import { KnownPacks, FirestormTexture, TextureMCMETA } from "~/v2/interfaces/textures";
+import {
+	Paths,
+	Uses,
+	Contributions,
+	TextureAll,
+	Path,
+	Use,
+	AnyPack,
+	FirestormTexture,
+	MCMETA,
+	PackGitHub,
+	Edition,
+} from "~/v2/interfaces";
 import config from "../config";
 
 import { uses } from "./uses";
-import { contributions } from "..";
-import { settings } from "../settings";
+import { contributions, packs } from "..";
 import { MinecraftSorter } from "../../tools/sorter";
+import { NotFoundError } from "../../tools/ApiError";
 
 config();
 
@@ -29,34 +40,32 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			)
 			.then((arr) => arr.flat());
 
-	el.url = async (pack: KnownPacks, version: string): Promise<string> => {
-		// https://raw.githubusercontent.com/Faithful-Resource-Pack/App/main/resources/transparency.png  // fallback image
-		// https://raw.githubusercontent.com/Faithful-Resource-Pack/Faithful-Java-32x/Jappa-1.18.1/assets/minecraft/textures/block/acacia_door_bottom.png
+	el.url = async (pack: AnyPack, version: string): Promise<string> => {
+		const baseURL = "https://raw.githubusercontent.com";
 
-		let urls: string;
+		let urls: Partial<Record<Edition, PackGitHub>>;
 		let path: Path;
-		let use: Use;
 
-		return settings
+		return packs
 			.readRaw()
-			.then((settingsFile: Record<string, any>) => {
-				urls = settingsFile.repositories.raw[pack];
+			.then((p) => {
+				urls = p[pack].github;
 				return el.paths();
 			})
 			.then((texturePaths: Paths) => {
 				// eq to [0]
 				if (version === "latest") {
 					[path] = texturePaths;
-					[version] = path.versions.sort(MinecraftSorter).reverse();
-				} else [path] = texturePaths.filter((p: Path) => p.versions.includes(version));
+					version = path.versions.sort(MinecraftSorter).at(-1);
+				} else path = texturePaths.find((p: Path) => p.versions.includes(version));
 
 				return el.uses();
 			})
 			.then((_uses: Uses) => {
-				// eq to [0]
-				[use] = _uses.filter((u: Use) => u.id === path.use);
-
-				return `${urls[use.edition]}${version}/${path.name}`;
+				const { edition } = _uses.find((u: Use) => u.id === path.use);
+				if (!urls[edition])
+					throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
+				return `${baseURL}/${urls[edition].org}/${urls[edition].repo}/${version}/${path.name}`;
 			});
 	};
 
@@ -69,7 +78,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			},
 		]);
 
-	el.mcmeta = async (): Promise<TextureMCMETA> =>
+	el.mcmeta = async (): Promise<MCMETA> =>
 		el
 			.paths()
 			.then((ps: Paths) => ps.find((path: Path) => path.mcmeta) || null)
@@ -103,7 +112,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 				output.paths = tPaths;
 				return el.mcmeta();
 			})
-			.then((mcmeta: TextureMCMETA) => {
+			.then((mcmeta: MCMETA) => {
 				output.mcmeta = mcmeta;
 				return el.contributions();
 			})

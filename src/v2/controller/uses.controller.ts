@@ -9,7 +9,6 @@ export class UsesController extends Controller {
 
 	/**
 	 * Get the raw collection of uses
-	 * @returns {Promise<Uses>}
 	 */
 	@Get("raw")
 	public async getRaw(): Promise<Record<string, Use>> {
@@ -19,7 +18,6 @@ export class UsesController extends Controller {
 	/**
 	 * Adds a new texture use to the database for a given texture ID and body
 	 * @param body Texture use to create
-	 * @returns {Promise<Use>} Created use
 	 */
 	@Post("")
 	@Security("discord", ["administrator"])
@@ -31,8 +29,7 @@ export class UsesController extends Controller {
 
 	/**
 	 * Get a path's use by ID
-	 * @param {String} id_or_name - Use ID or Use Name
-	 * @returns {Promise<Use | Uses>}
+	 * @param id_or_name - Use ID or Use Name
 	 */
 	@Get("{id_or_name}/paths")
 	public async getPathUseByIdOrName(@Path() id_or_name: string): Promise<Paths> {
@@ -41,8 +38,7 @@ export class UsesController extends Controller {
 
 	/**
 	 * Get a use by ID
-	 * @param {String} id_or_name Use ID or Use Name
-	 * @returns {Promise<Use | Uses>}
+	 * @param id_or_name Use ID or Use Name
 	 */
 	@Get("{id_or_name}")
 	public async getUseByIdOrName(@Path() id_or_name: string): Promise<Use | Uses> {
@@ -51,8 +47,7 @@ export class UsesController extends Controller {
 
 	/**
 	 * Update texture use by use ID
-	 * @param {String} id Use ID
-	 * @returns {Promise<void>}
+	 * @param id Use ID
 	 */
 	@Put("{id}")
 	@Security("discord", ["administrator"])
@@ -62,8 +57,7 @@ export class UsesController extends Controller {
 
 	/**
 	 * Remove texture use by use ID with its associated paths
-	 * @param {String} id Use ID
-	 * @returns {Promise<void>}
+	 * @param id Use ID
 	 */
 	@Delete("{id}")
 	@Security("discord", ["administrator"])

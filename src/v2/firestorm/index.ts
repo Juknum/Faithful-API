@@ -6,6 +6,8 @@ export * from "./users";
 export * from "./posts/files";
 export * from "./addons";
 export * from "./settings";
+export * from "./packs";
+export * from "./packs/submissions";
 export * from "./modding";
 export * from "./modding/modpacks";
 export * from "./posts";

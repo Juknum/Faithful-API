@@ -15,17 +15,21 @@ import {
 	Tags,
 } from "tsoa";
 import { Request as ExRequest, Response as ExResponse } from "express";
-import { Contributions, Paths, Texture, Textures, Uses } from "../interfaces";
 import {
+	Contributions,
+	Paths,
+	Texture,
+	Textures,
+	Uses,
 	Edition,
-	KnownPacks,
+	AnyPack,
 	TextureCreationParam,
-	TextureMCMETA,
+	MCMETA,
 	TextureProperty,
 	TextureAll,
 	TexturesAll,
 	EntireTextureToCreate,
-} from "../interfaces/textures";
+} from "../interfaces";
 import TextureService from "../service/texture.service";
 import { NotFoundError } from "../tools/ApiError";
 
@@ -51,7 +55,7 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get all the tags from all textures (Block, UI, ...)
+	 * Get all the tags from all textures (Block, UI, etc)
 	 */
 	@Get("tags")
 	public async getTags(): Promise<Array<string>> {
@@ -122,9 +126,9 @@ export class TextureController extends Controller {
 		| Paths
 		| Uses
 		| Contributions
-		| TextureMCMETA
+		| MCMETA
 		| TextureAll
-		| (TextureMCMETA | Textures | Texture | Paths | Uses | Contributions | TexturesAll)[]
+		| (MCMETA | Textures | Texture | Paths | Uses | Contributions | TexturesAll)[]
 	> {
 		if (typeof id_or_name === "string" && id_or_name.includes(",")) {
 			const id_array = id_or_name.split(",");
@@ -152,12 +156,13 @@ export class TextureController extends Controller {
 	@SuccessResponse(302, "Redirect")
 	public async getTextureURL(
 		@Path() id: string,
-		@Path() pack: KnownPacks,
+		@Path() pack: AnyPack,
 		@Path() mc_version: string,
 		@Request() request: ExRequest,
 	): Promise<void> {
 		const response = (<any>request).res as ExResponse;
-		response.redirect(await this.service.getURLById(parseInt(id, 10), pack, mc_version));
+		const url = await this.service.getURLById(parseInt(id, 10), pack, mc_version);
+		response.redirect(url);
 	}
 
 	/**

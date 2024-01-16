@@ -4,6 +4,7 @@
     "singleQuote": false,
     "printWidth": 100,
     "useTabs": true,
+    "endOfLine": "lf",
     "bracketSpacing": true,
     "arrowParens": "always",
     "parser": "typescript"

@@ -1,6 +1,7 @@
 import { EntireUseToCreate, Uses } from "./uses";
 import { Paths } from "./paths";
 import { Contributions } from "./contributions";
+import { AnyPack } from "./packs";
 
 export interface TextureCreationParam {
 	name: string | number; // texture name
@@ -11,8 +12,8 @@ export interface Texture extends TextureCreationParam {
 }
 export interface Textures extends Array<Texture> {}
 
-export interface TextureMCMETA {
-	animation: {
+export interface MCMETA {
+	animation?: {
 		interpolate?: boolean;
 		frametime?: number;
 		frames?: Array<number | { index: number; time: number }>;
@@ -22,36 +23,24 @@ export interface TextureMCMETA {
 export interface TextureAll extends Texture {
 	uses: Uses;
 	paths: Paths;
-	mcmeta: TextureMCMETA;
+	mcmeta: MCMETA;
 	contributions: Contributions;
 }
 export interface TexturesAll extends Array<TextureAll> {}
-
-// 🐰 🤲 OUR PACKS
-export const OurPacksArr = [
-	"faithful_32x",
-	"faithful_64x",
-	"classic_faithful_32x",
-	"classic_faithful_32x_progart",
-	"classic_faithful_64x",
-] as const;
-export const DefaultPacksArr = ["default", "progart"] as const;
-export const KnownPacksArr = [...DefaultPacksArr, ...OurPacksArr] as const;
 
 export interface EntireTextureToCreate extends TextureCreationParam {
 	uses: EntireUseToCreate[];
 }
 
-export type KnownPacks = (typeof KnownPacksArr)[number];
-export type Edition = "java" | "bedrock" | "dungeons";
+export type Edition = "java" | "bedrock";
 export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;
 
 export interface FirestormTexture extends Texture {
 	uses(): Promise<Uses>;
 	paths(): Promise<Paths>;
-	url(pack: KnownPacks, version: string): Promise<string>;
+	url(pack: AnyPack, version: string): Promise<string>;
 	contributions(): Promise<Contributions>;
-	mcmeta(): Promise<TextureMCMETA>;
+	mcmeta(): Promise<MCMETA>;
 	all(): Promise<TextureAll>;
 }
 
@@ -72,12 +61,12 @@ export interface TextureRepository {
 	searchTexturePropertyByNameOrId(
 		nameOrID: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA>;
+	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA>;
 	searchTextureByNameOrId(
 		nameOrID: string | number,
 		alwaysID: boolean,
 	): Promise<Textures | Texture>;
-	getURLById(id: number, pack: KnownPacks, version: string): Promise<string>;
+	getURLById(id: number, pack: AnyPack, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
 	deleteTexture(id: string): Promise<void>;
 }

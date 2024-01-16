@@ -1,7 +1,13 @@
 module.exports = {
 	root: true,
 	extends: ["airbnb-base", "prettier", "plugin:import/recommended", "plugin:import/typescript"],
-	ignorePatterns: ["src/v1/**/*", "dist/**/*", "build/**/*", "public/swagger.json", "public/custom.js"],
+	ignorePatterns: [
+		"src/v1/**/*",
+		"dist/**/*",
+		"build/**/*",
+		"public/swagger.json",
+		"public/custom.js",
+	],
 	parser: "@typescript-eslint/parser",
 	parserOptions: {
 		es2021: true,
@@ -9,7 +15,7 @@ module.exports = {
 	},
 	plugins: ["@typescript-eslint", "prettier", "import"],
 	rules: {
-		"indent": ["error", "tab"],
+		indent: ["error", "tab", { SwitchCase: 1 }],
 		"import/no-cycle": "off",
 		"no-unused-vars": "off",
 		"no-plusplus": "off",
@@ -17,7 +23,7 @@ module.exports = {
 		"no-console": "off",
 		"no-param-reassign": "off",
 		"import/prefer-default-export": "off",
-		"camelcase": "off",
+		camelcase: "off",
 		"class-methods-use-this": "off",
 		"import/extensions": [
 			"error",
@@ -46,11 +52,11 @@ module.exports = {
 			"ignorePackages",
 			{
 				"": "never",
-				"js": "never",
-				"jsx": "never",
-				"ts": "never",
-				"tsx": "never"
-			}
+				js: "never",
+				jsx: "never",
+				ts: "never",
+				tsx: "never",
+			},
 		],
 	},
 };

@@ -1,18 +1,10 @@
 /* eslint-disable no-await-in-loop */
 
 import { textures } from "../firestorm";
-import {
-	Edition,
-	GalleryResult,
-	KnownPacks,
-	Path,
-	TextureMCMETA,
-	Textures,
-	Use,
-	Uses,
-} from "../interfaces";
+import { Edition, GalleryResult, AnyPack, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
-import { SettingsService } from "./settings.service";
+import { NotFoundError } from "../tools/ApiError";
+import { PackService } from "./pack.service";
 import TextureService from "./texture.service";
 import UseService from "./use.service";
 
@@ -23,31 +15,30 @@ export default class GalleryService {
 
 	private readonly textureService = new TextureService();
 
-	private readonly settingsService = new SettingsService();
+	private readonly packService = new PackService();
 
 	async urlsFromTextures(
-		pack: KnownPacks,
+		pack: AnyPack,
 		edition: Edition,
 		mcVersion: string,
 		textureIDs: string[],
 		textureToUse: Record<string, Use>,
 		useToPath: Record<string, Path>,
 	) {
-		return this.settingsService
-			.raw()
-			.then((settings) => settings.repositories.raw[pack])
-			.then((urls) => `${urls[edition]}${mcVersion}/`)
-			.then((url) =>
-				textureIDs
-					.filter((textureID) => textureToUse[textureID])
-					.map((textureID) => textureToUse[textureID])
-					.map((use: Use) => useToPath[use.id].name)
-					.map((str) => url + str),
-			);
+		const baseURL = "https://raw.githubusercontent.com";
+		const packs = await this.packService.getRaw();
+		const urls = packs[pack].github[edition];
+		if (!urls) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
+		const url = `${baseURL}/${urls.org}/${urls.repo}/${mcVersion}/`;
+		return textureIDs
+			.filter((textureID) => textureToUse[textureID])
+			.map((textureID_1) => textureToUse[textureID_1])
+			.map((use: Use) => useToPath[use.id].name)
+			.map((str) => url + str);
 	}
 
 	async search(
-		pack: KnownPacks,
+		pack: AnyPack,
 		edition: Edition,
 		mcVersion: string,
 		tag?: string,
@@ -112,7 +103,7 @@ export default class GalleryService {
 		);
 
 		// TODO: optimize this to take less computation time
-		const animations: Record<string, TextureMCMETA> = {};
+		const animations: Record<string, MCMETA> = {};
 		// eslint-disable-next-line no-restricted-syntax
 		for (const useId of Object.keys(useToPath)) {
 			if (useToPath[useId] && useToPath[useId].mcmeta === true) {

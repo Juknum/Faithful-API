@@ -80,7 +80,7 @@ export default class UserFirestormRepository implements UserRepository {
 			});
 	}
 
-	getProfileOrCreate(id: string): User | PromiseLike<User> {
+	getProfileOrCreate(id: string): Promise<User> {
 		return users
 			.get(id)
 			.then((u) => __transformUser(u))

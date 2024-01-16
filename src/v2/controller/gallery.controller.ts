@@ -3,9 +3,9 @@ import {
 	AcceptedRes,
 	GalleryModalResult,
 	GalleryResult,
-	KnownPacksArr,
+	AnyPackArr,
 	TextureAll,
-	KnownPacks,
+	AnyPack,
 	Texture,
 	Edition,
 } from "../interfaces";
@@ -22,7 +22,7 @@ export class GalleryController extends Controller {
 
 	@Get("{pack}/{edition}/{mc_version}/{tag}/")
 	public async search(
-		@Path() pack: AcceptedRes | KnownPacks,
+		@Path() pack: AcceptedRes | AnyPack,
 		@Path() edition: Edition,
 		@Path() mc_version: string,
 		@Path() tag: string,
@@ -35,7 +35,7 @@ export class GalleryController extends Controller {
 		};
 
 		// legacy translation layer
-		const packID: KnownPacks = Object.keys(RES_TO_PACKS).includes(pack) ? RES_TO_PACKS[pack] : pack;
+		const packID: AnyPack = Object.keys(RES_TO_PACKS).includes(pack) ? RES_TO_PACKS[pack] : pack;
 
 		return cache.handle(`gallery-${packID}-${edition}-${mc_version}-${tag}-${search ?? ""}`, () =>
 			this.service.search(
@@ -55,16 +55,16 @@ export class GalleryController extends Controller {
 	 */
 	@Get("modal/{id}/{mc_version}")
 	public async modal(@Path() id: number, @Path() mc_version: string): Promise<GalleryModalResult> {
-		const urls: Record<KnownPacks, string> = (
+		const urls: Record<AnyPack, string> = (
 			await Promise.allSettled(
-				KnownPacksArr.map((p) => this.textureService.getURLById(id, p, mc_version)),
+				AnyPackArr.map((p) => this.textureService.getURLById(id, p, mc_version)),
 			)
 		)
-			.map((e, i) => [KnownPacksArr[i], e])
-			.filter((p: [KnownPacks, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
+			.map((e, i) => [AnyPackArr[i], e])
+			.filter((p: [AnyPack, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
 			.reduce(
-				(acc, p: [KnownPacks, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
-				{} as Record<KnownPacks, string>,
+				(acc, p: [AnyPack, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
+				{} as Record<AnyPack, string>,
 			);
 
 		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;

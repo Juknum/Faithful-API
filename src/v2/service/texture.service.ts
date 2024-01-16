@@ -1,10 +1,9 @@
-import { Contributions, InputPath, Paths, Texture, Textures, Uses } from "../interfaces";
+import { AnyPack, Contributions, Paths, Texture, Textures, InputPath, Uses } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
-	KnownPacks,
 	TextureCreationParam,
-	TextureMCMETA,
+	MCMETA,
 	TextureProperty,
 } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
@@ -71,7 +70,7 @@ export default class TextureService {
 	getPropertyByNameOrId(
 		nameOrID: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
+	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA> {
 		return this.textureRepo
 			.searchTexturePropertyByNameOrId(nameOrID, property)
 			.catch(() => Promise.reject(new Error("Service failed to make request")));
@@ -81,7 +80,7 @@ export default class TextureService {
 		return this.textureRepo.searchTextureByNameOrId(nameOrID);
 	}
 
-	getURLById(id: number, pack: KnownPacks, version: string): Promise<string> {
+	getURLById(id: number, pack: AnyPack, version: string): Promise<string> {
 		return this.textureRepo.getURLById(id, pack, version);
 	}
 
@@ -127,7 +126,7 @@ export default class TextureService {
 		return createdTexture;
 	}
 
-	async createEntireTextures(body: EntireTextureToCreate[]): Promise<Textures> {
+	createEntireTextures(body: EntireTextureToCreate[]): Promise<Textures> {
 		// create textures
 		return Promise.all(body.map((t) => this.createEntireTexture(t)));
 	}

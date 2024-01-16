@@ -39,7 +39,7 @@ export class PathsController extends Controller {
 
 	/**
 	 * Get path's use by internal ID (e.g. 6096bcd96fb8b)
-	 * @param {String} id Internal ID
+	 * @param id Internal ID
 	 */
 	@Get("{id}")
 	public async getPathById(id: string): Promise<Path> {
@@ -60,6 +60,11 @@ export class PathsController extends Controller {
 		});
 	}
 
+	/**
+	 * Change one version to a new version (e.g. 1.17 -> 1.17.1)
+	 * @param old_version version to replace
+	 * @param new_version version to replace with
+	 */
 	@Put("versions/modify/{old_version}/{new_version}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
@@ -70,6 +75,11 @@ export class PathsController extends Controller {
 		return this.service.modifyVersion(old_version, new_version);
 	}
 
+	/**
+	 * Add a version to existing paths
+	 * @param body Version name, edition it belongs to, and reference version if needed
+	 * @returns
+	 */
 	@Post("versions/add")
 	@Security("bot")
 	@Security("discord", ["administrator"])
@@ -79,7 +89,7 @@ export class PathsController extends Controller {
 
 	/**
 	 * Delete use by internal id (e.g. 6096bcd96fb8b)
-	 * @param {String} id Internal ID
+	 * @param id Internal ID
 	 */
 	@Delete("{id}")
 	@Security("bot")

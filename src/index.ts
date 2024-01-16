@@ -69,8 +69,8 @@ const options: UpdatedSwaggerUiOptions = {
 };
 
 app.listen(PORT, () => {
-	console.log(`DB is located at ${process.env.FIRESTORM_URL}`);
-	console.log(`Server is running at http://localhost:${PORT}`);
+	console.log(`Using database at ${process.env.FIRESTORM_URL}`);
+	console.log(`API started at http://localhost:${PORT}`);
 	if (NO_CACHE) console.log(`Started with no cache`);
 });
 

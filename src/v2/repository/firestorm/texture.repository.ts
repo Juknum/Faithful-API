@@ -1,14 +1,10 @@
 import firestorm, { ID_FIELD } from "firestorm-db";
 import {
 	Edition,
-	KnownPacks,
+	AnyPack,
 	TextureCreationParam,
-	TextureMCMETA,
+	MCMETA,
 	TextureProperty,
-} from "~/v2/interfaces/textures";
-import { NotFoundError } from "../../tools/ApiError";
-import { textures, paths, uses, contributions } from "../../firestorm";
-import {
 	Contributions,
 	Paths,
 	Texture,
@@ -17,7 +13,9 @@ import {
 	TextureRepository,
 	Path,
 	Use,
-} from "../../interfaces";
+} from "~/v2/interfaces";
+import { NotFoundError } from "../../tools/ApiError";
+import { textures, paths, uses, contributions } from "../../firestorm";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(
@@ -79,22 +77,21 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.readRaw();
 	}
 
-	public getURLById(id: number, pack: KnownPacks, version: string) {
+	public getURLById(id: number, pack: AnyPack, version: string) {
 		return textures.get(id).then((texture) => texture.url(pack, version));
 	}
 
 	// AlwaysID is a typescript hack to make sure the correct types are always returned
-	public async searchTextureByNameOrId<AlwaysID extends boolean>(
+	public searchTextureByNameOrId<AlwaysID extends boolean>(
 		nameOrID: string | number,
 	): Promise<AlwaysID extends true ? Texture : Texture | Textures> {
-		const res = (await this.searchTexturePropertyByNameOrId(nameOrID, null)) as Texture | Textures;
-		return res as any;
+		return this.searchTexturePropertyByNameOrId(nameOrID, null) as any;
 	}
 
-	public async searchTexturePropertyByNameOrId(
+	public searchTexturePropertyByNameOrId(
 		nameOrID: string | number,
 		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | TextureMCMETA> {
+	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA> {
 		const intID: number = parseInt(nameOrID as string, 10);
 
 		if (Number.isNaN(intID) || intID.toString() !== nameOrID.toString()) {
@@ -238,11 +235,8 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return Promise.all(promises).then(() => {});
 	}
 
-	public async changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
-		const unmapped = {
-			id,
-			...body,
-		};
+	public changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
+		const unmapped = { id, ...body };
 
 		return textures.set(id, unmapped).then(() => this.searchTextureByNameOrId<true>(id));
 	}
