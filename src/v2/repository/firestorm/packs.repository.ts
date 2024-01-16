@@ -76,23 +76,25 @@ export default class PackFirestormRepository implements PackRepository {
 				criteria: "==",
 				value: resolution,
 			});
-		const prom: Promise<FirestormPack[]> = options.length
+		const searchPromise: Promise<FirestormPack[]> = options.length
 			? packs.search(options)
 			: packs.readRaw().then(Object.values);
 
-		return prom.then(async (packs) => {
-			if (!type || type === "all") return packs;
-			const out: Packs = [];
-			for (const pack of packs) {
-				try {
-					await pack.submission();
-				} catch {
-					out.push(pack);
-				}
-			}
+		return searchPromise.then(async (searched) => {
+			if (!type || type === "all") return searched;
+			const out = (
+				await Promise.all(
+					searched.map((pack) =>
+						pack
+							.submission()
+							.then(() => pack)
+							.catch(() => undefined),
+					),
+				)
+			).filter((v) => v !== undefined);
 
-			if (type === "default") return out;
-			return packs.filter((p) => !out.includes(p));
+			if (type === "submission") return out;
+			return searched.filter((p) => !out.includes(p));
 		});
 	}
 
