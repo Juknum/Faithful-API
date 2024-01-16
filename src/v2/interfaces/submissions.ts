@@ -32,8 +32,8 @@ export interface FirestormSubmission extends Submission {}
 
 export interface SubmissionRepository {
 	getRaw(): Promise<Record<string, Submission>>;
+	getEveryPack(): Promise<Record<AnyPack, PackAll>>;
 	getById(id: FaithfulPack): Promise<Submission>;
-	getEveryPack(): Promise<PackAll>;
 	create(packId: AnyPack, packToCreate: Submission): Promise<Submission>;
 	update(packId: FaithfulPack, newPack: Submission): Promise<Submission>;
 	delete(packId: FaithfulPack): Promise<void>;

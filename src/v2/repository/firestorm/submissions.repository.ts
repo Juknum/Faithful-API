@@ -5,6 +5,7 @@ import {
 	CreationSubmission,
 	FaithfulPack,
 	PackAll,
+	AnyPack,
 } from "~/v2/interfaces";
 import { submissions } from "../../firestorm/packs/submissions";
 import { packs } from "../../firestorm/packs";
@@ -18,13 +19,15 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 		return submissions.get(id);
 	}
 
-	async getEveryPack(): Promise<PackAll> {
+	async getEveryPack(): Promise<Record<AnyPack, PackAll>> {
 		const submissionPacks = await submissions.readRaw().then((packs) => Object.values(packs));
 		const fullPackPromises = submissionPacks.map(async (p) => ({
 			...(await packs.get(p.id)),
 			submission: p,
 		}));
-		return Promise.all(fullPackPromises) as any;
+		return Promise.all(fullPackPromises).then((p) =>
+			p.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {}),
+		) as any;
 	}
 
 	create(packId: string, packToCreate: CreationSubmission): Promise<Submission> {

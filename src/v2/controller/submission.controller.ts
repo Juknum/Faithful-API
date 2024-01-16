@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
 import { SubmissionService } from "../service/submission.service";
-import { CreationSubmission, FaithfulPack, PackAll, Submission } from "../interfaces";
+import { AnyPack, CreationSubmission, FaithfulPack, PackAll, Submission } from "../interfaces";
 
 @Route("submissions")
 @Tags("Submissions")
@@ -16,7 +16,7 @@ export class SubmissionController extends Controller {
 	}
 
 	@Get("all")
-	public async getEveryPack(): Promise<PackAll> {
+	public async getEveryPack(): Promise<Record<AnyPack, PackAll>> {
 		return this.service.getEveryPack();
 	}
 

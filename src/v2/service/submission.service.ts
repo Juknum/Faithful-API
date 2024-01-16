@@ -12,7 +12,7 @@ export class SubmissionService {
 		return this.repository.getRaw();
 	}
 
-	public getEveryPack(): Promise<PackAll> {
+	public getEveryPack(): Promise<Record<AnyPack, PackAll>> {
 		return this.repository.getEveryPack();
 	}
 
