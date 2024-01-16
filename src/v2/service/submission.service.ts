@@ -1,4 +1,4 @@
-import { Submission, CreationSubmission, FaithfulPack, AnyPack } from "../interfaces";
+import { Submission, CreationSubmission, FaithfulPack, AnyPack, PackAll } from "../interfaces";
 import SubmissionFirestormRepository from "../repository/firestorm/submissions.repository";
 import { BadRequestError } from "../tools/ApiError";
 import { PackService } from "./pack.service";
@@ -10,6 +10,10 @@ export class SubmissionService {
 
 	public getRaw(): Promise<Record<string, Submission>> {
 		return this.repository.getRaw();
+	}
+
+	public getEveryPack(): Promise<PackAll> {
+		return this.repository.getEveryPack();
 	}
 
 	public getById(id: FaithfulPack): Promise<Submission> {
