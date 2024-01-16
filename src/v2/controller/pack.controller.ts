@@ -7,6 +7,7 @@ import {
 	Pack,
 	PackAll,
 	PackTag,
+	PackType,
 	Packs,
 } from "../interfaces";
 
@@ -42,8 +43,9 @@ export class PackController extends Controller {
 		@Query() tag?: PackTag,
 		@Query() name?: string,
 		@Query() resolution?: number,
+		@Query() type?: PackType,
 	): Promise<Packs> {
-		return this.service.search({ tag, name, resolution });
+		return this.service.search({ tag, name, resolution, type });
 	}
 
 	/**

@@ -23,6 +23,15 @@ export interface PackGitHub {
 
 export type PackTag = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "progart";
 
+export type PackType = "submission" | "default" | "all";
+
+export interface PackSearch {
+	tag?: PackTag;
+	name?: string;
+	resolution?: number;
+	type?: PackType;
+}
+
 export interface CreationPack {
 	// either can be specified manually or serialized automatically
 	id?: string;
@@ -44,12 +53,6 @@ export interface PackAll extends Pack {
 
 export interface CreationPackAll extends CreationPack {
 	submission?: FirstCreationSubmission;
-}
-
-export interface PackSearch {
-	tag?: PackTag;
-	name?: string;
-	resolution?: number;
 }
 
 export interface Packs extends Array<Pack> {}

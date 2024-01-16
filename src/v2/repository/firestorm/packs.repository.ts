@@ -11,6 +11,7 @@ import {
 	FaithfulPack,
 	CreationPackAll,
 	PackSearch,
+	FirestormPack,
 } from "~/v2/interfaces";
 import { packs } from "../../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
@@ -54,7 +55,7 @@ export default class PackFirestormRepository implements PackRepository {
 	}
 
 	search(params: PackSearch): Promise<Packs> {
-		const { tag, name, resolution } = params;
+		const { tag, name, resolution, type } = params;
 		const options: SearchOption<Pack>[] = [];
 		if (name)
 			options.push({
@@ -75,7 +76,24 @@ export default class PackFirestormRepository implements PackRepository {
 				criteria: "==",
 				value: resolution,
 			});
-		return packs.search(options);
+		const prom: Promise<FirestormPack[]> = options.length
+			? packs.search(options)
+			: packs.readRaw().then(Object.values);
+
+		return prom.then(async (packs) => {
+			if (!type || type === "all") return packs;
+			const out: Packs = [];
+			for (const pack of packs) {
+				try {
+					await pack.submission();
+				} catch {
+					out.push(pack);
+				}
+			}
+
+			if (type === "default") return out;
+			return packs.filter((p) => !out.includes(p));
+		});
 	}
 
 	async renamePack(oldPack: AnyPack, newPack: string): Promise<void> {
