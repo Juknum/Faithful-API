@@ -37,6 +37,7 @@ export interface CreationPack {
 	id?: string;
 	name: string;
 	tags: PackTag[];
+	logo: string;
 	resolution: number;
 	// not all editions are required
 	github: Partial<Record<Edition, PackGitHub>>;
