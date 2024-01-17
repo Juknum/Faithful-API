@@ -13,7 +13,7 @@ import {
 	PackSearch,
 	FirestormPack,
 } from "~/v2/interfaces";
-import { packs } from "../../firestorm";
+import { contributions, packs } from "../../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
 
 export default class PackFirestormRepository implements PackRepository {
@@ -130,6 +130,18 @@ export default class PackFirestormRepository implements PackRepository {
 	delete(packId: AnyPack): Promise<void> {
 		// try removing submission data if exists too
 		this.submissionRepo.delete(packId as FaithfulPack).catch(() => {});
-		return packs.remove(packId).then(() => {});
+
+		// remove associated contributions
+		return contributions
+			.search([
+				{
+					field: "pack",
+					criteria: "==",
+					value: packId,
+				},
+			])
+			.then((contribs) => contributions.removeBulk(contribs.map((c) => c.id)))
+			.then(() => packs.remove(packId))
+			.then(() => {});
 	}
 }
