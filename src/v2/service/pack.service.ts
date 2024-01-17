@@ -5,7 +5,6 @@ import {
 	Packs,
 	AnyPack,
 	PackSearch,
-	FaithfulPack,
 	CreationPackAll,
 	Contributions,
 	PackAll,
@@ -27,7 +26,7 @@ export class PackService {
 		return this.repository.search(params);
 	}
 
-	public getWithSubmission(id: FaithfulPack): Promise<PackAll> {
+	public getWithSubmission(id: AnyPack): Promise<PackAll> {
 		return this.repository.getWithSubmission(id);
 	}
 

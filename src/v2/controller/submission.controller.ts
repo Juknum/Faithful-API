@@ -41,7 +41,7 @@ export class SubmissionController extends Controller {
 
 	/**
 	 * Edit an existing submission pack
-	 * @param id pack ID
+	 * @param id Pack ID to edit
 	 * @param body Pack information
 	 */
 	@Put("{id}")
@@ -52,8 +52,8 @@ export class SubmissionController extends Controller {
 	}
 
 	/**
-	 * Deletes the entire pack
-	 * @param id pack ID
+	 * Deletes the submission pack entry (effectively converts a submission pack to a regular pack)
+	 * @param id Pack ID
 	 */
 	@Delete("{id}")
 	@Security("bot")

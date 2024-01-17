@@ -20,7 +20,7 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 	}
 
 	async getEveryPack(): Promise<Record<AnyPack, PackAll>> {
-		const submissionPacks = await submissions.readRaw().then((packs) => Object.values(packs));
+		const submissionPacks = await submissions.readRaw().then(Object.values);
 		const fullPackPromises = submissionPacks.map(async (p) => ({
 			...(await packs.get(p.id)),
 			submission: p,

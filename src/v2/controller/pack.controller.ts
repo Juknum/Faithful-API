@@ -1,15 +1,6 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Query, Route, Security, Tags } from "tsoa";
 import { PackService } from "../service/pack.service";
-import {
-	AnyPack,
-	CreationPackAll,
-	FaithfulPack,
-	Pack,
-	PackAll,
-	PackTag,
-	PackType,
-	Packs,
-} from "../interfaces";
+import { AnyPack, CreationPackAll, Pack, PackAll, PackTag, PackType, Packs } from "../interfaces";
 
 @Route("packs")
 @Tags("Packs")
@@ -59,27 +50,27 @@ export class PackController extends Controller {
 
 	/**
 	 * Change a pack ID and all its contributions if possible
-	 * @param old_pack pack ID to replace
-	 * @param new_pack pack ID to replace with
+	 * @param old_pack Pack ID to replace
+	 * @param new_pack Pack ID to replace with
 	 */
 	@Put("rename/{old_pack}/{new_pack}")
- @Security("bot")
- @Security("discord", ["administrator"])
+	@Security("bot")
+	@Security("discord", ["administrator"])
 	public async renamePack(@Path() old_pack: AnyPack, @Path() new_pack: string): Promise<void> {
 		return this.service.renamePack(old_pack, new_pack);
 	}
 
 	/**
 	 * Get a pack and its associated submission information by ID
-	 * @param pack_id Pack with submission support
+	 * @param pack_id Pack ID
 	 */
 	@Get("{pack_id}/all")
-	public async getWithSubmission(@Path() pack_id: FaithfulPack): Promise<PackAll> {
+	public async getWithSubmission(@Path() pack_id: AnyPack): Promise<PackAll> {
 		return this.service.getWithSubmission(pack_id);
 	}
 
 	/**
-	 * Create a pack or pack and submission at the same time
+	 * Create a pack, or a pack and submission at the same time
 	 * @param body Pack (or pack and submission) to add
 	 */
 	@Post("")
@@ -91,7 +82,7 @@ export class PackController extends Controller {
 
 	/**
 	 * Edit an existing pack
-	 * @param id pack ID
+	 * @param id Pack ID
 	 * @param body Pack information
 	 */
 	@Put("{id}")
@@ -102,8 +93,8 @@ export class PackController extends Controller {
 	}
 
 	/**
-	 * Deletes the entire pack
-	 * @param id pack ID
+	 * Deletes the entire pack, including associated submission information
+	 * @param id Pack ID
 	 */
 	@Delete("{id}")
 	@Security("bot")

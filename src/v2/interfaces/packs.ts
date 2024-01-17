@@ -64,7 +64,7 @@ export interface FirestormPack extends Pack {
 export interface PackRepository {
 	getRaw(): Promise<Record<string, Pack>>;
 	getById(id: AnyPack): Promise<Pack>;
-	getWithSubmission(id: FaithfulPack): Promise<PackAll>;
+	getWithSubmission(id: AnyPack): Promise<PackAll>;
 	getAllTags(): Promise<PackTag[]>;
 	search(params: PackSearch): Promise<Packs>;
 	renamePack(oldPack: AnyPack, newPack: string): Promise<void>;

@@ -27,9 +27,9 @@ export default class PackFirestormRepository implements PackRepository {
 		return packs.get(id);
 	}
 
-	async getWithSubmission(id: FaithfulPack): Promise<PackAll> {
+	async getWithSubmission(id: AnyPack): Promise<PackAll> {
 		const pack = await packs.get(id);
-		const submission = await this.submissionRepo.getById(id).catch(() => null);
+		const submission = await this.submissionRepo.getById(id as FaithfulPack).catch(() => null);
 
 		// faithful pack with no submission information found
 		if (!submission) return { ...pack, submission: {} };
