@@ -91,7 +91,7 @@ export default class ContributionService {
 			});
 	}
 
-	getPacks(): FaithfulPack[] {
+	getPacks(): Promise<FaithfulPack[]> {
 		return this.contributionRepo.getPacks();
 	}
 

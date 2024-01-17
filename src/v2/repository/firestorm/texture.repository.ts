@@ -180,7 +180,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 			.select({
 				fields: ["tags"],
 			})
-			.then((res: any) =>
+			.then((res: Textures) =>
 				(
 					Object.values(res).reduce(
 						(acc: Array<string>, cur: any) => [...acc, cur.tags],

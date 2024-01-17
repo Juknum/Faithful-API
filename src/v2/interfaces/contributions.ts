@@ -59,7 +59,7 @@ export interface ContributionsRepository {
 	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution>;
 	getByDateRange(begin: string, ends: string): Promise<Contributions>;
 	getAuthors(): Promise<ContributionsAuthors>;
-	getPacks(): FaithfulPack[];
+	getPacks(): Promise<FaithfulPack[]>;
 	searchByIdAndPacks(
 		textureIDs: Array<string>,
 		packs: Array<string>,
