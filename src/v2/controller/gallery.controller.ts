@@ -3,15 +3,15 @@ import {
 	AcceptedRes,
 	GalleryModalResult,
 	GalleryResult,
-	AnyPackArr,
 	TextureAll,
-	AnyPack,
+	PackID,
 	Texture,
 	Edition,
 } from "../interfaces";
 import GalleryService from "../service/gallery.service";
 import TextureService from "../service/texture.service";
 import cache from "../tools/cache";
+import { PackService } from "../service/pack.service";
 
 @Route("gallery")
 @Tags("Gallery")
@@ -22,7 +22,7 @@ export class GalleryController extends Controller {
 
 	@Get("{pack}/{edition}/{mc_version}/{tag}/")
 	public async search(
-		@Path() pack: AcceptedRes | AnyPack,
+		@Path() pack: AcceptedRes | PackID,
 		@Path() edition: Edition,
 		@Path() mc_version: string,
 		@Path() tag: string,
@@ -35,7 +35,7 @@ export class GalleryController extends Controller {
 		};
 
 		// legacy translation layer
-		const packID: AnyPack = Object.keys(RES_TO_PACKS).includes(pack) ? RES_TO_PACKS[pack] : pack;
+		const packID: PackID = Object.keys(RES_TO_PACKS).includes(pack) ? RES_TO_PACKS[pack] : pack;
 
 		return cache.handle(`gallery-${packID}-${edition}-${mc_version}-${tag}-${search ?? ""}`, () =>
 			this.service.search(
@@ -55,16 +55,17 @@ export class GalleryController extends Controller {
 	 */
 	@Get("modal/{id}/{mc_version}")
 	public async modal(@Path() id: number, @Path() mc_version: string): Promise<GalleryModalResult> {
-		const urls: Record<AnyPack, string> = (
+		const packIDs = Object.keys(await new PackService().getRaw());
+		const urls: Record<PackID, string> = (
 			await Promise.allSettled(
-				AnyPackArr.map((p) => this.textureService.getURLById(id, p, mc_version)),
+				packIDs.map((p) => this.textureService.getURLById(id, p, mc_version)),
 			)
 		)
-			.map((e, i) => [AnyPackArr[i], e])
-			.filter((p: [AnyPack, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
+			.map((e, i) => [packIDs[i], e])
+			.filter((p: [PackID, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
 			.reduce(
-				(acc, p: [AnyPack, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
-				{} as Record<AnyPack, string>,
+				(acc, p: [PackID, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
+				{} as Record<PackID, string>,
 			);
 
 		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;

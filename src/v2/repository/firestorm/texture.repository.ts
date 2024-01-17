@@ -1,7 +1,7 @@
 import firestorm, { ID_FIELD } from "firestorm-db";
 import {
 	Edition,
-	AnyPack,
+	PackID,
 	TextureCreationParam,
 	MCMETA,
 	TextureProperty,
@@ -77,7 +77,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.readRaw();
 	}
 
-	public getURLById(id: number, pack: AnyPack, version: string) {
+	public getURLById(id: number, pack: PackID, version: string) {
 		return textures.get(id).then((texture) => texture.url(pack, version));
 	}
 

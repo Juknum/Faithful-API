@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 
 import { textures } from "../firestorm";
-import { Edition, GalleryResult, AnyPack, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
+import { Edition, GalleryResult, PackID, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
 import { NotFoundError } from "../tools/ApiError";
 import { PackService } from "./pack.service";
@@ -18,7 +18,7 @@ export default class GalleryService {
 	private readonly packService = new PackService();
 
 	async urlsFromTextures(
-		pack: AnyPack,
+		pack: PackID,
 		edition: Edition,
 		mcVersion: string,
 		textureIDs: string[],
@@ -38,7 +38,7 @@ export default class GalleryService {
 	}
 
 	async search(
-		pack: AnyPack,
+		pack: PackID,
 		edition: Edition,
 		mcVersion: string,
 		tag?: string,

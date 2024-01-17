@@ -1,4 +1,4 @@
-import { AnyPack, Contributions, Paths, Texture, Textures, InputPath, Uses } from "../interfaces";
+import { PackID, Contributions, Paths, Texture, Textures, InputPath, Uses } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
@@ -80,7 +80,7 @@ export default class TextureService {
 		return this.textureRepo.searchTextureByNameOrId(nameOrID);
 	}
 
-	getURLById(id: number, pack: AnyPack, version: string): Promise<string> {
+	getURLById(id: number, pack: PackID, version: string): Promise<string> {
 		return this.textureRepo.getURLById(id, pack, version);
 	}
 

@@ -1,4 +1,4 @@
-import { AnyPack, FaithfulPack, PackAll } from "./packs";
+import { PackID, PackAll } from "./packs";
 
 export interface SubmissionChannels {
 	submit: string;
@@ -9,7 +9,7 @@ export interface SubmissionChannels {
 export interface FirstCreationSubmission {
 	// when created at the same time as pack, id isn't required (duplicated otherwise)
 	id?: string;
-	reference: AnyPack | null;
+	reference: PackID | null;
 	channels: SubmissionChannels;
 	council_enabled: boolean;
 	time_to_results: number;
@@ -19,11 +19,11 @@ export interface FirstCreationSubmission {
 
 export interface CreationSubmission extends FirstCreationSubmission {
 	// adding submission pack separately needs parent pack
-	id: AnyPack;
+	id: PackID;
 }
 
 export interface Submission extends CreationSubmission {
-	id: FaithfulPack;
+	id: PackID;
 }
 
 export interface Submissions extends Array<Submission> {}
@@ -32,9 +32,9 @@ export interface FirestormSubmission extends Submission {}
 
 export interface SubmissionRepository {
 	getRaw(): Promise<Record<string, Submission>>;
-	getEveryPack(): Promise<Record<AnyPack, PackAll>>;
-	getById(id: FaithfulPack): Promise<Submission>;
-	create(packId: AnyPack, packToCreate: Submission): Promise<Submission>;
-	update(packId: FaithfulPack, newPack: Submission): Promise<Submission>;
-	delete(packId: FaithfulPack): Promise<void>;
+	getEveryPack(): Promise<Record<PackID, PackAll>>;
+	getById(id: PackID): Promise<Submission>;
+	create(packId: PackID, packToCreate: Submission): Promise<Submission>;
+	update(packId: PackID, newPack: Submission): Promise<Submission>;
+	delete(packId: PackID): Promise<void>;
 }

@@ -7,7 +7,7 @@ import {
 	TextureAll,
 	Path,
 	Use,
-	AnyPack,
+	PackID,
 	FirestormTexture,
 	MCMETA,
 	PackGitHub,
@@ -40,7 +40,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			)
 			.then((arr) => arr.flat());
 
-	el.url = async (pack: AnyPack, version: string): Promise<string> => {
+	el.url = async (pack: PackID, version: string): Promise<string> => {
 		const baseURL = "https://raw.githubusercontent.com";
 
 		let urls: Partial<Record<Edition, PackGitHub>>;

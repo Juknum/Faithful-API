@@ -1,9 +1,8 @@
 import { contributions } from "../firestorm";
 import {
 	Pack,
-	PackTag,
 	Packs,
-	AnyPack,
+	PackID,
 	PackSearch,
 	CreationPackAll,
 	Contributions,
@@ -18,7 +17,7 @@ export class PackService {
 		return this.repository.getRaw();
 	}
 
-	public getById(id: AnyPack): Promise<Pack> {
+	public getById(id: PackID): Promise<Pack> {
 		return this.repository.getById(id);
 	}
 
@@ -26,15 +25,15 @@ export class PackService {
 		return this.repository.search(params);
 	}
 
-	public getWithSubmission(id: AnyPack): Promise<PackAll> {
+	public getWithSubmission(id: PackID): Promise<PackAll> {
 		return this.repository.getWithSubmission(id);
 	}
 
-	public getAllTags(): Promise<PackTag[]> {
+	public getAllTags(): Promise<string[]> {
 		return this.repository.getAllTags();
 	}
 
-	public renamePack(oldPack: AnyPack, newPack: string): Promise<void> {
+	public renamePack(oldPack: PackID, newPack: string): Promise<void> {
 		this.repository.renamePack(oldPack, newPack);
 
 		return contributions
@@ -69,11 +68,11 @@ export class PackService {
 		return this.repository.create(body.id, body);
 	}
 
-	public update(id: AnyPack, pack: Pack): Promise<Pack> {
+	public update(id: PackID, pack: Pack): Promise<Pack> {
 		return this.repository.update(id, pack);
 	}
 
-	public delete(id: AnyPack): Promise<void> {
+	public delete(id: PackID): Promise<void> {
 		return this.repository.delete(id);
 	}
 }

@@ -1,9 +1,9 @@
-import { FaithfulPack } from "./packs";
+import { PackID } from "./packs";
 
 export interface ContributionCreationParams {
 	date: number; // unix timestamp
 	resolution: 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096; // texture resolution
-	pack: FaithfulPack; // resource pack name
+	pack: PackID; // resource pack name
 	authors: Array<string>; // discords users ids
 	texture: string; // texture id
 }
@@ -27,9 +27,9 @@ export interface DayData {
 
 export type DayRecord = Record<number, DayData>;
 
-export type PackRecord = Record<FaithfulPack, DayRecord>;
-export type PackPercentile = Record<FaithfulPack, number>;
-export type PackData = Record<FaithfulPack, DayData[]>;
+export type PackRecord = Record<PackID, DayRecord>;
+export type PackPercentile = Record<PackID, number>;
+export type PackData = Record<PackID, DayData[]>;
 
 export interface ContributionStats {
 	total_contributions: number; // number of total contributions
@@ -59,7 +59,7 @@ export interface ContributionsRepository {
 	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution>;
 	getByDateRange(begin: string, ends: string): Promise<Contributions>;
 	getAuthors(): Promise<ContributionsAuthors>;
-	getPacks(): Promise<FaithfulPack[]>;
+	getPacks(): Promise<PackID[]>;
 	searchByIdAndPacks(
 		textureIDs: Array<string>,
 		packs: Array<string>,

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Query, Route, Security, Tags } from "tsoa";
 import { PackService } from "../service/pack.service";
-import { AnyPack, CreationPackAll, Pack, PackAll, PackTag, PackType, Packs } from "../interfaces";
+import { PackID, CreationPackAll, Pack, PackAll, PackType, Packs } from "../interfaces";
 
 @Route("packs")
 @Tags("Packs")
@@ -19,7 +19,7 @@ export class PackController extends Controller {
 	 * Get all the tags from all packs (faithful, progart, etc)
 	 */
 	@Get("tags")
-	public async getAllTags(): Promise<PackTag[]> {
+	public async getAllTags(): Promise<string[]> {
 		return this.service.getAllTags();
 	}
 
@@ -31,7 +31,7 @@ export class PackController extends Controller {
 	 */
 	@Get("search")
 	public async searchPacks(
-		@Query() tag?: PackTag,
+		@Query() tag?: string,
 		@Query() name?: string,
 		@Query() resolution?: number,
 		@Query() type?: PackType,
@@ -44,7 +44,7 @@ export class PackController extends Controller {
 	 * @param pack_id Supported pack
 	 */
 	@Get("{pack_id}")
-	public async getPack(@Path() pack_id: AnyPack): Promise<Pack> {
+	public async getPack(@Path() pack_id: PackID): Promise<Pack> {
 		return this.service.getById(pack_id);
 	}
 
@@ -56,7 +56,7 @@ export class PackController extends Controller {
 	@Put("rename/{old_pack}/{new_pack}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async renamePack(@Path() old_pack: AnyPack, @Path() new_pack: string): Promise<void> {
+	public async renamePack(@Path() old_pack: PackID, @Path() new_pack: string): Promise<void> {
 		return this.service.renamePack(old_pack, new_pack);
 	}
 
@@ -65,7 +65,7 @@ export class PackController extends Controller {
 	 * @param pack_id Pack ID
 	 */
 	@Get("{pack_id}/all")
-	public async getWithSubmission(@Path() pack_id: AnyPack): Promise<PackAll> {
+	public async getWithSubmission(@Path() pack_id: PackID): Promise<PackAll> {
 		return this.service.getWithSubmission(pack_id);
 	}
 
@@ -88,7 +88,7 @@ export class PackController extends Controller {
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async update(@Path() id: AnyPack, @Body() body: Pack): Promise<Pack> {
+	public async update(@Path() id: PackID, @Body() body: Pack): Promise<Pack> {
 		return this.service.update(id, body);
 	}
 
@@ -99,7 +99,7 @@ export class PackController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async delete(id: AnyPack): Promise<void> {
+	public async delete(id: PackID): Promise<void> {
 		return this.service.delete(id);
 	}
 }

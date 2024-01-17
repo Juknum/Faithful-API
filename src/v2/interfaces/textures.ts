@@ -1,7 +1,7 @@
 import { EntireUseToCreate, Uses } from "./uses";
 import { Paths } from "./paths";
 import { Contributions } from "./contributions";
-import { AnyPack } from "./packs";
+import { PackID } from "./packs";
 
 export interface TextureCreationParam {
 	name: string | number; // texture name
@@ -38,7 +38,7 @@ export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "a
 export interface FirestormTexture extends Texture {
 	uses(): Promise<Uses>;
 	paths(): Promise<Paths>;
-	url(pack: AnyPack, version: string): Promise<string>;
+	url(pack: PackID, version: string): Promise<string>;
 	contributions(): Promise<Contributions>;
 	mcmeta(): Promise<MCMETA>;
 	all(): Promise<TextureAll>;
@@ -66,7 +66,7 @@ export interface TextureRepository {
 		nameOrID: string | number,
 		alwaysID: boolean,
 	): Promise<Textures | Texture>;
-	getURLById(id: number, pack: AnyPack, version: string): Promise<string>;
+	getURLById(id: number, pack: PackID, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
 	deleteTexture(id: string): Promise<void>;
 }

@@ -1,5 +1,5 @@
 import { contributions } from "../firestorm";
-import { Contribution, Contributions, FaithfulPack } from "../interfaces";
+import { Contribution, Contributions, PackID } from "../interfaces";
 import {
 	ContributionCreationParams,
 	ContributionsAuthors,
@@ -91,7 +91,7 @@ export default class ContributionService {
 			});
 	}
 
-	getPacks(): Promise<FaithfulPack[]> {
+	getPacks(): Promise<PackID[]> {
 		return this.contributionRepo.getPacks();
 	}
 

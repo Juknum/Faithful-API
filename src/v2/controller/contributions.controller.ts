@@ -18,7 +18,7 @@ import {
 	ContributionsAuthors,
 	ContributionStats,
 	ContributionSearch,
-	FaithfulPack,
+	PackID,
 } from "../interfaces";
 import ContributionService from "../service/contributions.service";
 import { NotAvailableError } from "../tools/ApiError";
@@ -50,7 +50,7 @@ export class ContributionsController extends Controller {
 	 * Get all resource packs with contributions
 	 */
 	@Get("packs")
-	public async getPacks(): Promise<FaithfulPack[]> {
+	public async getPacks(): Promise<PackID[]> {
 		return this.service.getPacks();
 	}
 

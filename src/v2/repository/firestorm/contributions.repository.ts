@@ -4,7 +4,7 @@ import {
 	Contributions,
 	ContributionsRepository,
 	ContributionsAuthors,
-	FaithfulPack,
+	PackID,
 } from "../../interfaces";
 import { contributions, users } from "../../firestorm";
 
@@ -13,13 +13,13 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		return contributions.get(id);
 	}
 
-	getPacks(): Promise<FaithfulPack[]> {
+	getPacks(): Promise<PackID[]> {
 		return contributions.select({ fields: ["pack"] }).then((res: Contributions) =>
 			(
 				Object.values(res).reduce(
 					(acc: Array<string>, cur: any) => [...acc, cur.pack],
 					[],
-				) as Array<FaithfulPack>
+				) as Array<PackID>
 			)
 				.flat()
 				.filter((e, i, a) => a.indexOf(e) === i)

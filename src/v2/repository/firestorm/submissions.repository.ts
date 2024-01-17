@@ -3,9 +3,8 @@ import {
 	SubmissionRepository,
 	Submission,
 	CreationSubmission,
-	FaithfulPack,
 	PackAll,
-	AnyPack,
+	PackID,
 } from "~/v2/interfaces";
 import { submissions } from "../../firestorm/packs/submissions";
 import { packs } from "../../firestorm/packs";
@@ -15,11 +14,11 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 		return submissions.readRaw();
 	}
 
-	getById(id: FaithfulPack): Promise<Submission> {
+	getById(id: PackID): Promise<Submission> {
 		return submissions.get(id);
 	}
 
-	async getEveryPack(): Promise<Record<AnyPack, PackAll>> {
+	async getEveryPack(): Promise<Record<PackID, PackAll>> {
 		const submissionPacks = await submissions.readRaw().then(Object.values);
 		const fullPackPromises = submissionPacks.map(async (p) => ({
 			...(await packs.get(p.id)),
@@ -34,12 +33,12 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 		return submissions.set(packId, packToCreate).then(() => submissions.get(packId));
 	}
 
-	update(packId: FaithfulPack, newPack: Submission): Promise<Submission> {
+	update(packId: PackID, newPack: Submission): Promise<Submission> {
 		const packWithId = { ...newPack, [ID_FIELD]: packId };
 		return submissions.set(packId, packWithId).then(() => submissions.get(packId));
 	}
 
-	delete(packId: FaithfulPack): Promise<void> {
+	delete(packId: PackID): Promise<void> {
 		return submissions.remove(packId).then(() => {}); // return nothing
 	}
 }

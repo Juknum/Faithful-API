@@ -22,7 +22,7 @@ import {
 	Textures,
 	Uses,
 	Edition,
-	AnyPack,
+	PackID,
 	TextureCreationParam,
 	MCMETA,
 	TextureProperty,
@@ -156,7 +156,7 @@ export class TextureController extends Controller {
 	@SuccessResponse(302, "Redirect")
 	public async getTextureURL(
 		@Path() id: string,
-		@Path() pack: AnyPack,
+		@Path() pack: PackID,
 		@Path() mc_version: string,
 		@Request() request: ExRequest,
 	): Promise<void> {

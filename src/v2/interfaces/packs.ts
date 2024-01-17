@@ -1,32 +1,18 @@
 import { FirstCreationSubmission, Submission } from "./submissions";
 import { Edition } from "./textures";
 
-export const FaithfulPacksArr = [
-	"faithful_32x",
-	"faithful_64x",
-	"classic_faithful_32x",
-	"classic_faithful_32x_progart",
-	"classic_faithful_64x",
-] as const;
-
-export const DefaultPacksArr = ["default", "progart"] as const;
-export const AnyPackArr = [...DefaultPacksArr, ...FaithfulPacksArr] as const;
-
-export type FaithfulPack = (typeof FaithfulPacksArr)[number];
-export type DefaultPack = (typeof DefaultPacksArr)[number];
-export type AnyPack = (typeof AnyPackArr)[number];
+// this way you don't have to add a new pack every time a new one gets created
+export type PackID = string;
 
 export interface PackGitHub {
 	repo: string;
 	org: string;
 }
 
-export type PackTag = "vanilla" | "faithful" | "classic_faithful" | "jappa" | "progart";
-
 export type PackType = "submission" | "default" | "all";
 
 export interface PackSearch {
-	tag?: PackTag;
+	tag?: string;
 	name?: string;
 	resolution?: number;
 	type?: PackType;
@@ -36,7 +22,7 @@ export interface CreationPack {
 	// either can be specified manually or serialized automatically
 	id?: string;
 	name: string;
-	tags: PackTag[];
+	tags: string[];
 	logo: string;
 	resolution: number;
 	// not all editions are required
@@ -45,7 +31,7 @@ export interface CreationPack {
 
 export interface Pack extends CreationPack {
 	// override since now you know what packs exist
-	id: AnyPack;
+	id: PackID;
 }
 
 export interface PackAll extends Pack {
@@ -64,12 +50,12 @@ export interface FirestormPack extends Pack {
 
 export interface PackRepository {
 	getRaw(): Promise<Record<string, Pack>>;
-	getById(id: AnyPack): Promise<Pack>;
-	getWithSubmission(id: AnyPack): Promise<PackAll>;
-	getAllTags(): Promise<PackTag[]>;
+	getById(id: PackID): Promise<Pack>;
+	getWithSubmission(id: PackID): Promise<PackAll>;
+	getAllTags(): Promise<string[]>;
 	search(params: PackSearch): Promise<Packs>;
-	renamePack(oldPack: AnyPack, newPack: string): Promise<void>;
+	renamePack(oldPack: PackID, newPack: string): Promise<void>;
 	create(packId: string, packToCreate: CreationPackAll): Promise<CreationPackAll>;
-	update(packId: AnyPack, newPack: Pack): Promise<Pack>;
-	delete(packId: AnyPack): Promise<void>;
+	update(packId: PackID, newPack: Pack): Promise<Pack>;
+	delete(packId: PackID): Promise<void>;
 }

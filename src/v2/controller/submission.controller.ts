@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
 import { SubmissionService } from "../service/submission.service";
-import { AnyPack, CreationSubmission, FaithfulPack, PackAll, Submission } from "../interfaces";
+import { PackID, CreationSubmission, PackAll, Submission } from "../interfaces";
 
 @Route("submissions")
 @Tags("Submissions")
@@ -16,7 +16,7 @@ export class SubmissionController extends Controller {
 	}
 
 	@Get("all")
-	public async getEveryPack(): Promise<Record<AnyPack, PackAll>> {
+	public async getEveryPack(): Promise<Record<PackID, PackAll>> {
 		return this.service.getEveryPack();
 	}
 
@@ -24,7 +24,7 @@ export class SubmissionController extends Controller {
 	 * Get a submission pack by ID
 	 */
 	@Get("{pack_id}")
-	public async getPack(@Path() pack_id: FaithfulPack): Promise<Submission> {
+	public async getPack(@Path() pack_id: PackID): Promise<Submission> {
 		return this.service.getById(pack_id);
 	}
 
@@ -47,7 +47,7 @@ export class SubmissionController extends Controller {
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async update(@Path() id: FaithfulPack, @Body() body: Submission): Promise<Submission> {
+	public async update(@Path() id: PackID, @Body() body: Submission): Promise<Submission> {
 		return this.service.update(id, body);
 	}
 
@@ -58,7 +58,7 @@ export class SubmissionController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async delete(id: FaithfulPack): Promise<void> {
+	public async delete(id: PackID): Promise<void> {
 		return this.service.delete(id);
 	}
 }

@@ -2,13 +2,11 @@ import { ID_FIELD, SearchOption } from "firestorm-db";
 import {
 	PackRepository,
 	Pack,
-	PackTag,
 	Packs,
 	CreationPack,
-	AnyPack,
 	PackAll,
 	Submission,
-	FaithfulPack,
+	PackID,
 	CreationPackAll,
 	PackSearch,
 	FirestormPack,
@@ -27,16 +25,16 @@ export default class PackFirestormRepository implements PackRepository {
 		return packs.get(id);
 	}
 
-	async getWithSubmission(id: AnyPack): Promise<PackAll> {
+	async getWithSubmission(id: PackID): Promise<PackAll> {
 		const pack = await packs.get(id);
-		const submission = await this.submissionRepo.getById(id as FaithfulPack).catch(() => null);
+		const submission = await this.submissionRepo.getById(id).catch(() => null);
 
 		// faithful pack with no submission information found
 		if (!submission) return { ...pack, submission: {} };
 		return { ...pack, submission };
 	}
 
-	getAllTags(): Promise<PackTag[]> {
+	getAllTags(): Promise<string[]> {
 		return packs
 			.select({
 				fields: ["tags"],
@@ -46,7 +44,7 @@ export default class PackFirestormRepository implements PackRepository {
 					Object.values(res).reduce(
 						(acc: Array<string>, cur: any) => [...acc, cur.tags],
 						[],
-					) as Array<PackTag>
+					) as Array<string>
 				)
 					.flat()
 					.filter((e, i, a) => a.indexOf(e) === i)
@@ -98,13 +96,13 @@ export default class PackFirestormRepository implements PackRepository {
 		});
 	}
 
-	async renamePack(oldPack: AnyPack, newPack: string): Promise<void> {
+	async renamePack(oldPack: PackID, newPack: string): Promise<void> {
 		const data: CreationPackAll = await this.getById(oldPack);
 		data.id = newPack;
-		const submission = await this.submissionRepo.getById(oldPack as FaithfulPack).catch(() => null);
+		const submission = await this.submissionRepo.getById(oldPack).catch(() => null);
 		if (submission) data.submission = submission;
 		this.delete(oldPack);
-		this.submissionRepo.delete(oldPack as FaithfulPack);
+		this.submissionRepo.delete(oldPack);
 		this.create(newPack, data);
 	}
 
@@ -122,14 +120,14 @@ export default class PackFirestormRepository implements PackRepository {
 		return packs.set(packId, data).then(() => ({ id: packId, ...data, ...out }));
 	}
 
-	update(packId: AnyPack, newPack: CreationPack): Promise<Pack> {
+	update(packId: PackID, newPack: CreationPack): Promise<Pack> {
 		const packWithId = { ...newPack, [ID_FIELD]: packId };
 		return packs.set(packId, packWithId).then(() => packs.get(packId));
 	}
 
-	delete(packId: AnyPack): Promise<void> {
+	delete(packId: PackID): Promise<void> {
 		// try removing submission data if exists too
-		this.submissionRepo.delete(packId as FaithfulPack).catch(() => {});
+		this.submissionRepo.delete(packId).catch(() => {});
 
 		// remove associated contributions
 		return contributions
