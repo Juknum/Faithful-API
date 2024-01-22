@@ -552,7 +552,6 @@ export default class AddonService {
 			author: null,
 			reason: "Add-on must have a header image",
 		};
-		await this.saveUpdate(addonID, addon, before, notify);
 
 		// remove file from file service
 		await this.fileService.removeFileById(header.id);
