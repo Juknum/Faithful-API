@@ -360,8 +360,8 @@ export default class AddonService {
 		const { slug } = addon;
 
 		const before = addon.approval?.status || null;
-		// try to remove curent header
-		await this.deleteHeader(String(addonID), false).catch(() => {});
+		// try to remove current header
+		await this.deleteHeader(String(addonID)).catch(() => {});
 
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/header.${extension}`;
@@ -517,7 +517,7 @@ export default class AddonService {
 	 * Deletes the given screenshot at given index
 	 * @param idOrSlug ID or slug of the deleted add-on screenshot
 	 */
-	public async deleteHeader(idOrSlug: string, notify: Boolean = true): Promise<void> {
+	public async deleteHeader(idOrSlug: string): Promise<void> {
 		// get addonID
 		const idAndAddon = await this.getAddonFromSlugOrId(idOrSlug);
 		const addonID = idAndAddon[0];
@@ -552,6 +552,7 @@ export default class AddonService {
 			author: null,
 			reason: "Add-on must have a header image",
 		};
+		await this.saveUpdate(addonID, addon, before, false);
 
 		// remove file from file service
 		await this.fileService.removeFileById(header.id);
