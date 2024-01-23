@@ -165,6 +165,13 @@ export class TextureController extends Controller {
 		response.redirect(url);
 	}
 
+	@Put("merge/{add_id}/{remove_id}")
+	@Security("bot")
+	@Security("discord", ["administrator"])
+	public async mergeTextures(@Path() add_id: string, @Path() remove_id: string) {
+		return this.service.mergeTextures(add_id, remove_id);
+	}
+
 	/**
 	 * Create a texture
 	 * @param body Texture information

@@ -1,10 +1,21 @@
-import { PackID, Contributions, Paths, Texture, Textures, InputPath, Uses } from "../interfaces";
+import {
+	PackID,
+	Contributions,
+	Paths,
+	Texture,
+	Textures,
+	InputPath,
+	Uses,
+	Use,
+	FirestormUse,
+} from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
 	TextureCreationParam,
 	MCMETA,
 	TextureProperty,
+	TextureAll,
 } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 import PathService from "./path.service";
@@ -82,6 +93,54 @@ export default class TextureService {
 
 	getURLById(id: number, pack: PackID, version: string): Promise<string> {
 		return this.textureRepo.getURLById(id, pack, version);
+	}
+
+	async mergeTextures(addID: string, removeID: string) {
+		// so basically we append the uses of the removed texture to the uses of the kept texture
+		const addTexture: TextureAll = (await this.getPropertyByNameOrId(addID, "all")) as any;
+
+		// get most recent use id from texture to add
+		const latestLetter = addTexture.uses
+			.reduce((best, cur) => {
+				const letter = cur.id.at(-1);
+				if (best > letter) return best;
+				return letter;
+			}, "a")
+			.charCodeAt(0);
+		const usesToRemove: FirestormUse[] = (await this.getPropertyByNameOrId(
+			removeID,
+			"uses",
+		)) as any;
+
+		// two dimensional array
+		const pathsToRemove = await Promise.all(usesToRemove.map((a) => a.getPaths()));
+
+		const pathsToAdd = [];
+
+		const usesToAdd = usesToRemove.map((use, i) => {
+			// find set of paths where at least one path
+			const pathsWithUse = pathsToRemove.find((p) => p?.[0]?.use === use.id);
+			use.id = addID + String.fromCharCode(latestLetter + i + 1);
+			use.texture = Number(addID);
+
+			if (!pathsWithUse) return use;
+
+			pathsToAdd.push(
+				...pathsWithUse.map((p) => {
+					// randomly generated when added later
+					delete p.id;
+					p.use = use.id;
+					return p;
+				}),
+			);
+
+			return use;
+		});
+
+		// use names, etc are all preserved
+		if (usesToAdd.length) await this.useService.createMultipleUses(usesToAdd);
+		if (pathsToAdd.length) await this.pathService.createMultiplePaths(pathsToAdd);
+		await this.deleteTexture(removeID);
 	}
 
 	createTexture(texture: TextureCreationParam): Promise<Texture> {
