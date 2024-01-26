@@ -26,13 +26,13 @@ export default class GalleryService {
 		useToPath: Record<string, Path>,
 	) {
 		const baseURL = "https://raw.githubusercontent.com";
-		const packs = await this.packService.getRaw();
-		const urls = packs[pack].github[edition];
+		const foundPack = await this.packService.getById(pack);
+		const urls = foundPack.github[edition];
 		if (!urls) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
 		const url = `${baseURL}/${urls.org}/${urls.repo}/${mcVersion}/`;
 		return textureIDs
 			.filter((textureID) => textureToUse[textureID])
-			.map((textureID_1) => textureToUse[textureID_1])
+			.map((textureID) => textureToUse[textureID])
 			.map((use: Use) => useToPath[use.id].name)
 			.map((str) => url + str);
 	}
@@ -139,12 +139,8 @@ export default class GalleryService {
 				};
 			})
 			.sort((a, b) => {
-				if (a.name < b.name) {
-					return -1;
-				}
-				if (a.name > b.name) {
-					return 1;
-				}
+				if (a.name < b.name) return -1;
+				if (a.name > b.name) return 1;
 				return 0;
 			});
 	}

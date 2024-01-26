@@ -2,19 +2,18 @@ import { users } from "../../firestorm";
 import {
 	Addons,
 	Contributions,
-	UserNames,
+	Usernames,
 	User,
 	Users,
 	UserCreationParams,
 	UserRepository,
-	UserName,
+	Username,
 	UserProfile,
-	Medias,
 } from "../../interfaces";
 
 // eslint-disable-next-line no-underscore-dangle
-const __transformUser = (user: any): User => ({
-	// falsy checking and remove warns field (unused)
+const __transformUser = (user: Partial<User>): User => ({
+	// falsy checking
 	id: user.id,
 	username: user.username || "",
 	uuid: user.uuid || "",
@@ -24,7 +23,7 @@ const __transformUser = (user: any): User => ({
 });
 
 export default class UserFirestormRepository implements UserRepository {
-	getNameById(id: string): Promise<UserName> {
+	getNameById(id: string): Promise<Username> {
 		return users.get(id).then((res) => ({
 			id: res.id,
 			username: res.anonymous ? undefined : res.username,
@@ -43,18 +42,13 @@ export default class UserFirestormRepository implements UserRepository {
 		);
 	}
 
-	getNames(): Promise<UserNames> {
+	getNames(): Promise<Usernames> {
 		return users
 			.select({ fields: ["id", "username", "uuid", "anonymous"] })
 			.then((obj: any) => Object.values(obj))
 			.then(
 				(
-					_users: Array<{
-						id: string;
-						username: string;
-						uuid: string;
-						anonymous: boolean;
-					}>,
+					_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[],
 				) =>
 					_users.map((el) => ({
 						id: el.id,
@@ -118,7 +112,7 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUsersFromRole(role: string, username?: string): Promise<Users> {
-		if (role === "all" && !username) return users.readRaw().then((res: any) => Object.values(res));
+		if (role === "all" && !username) return users.readRaw().then(Object.values);
 		const options = [];
 
 		if (role !== "all")
@@ -174,22 +168,14 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUserProfiles(searchedUsers: string[]): Promise<UserProfile[]> {
-		return users.searchKeys(searchedUsers).then(
-			(
-				_users: Array<{
-					id: string;
-					username: string;
-					uuid: string;
-					anonymous: boolean;
-					media?: Medias;
-				}>,
-			) =>
-				_users.map((el) => ({
-					id: el.id,
-					username: el.anonymous ? undefined : el.username,
-					uuid: el.anonymous ? undefined : el.uuid || undefined,
-					media: el.anonymous ? undefined : el.media || [],
-				})),
+		return users.searchKeys(searchedUsers).then((u) =>
+			u.map((el) => ({
+				id: el.id,
+				username: el.anonymous ? undefined : el.username,
+				// ensure anonymous stays anonymous
+				uuid: el.anonymous ? undefined : el.uuid || undefined,
+				media: el.anonymous ? undefined : el.media || [],
+			})),
 		);
 	}
 }

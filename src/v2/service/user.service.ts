@@ -1,12 +1,12 @@
 import {
 	Addons,
 	Contributions,
-	UserNames,
+	Usernames,
 	User,
 	Users,
 	UserStats,
 	UserProfile,
-	UserName,
+	Username,
 } from "../interfaces";
 import UserFirestormRepository from "../repository/firestorm/user.repository";
 import { BadRequestError } from "../tools/ApiError";
@@ -50,11 +50,11 @@ export class UserService {
 			});
 	}
 
-	public getNames(): Promise<UserNames> {
+	public getNames(): Promise<Usernames> {
 		return this.repository.getNames();
 	}
 
-	public getNameById(id: string): Promise<UserName> {
+	public getNameById(id: string): Promise<Username> {
 		return this.repository.getNameById(id);
 	}
 

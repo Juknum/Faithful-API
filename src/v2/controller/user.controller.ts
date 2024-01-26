@@ -16,13 +16,13 @@ import { BadRequestError, ForbiddenError, NotAvailableError } from "../tools/Api
 import {
 	Addons,
 	Contributions,
-	UserNames,
+	Usernames,
 	Users,
 	User,
 	UserCreationParams,
 	UserStats,
 	UserProfile,
-	UserName,
+	Username,
 } from "../interfaces";
 import { UserService } from "../service/user.service";
 import cache from "../tools/cache";
@@ -30,7 +30,7 @@ import cache from "../tools/cache";
 @Route("users")
 @Tags("Users")
 export class UserController extends Controller {
-	private userService = new UserService();
+	private readonly userService = new UserService();
 
 	@Get("profile")
 	@Security("discord", [])
@@ -54,6 +54,8 @@ export class UserController extends Controller {
 	 * Get the raw collection of users
 	 */
 	@Get("raw")
+	@Security("discord", ["administrator"])
+	@Security("bot")
 	public async getRaw(): Promise<Record<string, User>> {
 		return this.userService.getRaw();
 	}
@@ -71,7 +73,7 @@ export class UserController extends Controller {
 	 * Get all usernames the database has
 	 */
 	@Get("names")
-	public async getNames(): Promise<UserNames> {
+	public async getNames(): Promise<Usernames> {
 		return this.userService.getNames();
 	}
 
@@ -139,7 +141,7 @@ export class UserController extends Controller {
 	 * @param id User ID
 	 */
 	@Get("{id}/name")
-	public async getName(@Path() id: string): Promise<UserName> {
+	public async getName(@Path() id: string): Promise<Username> {
 		return this.userService.getNameById(id);
 	}
 

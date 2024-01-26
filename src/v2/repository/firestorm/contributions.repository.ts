@@ -5,6 +5,7 @@ import {
 	ContributionsRepository,
 	ContributionsAuthors,
 	PackID,
+	User,
 } from "../../interfaces";
 import { contributions, users } from "../../firestorm";
 
@@ -86,39 +87,31 @@ export default class ContributionFirestormRepository implements ContributionsRep
 				}),
 			)
 			.then(() => users.select({ fields: ["id", "username", "uuid", "anonymous"] }))
-			.then((obj: any) => Object.values(obj).map((o: any) => o))
-			.then(
-				(
-					_users: Array<{
-						id: string;
-						username: string;
-						uuid: string;
-						anonymous: boolean;
-					}>,
-				) =>
-					Object.values(out).map((author: any) => {
-						const user = _users.find((u) => u.id === author.id);
+			.then(Object.values)
+			.then((_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[]) =>
+				Object.values(out).map((author: any) => {
+					const user = _users.find((u) => u.id === author.id);
 
-						if (user)
-							return {
-								...author,
-								username: user.anonymous ? undefined : user.username,
-								uuid: user.anonymous ? undefined : user.uuid,
-							};
+					if (user)
+						return {
+							...author,
+							username: user.anonymous ? undefined : user.username,
+							uuid: user.anonymous ? undefined : user.uuid,
+						};
 
-						return author;
-					}),
+					return author;
+				}),
 			);
 	}
 
 	addContribution(params: ContributionCreationParams): Promise<Contribution> {
-		return contributions.add(params).then((id: string) => contributions.get(id));
+		return contributions.add(params).then((id) => contributions.get(id));
 	}
 
 	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
 		return contributions
 			.addBulk(params)
-			.then((ids: string[]) => Promise.all(ids.map((id) => contributions.get(id))));
+			.then((ids) => Promise.all(ids.map((id) => contributions.get(id))));
 	}
 
 	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution> {
@@ -161,7 +154,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 					value: ends,
 				},
 			])
-			.then((startContribution: any) => {
+			.then((startContribution) => {
 				res = startContribution;
 				return contributions.search([
 					{

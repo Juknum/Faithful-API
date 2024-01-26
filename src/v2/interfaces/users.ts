@@ -22,17 +22,18 @@ export interface Medias extends Array<Media> {}
 
 export interface UserCreationParams {
 	username: string; // username displayed online
-	uuid: string; // MC UUID
+	uuid: string; // minecraft profile UUID
 	anonymous: boolean; // true if the user is anonymous
-	roles: Array<string>; // discord roles the user have, that can be modified by admin only
+	roles: Array<string>; // discord roles the user has, that can be modified by admin only
 }
 
-export interface UserName {
+export interface Username {
 	id: string;
 	username: string;
 	uuid: string;
 }
-export interface UserNames extends Array<UserName> {}
+
+export interface Usernames extends Array<Username> {}
 
 export interface UserProfile {
 	id?: string;
@@ -64,7 +65,7 @@ export interface FirestormUser extends User {
 export interface UserRepository {
 	getProfileOrCreate(id: string): User | PromiseLike<User>;
 	getUserProfiles(authors: string[]): Promise<UserProfile[]>;
-	getNameById(id: string): Promise<UserName>;
+	getNameById(id: string): Promise<Username>;
 	getRaw(): Promise<Record<string, User>>;
 	getNames(): Promise<any>;
 	getUserById(id: string): Promise<User>;
