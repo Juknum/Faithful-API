@@ -91,7 +91,6 @@ export default class UserFirestormRepository implements UserRepository {
 						roles: [],
 						username: "",
 						uuid: "",
-						warns: [],
 						id,
 						media: [],
 					};

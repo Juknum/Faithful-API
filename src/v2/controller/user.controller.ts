@@ -178,7 +178,7 @@ export class UserController extends Controller {
 	@Security("discord", [])
 	@Security("bot")
 	public async create(@Path() id: string, @Body() body: UserCreationParams): Promise<User> {
-		return this.userService.create(id, { ...body, id, media: [], warns: [] });
+		return this.userService.create(id, { ...body, id, media: [] });
 	}
 
 	/**
@@ -207,10 +207,9 @@ export class UserController extends Controller {
 		const user = await this.userService.getUserById(id).catch(() => {});
 
 		const media = user ? user.media || [] : [];
-		const warns = user ? user.warns || [] : [];
 
 		// add properties
-		const sent: User = { ...body, id, media, warns };
+		const sent: User = { ...body, id, media };
 		return this.userService.update(id, sent);
 	}
 

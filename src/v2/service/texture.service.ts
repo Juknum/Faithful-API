@@ -24,6 +24,7 @@ export default class TextureService {
 	private readonly textureRepo = new TextureFirestormRepository();
 
 	private readonly useService = new UseService();
+
 	private readonly pathService = new PathService();
 
 	// eslint-disable-next-line no-use-before-define
