@@ -15,7 +15,7 @@ import {
 	Use,
 } from "~/v2/interfaces";
 import { NotFoundError } from "../../tools/ApiError";
-import { textures, paths, uses, contributions } from "../../firestorm";
+import { textures, paths, uses, contributions, settings } from "../../firestorm";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(
@@ -209,8 +209,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public getVersionByEdition(edition: Edition): Promise<Array<string>> {
-		return firestorm
-			.collection("settings")
+		return settings
 			.get("versions")
 			.then((versions) => {
 				if (versions[edition] === undefined) throw new NotFoundError("edition not found");
@@ -226,11 +225,13 @@ export default class TextureFirestormRepository implements TextureRepository {
 		const foundTexture = await textures.get(id);
 		const foundUses = await foundTexture.uses();
 		const foundPaths = await foundTexture.paths();
+		const foundContributions = await foundTexture.contributions();
 
 		const promises = [];
 		promises.push(textures.remove(id));
 		promises.push(uses.removeBulk(foundUses.map((u) => u[ID_FIELD])));
 		promises.push(paths.removeBulk(foundPaths.map((p) => p[ID_FIELD])));
+		promises.push(contributions.removeBulk(foundContributions.map((c) => c[ID_FIELD])));
 
 		return Promise.all(promises).then(() => {});
 	}
