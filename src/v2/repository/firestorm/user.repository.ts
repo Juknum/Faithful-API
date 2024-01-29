@@ -46,15 +46,12 @@ export default class UserFirestormRepository implements UserRepository {
 		return users
 			.select({ fields: ["id", "username", "uuid", "anonymous"] })
 			.then((obj: any) => Object.values(obj))
-			.then(
-				(
-					_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[],
-				) =>
-					_users.map((el) => ({
-						id: el.id,
-						username: el.anonymous ? undefined : el.username,
-						uuid: el.anonymous ? undefined : el.uuid,
-					})),
+			.then((_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[]) =>
+				_users.map((el) => ({
+					id: el.id,
+					username: el.anonymous ? undefined : el.username,
+					uuid: el.anonymous ? undefined : el.uuid,
+				})),
 			);
 	}
 

@@ -1,4 +1,4 @@
-import firestorm, { ID_FIELD } from "firestorm-db";
+import { ID_FIELD } from "firestorm-db";
 import {
 	Edition,
 	PackID,
@@ -209,12 +209,10 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public getVersionByEdition(edition: Edition): Promise<Array<string>> {
-		return settings
-			.get("versions")
-			.then((versions) => {
-				if (versions[edition] === undefined) throw new NotFoundError("edition not found");
-				return versions[edition];
-			});
+		return settings.get("versions").then((versions) => {
+			if (versions[edition] === undefined) throw new NotFoundError("edition not found");
+			return versions[edition];
+		});
 	}
 
 	public createTexture(texture: TextureCreationParam): Promise<Texture> {
