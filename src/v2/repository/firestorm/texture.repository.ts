@@ -24,13 +24,12 @@ export default class TextureFirestormRepository implements TextureRepository {
 		forcePartial: boolean = false,
 	): Promise<Textures> {
 		// * none, read raw
-		if (tag === undefined && search === undefined) {
-			return this.getRaw().then((res: any) => Object.values(res));
-		}
+		if (tag === undefined && search === undefined)
+			return this.getRaw().then(Object.values);
 
 		// * number id: get + includes tag?
-		const numberID: number = search !== undefined ? Number.parseInt(search, 10) : Number.NaN;
-		if (!Number.isNaN(numberID)) {
+		const numberID: number = search !== undefined ? parseInt(search, 10) : NaN;
+		if (!Number.isNaN(numberID) && numberID.toString() === search.toString()) {
 			const tex: Texture = await textures.get(numberID).catch(() => undefined);
 
 			if (tex === undefined) return Promise.resolve([]);
@@ -65,7 +64,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		}
 
 		const results: Textures = await textures.search(criterias);
-		if (results.length && search === undefined && !partial) return Promise.resolve(results);
+		if (results.length && search === undefined && !partial) return results;
 
 		// fallback string search criteria to include if empty results
 		criterias[criterias.length - 1].criteria = "includes";

@@ -49,7 +49,7 @@ export default class TextureService {
 		return this.textureRepo.getTextureById(id, property);
 	}
 
-	getByNameIdAndTag(tag: string | undefined, search: string | undefined) {
+	getByNameIdAndTag(tag: string | undefined, search: string | undefined): Promise<Textures> {
 		return this.textureRepo.getByNameIdAndTag(tag, search);
 	}
 
