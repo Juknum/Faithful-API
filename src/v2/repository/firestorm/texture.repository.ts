@@ -24,8 +24,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		forcePartial: boolean = false,
 	): Promise<Textures> {
 		// * none, read raw
-		if (tag === undefined && search === undefined)
-			return this.getRaw().then(Object.values);
+		if (tag === undefined && search === undefined) return this.getRaw().then(Object.values);
 
 		// * number id: get + includes tag?
 		const numberID: number = search !== undefined ? parseInt(search, 10) : NaN;

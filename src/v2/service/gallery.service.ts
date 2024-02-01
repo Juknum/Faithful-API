@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 
+import axios from "axios";
 import { textures } from "../firestorm";
 import { Edition, GalleryResult, PackID, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
 import PathFirestormRepository from "../repository/firestorm/path.repository";
@@ -25,16 +26,30 @@ export default class GalleryService {
 		textureToUse: Record<string, Use>,
 		useToPath: Record<string, Path>,
 	) {
+		const blacklist: string[] =
+			(
+				await axios.get(
+					"https://raw.githubusercontent.com/Faithful-Resource-Pack/CompliBot/main/json/blacklisted_textures.json",
+				)
+			).data[edition] ?? [];
+
 		const baseURL = "https://raw.githubusercontent.com";
-		const foundPack = await this.packService.getById(pack);
-		const urls = foundPack.github[edition];
-		if (!urls) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
-		const url = `${baseURL}/${urls.org}/${urls.repo}/${mcVersion}/`;
+		const requestURLs = await this.packService.getById(pack).then((res) => res.github[edition]);
+		if (!requestURLs) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
+
+		const defaultURLs = await this.packService
+			.getById("default")
+			.then((res) => res.github[edition]);
+
 		return textureIDs
 			.filter((textureID) => textureToUse[textureID])
 			.map((textureID) => textureToUse[textureID])
 			.map((use: Use) => useToPath[use.id].name)
-			.map((str) => url + str);
+			.map((path) => {
+				// fall back to default if blacklisted (simulates default behavior)
+				const url = blacklist.some((i) => path.includes(i)) ? defaultURLs : requestURLs;
+				return `${baseURL}/${url.org}/${url.repo}/${mcVersion}/${path}`;
+			});
 	}
 
 	async search(
