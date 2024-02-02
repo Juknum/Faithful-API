@@ -165,6 +165,11 @@ export class TextureController extends Controller {
 		response.redirect(url);
 	}
 
+	/**
+	 * Merge two texture together
+	 * @param add_id Texture to add uses to
+	 * @param remove_id Texture to delete
+	 */
 	@Put("merge/{add_id}/{remove_id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])

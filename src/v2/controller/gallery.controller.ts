@@ -18,6 +18,8 @@ import { PackService } from "../service/pack.service";
 export class GalleryController extends Controller {
 	private readonly textureService = new TextureService();
 
+	private readonly packService = new PackService();
+
 	private readonly service = new GalleryService();
 
 	@Get("{pack}/{edition}/{mc_version}/{tag}/")
@@ -55,7 +57,7 @@ export class GalleryController extends Controller {
 	 */
 	@Get("modal/{id}/{mc_version}")
 	public async modal(@Path() id: number, @Path() mc_version: string): Promise<GalleryModalResult> {
-		const packIDs = Object.keys(await new PackService().getRaw());
+		const packIDs = Object.keys(await this.packService.getRaw());
 		const urls: Record<PackID, string> = (
 			await Promise.allSettled(
 				packIDs.map((p) => this.textureService.getURLById(id, p, mc_version)),
