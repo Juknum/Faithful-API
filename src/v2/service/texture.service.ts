@@ -117,7 +117,7 @@ export default class TextureService {
 		const pathsToAdd = [];
 
 		const usesToAdd = usesToRemove.map((use, i) => {
-			// find set of paths where at least one path
+			// find corresponding set of paths for use
 			const pathsWithUse = pathsToRemove.find((p) => p?.[0]?.use === use.id);
 			use.id = addID + String.fromCharCode(latestLetter + i + 1);
 			use.texture = Number(addID);
