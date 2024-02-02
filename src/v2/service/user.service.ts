@@ -19,35 +19,33 @@ export class UserService {
 	}
 
 	public getStats(): Promise<UserStats> {
-		return this.getRaw()
-			.then((raw) => Object.values(raw))
-			.then((users) => {
-				const allRoles = [] as string[];
-				return users.reduce(
-					(acc, user) => {
-						acc.total++;
-						if (user.anonymous) acc.total_anonymous++;
+		return this.getRaw().then((users) => {
+			const allRoles = [] as string[];
+			return Object.values(users).reduce(
+				(acc, user) => {
+					acc.total++;
+					if (user.anonymous) acc.total_anonymous++;
 
-						user.roles.forEach((role) => {
-							if (!allRoles.includes(role)) {
-								allRoles.push(role);
-								acc.total_roles++;
+					user.roles.forEach((role) => {
+						if (!allRoles.includes(role)) {
+							allRoles.push(role);
+							acc.total_roles++;
 
-								acc.total_per_roles[role] = 0;
-							}
-							acc.total_per_roles[role]++;
-						});
+							acc.total_per_roles[role] = 0;
+						}
+						acc.total_per_roles[role]++;
+					});
 
-						return acc;
-					},
-					{
-						total: 0,
-						total_anonymous: 0,
-						total_roles: 0,
-						total_per_roles: {},
-					} as UserStats,
-				);
-			});
+					return acc;
+				},
+				{
+					total: 0,
+					total_anonymous: 0,
+					total_roles: 0,
+					total_per_roles: {},
+				} as UserStats,
+			);
+		});
 	}
 
 	public getNames(): Promise<Usernames> {

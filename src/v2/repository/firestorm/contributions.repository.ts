@@ -15,32 +15,25 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	}
 
 	getPacks(): Promise<PackID[]> {
-		return contributions.select({ fields: ["pack"] }).then((res: Contributions) =>
-			(
-				Object.values(res).reduce(
-					(acc: Array<string>, cur: any) => [...acc, cur.pack],
-					[],
-				) as Array<PackID>
-			)
-				.flat()
+		return contributions.select({ fields: ["pack"] }).then((res) =>
+			Object.values(res)
+				.map((v) => v.pack)
 				.filter((e, i, a) => a.indexOf(e) === i)
 				.sort(),
 		);
 	}
 
 	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {
-		const options: any[] = authors.map((a) => ({
+		const options: any[] = authors.map((author) => ({
 			field: "authors",
 			criteria: "array-contains",
-			value: a as any,
+			value: author,
 		}));
 
 		if (packs !== null) options.push({ field: "pack", criteria: "in", value: packs });
 		return contributions
 			.search(options)
-			.then((res: Contributions) =>
-				res.filter((c: Contribution) => (packs === null ? true : packs.includes(c.pack))),
-			);
+			.then((res) => res.filter((c) => (packs === null ? true : packs.includes(c.pack))));
 	}
 
 	searchByIdAndPacks(
@@ -50,11 +43,11 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	): Promise<Contributions> {
 		const options = [];
 		if (authors) {
-			authors.forEach((a) => {
+			authors.forEach((author) => {
 				options.push({
 					field: "authors",
 					criteria: "array-contains",
-					value: a as any,
+					value: author,
 				});
 			});
 		}

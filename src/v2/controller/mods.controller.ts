@@ -1,5 +1,5 @@
 import { Controller, Get, Path, Request, Route, SuccessResponse, Tags, Response } from "tsoa";
-import { Request as ExRequest, Response as ExResponse } from "express";
+import { Request as ExRequest } from "express";
 import { Mod } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";
 import ModsService from "../service/mods.service";
@@ -22,18 +22,16 @@ export class ModsController extends Controller {
 	@Response<NotFoundError>(404)
 	@SuccessResponse(302, "Redirect")
 	public async getThumbnail(@Path() id: string, @Request() request: ExRequest): Promise<void> {
-		const response = (<any>request).res as ExResponse;
-
 		// if id is a number, it's a CurseForge ID
 		if (Number.isNaN(parseInt(id, 10))) {
-			response.sendStatus(404);
+			request.res.sendStatus(404);
 			return;
 		}
 
 		const url = await cache.handle(`mods-thumbnail-${id}`, () =>
 			this.service.getThumbnail(parseInt(id, 10)),
 		);
-		response.redirect(url);
+		request.res.redirect(url);
 	}
 
 	@Get("{id}/curseforge/name")

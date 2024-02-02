@@ -3,7 +3,6 @@ import {
 	AcceptedRes,
 	GalleryModalResult,
 	GalleryResult,
-	TextureAll,
 	PackID,
 	Texture,
 	Edition,
@@ -70,17 +69,17 @@ export class GalleryController extends Controller {
 				{} as Record<PackID, string>,
 			);
 
-		const all = (await this.textureService.getPropertyByNameOrId(id, "all")) as TextureAll;
+		const all = await this.textureService.getPropertyByNameOrId(id, "all");
 
 		const texture = (await this.textureService.getByNameOrId(id)) as Texture;
 
-		return Promise.resolve({
+		return {
 			contributions: all.contributions,
 			uses: all.uses,
 			paths: all.paths,
 			mcmeta: all.mcmeta,
 			urls,
 			texture,
-		});
+		};
 	}
 }

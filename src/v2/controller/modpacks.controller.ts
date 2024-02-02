@@ -1,5 +1,5 @@
 import { Controller, Get, Path, Request, Route, SuccessResponse, Tags } from "tsoa";
-import { Request as ExRequest, Response as ExResponse } from "express";
+import { Request as ExRequest } from "express";
 import { Modpack } from "../interfaces";
 import ModpacksService from "../service/modpacks.service";
 import cache from "../tools/cache";
@@ -23,7 +23,7 @@ export class ModpacksController extends Controller {
 		const url = await cache.handle(`modpacks-thumbnail-${id}`, () =>
 			this.service.getThumbnail(parseInt(id, 10)),
 		);
-		const response = (<any>request).res as ExResponse;
-		response.redirect(url);
+
+		request.res.redirect(url);
 	}
 }

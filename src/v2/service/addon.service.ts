@@ -488,10 +488,10 @@ export default class AddonService {
 
 		// get existing screenshots
 		const files = await this.getFiles(addonID).catch((): Files => []);
-		const screens = files.filter((f) => f.use === "screenshot" || f.use === "carousel");
+		const screens = files.filter((f) => ["screenshot", "carousel"].includes(f.use));
 
 		// find precise screen, by id else by index
-		const idedscreen = screens.filter((s) => s.id && s.id === String(indexOrSlug))[0];
+		const idedscreen = screens.find((s) => s.id && s.id === String(indexOrSlug));
 		const screen = idedscreen || screens[indexOrSlug];
 		if (screen === undefined) return Promise.reject(new NotFoundError("Screenshot not found"));
 
@@ -508,9 +508,7 @@ export default class AddonService {
 		await this.fileService.removeFileById(screen.id);
 
 		// remove actual file
-		await this.fileService.remove(source);
-
-		return Promise.resolve();
+		return this.fileService.remove(source).then(() => {});
 	}
 
 	/**
@@ -558,9 +556,7 @@ export default class AddonService {
 		await this.fileService.removeFileById(header.id);
 
 		// remove actual file
-		await this.fileService.remove(source);
-
-		return Promise.resolve();
+		return this.fileService.remove(source).then(() => {});
 	}
 
 	private async saveUpdate(

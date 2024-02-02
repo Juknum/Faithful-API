@@ -26,7 +26,7 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 		}));
 		return Promise.all(fullPackPromises).then((p) =>
 			p.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {}),
-		) as any;
+		);
 	}
 
 	create(packId: string, packToCreate: CreationSubmission): Promise<Submission> {

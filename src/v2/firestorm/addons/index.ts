@@ -6,7 +6,7 @@ import { files } from "../posts/files";
 config();
 
 export const addons = firestorm.collection<FirestormAddon>("addons", (el) => {
-	el.files = (): Promise<Files> =>
+	el.getFiles = (): Promise<Files> =>
 		files.search([
 			{
 				field: "parent.id",
@@ -20,14 +20,11 @@ export const addons = firestorm.collection<FirestormAddon>("addons", (el) => {
 			},
 		]);
 
-	el.all = (): Promise<AddonAll> => {
-		// files isn't defined yet so ts throws an error before it gets set
-		const output = el as any;
-		return el.files().then((res) => {
-			output.files = res;
-			return output;
-		});
-	};
+	el.all = (): Promise<AddonAll> =>
+		el.getFiles().then((f) => ({
+			...el,
+			files: f,
+		}));
 
 	return el;
 });

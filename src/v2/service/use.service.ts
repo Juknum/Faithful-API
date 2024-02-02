@@ -32,17 +32,10 @@ export default class UseService {
 		return this.useRepo.getUseByIdOrName(idOrName);
 	}
 
-	getUseByIdOrNameAndCatch(idOrName: string): Promise<Uses | Use> {
-		return this.getUseByIdOrName(idOrName).then((res) => {
-			let found = false;
-			if (Array.isArray(res)) {
-				found = res.length > 0;
-			} else {
-				found = res !== undefined;
-			}
-
-			return found ? Promise.resolve(res) : Promise.reject(new NotFoundError(`Use ID not found`));
-		});
+	async getUseByIdOrNameAndCatch(idOrName: string): Promise<Uses | Use> {
+		const res = await this.getUseByIdOrName(idOrName);
+		if (Array.isArray(res) ? res.length > 0 : res !== undefined) return res;
+		throw new NotFoundError(`Use ID not found`);
 	}
 
 	updateUse(id: string, modifiedUse: CreationUse): Use | PromiseLike<Use> {

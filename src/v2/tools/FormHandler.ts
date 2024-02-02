@@ -11,7 +11,7 @@ const upload = multer({
 	limits: {
 		fileSize: 3000000, // 3MB
 	},
-	fileFilter(req, file, callback) {
+	fileFilter(_req, file, callback) {
 		if (MIME_TYPES_ACCEPTED.includes(file.mimetype)) callback(null, true);
 		else {
 			callback(
@@ -24,12 +24,8 @@ const upload = multer({
 });
 
 function returnHandler(response: any, statusCode?: number, data?: any, headers: any = {}) {
-	if (response.headersSent) {
-		return;
-	}
-	Object.keys(headers).forEach((name: string) => {
-		response.set(name, headers[name]);
-	});
+	if (response.headersSent) return;
+	Object.keys(headers).forEach((name) => response.set(name, headers[name]));
 	if (
 		data &&
 		typeof data.pipe === "function" &&
@@ -53,15 +49,13 @@ function promiseHandler(
 	next: any,
 ) {
 	return Promise.resolve(promise)
-		.then((data: any) => {
+		.then((data) => {
 			const statusCode = controllerObj.getStatus() || successStatus;
 			const headers = controllerObj.getHeaders();
 
-			// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
 			returnHandler(response, statusCode, data, headers);
 		})
-		.catch((error: any) => next(error));
+		.catch((error) => next(error));
 }
 
 interface SwaggerDocOptions {

@@ -6,7 +6,7 @@ export default class SettingsFirestormRepository implements SettingsRepository {
 		return settings.readRaw();
 	}
 
-	update(body: any): Promise<void> {
+	update(body: Record<string, any>): Promise<void> {
 		return settings.writeRaw(body).then(() => {});
 	}
 }

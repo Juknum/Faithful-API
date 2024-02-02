@@ -66,9 +66,7 @@ export default class UseFirestormRepository implements UseRepository {
 	removeUseById(useID: string): Promise<void> {
 		return uses
 			.get(useID) // assure you find the texture and get path method
-			.then((gatheredUse) => {
-				return gatheredUse.getPaths();
-			})
+			.then((gatheredUse) => gatheredUse.getPaths())
 			.then((foundPaths) => {
 				return Promise.all([
 					uses.remove(useID),

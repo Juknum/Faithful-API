@@ -14,7 +14,7 @@ import {
 	SuccessResponse,
 	Tags,
 } from "tsoa";
-import { Request as ExRequest, Response as ExResponse } from "express";
+import { Request as ExRequest } from "express";
 import {
 	Contributions,
 	Paths,
@@ -139,7 +139,7 @@ export class TextureController extends Controller {
 					.filter((p) => p.status === "fulfilled")
 					.map((p: any) => p.value)
 					.flat(),
-			) as Promise<(Textures | Texture | Paths | Uses | Contributions)[]>;
+			);
 		}
 
 		return this.service.getPropertyByNameOrId(id_or_name, property);
@@ -160,9 +160,8 @@ export class TextureController extends Controller {
 		@Path() mc_version: string,
 		@Request() request: ExRequest,
 	): Promise<void> {
-		const response = (<any>request).res as ExResponse;
 		const url = await this.service.getURLById(parseInt(id, 10), pack, mc_version);
-		response.redirect(url);
+		request.res.redirect(url);
 	}
 
 	/**

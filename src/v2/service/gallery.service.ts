@@ -64,15 +64,15 @@ export default class GalleryService {
 
 		const texturesFound = await this.textureService.getByNameIdAndTag(tag, search);
 
-		if (texturesFound.length === 0) return Promise.resolve([]);
+		if (texturesFound.length === 0) return [];
 		const ids = texturesFound.map((t) => Number.parseInt(t.id, 10));
 
 		const usesFound = await this.useService.getUsesByIdsAndEdition(ids, edition);
-		if (usesFound.length === 0) return Promise.resolve([]);
+		if (usesFound.length === 0) return [];
 		const useIDs = usesFound.map((u) => u.id);
 
 		const pathsFound = await this.pathRepo.getPathsByUseIdsAndVersion(useIDs, mcVersion);
-		if (pathsFound.length === 0) return Promise.resolve([]);
+		if (pathsFound.length === 0) return [];
 
 		// ? From this we can go up, to filter with the found results
 		// ? because a texture may not have a matching use or a use a matching path

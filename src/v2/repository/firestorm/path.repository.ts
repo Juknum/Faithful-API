@@ -1,4 +1,5 @@
 import { InputPath, Path, Paths, PathRepository } from "~/v2/interfaces";
+import { ID_FIELD } from "firestorm-db";
 import { paths } from "../../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
@@ -83,7 +84,7 @@ export default class PathFirestormRepository implements PathRepository {
 				const edits = filtered.map(
 					(p) =>
 						({
-							id: p.id,
+							id: p[ID_FIELD],
 							field: "versions",
 							operation: "array-push",
 							value: newVersion,

@@ -73,7 +73,7 @@ export interface AddonStatsAdmin extends AddonStats {
 }
 
 export interface FirestormAddon extends Addon {
-	files(): Promise<Files>;
+	getFiles(): Promise<Files>;
 	all(): Promise<AddonAll>;
 }
 

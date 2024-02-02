@@ -1,20 +1,12 @@
-import {
-	PackID,
-	Contributions,
-	Paths,
-	Texture,
-	Textures,
-	InputPath,
-	Uses,
-	FirestormUse,
-} from "../interfaces";
+import { ID_FIELD } from "firestorm-db";
+import { PackID, Texture, Textures, InputPath, Uses, FirestormUse } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
 	TextureCreationParam,
-	MCMETA,
 	TextureProperty,
 	TextureAll,
+	PropertyToOutput,
 } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/firestorm/texture.repository";
 import PathService from "./path.service";
@@ -77,12 +69,12 @@ export default class TextureService {
 		return this.textureRepo.getResolutions();
 	}
 
-	getPropertyByNameOrId(
+	getPropertyByNameOrId<Property extends TextureProperty>(
 		nameOrID: string | number,
-		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA> {
+		property: Property,
+	): Promise<PropertyToOutput<Property>> {
 		return this.textureRepo
-			.searchTexturePropertyByNameOrId(nameOrID, property)
+			.searchTexturePropertyByNameOrId<Property>(nameOrID, property)
 			.catch(() => Promise.reject(new Error("Service failed to make request")));
 	}
 
@@ -95,31 +87,28 @@ export default class TextureService {
 	}
 
 	async mergeTextures(addID: string, removeID: string) {
-		// so basically we append the uses of the removed texture to the uses of the kept texture
-		const addTexture: TextureAll = (await this.getPropertyByNameOrId(addID, "all")) as any;
+		// append the uses of the removed texture to the uses of the kept texture
+		const addTexture: TextureAll = await this.getPropertyByNameOrId(addID, "all");
 
 		// get most recent use id from texture to add
 		const latestLetter = addTexture.uses
 			.reduce((best, cur) => {
-				const letter = cur.id.at(-1);
+				const letter = cur[ID_FIELD].at(-1);
 				if (best > letter) return best;
 				return letter;
 			}, "a")
 			.charCodeAt(0);
-		const usesToRemove: FirestormUse[] = (await this.getPropertyByNameOrId(
-			removeID,
-			"uses",
-		)) as any;
+		const usesToRemove = await this.getPropertyByNameOrId(removeID, "uses");
 
 		// two dimensional array
-		const pathsToRemove = await Promise.all(usesToRemove.map((a) => a.getPaths()));
+		const pathsToRemove = await Promise.all(usesToRemove.map((a: FirestormUse) => a.getPaths()));
 
 		const pathsToAdd = [];
 
 		const usesToAdd = usesToRemove.map((use, i) => {
 			// find corresponding set of paths for use
-			const pathsWithUse = pathsToRemove.find((p) => p?.[0]?.use === use.id);
-			use.id = addID + String.fromCharCode(latestLetter + i + 1);
+			const pathsWithUse = pathsToRemove.find((p) => p?.[0]?.use === use[ID_FIELD]);
+			use[ID_FIELD] = addID + String.fromCharCode(latestLetter + i + 1);
 			use.texture = Number(addID);
 
 			if (!pathsWithUse) return use;
@@ -127,8 +116,8 @@ export default class TextureService {
 			pathsToAdd.push(
 				...pathsWithUse.map((p) => {
 					// randomly generated when added later
-					delete p.id;
-					p.use = use.id;
+					delete p[ID_FIELD];
+					p.use = use[ID_FIELD];
 					return p;
 				}),
 			);
@@ -151,7 +140,7 @@ export default class TextureService {
 			name: input.name,
 			tags: input.tags,
 		});
-		const textureID = createdTexture.id;
+		const textureID = createdTexture[ID_FIELD];
 
 		// create uses
 		const [useIDs, fullUsesToCreate]: [string[], Uses] = input.uses.reduce(

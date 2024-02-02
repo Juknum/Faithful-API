@@ -33,7 +33,22 @@ export interface EntireTextureToCreate extends TextureCreationParam {
 }
 
 export type Edition = "java" | "bedrock";
-export type TextureProperty = "uses" | "paths" | "contributions" | "mcmeta" | "all" | null;
+export type TextureProperty = null | "uses" | "paths" | "contributions" | "mcmeta" | "all";
+
+// average typescript experience
+export type PropertyToOutput<T extends TextureProperty> = T extends null
+	? Texture | Textures
+	: T extends "uses"
+		? Uses
+		: T extends "paths"
+			? Paths
+			: T extends "contributions"
+				? Contributions
+				: T extends "mcmeta"
+					? MCMETA
+					: T extends "all"
+						? TextureAll
+						: never;
 
 export interface FirestormTexture extends Texture {
 	uses(): Promise<Uses>;

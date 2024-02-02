@@ -37,13 +37,12 @@ export default class CloudflareClassRepository implements CloudflareRepository {
 				),
 			)
 			.then((response) => {
-				if (Array.isArray(response)) {
+				if (Array.isArray(response))
 					response.forEach((zone) => {
 						delete zone.result;
 					});
-				}
 
-				return Promise.resolve(response);
+				return response;
 			});
 	}
 

@@ -20,7 +20,7 @@ export class SettingsService {
 		return result;
 	}
 
-	update(body: any): void | PromiseLike<void> {
+	update(body: Record<string, any>): void | PromiseLike<void> {
 		return this.settingsRepository.update(body);
 	}
 }

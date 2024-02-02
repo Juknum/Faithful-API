@@ -3,39 +3,35 @@ import {
 	Edition,
 	PackID,
 	TextureCreationParam,
-	MCMETA,
 	TextureProperty,
-	Contributions,
-	Paths,
 	Texture,
 	Textures,
-	Uses,
 	TextureRepository,
-	Path,
 	Use,
+	PropertyToOutput,
 } from "~/v2/interfaces";
 import { NotFoundError } from "../../tools/ApiError";
 import { textures, paths, uses, contributions, settings } from "../../firestorm";
+import { MinecraftSorter } from "../../tools/sorter";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(
 		tag: string | undefined,
 		search: string | undefined,
-		forcePartial: boolean = false,
+		forcePartial = false,
 	): Promise<Textures> {
 		// * none, read raw
 		if (tag === undefined && search === undefined) return this.getRaw().then(Object.values);
 
 		// * number id: get + includes tag?
-		const numberID: number = search !== undefined ? parseInt(search, 10) : NaN;
+		const numberID = search !== undefined ? parseInt(search, 10) : NaN;
 		if (!Number.isNaN(numberID) && numberID.toString() === search.toString()) {
 			const tex: Texture = await textures.get(numberID).catch(() => undefined);
 
-			if (tex === undefined) return Promise.resolve([]);
+			if (tex === undefined) return [];
+			if (tag === undefined || tex.tags.includes(tag)) return [tex];
 
-			if (tag === undefined || tex.tags.includes(tag)) return Promise.resolve([tex]);
-
-			return Promise.resolve([]);
+			return [];
 		}
 
 		// tag or string search
@@ -50,7 +46,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		}
 
 		// with search
-		let partial = false || forcePartial;
+		let partial = forcePartial;
 		if (search !== undefined) {
 			partial = search.startsWith("_") || search.endsWith("_") || forcePartial;
 
@@ -83,13 +79,13 @@ export default class TextureFirestormRepository implements TextureRepository {
 	public searchTextureByNameOrId<AlwaysID extends boolean>(
 		nameOrID: string | number,
 	): Promise<AlwaysID extends true ? Texture : Texture | Textures> {
-		return this.searchTexturePropertyByNameOrId(nameOrID, null) as any;
+		return this.searchTexturePropertyByNameOrId<null>(nameOrID, null) as any;
 	}
 
-	public searchTexturePropertyByNameOrId(
+	public searchTexturePropertyByNameOrId<Property extends TextureProperty>(
 		nameOrID: string | number,
-		property: TextureProperty,
-	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA> {
+		property: Property,
+	): Promise<PropertyToOutput<Property>> {
 		const intID: number = parseInt(nameOrID as string, 10);
 
 		if (Number.isNaN(intID) || intID.toString() !== nameOrID.toString()) {
@@ -106,7 +102,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 					.search([{ field: "name", criteria: "includes", value: nameOrID, ignoreCase: true }])
 					.then((texturesFound: Textures) => {
 						if (property === null) return texturesFound;
-						return Promise.all(texturesFound.map((t) => t[property]()));
+						return Promise.all(texturesFound.map((t) => t[property as string]()));
 					});
 			}
 
@@ -123,11 +119,11 @@ export default class TextureFirestormRepository implements TextureRepository {
 				})
 				.then((otherTexturesFound: Textures) => {
 					if (property === null) return otherTexturesFound;
-					return Promise.all(otherTexturesFound.map((t) => t[property]()));
+					return Promise.all(otherTexturesFound.map((t) => t[property as string]()));
 				});
 		}
 
-		return this.getTextureById(intID, property);
+		return this.getTextureById(intID, property) as any;
 	}
 
 	public getTextureById(id: number, property: TextureProperty): Promise<Texture> {
@@ -177,13 +173,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 			.select({
 				fields: ["tags"],
 			})
-			.then((res: Textures) =>
-				(
-					Object.values(res).reduce(
-						(acc: Array<string>, cur: any) => [...acc, cur.tags],
-						[],
-					) as Array<string>
-				)
+			.then((res) =>
+				Object.values(res)
+					.map((v) => v.tags)
 					.flat()
 					.filter((e, i, a) => a.indexOf(e) === i)
 					.sort(),
@@ -196,12 +188,12 @@ export default class TextureFirestormRepository implements TextureRepository {
 				fields: ["versions"],
 			})
 			.then((res) =>
-				Object.values(res).reduce((acc: Array<string>, cur: Path) => {
-					(cur.versions || []).forEach((edi) => {
-						if (!acc.includes(edi)) acc.push(edi);
-					});
-					return acc.sort().reverse();
-				}, []),
+				Object.values(res)
+					.map((v) => v.versions)
+					.flat()
+					.filter((e, i, a) => a.indexOf(e) === i)
+					.sort(MinecraftSorter)
+					.reverse(),
 			);
 	}
 

@@ -39,13 +39,9 @@ export default class PackFirestormRepository implements PackRepository {
 			.select({
 				fields: ["tags"],
 			})
-			.then((res: any) =>
-				(
-					Object.values(res).reduce(
-						(acc: Array<string>, cur: any) => [...acc, cur.tags],
-						[],
-					) as Array<string>
-				)
+			.then((res) =>
+				Object.values(res)
+					.map((v) => v.tags)
 					.flat()
 					.filter((e, i, a) => a.indexOf(e) === i)
 					.sort(),
@@ -138,7 +134,7 @@ export default class PackFirestormRepository implements PackRepository {
 					value: packId,
 				},
 			])
-			.then((contribs) => contributions.removeBulk(contribs.map((c) => c.id)))
+			.then((contribs) => contributions.removeBulk(contribs.map((c) => c[ID_FIELD])))
 			.then(() => packs.remove(packId))
 			.then(() => {});
 	}

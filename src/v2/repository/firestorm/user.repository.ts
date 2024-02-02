@@ -35,17 +35,17 @@ export default class UserFirestormRepository implements UserRepository {
 		return (
 			users
 				.readRaw()
-				.then((res: Record<string, User>) => Object.entries(res))
+				.then(Object.entries)
 				// convert to entries to map, convert back to object after mapping done
 				.then((arr: [string, User][]) => arr.map(([key, el]) => [key, __transformUser(el)]))
-				.then((arr: [string, User][]) => Object.fromEntries(arr))
+				.then(Object.fromEntries)
 		);
 	}
 
 	getNames(): Promise<Usernames> {
 		return users
 			.select({ fields: ["id", "username", "uuid", "anonymous"] })
-			.then((obj: any) => Object.values(obj))
+			.then(Object.values)
 			.then((_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[]) =>
 				_users.map((el) => ({
 					id: el.id,
@@ -61,7 +61,7 @@ export default class UserFirestormRepository implements UserRepository {
 			.then((u) => __transformUser(u))
 			.catch((err) => {
 				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
-					const formattedError = new Error("User not found") as any;
+					const formattedError: any = new Error("User not found");
 					formattedError.code = 404;
 
 					return Promise.reject(formattedError);
@@ -161,7 +161,7 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	delete(id: string): Promise<void> {
-		return users.remove(id).then(() => Promise.resolve());
+		return users.remove(id).then(() => {});
 	}
 
 	getUserProfiles(searchedUsers: string[]): Promise<UserProfile[]> {
