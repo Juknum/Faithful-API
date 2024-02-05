@@ -22,6 +22,7 @@ firestorm.address(process.env.FIRESTORM_URL);
 firestorm.token(process.env.FIRESTORM_TOKEN);
 
 const app: Application = express();
+app.disable("x-powered-by");
 
 // Use body parser to read sent json payloads
 //! DO NOT DELETE THE BODY PARSER, IT IS USED TO AGGREGATE DATA AND TRANSFORM IT
