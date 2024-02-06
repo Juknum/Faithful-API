@@ -26,10 +26,10 @@ export default class GalleryService {
 		textureToUse: Record<string, Use>,
 		useToPath: Record<string, Path>,
 	) {
-		const blacklist: string[] =
+		const ignoredTextures: string[] =
 			(
 				await axios.get(
-					"https://raw.githubusercontent.com/Faithful-Resource-Pack/CompliBot/main/json/blacklisted_textures.json",
+					"https://raw.githubusercontent.com/Faithful-Resource-Pack/CompliBot/main/json/ignored_textures.json",
 				)
 			).data[edition] ?? [];
 
@@ -46,8 +46,8 @@ export default class GalleryService {
 			.map((textureID) => textureToUse[textureID])
 			.map((use: Use) => useToPath[use.id].name)
 			.map((path) => {
-				// fall back to default if blacklisted (simulates default behavior)
-				const url = blacklist.some((i) => path.includes(i)) ? defaultURLs : requestURLs;
+				// fall back to default if ignored (simulates default behavior)
+				const url = ignoredTextures.some((i) => path.includes(i)) ? defaultURLs : requestURLs;
 				return `${baseURL}/${url.org}/${url.repo}/${mcVersion}/${path}`;
 			});
 	}
