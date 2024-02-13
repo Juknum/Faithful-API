@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { settings } from "../../firestorm/index";
 import { SettingsRepository } from "../../interfaces";
 
@@ -6,7 +7,7 @@ export default class SettingsFirestormRepository implements SettingsRepository {
 		return settings.readRaw();
 	}
 
-	update(body: Record<string, any>): Promise<void> {
-		return settings.writeRaw(body).then(() => {});
+	update(body: Record<string, any>): Promise<WriteConfirmation> {
+		return settings.writeRaw(body);
 	}
 }

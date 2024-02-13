@@ -1,5 +1,5 @@
 import { InputPath, Path, Paths, PathRepository } from "~/v2/interfaces";
-import { ID_FIELD } from "firestorm-db";
+import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { paths } from "../../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
@@ -37,12 +37,12 @@ export default class PathFirestormRepository implements PathRepository {
 		return paths.addBulk(pathArray).then((ids) => paths.searchKeys(ids));
 	}
 
-	removePathById(pathID: string): Promise<void> {
-		return paths.remove(pathID).then(() => {});
+	removePathById(pathID: string): Promise<WriteConfirmation> {
+		return paths.remove(pathID);
 	}
 
-	removePathsByBulk(pathIDs: string[]): Promise<void> {
-		return paths.removeBulk(pathIDs).then(() => {});
+	removePathsByBulk(pathIDs: string[]): Promise<WriteConfirmation> {
+		return paths.removeBulk(pathIDs);
 	}
 
 	getPathById(pathID: string): Promise<Path> {
@@ -59,7 +59,7 @@ export default class PathFirestormRepository implements PathRepository {
 	 * @param oldVersion old version to remove on paths versions array
 	 * @param newVersion new version to replace the old version
 	 */
-	modifyVersion(oldVersion: string, newVersion: string): void | PromiseLike<void> {
+	modifyVersion(oldVersion: string, newVersion: string): Promise<void> {
 		return this.getRaw()
 			.then((r) => {
 				const old: Paths = Object.values(r);
@@ -76,7 +76,7 @@ export default class PathFirestormRepository implements PathRepository {
 			.then(() => {});
 	}
 
-	addNewVersionToVersion(version: string, newVersion: string): void | PromiseLike<void> {
+	addNewVersionToVersion(version: string, newVersion: string): Promise<void> {
 		return this.getRaw()
 			.then((r) => {
 				const old: Paths = Object.values(r);

@@ -11,6 +11,7 @@ import {
 	Security,
 	Tags,
 } from "tsoa";
+import { WriteConfirmation } from "firestorm-db";
 import {
 	Contributions,
 	Contribution,
@@ -153,7 +154,7 @@ export class ContributionsController extends Controller {
 	@Delete("{id}")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async deleteContribution(id: string): Promise<string> {
+	public async deleteContribution(id: string): Promise<WriteConfirmation> {
 		return this.service.deleteContribution(id);
 	}
 

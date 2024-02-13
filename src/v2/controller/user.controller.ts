@@ -12,6 +12,7 @@ import {
 	Security,
 	Tags,
 } from "tsoa";
+import { WriteConfirmation } from "firestorm-db";
 import { BadRequestError, ForbiddenError, NotAvailableError } from "../tools/ApiError";
 import {
 	Addons,
@@ -234,7 +235,7 @@ export class UserController extends Controller {
 	@Delete("{id}")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async delete(@Path() id: string): Promise<void> {
+	public async delete(@Path() id: string): Promise<WriteConfirmation> {
 		return this.userService.delete(id);
 	}
 }

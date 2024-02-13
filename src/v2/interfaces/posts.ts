@@ -1,3 +1,5 @@
+import { WriteConfirmation } from "firestorm-db";
+
 export interface Post {
 	id: string; // post unique id
 	name: string; // addon name (> 5 && < 30)
@@ -38,5 +40,5 @@ export interface WebsitePostRepository {
 	getByPermalink(permalink: String): Promise<WebsitePost>;
 	create(post: CreateWebsitePost): Promise<WebsitePost>;
 	update(id: number, post: CreateWebsitePost): Promise<WebsitePost>;
-	delete(id: number): Promise<void>;
+	delete(id: number): Promise<WriteConfirmation>;
 }

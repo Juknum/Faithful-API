@@ -16,6 +16,7 @@ import {
 	Query,
 } from "tsoa";
 import DOMPurify from "isomorphic-dompurify";
+import { WriteConfirmation } from "firestorm-db";
 import {
 	WebsitePostDownloadRecord,
 	WebsitePostChangelogRecord,
@@ -156,7 +157,7 @@ export class PostController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["administrator"])
 	@Delete("{id}")
-	public deletePost(@Path() id: number): Promise<void> {
+	public deletePost(@Path() id: number): Promise<WriteConfirmation> {
 		return this.service.delete(id);
 	}
 }

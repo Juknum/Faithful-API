@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
+import { WriteConfirmation } from "firestorm-db";
 import { Use, Uses, Paths, CreationUse } from "../interfaces";
 import UseService from "../service/use.service";
 
@@ -61,7 +62,7 @@ export class UsesController extends Controller {
 	 */
 	@Delete("{id}")
 	@Security("discord", ["administrator"])
-	public async deleteUse(@Path() id: string): Promise<void> {
+	public async deleteUse(@Path() id: string): Promise<WriteConfirmation[]> {
 		return this.service.deleteUse(id);
 	}
 }

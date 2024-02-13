@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { contributions } from "../firestorm";
 import {
 	Pack,
@@ -72,7 +73,7 @@ export class PackService {
 		return this.repository.update(id, pack);
 	}
 
-	public delete(id: PackID): Promise<void> {
+	public delete(id: PackID): Promise<WriteConfirmation> {
 		return this.repository.delete(id);
 	}
 }

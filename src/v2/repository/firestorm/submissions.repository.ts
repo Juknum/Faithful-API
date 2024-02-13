@@ -1,4 +1,4 @@
-import { ID_FIELD } from "firestorm-db";
+import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import {
 	SubmissionRepository,
 	Submission,
@@ -38,7 +38,7 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 		return submissions.set(packId, packWithId).then(() => submissions.get(packId));
 	}
 
-	delete(packId: PackID): Promise<void> {
-		return submissions.remove(packId).then(() => {}); // return nothing
+	delete(packId: PackID): Promise<WriteConfirmation> {
+		return submissions.remove(packId);
 	}
 }

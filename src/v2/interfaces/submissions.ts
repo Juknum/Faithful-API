@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { PackID, PackAll } from "./packs";
 
 export interface SubmissionChannels {
@@ -36,5 +37,5 @@ export interface SubmissionRepository {
 	getById(id: PackID): Promise<Submission>;
 	create(packId: PackID, packToCreate: Submission): Promise<Submission>;
 	update(packId: PackID, newPack: Submission): Promise<Submission>;
-	delete(packId: PackID): Promise<void>;
+	delete(packId: PackID): Promise<WriteConfirmation>;
 }

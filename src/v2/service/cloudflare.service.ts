@@ -8,7 +8,7 @@ export default class CloudflareService {
 		return this.repository.purge();
 	}
 
-	dev(mode: DevMode): any | PromiseLike<any> {
+	dev(mode: DevMode): Promise<void> {
 		return this.repository.dev(mode);
 	}
 }

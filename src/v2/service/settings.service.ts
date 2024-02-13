@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import SettingsFirestormRepository from "../repository/firestorm/settings.repository";
 
 export class SettingsService {
@@ -20,7 +21,7 @@ export class SettingsService {
 		return result;
 	}
 
-	update(body: Record<string, any>): void | PromiseLike<void> {
+	update(body: Record<string, any>): Promise<WriteConfirmation> {
 		return this.settingsRepository.update(body);
 	}
 }

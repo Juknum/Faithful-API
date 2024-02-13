@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { FirstCreationSubmission, Submission } from "./submissions";
 import { Edition } from "./textures";
 
@@ -57,5 +58,5 @@ export interface PackRepository {
 	renamePack(oldPack: PackID, newPack: string): Promise<void>;
 	create(packId: string, packToCreate: CreationPackAll): Promise<CreationPackAll>;
 	update(packId: PackID, newPack: Pack): Promise<Pack>;
-	delete(packId: PackID): Promise<void>;
+	delete(packId: PackID): Promise<WriteConfirmation>;
 }

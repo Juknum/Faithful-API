@@ -1,3 +1,5 @@
+import { WriteConfirmation } from "firestorm-db";
+
 export interface FileParent {
 	type: string; // collection name (addon, post...)
 	id: string; // id of the parent
@@ -22,15 +24,15 @@ export interface FirestormFile extends File {}
 
 export interface FileRepository {
 	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void>;
-	remove(path: string): Promise<void>;
+	remove(path: string): Promise<WriteConfirmation>;
 	addFile(file: File): Promise<string>;
 	addFiles(files: Files): Promise<string[]>;
 	getFileById(id: string): Promise<File>;
 	getFilesByParent(parent: FileParent): Promise<Files>;
 	setFileById(id: string, file: File): Promise<File>;
-	removeFileById(id: string): Promise<void>;
-	removeFilesByParent(parent: FileParent): Promise<void>;
-	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<void>;
-	removeFileByPath(path: string): Promise<void>;
+	removeFileById(id: string): Promise<WriteConfirmation>;
+	removeFilesByParent(parent: FileParent): Promise<WriteConfirmation>;
+	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<WriteConfirmation>;
+	removeFileByPath(path: string): Promise<WriteConfirmation>;
 	getRaw(): Promise<Record<string, File>>;
 }

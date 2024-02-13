@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { Use, Uses, Paths, CreationUse } from "../interfaces";
 import UseFirestormRepository from "../repository/firestorm/use.repository";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
@@ -38,7 +39,7 @@ export default class UseService {
 		throw new NotFoundError(`Use ID not found`);
 	}
 
-	updateUse(id: string, modifiedUse: CreationUse): Use | PromiseLike<Use> {
+	updateUse(id: string, modifiedUse: CreationUse): Promise<Use> {
 		return this.getUseByIdOrNameAndCatch(id).then(() =>
 			this.useRepo.set({
 				id,
@@ -47,7 +48,7 @@ export default class UseService {
 		);
 	}
 
-	deleteUse(id: string): Promise<void> {
+	deleteUse(id: string): Promise<WriteConfirmation[]> {
 		return this.useRepo.deleteUse(id);
 	}
 

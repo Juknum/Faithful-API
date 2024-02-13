@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { Edition } from "./textures";
 
 export interface CreationPath {
@@ -19,16 +20,16 @@ export interface Paths extends Array<Path> {}
 export interface FirestormPath extends Path {}
 
 export interface PathRepository {
-	addNewVersionToVersion(version: string, newVersion: string): void | PromiseLike<void>;
+	addNewVersionToVersion(version: string, newVersion: string): Promise<void>;
 	getPathById(pathID: string): Promise<Path>;
 	getPathUseById(useID: string): Promise<Paths>;
 	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths>;
 	createPath(path: InputPath): Promise<Path>;
 	createPathBulk(paths: InputPath[]): Promise<Paths>;
 	updatePath(pathID: string, path: Path): Promise<Path>;
-	modifyVersion(oldVersion: string, newVersion: string): void | PromiseLike<void>;
-	removePathById(pathID: string): Promise<void>;
-	removePathsByBulk(pathIDs: string[]): Promise<void>;
+	modifyVersion(oldVersion: string, newVersion: string): Promise<void>;
+	removePathById(pathID: string): Promise<WriteConfirmation>;
+	removePathsByBulk(pathIDs: string[]): Promise<WriteConfirmation>;
 	getRaw(): Promise<Record<string, Path>>;
 }
 

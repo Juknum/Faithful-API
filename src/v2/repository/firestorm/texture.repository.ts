@@ -1,4 +1,4 @@
-import { ID_FIELD } from "firestorm-db";
+import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import {
 	Edition,
 	PackID,
@@ -7,7 +7,6 @@ import {
 	Texture,
 	Textures,
 	TextureRepository,
-	Use,
 	PropertyToOutput,
 } from "~/v2/interfaces";
 import { NotFoundError } from "../../tools/ApiError";
@@ -141,10 +140,10 @@ export default class TextureFirestormRepository implements TextureRepository {
 				fields: ["edition"],
 			})
 			.then((res) =>
-				Object.values(res).reduce((acc: Array<string>, cur: Use) => {
-					if (!acc.includes(cur.edition)) acc.push(cur.edition);
-					return acc.sort();
-				}, []),
+				Object.values(res)
+					.map((v) => v.edition)
+					.filter((e, i, a) => a.indexOf(e) === i)
+					.sort(),
 			);
 	}
 
@@ -153,18 +152,11 @@ export default class TextureFirestormRepository implements TextureRepository {
 			.select({
 				fields: ["resolution"],
 			})
-			.then((response: any) =>
-				(
-					Object.values(response).reduce(
-						(resolutionList: Array<number>, currentContribution: any) => {
-							const { resolution: contributionResolution } = currentContribution;
-							if (!resolutionList.includes(contributionResolution))
-								resolutionList.push(contributionResolution);
-							return resolutionList;
-						},
-						[],
-					) as Array<number>
-				).sort(),
+			.then((res) =>
+				Object.values(res)
+					.map((v) => v.resolution)
+					.filter((e, i, a) => a.indexOf(e) === i)
+					.sort(),
 			);
 	}
 
@@ -208,24 +200,23 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return textures.add(texture).then((id: string) => this.searchTextureByNameOrId<true>(id));
 	}
 
-	public async deleteTexture(id: string): Promise<void> {
+	public async deleteTexture(id: string): Promise<WriteConfirmation[]> {
 		const foundTexture = await textures.get(id);
 		const foundUses = await foundTexture.uses();
 		const foundPaths = await foundTexture.paths();
 		const foundContributions = await foundTexture.contributions();
 
-		const promises = [];
+		const promises: Promise<WriteConfirmation>[] = [];
 		promises.push(textures.remove(id));
 		promises.push(uses.removeBulk(foundUses.map((u) => u[ID_FIELD])));
 		promises.push(paths.removeBulk(foundPaths.map((p) => p[ID_FIELD])));
 		promises.push(contributions.removeBulk(foundContributions.map((c) => c[ID_FIELD])));
 
-		return Promise.all(promises).then(() => {});
+		return Promise.all(promises);
 	}
 
 	public changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
 		const unmapped = { id, ...body };
-
 		return textures.set(id, unmapped).then(() => this.searchTextureByNameOrId<true>(id));
 	}
 }

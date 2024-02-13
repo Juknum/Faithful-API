@@ -1,4 +1,4 @@
-import { ID_FIELD } from "firestorm-db";
+import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { PackID, Texture, Textures, InputPath, Uses, FirestormUse } from "../interfaces";
 import {
 	Edition,
@@ -178,11 +178,11 @@ export default class TextureService {
 		return Promise.all(body.map((t) => this.createEntireTexture(t)));
 	}
 
-	changeTexture(id: string, body: TextureCreationParam): Texture | PromiseLike<Texture> {
+	changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
 		return this.getByNameOrId(id).then(() => this.textureRepo.changeTexture(id, body));
 	}
 
-	deleteTexture(id: string): Promise<void> {
+	deleteTexture(id: string): Promise<WriteConfirmation[]> {
 		return this.textureRepo.deleteTexture(id);
 	}
 }

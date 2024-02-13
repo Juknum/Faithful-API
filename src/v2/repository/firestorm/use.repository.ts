@@ -1,6 +1,6 @@
 /* eslint-disable arrow-body-style */
 import { Use, UseRepository, Uses } from "~/v2/interfaces";
-import { ID_FIELD } from "firestorm-db";
+import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { paths as pathsCollection, uses } from "../../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
@@ -49,7 +49,7 @@ export default class UseFirestormRepository implements UseRepository {
 		);
 	}
 
-	deleteUse(id: string): Promise<void> {
+	deleteUse(id: string): Promise<WriteConfirmation[]> {
 		return this.removeUseById(id);
 	}
 
@@ -63,7 +63,7 @@ export default class UseFirestormRepository implements UseRepository {
 		return uses.setBulk(useIDs, useArray).then(() => uses.searchKeys(useIDs));
 	}
 
-	removeUseById(useID: string): Promise<void> {
+	removeUseById(useID: string): Promise<WriteConfirmation[]> {
 		return uses
 			.get(useID) // assure you find the texture and get path method
 			.then((gatheredUse) => gatheredUse.getPaths())
@@ -72,11 +72,10 @@ export default class UseFirestormRepository implements UseRepository {
 					uses.remove(useID),
 					pathsCollection.removeBulk(foundPaths.map((p) => p[ID_FIELD])), // delete all paths
 				]);
-			})
-			.then(() => {});
+			});
 	}
 
-	removeUsesByBulk(useIDs: string[]): Promise<void> {
-		return Promise.all(useIDs.map((useID) => this.removeUseById(useID))).then(() => {});
+	removeUsesByBulk(useIDs: string[]): Promise<WriteConfirmation[][]> {
+		return Promise.all(useIDs.map((useID) => this.removeUseById(useID)));
 	}
 }

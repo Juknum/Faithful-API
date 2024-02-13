@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { users } from "../../firestorm";
 import {
 	Addons,
@@ -43,16 +44,19 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getNames(): Promise<Usernames> {
-		return users
-			.select({ fields: ["id", "username", "uuid", "anonymous"] })
-			.then(Object.values)
-			.then((_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[]) =>
-				_users.map((el) => ({
-					id: el.id,
-					username: el.anonymous ? undefined : el.username,
-					uuid: el.anonymous ? undefined : el.uuid,
-				})),
-			);
+		return (
+			users
+				.select({ fields: ["id", "username", "uuid", "anonymous"] })
+				// calling Object.values as a callback gets rid of type inference
+				.then((res) => Object.values(res))
+				.then((_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[]) =>
+					_users.map((el) => ({
+						id: el.id,
+						username: el.anonymous ? undefined : el.username,
+						uuid: el.anonymous ? undefined : el.uuid,
+					})),
+				)
+		);
 	}
 
 	getUserById(id: string): Promise<User> {
@@ -105,7 +109,7 @@ export default class UserFirestormRepository implements UserRepository {
 					ignoreCase: true,
 				},
 			])
-			.then((arr: Users) => arr.map((el) => __transformUser(el)));
+			.then((arr: Users) => arr.map(__transformUser));
 	}
 
 	getUsersFromRole(role: string, username?: string): Promise<Users> {
@@ -160,8 +164,8 @@ export default class UserFirestormRepository implements UserRepository {
 		return users.set(id, user).then(() => this.getUserById(id));
 	}
 
-	delete(id: string): Promise<void> {
-		return users.remove(id).then(() => {});
+	delete(id: string): Promise<WriteConfirmation> {
+		return users.remove(id);
 	}
 
 	getUserProfiles(searchedUsers: string[]): Promise<UserProfile[]> {

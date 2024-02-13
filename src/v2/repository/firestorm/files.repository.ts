@@ -1,4 +1,4 @@
-import firestorm, { ID_FIELD } from "firestorm-db";
+import firestorm, { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import FormData from "form-data";
 import { files } from "../../firestorm";
 import { File, FileParent, FileRepository, Files, FileUse } from "../../interfaces/files";
@@ -37,26 +37,24 @@ export class FilesFirestormRepository implements FileRepository {
 		return files.set(id, file).then(() => this.getFileById(id));
 	}
 
-	removeFileById(id: string): Promise<void> {
-		return files.remove(id).then(() => {});
+	removeFileById(id: string): Promise<WriteConfirmation> {
+		return files.remove(id);
 	}
 
-	removeFilesByParent(parent: FileParent): Promise<void> {
-		return this.getFilesByParent(parent)
-			.then((_files) => files.removeBulk(_files.map((f) => f[ID_FIELD])))
-			.then(() => {});
+	removeFilesByParent(parent: FileParent): Promise<WriteConfirmation> {
+		return this.getFilesByParent(parent).then((_files) =>
+			files.removeBulk(_files.map((f) => f[ID_FIELD])),
+		);
 	}
 
-	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<void> {
-		return this.getFilesByParent(parent)
-			.then((_files) =>
-				files.removeBulk(_files.filter((f) => f.use === use).map((f) => f[ID_FIELD])),
-			)
-			.then(() => {});
+	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<WriteConfirmation> {
+		return this.getFilesByParent(parent).then((_files) =>
+			files.removeBulk(_files.filter((f) => f.use === use).map((f) => f[ID_FIELD])),
+		);
 	}
 
-	removeFileByPath(path: string): Promise<void> {
-		return this.remove(path).finally(() => {});
+	removeFileByPath(path: string): Promise<WriteConfirmation> {
+		return this.remove(path);
 	}
 
 	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void> {
@@ -69,9 +67,9 @@ export class FilesFirestormRepository implements FileRepository {
 		return firestorm.files.upload(form);
 	}
 
-	remove(path: string): Promise<void> {
+	remove(path: string): Promise<WriteConfirmation> {
 		// @ts-ignore
-		return firestorm.files.delete(path).then(() => {});
+		return firestorm.files.delete(path);
 	}
 
 	getRaw(): Promise<Record<string, File>> {

@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { CreationPath, Paths } from "./paths";
 
 export interface BaseUse {
@@ -28,9 +29,9 @@ export interface UseRepository {
 	getUsesByEdition(edition: string): Promise<Uses>;
 	getRaw(): Promise<Record<string, Use>>;
 	getUseByIdOrName(idOrName: string): Promise<Uses | Use>;
-	deleteUse(id: string): Promise<void>;
+	deleteUse(id: string): Promise<WriteConfirmation[]>;
 	set(use: Use): Promise<Use>;
 	setMultiple(uses: Uses): Promise<Uses>;
-	removeUseById(useID: string): Promise<void>;
-	removeUsesByBulk(useIDs: string[]): Promise<void>;
+	removeUseById(useID: string): Promise<WriteConfirmation[]>;
+	removeUsesByBulk(useIDs: string[]): Promise<WriteConfirmation[][]>;
 }

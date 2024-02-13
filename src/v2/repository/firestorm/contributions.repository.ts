@@ -1,3 +1,4 @@
+import { SearchOption, WriteConfirmation } from "firestorm-db";
 import {
 	Contribution,
 	ContributionCreationParams,
@@ -5,7 +6,6 @@ import {
 	ContributionsRepository,
 	ContributionsAuthors,
 	PackID,
-	User,
 } from "../../interfaces";
 import { contributions, users } from "../../firestorm";
 
@@ -24,7 +24,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	}
 
 	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {
-		const options: any[] = authors.map((author) => ({
+		const options: SearchOption<Contribution>[] = authors.map((author) => ({
 			field: "authors",
 			criteria: "array-contains",
 			value: author,
@@ -66,35 +66,38 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	getAuthors(): Promise<ContributionsAuthors> {
 		const out = {};
 
-		return contributions
-			.select({ fields: ["authors"] })
-			.then((obj: any) =>
-				Object.values(obj)
-					.map((o: any) => o.authors)
-					.flat(),
-			)
-			.then((authors: Array<string>) =>
-				authors.forEach((id: string) => {
-					if (!out[id]) out[id] = { id, contributions: 1 };
-					else out[id].contributions++;
-				}),
-			)
-			.then(() => users.select({ fields: ["id", "username", "uuid", "anonymous"] }))
-			.then(Object.values)
-			.then((_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[]) =>
-				Object.values(out).map((author: any) => {
-					const user = _users.find((u) => u.id === author.id);
+		return (
+			contributions
+				.select({ fields: ["authors"] })
+				.then((obj) =>
+					Object.values(obj)
+						.map((o) => o.authors)
+						.flat(),
+				)
+				.then((authors) =>
+					authors.forEach((id) => {
+						if (!out[id]) out[id] = { id, contributions: 1 };
+						else out[id].contributions++;
+					}),
+				)
+				.then(() => users.select({ fields: ["id", "username", "uuid", "anonymous"] }))
+				// calling Object.values as a callback gets rid of type inference
+				.then((res) => Object.values(res))
+				.then((_users) =>
+					Object.values(out).map((author: any) => {
+						const user = _users.find((u) => u.id === author.id);
 
-					if (user)
-						return {
-							...author,
-							username: user.anonymous ? undefined : user.username,
-							uuid: user.anonymous ? undefined : user.uuid,
-						};
+						if (user)
+							return {
+								...author,
+								username: user.anonymous ? undefined : user.username,
+								uuid: user.anonymous ? undefined : user.uuid,
+							};
 
-					return author;
-				}),
-			);
+						return author;
+					}),
+				)
+		);
 	}
 
 	addContribution(params: ContributionCreationParams): Promise<Contribution> {
@@ -111,7 +114,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		return contributions.set(id, params).then(() => contributions.get(id));
 	}
 
-	deleteContribution(id: string): Promise<string> {
+	deleteContribution(id: string): Promise<WriteConfirmation> {
 		return contributions.remove(id);
 	}
 

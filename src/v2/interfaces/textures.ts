@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { EntireUseToCreate, Uses } from "./uses";
 import { Paths } from "./paths";
 import { Contributions } from "./contributions";
@@ -83,5 +84,5 @@ export interface TextureRepository {
 	): Promise<Textures | Texture>;
 	getURLById(id: number, pack: PackID, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
-	deleteTexture(id: string): Promise<void>;
+	deleteTexture(id: string): Promise<WriteConfirmation[]>;
 }

@@ -1,4 +1,4 @@
-import { ID_FIELD } from "firestorm-db";
+import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { posts } from "../../firestorm";
 import { CreateWebsitePost, WebsitePost as Post, WebsitePostRepository } from "../../interfaces";
 
@@ -39,7 +39,7 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 		return posts.set(id, postWithId).then(() => posts.get(id));
 	}
 
-	delete(id: number): Promise<void> {
-		return posts.remove(String(id)).then(() => {}); // return nothing
+	delete(id: number): Promise<WriteConfirmation> {
+		return posts.remove(String(id));
 	}
 }

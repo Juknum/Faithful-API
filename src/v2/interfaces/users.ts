@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { Contributions } from "./contributions";
 import { Addons } from "./addons";
 
@@ -63,18 +64,18 @@ export interface FirestormUser extends User {
 
 /* eslint-disable no-unused-vars */
 export interface UserRepository {
-	getProfileOrCreate(id: string): User | PromiseLike<User>;
+	getProfileOrCreate(id: string): Promise<User>;
 	getUserProfiles(authors: string[]): Promise<UserProfile[]>;
 	getNameById(id: string): Promise<Username>;
 	getRaw(): Promise<Record<string, User>>;
-	getNames(): Promise<any>;
+	getNames(): Promise<Usernames>;
 	getUserById(id: string): Promise<User>;
 	getUsersByName(name: string): Promise<Users>;
 	getContributionsById(id: string): Promise<Contributions>;
 	getAddonsApprovedById(id: string): Promise<Addons>;
 	getAddonsById(id: string): Promise<Addons>;
 	update(id: string, user: User): Promise<User>;
-	delete(id: string): Promise<void>;
+	delete(id: string): Promise<WriteConfirmation>;
 	getUsersFromRole(role: string, username?: string): Promise<Users>;
 	getRoles(): Promise<User["roles"]>;
 }

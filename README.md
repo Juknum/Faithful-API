@@ -1,7 +1,7 @@
 <img src="https://raw.githubusercontent.com/Faithful-Resource-Pack/Branding/main/logos/transparent/256/plain_logo.png" alt="Faithful Logo" align="right">
 <div align="center">
   <h1>Faithful API</h1>
-  <h3>A public API for Faithful Resource Pack textures, add-ons and more.</h3>
+  <h3>Public RESTful API for Faithful's texture database, add-on submission, and more.</h3>
 
 ![RepoSize](https://img.shields.io/github/repo-size/Faithful-Resource-Pack/API)
 ![Issues](https://img.shields.io/github/issues/Faithful-Resource-Pack/API)

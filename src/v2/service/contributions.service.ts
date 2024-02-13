@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { contributions } from "../firestorm";
 import { Contribution, Contributions, PackID } from "../interfaces";
 import {
@@ -133,7 +134,7 @@ export default class ContributionService {
 		return this.contributionRepo.addContributions(params);
 	}
 
-	deleteContribution(id: string): Promise<string> {
+	deleteContribution(id: string): Promise<WriteConfirmation> {
 		return this.contributionRepo.deleteContribution(id);
 	}
 

@@ -10,6 +10,7 @@ import {
 	Body,
 	Put,
 } from "tsoa";
+import { WriteConfirmation } from "firestorm-db";
 import { Path, InputPath, PathNewVersionParam } from "../interfaces";
 import PathService from "../service/path.service";
 
@@ -94,7 +95,7 @@ export class PathsController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async deleteUse(@URLPath() id: string): Promise<void> {
+	public async deleteUse(@URLPath() id: string): Promise<WriteConfirmation> {
 		return this.service.removePathById(id);
 	}
 }

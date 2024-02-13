@@ -15,6 +15,7 @@ import {
 	Tags,
 } from "tsoa";
 import { Request as ExRequest } from "express";
+import { WriteConfirmation } from "firestorm-db";
 import {
 	Contributions,
 	Paths,
@@ -220,7 +221,7 @@ export class TextureController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async deleteTexture(id: string): Promise<void> {
+	public async deleteTexture(id: string): Promise<WriteConfirmation[]> {
 		return this.service.deleteTexture(id);
 	}
 }

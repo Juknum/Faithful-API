@@ -10,6 +10,7 @@ import {
 	SuccessResponse,
 	Tags,
 } from "tsoa";
+import { WriteConfirmation } from "firestorm-db";
 import { NotFoundError, PermissionError } from "../tools/ApiError";
 import { SettingsService } from "../service/settings.service";
 
@@ -52,7 +53,7 @@ export class SettingsController extends Controller {
 	@Response<PermissionError>(403)
 	@Post("/raw")
 	@Security("discord", ["administrator", "developer"])
-	public async update(@Body() body: Record<string, any>): Promise<void> {
+	public async update(@Body() body: Record<string, any>): Promise<WriteConfirmation> {
 		return this.settingsService.update(body);
 	}
 }

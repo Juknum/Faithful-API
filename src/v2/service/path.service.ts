@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { BadRequestError } from "../tools/ApiError";
 import UseService from "./use.service";
 import { InputPath, Path, PathNewVersionParam, Paths } from "../interfaces";
@@ -88,11 +89,11 @@ export default class PathService {
 		return this.repository.addNewVersionToVersion(body.version, body.newVersion);
 	}
 
-	removePathById(pathID: string): Promise<void> {
+	removePathById(pathID: string): Promise<WriteConfirmation> {
 		return this.repository.removePathById(pathID);
 	}
 
-	removePathByBulk(pathIDs: string[]): Promise<void> {
+	removePathByBulk(pathIDs: string[]): Promise<WriteConfirmation> {
 		return this.repository.removePathsByBulk(pathIDs);
 	}
 }

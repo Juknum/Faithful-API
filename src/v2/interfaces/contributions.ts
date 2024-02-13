@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { PackID } from "./packs";
 
 export interface ContributionCreationParams {
@@ -55,7 +56,7 @@ export interface ContributionsRepository {
 	getContributionById(id: string): Promise<Contribution>;
 	addContribution(params: ContributionCreationParams): Promise<Contribution>;
 	addContributions(params: ContributionCreationParams[]): Promise<Contributions>;
-	deleteContribution(id: string): Promise<string>;
+	deleteContribution(id: string): Promise<WriteConfirmation>;
 	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution>;
 	getByDateRange(begin: string, ends: string): Promise<Contributions>;
 	getAuthors(): Promise<ContributionsAuthors>;

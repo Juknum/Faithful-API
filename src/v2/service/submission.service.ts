@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { Submission, CreationSubmission, PackID, PackAll } from "../interfaces";
 import SubmissionFirestormRepository from "../repository/firestorm/submissions.repository";
 import { BadRequestError } from "../tools/ApiError";
@@ -34,7 +35,7 @@ export class SubmissionService {
 			.then(() => this.repository.update(id, pack));
 	}
 
-	public delete(id: PackID): Promise<void> {
+	public delete(id: PackID): Promise<WriteConfirmation> {
 		return this.repository.delete(id);
 	}
 }

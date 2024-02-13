@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { addons } from "../../firestorm";
 import { Files, AddonStatus, Addon, Addons, AddonRepository } from "../../interfaces";
 
@@ -52,8 +53,8 @@ export default class AddonFirestormRepository implements AddonRepository {
 			.then((results) => results[0]);
 	}
 
-	delete(id: number): Promise<void> {
-		return addons.remove(String(id)).then(() => {}); // return nothing
+	delete(id: number): Promise<WriteConfirmation> {
+		return addons.remove(String(id));
 	}
 
 	update(id: number, addon: Addon): Promise<Addon> {

@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import {
 	Addons,
 	Contributions,
@@ -136,7 +137,7 @@ export class UserService {
 		return this.repository.update(id, user);
 	}
 
-	public delete(id: string): Promise<void> {
+	public delete(id: string): Promise<WriteConfirmation> {
 		return this.repository.delete(id);
 	}
 }

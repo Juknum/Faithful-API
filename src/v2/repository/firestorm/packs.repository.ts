@@ -1,4 +1,4 @@
-import { ID_FIELD, SearchOption } from "firestorm-db";
+import { ID_FIELD, SearchOption, WriteConfirmation } from "firestorm-db";
 import {
 	PackRepository,
 	Pack,
@@ -121,7 +121,7 @@ export default class PackFirestormRepository implements PackRepository {
 		return packs.set(packId, packWithId).then(() => packs.get(packId));
 	}
 
-	delete(packId: PackID): Promise<void> {
+	delete(packId: PackID): Promise<WriteConfirmation> {
 		// try removing submission data if exists too
 		this.submissionRepo.delete(packId).catch(() => {});
 
@@ -135,7 +135,6 @@ export default class PackFirestormRepository implements PackRepository {
 				},
 			])
 			.then((contribs) => contributions.removeBulk(contribs.map((c) => c[ID_FIELD])))
-			.then(() => packs.remove(packId))
-			.then(() => {});
+			.then(() => packs.remove(packId));
 	}
 }

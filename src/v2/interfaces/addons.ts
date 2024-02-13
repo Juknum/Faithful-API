@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import { Files } from "./files";
 
 export interface AddonDownload {
@@ -84,6 +85,6 @@ export interface AddonRepository {
 	getAddonByStatus(status: AddonStatus): Promise<Addons>;
 	getFilesById(addonId: number): Promise<Files>;
 	create(addon: Addon): Promise<Addon>;
-	delete(id: number): Promise<void>;
+	delete(id: number): Promise<WriteConfirmation>;
 	update(id: number, addon: Addon): Promise<Addon>;
 }

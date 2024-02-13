@@ -1,3 +1,4 @@
+import { WriteConfirmation } from "firestorm-db";
 import {
 	WebsitePostDownloadRecord,
 	WebsitePostChangelogRecord,
@@ -58,7 +59,7 @@ export default class PostService {
 		return this.postRepo.update(id, post);
 	}
 
-	delete(id: number): Promise<void> {
+	delete(id: number): Promise<WriteConfirmation> {
 		return this.postRepo.delete(id);
 	}
 }

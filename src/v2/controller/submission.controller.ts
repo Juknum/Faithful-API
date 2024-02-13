@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
+import { WriteConfirmation } from "firestorm-db";
 import { SubmissionService } from "../service/submission.service";
 import { PackID, CreationSubmission, PackAll, Submission } from "../interfaces";
 
@@ -58,7 +59,7 @@ export class SubmissionController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async delete(id: PackID): Promise<void> {
+	public async delete(id: PackID): Promise<WriteConfirmation> {
 		return this.service.delete(id);
 	}
 }
