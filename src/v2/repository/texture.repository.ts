@@ -122,15 +122,18 @@ export default class TextureFirestormRepository implements TextureRepository {
 				});
 		}
 
-		return this.getTextureById(intID, property) as any;
+		return this.getTextureById(intID, property);
 	}
 
-	public getTextureById(id: number, property: TextureProperty): Promise<Texture> {
+	public getTextureById<Property extends TextureProperty>(
+		id: number,
+		property: Property,
+	): Promise<PropertyToOutput<Property>> {
 		if (Number.isNaN(id) || id < 0)
 			return Promise.reject(new Error("Texture IDs must be integers greater than 0."));
 		return textures.get(id).then((t: Texture) => {
 			if (property === null) return t;
-			return t[property]();
+			return t[property as string]();
 		});
 	}
 

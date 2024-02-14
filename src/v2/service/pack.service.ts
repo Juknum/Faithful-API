@@ -1,4 +1,4 @@
-import { WriteConfirmation } from "firestorm-db";
+import { EditField, WriteConfirmation } from "firestorm-db";
 import { contributions } from "../firestorm";
 import {
 	Pack,
@@ -8,6 +8,7 @@ import {
 	CreationPackAll,
 	Contributions,
 	PackAll,
+	Contribution,
 } from "../interfaces";
 import PackFirestormRepository from "../repository/packs.repository";
 
@@ -42,10 +43,10 @@ export class PackService {
 			.then((r) => {
 				const old: Contributions = Object.values(r);
 				const filtered = old.filter((c) => c.pack === oldPack);
-				const edits = filtered.map((p) => ({
+				const edits: EditField<Contribution>[] = filtered.map((p) => ({
 					id: p.id,
 					field: "pack",
-					operation: "set" as const,
+					operation: "set",
 					value: newPack,
 				}));
 

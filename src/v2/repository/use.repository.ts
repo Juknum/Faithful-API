@@ -1,7 +1,7 @@
 /* eslint-disable arrow-body-style */
 import { Use, UseRepository, Uses } from "~/v2/interfaces";
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
-import { paths as pathsCollection, uses } from "../firestorm";
+import { paths, uses } from "../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
 	getUsesByEdition(edition: string): Promise<Uses> {
@@ -70,7 +70,7 @@ export default class UseFirestormRepository implements UseRepository {
 			.then((foundPaths) => {
 				return Promise.all([
 					uses.remove(useID),
-					pathsCollection.removeBulk(foundPaths.map((p) => p[ID_FIELD])), // delete all paths
+					paths.removeBulk(foundPaths.map((p) => p[ID_FIELD])), // delete all paths
 				]);
 			});
 	}
