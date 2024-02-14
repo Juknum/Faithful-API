@@ -1,6 +1,6 @@
 import { Mod } from "~/v2/interfaces";
 import { mods } from "../firestorm";
-import ModsFirestormRepository from "../repository/firestorm/mods.repository";
+import ModsFirestormRepository from "../repository/mods.repository";
 
 export default class ModsService {
 	private readonly modsRepo = new ModsFirestormRepository();

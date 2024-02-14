@@ -13,7 +13,7 @@ import {
 	AddonStatsAdmin,
 	AddonStatusApproved,
 } from "../interfaces/addons";
-import AddonFirestormRepository from "../repository/firestorm/addon.repository";
+import AddonFirestormRepository from "../repository/addon.repository";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 function toSlug(value: string) {

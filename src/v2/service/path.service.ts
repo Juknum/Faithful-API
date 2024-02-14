@@ -2,7 +2,7 @@ import { WriteConfirmation } from "firestorm-db";
 import { BadRequestError } from "../tools/ApiError";
 import UseService from "./use.service";
 import { InputPath, Path, PathNewVersionParam, Paths } from "../interfaces";
-import PathFirestormRepository from "../repository/firestorm/path.repository";
+import PathFirestormRepository from "../repository/path.repository";
 import TextureService from "./texture.service";
 import { settings } from "../firestorm";
 

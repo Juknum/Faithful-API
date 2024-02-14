@@ -6,8 +6,8 @@ import {
 	PackAll,
 	PackID,
 } from "~/v2/interfaces";
-import { submissions } from "../../firestorm/packs/submissions";
-import { packs } from "../../firestorm/packs";
+import { submissions } from "../firestorm/packs/submissions";
+import { packs } from "../firestorm/packs";
 
 export default class SubmissionFirestormRepository implements SubmissionRepository {
 	getRaw(): Promise<Record<string, Submission>> {

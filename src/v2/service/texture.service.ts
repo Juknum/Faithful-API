@@ -8,7 +8,7 @@ import {
 	TextureAll,
 	PropertyToOutput,
 } from "../interfaces/textures";
-import TextureFirestormRepository from "../repository/firestorm/texture.repository";
+import TextureFirestormRepository from "../repository/texture.repository";
 import PathService from "./path.service";
 import UseService from "./use.service";
 

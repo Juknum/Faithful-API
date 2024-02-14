@@ -3,7 +3,7 @@
 import axios from "axios";
 import { textures } from "../firestorm";
 import { Edition, GalleryResult, PackID, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
-import PathFirestormRepository from "../repository/firestorm/path.repository";
+import PathFirestormRepository from "../repository/path.repository";
 import { NotFoundError } from "../tools/ApiError";
 import { PackService } from "./pack.service";
 import TextureService from "./texture.service";

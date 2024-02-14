@@ -1,7 +1,7 @@
 import firestorm, { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import FormData from "form-data";
-import { files } from "../../firestorm";
-import { File, FileParent, FileRepository, Files, FileUse } from "../../interfaces/files";
+import { files } from "../firestorm";
+import { File, FileParent, FileRepository, Files, FileUse } from "../interfaces/files";
 
 export class FilesFirestormRepository implements FileRepository {
 	addFiles(fileList: Files): Promise<string[]> {

@@ -9,7 +9,7 @@ import {
 	UserProfile,
 	Username,
 } from "../interfaces";
-import UserFirestormRepository from "../repository/firestorm/user.repository";
+import UserFirestormRepository from "../repository/user.repository";
 import { BadRequestError } from "../tools/ApiError";
 
 export class UserService {

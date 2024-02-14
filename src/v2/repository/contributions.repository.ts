@@ -6,8 +6,8 @@ import {
 	ContributionsRepository,
 	ContributionsAuthors,
 	PackID,
-} from "../../interfaces";
-import { contributions, users } from "../../firestorm";
+} from "../interfaces";
+import { contributions, users } from "../firestorm";
 
 export default class ContributionFirestormRepository implements ContributionsRepository {
 	getContributionById(id: string): Promise<Contribution> {

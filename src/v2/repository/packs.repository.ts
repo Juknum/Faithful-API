@@ -11,7 +11,7 @@ import {
 	PackSearch,
 	FirestormPack,
 } from "~/v2/interfaces";
-import { contributions, packs } from "../../firestorm";
+import { contributions, packs } from "../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
 
 export default class PackFirestormRepository implements PackRepository {

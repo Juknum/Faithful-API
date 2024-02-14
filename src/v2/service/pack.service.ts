@@ -9,7 +9,7 @@ import {
 	Contributions,
 	PackAll,
 } from "../interfaces";
-import PackFirestormRepository from "../repository/firestorm/packs.repository";
+import PackFirestormRepository from "../repository/packs.repository";
 
 export class PackService {
 	private readonly repository = new PackFirestormRepository();

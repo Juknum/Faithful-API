@@ -1,6 +1,6 @@
 import axios from "axios";
-import { modpacks } from "../../firestorm";
-import { Modpack, ModpacksRepository } from "../../interfaces";
+import { modpacks } from "../firestorm";
+import { Modpack, ModpacksRepository } from "../interfaces";
 
 export default class ModpacksFirestormRepository implements ModpacksRepository {
 	public getRaw(): Promise<Record<string, Modpack>> {

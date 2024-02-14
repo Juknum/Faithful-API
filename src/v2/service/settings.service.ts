@@ -1,5 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
-import SettingsFirestormRepository from "../repository/firestorm/settings.repository";
+import SettingsFirestormRepository from "../repository/settings.repository";
 
 export class SettingsService {
 	private readonly settingsRepository = new SettingsFirestormRepository();

@@ -1,6 +1,6 @@
 import { InputPath, Path, Paths, PathRepository } from "~/v2/interfaces";
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
-import { paths } from "../../firestorm/textures/paths";
+import { paths } from "../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
 	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths> {

@@ -1,5 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
-import { users } from "../../firestorm";
+import { users } from "../firestorm";
 import {
 	Addons,
 	Contributions,
@@ -10,7 +10,7 @@ import {
 	UserRepository,
 	Username,
 	UserProfile,
-} from "../../interfaces";
+} from "../interfaces";
 
 // eslint-disable-next-line no-underscore-dangle
 const __transformUser = (user: Partial<User>): User => ({
