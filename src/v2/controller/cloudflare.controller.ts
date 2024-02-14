@@ -1,5 +1,4 @@
 import { Controller, Get, Path, Route, Security, Tags } from "tsoa";
-import { DevMode } from "../interfaces/cloudflare";
 import CloudflareService from "../service/cloudflare.service";
 
 @Route("cloudflare")
@@ -26,7 +25,7 @@ export class CloudflareController extends Controller {
 	 */
 	@Get("dev/{mode}")
 	@Security("cloudflare")
-	public async dev(@Path() mode: DevMode): Promise<any> {
+	public async dev(@Path() mode: "on" | "off"): Promise<any> {
 		return this.service.dev(mode);
 	}
 }
