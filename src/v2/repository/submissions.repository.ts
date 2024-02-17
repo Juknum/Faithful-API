@@ -24,7 +24,9 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 			...(await packs.get(p.id)),
 			submission: p,
 		}));
+
 		return Promise.all(fullPackPromises).then((p) =>
+			// convert back to object from array
 			p.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {}),
 		);
 	}
