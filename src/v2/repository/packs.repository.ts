@@ -13,6 +13,7 @@ import {
 } from "~/v2/interfaces";
 import { contributions, packs } from "../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
+import { selectDistinct } from "../tools/firestorm";
 
 export default class PackFirestormRepository implements PackRepository {
 	private readonly submissionRepo = new SubmissionFirestormRepository();
@@ -35,17 +36,7 @@ export default class PackFirestormRepository implements PackRepository {
 	}
 
 	getAllTags(): Promise<string[]> {
-		return packs
-			.select({
-				fields: ["tags"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.tags)
-					.flat()
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(),
-			);
+		return selectDistinct(packs, "tags", true).then((res) => res.sort());
 	}
 
 	search(params: PackSearch): Promise<Packs> {

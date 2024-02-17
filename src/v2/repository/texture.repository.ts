@@ -12,6 +12,7 @@ import {
 import { NotFoundError } from "../tools/ApiError";
 import { textures, paths, uses, contributions, settings } from "../firestorm";
 import { MinecraftSorter } from "../tools/sorter";
+import { selectDistinct } from "../tools/firestorm";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(
@@ -138,58 +139,19 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public getEditions() {
-		return uses
-			.select({
-				fields: ["edition"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.edition)
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(),
-			);
+		return selectDistinct(uses, "edition").then((res) => res.sort());
 	}
 
 	public getResolutions(): Promise<Array<number>> {
-		return contributions
-			.select({
-				fields: ["resolution"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.resolution)
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(),
-			);
+		return selectDistinct(contributions, "resolution").then((res) => res.sort());
 	}
 
 	public getTags(): Promise<Array<string>> {
-		return textures
-			.select({
-				fields: ["tags"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.tags)
-					.flat()
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(),
-			);
+		return selectDistinct(textures, "tags", true).then((res) => res.sort());
 	}
 
 	public getVersions(): Promise<Array<string>> {
-		return paths
-			.select({
-				fields: ["versions"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.versions)
-					.flat()
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(MinecraftSorter)
-					.reverse(),
-			);
+		return selectDistinct(paths, "versions", true).then((res) => res.sort(MinecraftSorter).reverse());
 	}
 
 	public getVersionByEdition(edition: Edition): Promise<Array<string>> {
