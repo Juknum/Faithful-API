@@ -151,7 +151,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public getVersions(): Promise<Array<string>> {
-		return selectDistinct(paths, "versions", true).then((res) => res.sort(MinecraftSorter).reverse());
+		return selectDistinct(paths, "versions", true).then((res) =>
+			res.sort(MinecraftSorter).reverse(),
+		);
 	}
 
 	public getVersionByEdition(edition: Edition): Promise<Array<string>> {

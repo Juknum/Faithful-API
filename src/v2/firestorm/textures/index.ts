@@ -13,14 +13,12 @@ import {
 	PackGitHub,
 	Edition,
 } from "~/v2/interfaces";
-import config from "../config";
+import "../config";
 
 import { uses } from "./uses";
 import { contributions, packs } from "..";
 import { MinecraftSorter } from "../../tools/sorter";
 import { NotFoundError } from "../../tools/ApiError";
-
-config();
 
 export const textures = firestorm.collection<FirestormTexture>("textures", (el) => {
 	el.uses = async (): Promise<Uses> =>

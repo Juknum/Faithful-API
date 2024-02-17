@@ -1,9 +1,7 @@
 import firestorm from "firestorm-db";
 import { FirestormAddon, AddonAll, Files } from "~/v2/interfaces";
-import config from "../config";
+import "../config";
 import { files } from "../posts/files";
-
-config();
 
 export const addons = firestorm.collection<FirestormAddon>("addons", (el) => {
 	el.getFiles = (): Promise<Files> =>
