@@ -270,6 +270,11 @@ export class AddonController extends Controller {
 		response.redirect(screenshotURL);
 	}
 
+	/**
+	 * Get an add-on header image URL
+	 * @param id_or_slug ID or slug of the requested add-on
+	 * @returns Add-on header image URL
+	 */
 	@Response<NotFoundError>(404)
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])

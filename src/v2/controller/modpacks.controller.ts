@@ -17,6 +17,10 @@ export class ModpacksController extends Controller {
 		return this.service.getRaw();
 	}
 
+	/**
+	 * Get a modpack thumbnail by ID
+	 * @param id Mod ID
+	 */
 	@Get("{id}/thumbnail")
 	@SuccessResponse(302, "Redirect")
 	public async getThumbnail(@Path() id: string, @Request() request: ExRequest): Promise<void> {

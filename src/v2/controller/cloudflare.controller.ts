@@ -22,6 +22,7 @@ export class CloudflareController extends Controller {
 	 * This will bypass Cloudflare's accelerated cache and slow down your site, but is useful if you are making changes to cacheable
 	 * content (like images, css, or JavaScript) and would like to see those changes right away. Once entered, development mode will
 	 * last for 3 hours and then automatically toggle off.
+	 * @param mode Whether to enable or disable developer mode
 	 */
 	@Get("dev/{mode}")
 	@Security("cloudflare")

@@ -372,6 +372,7 @@ export default class AddonService {
 			author: null,
 			reason: null,
 		};
+
 		await this.saveUpdate(addonID, addon, before);
 
 		// upload file

@@ -160,7 +160,7 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 		if (!name) {
 			try {
 				name = status(code).replace(/ /, "");
-			} catch (error) {
+			} catch {
 				// you tried your best, we don't blame you
 			}
 		}
