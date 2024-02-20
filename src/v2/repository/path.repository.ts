@@ -62,7 +62,7 @@ export default class PathFirestormRepository implements PathRepository {
 	modifyVersion(oldVersion: string, newVersion: string): Promise<void> {
 		return this.getRaw()
 			.then((r) => {
-				const old: Paths = Object.values(r);
+				const old = Object.values(r);
 				const filtered = old.filter((p) => p.versions.includes(oldVersion));
 				const edits: EditField<Path>[] = filtered.map((p) => ({
 					id: p.id,
@@ -79,7 +79,7 @@ export default class PathFirestormRepository implements PathRepository {
 	addNewVersionToVersion(version: string, newVersion: string): Promise<void> {
 		return this.getRaw()
 			.then((r) => {
-				const old: Paths = Object.values(r);
+				const old = Object.values(r);
 				const filtered = old.filter((p) => p.versions.includes(version));
 				const edits: EditField<Path>[] = filtered.map((p) => ({
 					id: p[ID_FIELD],

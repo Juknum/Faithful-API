@@ -21,7 +21,7 @@ import { MinecraftSorter } from "../../tools/sorter";
 import { NotFoundError } from "../../tools/ApiError";
 
 export const textures = firestorm.collection<FirestormTexture>("textures", (el) => {
-	el.uses = async (): Promise<Uses> =>
+	el.uses = (): Promise<Uses> =>
 		uses.search([
 			{
 				field: "texture",
@@ -30,7 +30,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			},
 		]);
 
-	el.paths = async (): Promise<Paths> =>
+	el.paths = (): Promise<Paths> =>
 		el
 			.uses()
 			.then((_uses) =>
@@ -38,19 +38,19 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			)
 			.then((arr) => arr.flat());
 
-	el.url = async (pack: PackID, version: string): Promise<string> => {
+	el.url = (pack: PackID, version: string): Promise<string> => {
 		const baseURL = "https://raw.githubusercontent.com";
 
 		let urls: Partial<Record<Edition, PackGitHub>>;
 		let path: Path;
 
 		return packs
-			.readRaw()
+			.get(pack)
 			.then((p) => {
-				urls = p[pack].github;
+				urls = p.github;
 				return el.paths();
 			})
-			.then((texturePaths: Paths) => {
+			.then((texturePaths) => {
 				// eq to [0]
 				if (version === "latest") {
 					[path] = texturePaths;
@@ -67,7 +67,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			});
 	};
 
-	el.contributions = async (): Promise<Contributions> =>
+	el.contributions = (): Promise<Contributions> =>
 		contributions.search([
 			{
 				field: "texture",
@@ -76,12 +76,12 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			},
 		]);
 
-	el.mcmeta = async (): Promise<MCMETA> =>
+	el.mcmeta = (): Promise<MCMETA> =>
 		el
 			.paths()
-			.then((ps: Paths) => ps.find((path: Path) => path.mcmeta) || null)
-			.then((p: Path | null) => Promise.all([el.uses(), p]))
-			.then(([us, p]: [Uses, Path | null]) => {
+			.then((ps) => ps.find((path: Path) => path.mcmeta) || null)
+			.then((p) => Promise.all([el.uses(), p]))
+			.then(([us, p]) => {
 				if (p === null) return [null, null];
 				return [us.find((use: Use) => use.id === p.use), p];
 			})
@@ -95,30 +95,18 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 					)
 					.catch(() => null); // avoid crash if mcmeta file cannot be found
 			})
-			.then((res: any | null) => (res ? res.data : {}))
+			.then((res) => (res ? res.data : {}))
 			.catch(() => {});
 
-	el.all = async (): Promise<TextureAll> => {
-		const output = { id: el.id, name: el.name, tags: el.tags } as TextureAll;
-		return el
-			.uses()
-			.then((tUses: Uses) => {
-				output.uses = tUses;
-				return el.paths();
-			})
-			.then((tPaths: Paths) => {
-				output.paths = tPaths;
-				return el.mcmeta();
-			})
-			.then((mcmeta: MCMETA) => {
-				output.mcmeta = mcmeta;
-				return el.contributions();
-			})
-			.then((tContribs: Contributions) => {
-				output.contributions = tContribs;
-				return output;
-			});
-	};
+	el.all = async (): Promise<TextureAll> => ({
+		id: el.id,
+		name: el.name,
+		tags: el.tags,
+		uses: await el.uses(),
+		paths: await el.paths(),
+		mcmeta: await el.mcmeta(),
+		contributions: await el.contributions(),
+	});
 
 	return el;
 });

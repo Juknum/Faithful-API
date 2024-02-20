@@ -6,7 +6,6 @@ import {
 	PackID,
 	PackSearch,
 	CreationPackAll,
-	Contributions,
 	PackAll,
 	Contribution,
 } from "../interfaces";
@@ -41,7 +40,7 @@ export class PackService {
 		return contributions
 			.readRaw()
 			.then((r) => {
-				const old: Contributions = Object.values(r);
+				const old = Object.values(r);
 				const filtered = old.filter((c) => c.pack === oldPack);
 				const edits: EditField<Contribution>[] = filtered.map((p) => ({
 					id: p.id,

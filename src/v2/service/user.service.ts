@@ -20,9 +20,9 @@ export class UserService {
 	}
 
 	public getStats(): Promise<UserStats> {
-		return this.getRaw().then((users) => {
-			const allRoles = [] as string[];
-			return Object.values(users).reduce(
+		const allRoles = [] as string[];
+		return this.getRaw().then((users) =>
+			Object.values(users).reduce(
 				(acc, user) => {
 					acc.total++;
 					if (user.anonymous) acc.total_anonymous++;
@@ -45,8 +45,8 @@ export class UserService {
 					total_roles: 0,
 					total_per_roles: {},
 				} as UserStats,
-			);
-		});
+			),
+		);
 	}
 
 	public getNames(): Promise<Usernames> {

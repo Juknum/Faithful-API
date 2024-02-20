@@ -14,7 +14,6 @@ import {
 	Addon,
 	Addons,
 	Files,
-	AddonAll,
 	AddonProperty,
 	AddonDownload,
 	AddonStatus,
@@ -53,7 +52,7 @@ export class AddonController extends Controller {
 
 			case "all":
 			default:
-				return this.service.getAll(id).then((addon: AddonAll) => {
+				return this.service.getAll(id).then((addon) => {
 					addon.files = addon.files.map((f) => {
 						if ((f.use === "header" || f.use === "screenshot") && f.source.startsWith("/"))
 							f.source = process.env.DB_IMAGE_ROOT + f.source;
@@ -179,7 +178,7 @@ export class AddonController extends Controller {
 	): Promise<Addon | Files> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
-			.then((value: [number, Addon]) => this.getAddonProperty(value[0], property));
+			.then((value) => this.getAddonProperty(value[0], property));
 	}
 
 	/**
@@ -193,7 +192,7 @@ export class AddonController extends Controller {
 	public async getScreenshots(@Path() id_or_slug: string): Promise<Array<string>> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
-			.then((value: [number, Addon]) => this.service.getScreenshots(value[0]))
+			.then((value) => this.service.getScreenshots(value[0]))
 			.then((screens) =>
 				screens.map((s) => (s.startsWith("/") ? process.env.DB_IMAGE_ROOT + s : s)),
 			);
@@ -210,7 +209,7 @@ export class AddonController extends Controller {
 	public async getScreenshotsIds(@Path() id_or_slug: string): Promise<Array<string>> {
 		return this.service
 			.getAddonFromSlugOrId(id_or_slug)
-			.then((value: [number, Addon]) => this.service.getScreenshotsIds(value[0]));
+			.then((value) => this.service.getScreenshotsIds(value[0]));
 	}
 
 	/**

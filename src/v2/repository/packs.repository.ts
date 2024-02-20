@@ -9,7 +9,6 @@ import {
 	PackID,
 	CreationPackAll,
 	PackSearch,
-	FirestormPack,
 } from "~/v2/interfaces";
 import { contributions, packs } from "../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
@@ -61,9 +60,11 @@ export default class PackFirestormRepository implements PackRepository {
 				criteria: "==",
 				value: resolution,
 			});
-		const searchPromise: Promise<FirestormPack[]> = options.length
+
+		// calling Object.values as a callback gets rid of type inference
+		const searchPromise = options.length
 			? packs.search(options)
-			: packs.readRaw().then(Object.values);
+			: packs.readRaw().then((res) => Object.values(res));
 
 		return searchPromise.then(async (searched) => {
 			if (!type || type === "all") return searched;

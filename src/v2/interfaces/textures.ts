@@ -27,6 +27,7 @@ export interface TextureAll extends Texture {
 	mcmeta: MCMETA;
 	contributions: Contributions;
 }
+
 export interface TexturesAll extends Array<TextureAll> {}
 
 export interface EntireTextureToCreate extends TextureCreationParam {
