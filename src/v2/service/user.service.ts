@@ -121,6 +121,8 @@ export class UserService {
 		await this.update(id, user);
 	}
 
+	//! We don't make verifications here, it's in the controllers
+
 	public async setRoles(id: string, roles: string[]): Promise<User> {
 		const user = await this.getUserById(id);
 		user.roles = roles;

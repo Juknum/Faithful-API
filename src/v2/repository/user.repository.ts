@@ -13,13 +13,14 @@ import {
 } from "../interfaces";
 import { selectDistinct } from "../tools/firestorm";
 
-// you can get a discord username from a discord id but to my knowledge they aren't shown anywhere on the frontend
-const anonymizeUser = (user: Partial<User>): User => ({
+// eslint-disable-next-line no-underscore-dangle
+const __transformUser = (user: Partial<User>): User => ({
+	// falsy checking
 	id: user.id,
-	username: user.anonymous ? user.username : null,
-	uuid: user.anonymous ? user.uuid : null,
-	roles: user.anonymous ? user.roles || [] : null,
-	media: user.anonymous ? user.media : null,
+	username: user.username || "",
+	uuid: user.uuid || "",
+	roles: user.roles || [],
+	media: user.media,
 	anonymous: user.anonymous || false,
 });
 
@@ -33,7 +34,14 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getRaw(): Promise<Record<string, User>> {
-		return users.readRaw(); // protected endpoint, no need to anonymize
+		return (
+			users
+				.readRaw()
+				.then(Object.entries)
+				// convert to entries to map, convert back to object after mapping done
+				.then((arr: [string, User][]) => arr.map(([key, el]) => [key, __transformUser(el)]))
+				.then(Object.fromEntries)
+		);
 	}
 
 	getNames(): Promise<Usernames> {
@@ -55,7 +63,7 @@ export default class UserFirestormRepository implements UserRepository {
 	getUserById(id: string): Promise<User> {
 		return users
 			.get(id)
-			.then(anonymizeUser)
+			.then((u) => __transformUser(u))
 			.catch((err) => {
 				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
 					const formattedError: any = new Error("User not found");
@@ -70,16 +78,17 @@ export default class UserFirestormRepository implements UserRepository {
 
 	getProfileOrCreate(id: string): Promise<User> {
 		return users
-			.get(id) // protected endpoint
+			.get(id)
+			.then((u) => __transformUser(u))
 			.catch((err) => {
 				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
 					const empty: User = {
-						id,
+						anonymous: false,
 						roles: [],
 						username: "",
 						uuid: "",
+						id,
 						media: [],
-						anonymous: false,
 					};
 					return users.set(id, empty).then(() => this.getUserById(id));
 				}
@@ -89,25 +98,23 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUsersByName(name: string): Promise<Users> {
+		if (!name || name.length < 3)
+			return Promise.reject(new Error("User search requires at least 3 letters"));
+
 		return users
 			.search([
 				{
 					field: "username",
-					criteria: name.length < 3 ? "==" : "includes",
+					criteria: "includes",
 					value: name,
 					ignoreCase: true,
 				},
 			])
-			.then((arr) => arr.map(anonymizeUser));
+			.then((arr: Users) => arr.map(__transformUser));
 	}
 
 	getUsersFromRole(role: string, username?: string): Promise<Users> {
-		if (role === "all" && !username)
-			return users
-				.readRaw()
-				.then(Object.values)
-				.then((arr) => arr.map(anonymizeUser));
-
+		if (role === "all" && !username) return users.readRaw().then(Object.values);
 		const options = [];
 
 		if (role !== "all")
@@ -126,7 +133,7 @@ export default class UserFirestormRepository implements UserRepository {
 				ignoreCase: true,
 			});
 
-		return users.search(options).then((arr) => arr.map(anonymizeUser));
+		return users.search(options).then((arr: Users) => arr.map((el) => __transformUser(el)));
 	}
 
 	getRoles(): Promise<Array<string>> {
@@ -142,9 +149,10 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getAddonsApprovedById(id: string): Promise<Addons> {
-		return this.getAddonsById(id).then((arr) =>
-			arr.filter((el) => el.approval.status === "approved"),
-		);
+		return users
+			.get(id)
+			.then((u) => u.addons())
+			.then((arr) => arr.filter((el) => el.approval.status === "approved"));
 	}
 
 	update(id: string, user: UserCreationParams): Promise<User> {
@@ -156,6 +164,14 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUserProfiles(searchedUsers: string[]): Promise<UserProfile[]> {
-		return users.searchKeys(searchedUsers).then((u) => u.map(anonymizeUser));
+		return users.searchKeys(searchedUsers).then((u) =>
+			u.map((el) => ({
+				id: el.id,
+				username: el.anonymous ? undefined : el.username,
+				// ensure anonymous stays anonymous
+				uuid: el.anonymous ? undefined : el.uuid || undefined,
+				media: el.anonymous ? undefined : el.media || [],
+			})),
+		);
 	}
 }
