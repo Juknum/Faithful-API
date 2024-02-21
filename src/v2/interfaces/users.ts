@@ -38,7 +38,7 @@ export interface Usernames extends Array<Username> {}
 
 export interface UserProfile {
 	id?: string;
-	media?: Medias;
+	media?: Media[];
 	username: string | undefined;
 	uuid: string | undefined;
 }
