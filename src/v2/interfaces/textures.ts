@@ -27,6 +27,7 @@ export interface TextureAll extends Texture {
 	mcmeta: MCMETA;
 	contributions: Contributions;
 }
+
 export interface TexturesAll extends Array<TextureAll> {}
 
 export interface EntireTextureToCreate extends TextureCreationParam {
@@ -68,7 +69,7 @@ export interface TextureRepository {
 		search: string | undefined,
 		forcePartial?: boolean,
 	): Promise<Textures>;
-	getTextureById(id: number, property: TextureProperty): Promise<Texture>;
+	getTextureById(id: number, property: TextureProperty): Promise<PropertyToOutput<TextureProperty>>;
 	getVersions(): Promise<Array<string>>;
 	getEditions(): Promise<Array<string>>;
 	getResolutions(): Promise<Array<number>>;

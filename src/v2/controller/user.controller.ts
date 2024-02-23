@@ -33,18 +33,28 @@ import cache from "../tools/cache";
 export class UserController extends Controller {
 	private readonly userService = new UserService();
 
+	/**
+	 * Get user information using authentication parameters
+	 */
 	@Get("profile")
 	@Security("discord", [])
 	public getProfile(@Request() request: any): Promise<User> {
 		return this.userService.getUserById(request.user);
 	}
 
+	/**
+	 * Update a user's profile
+	 * @param body New data
+	 */
 	@Post("profile")
 	@Security("discord", [])
 	public async setProfile(@Body() body: UserProfile, @Request() request: any): Promise<void> {
 		await this.userService.setProfileById(request.user, body);
 	}
 
+	/**
+	 * Create a new blank user profile
+	 */
 	@Post("newprofile")
 	@Security("discord", [])
 	public async createProfile(@Request() request: any): Promise<User> {
@@ -71,7 +81,7 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Get all usernames the database has
+	 * Get all usernames, UUIDs, and IDs
 	 */
 	@Get("names")
 	public async getNames(): Promise<Usernames> {
@@ -96,7 +106,7 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Get users that have a specific role
+	 * Get users that have a specific role and username
 	 * @param role Role name
 	 * @param username Discord user username
 	 */
@@ -188,7 +198,6 @@ export class UserController extends Controller {
 	 * Update user data for the given user ID
 	 * @param id User ID
 	 * @param body User data
-	 * @param request
 	 */
 	@Put("{id}")
 	@Security("discord", [])

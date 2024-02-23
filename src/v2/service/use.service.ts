@@ -1,6 +1,6 @@
 import { WriteConfirmation } from "firestorm-db";
 import { Use, Uses, Paths, CreationUse } from "../interfaces";
-import UseFirestormRepository from "../repository/firestorm/use.repository";
+import UseFirestormRepository from "../repository/use.repository";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import PathService from "./path.service";
 

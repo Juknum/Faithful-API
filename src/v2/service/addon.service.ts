@@ -13,7 +13,7 @@ import {
 	AddonStatsAdmin,
 	AddonStatusApproved,
 } from "../interfaces/addons";
-import AddonFirestormRepository from "../repository/firestorm/addon.repository";
+import AddonFirestormRepository from "../repository/addon.repository";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 function toSlug(value: string) {
@@ -103,46 +103,42 @@ export default class AddonService {
 	}
 
 	getStats(asAdmin: boolean): Promise<AddonStatsAdmin> {
-		return this.getRaw().then((entries) => {
-			let values = Object.values(entries);
-
-			if (!asAdmin) values = values.filter((a) => a.approval.status === AddonStatusApproved);
-
-			return values.reduce(
-				(acc, val) => {
-					acc[val.approval.status]++;
-					val.options.tags.forEach((t) => {
-						acc.numbers[t] = (acc.numbers[t] || 0) + 1;
-					});
-					return acc;
-				},
-				{
-					approved: 0,
-					pending: 0,
-					denied: 0,
-					archived: 0,
-					numbers: {},
-				} as AddonStatsAdmin,
+		return this.getRaw()
+			.then((entries) =>
+				Object.values(entries).filter((a) => asAdmin || a.approval.status === AddonStatusApproved),
+			)
+			.then((values) =>
+				values.reduce(
+					(acc, val) => {
+						acc[val.approval.status]++;
+						val.options.tags.forEach((t) => {
+							acc.numbers[t] = (acc.numbers[t] || 0) + 1;
+						});
+						return acc;
+					},
+					{
+						approved: 0,
+						pending: 0,
+						denied: 0,
+						archived: 0,
+						numbers: {},
+					} as AddonStatsAdmin,
+				),
 			);
-		});
 	}
 
-	getScreenshotsFiles(id): Promise<Files> {
+	getScreenshotsFiles(id: number): Promise<Files> {
 		return this.getFiles(id).then(
 			(files: Files) => files.filter((f: File) => f.use === "screenshot" || f.use === "carousel"), // TODO: only keep screenshots
 		);
 	}
 
-	getScreenshotsIds(id): Promise<Array<string>> {
-		return this.getScreenshotsFiles(id).then((files: Files) =>
-			Object.values(files).map((f: File) => f.id),
-		);
+	getScreenshotsIds(id: number): Promise<Array<string>> {
+		return this.getScreenshotsFiles(id).then((files) => Object.values(files).map((f) => f.id));
 	}
 
-	getScreenshots(id): Promise<Array<string>> {
-		return this.getScreenshotsFiles(id).then((files: Files) =>
-			Object.values(files).map((f: File) => f.source),
-		);
+	getScreenshots(id: number): Promise<Array<string>> {
+		return this.getScreenshotsFiles(id).then((files) => Object.values(files).map((f) => f.source));
 	}
 
 	async getScreenshotURL(id: number, index: number): Promise<string> {
@@ -372,6 +368,7 @@ export default class AddonService {
 			author: null,
 			reason: null,
 		};
+
 		await this.saveUpdate(addonID, addon, before);
 
 		// upload file

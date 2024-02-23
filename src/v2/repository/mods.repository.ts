@@ -1,7 +1,7 @@
 import axios from "axios";
-import { NotFoundError } from "../../tools/ApiError";
-import { mods } from "../../firestorm";
-import { Mod, ModsRepository } from "../../interfaces";
+import { NotFoundError } from "../tools/ApiError";
+import { mods } from "../firestorm";
+import { Mod, ModsRepository } from "../interfaces";
 
 export default class ModsFirestormRepository implements ModsRepository {
 	public getRaw(): Promise<Record<string, Mod>> {
@@ -13,9 +13,7 @@ export default class ModsFirestormRepository implements ModsRepository {
 			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
 		}).then((res) => {
 			const url = res?.data?.data?.logo?.thumbnailUrl;
-			if (url) {
-				return url;
-			}
+			if (url) return url;
 
 			// else
 			throw new NotFoundError("No thumbnail found for this mod");
@@ -27,9 +25,7 @@ export default class ModsFirestormRepository implements ModsRepository {
 			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
 		}).then((res) => {
 			const name = res?.data?.data?.name;
-			if (name) {
-				return name;
-			}
+			if (name) return name;
 
 			// else
 			throw new NotFoundError("No name found for this mod");

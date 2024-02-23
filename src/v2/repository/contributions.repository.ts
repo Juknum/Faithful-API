@@ -6,8 +6,8 @@ import {
 	ContributionsRepository,
 	ContributionsAuthors,
 	PackID,
-} from "../../interfaces";
-import { contributions, users } from "../../firestorm";
+} from "../interfaces";
+import { contributions, users } from "../firestorm";
 
 export default class ContributionFirestormRepository implements ContributionsRepository {
 	getContributionById(id: string): Promise<Contribution> {
@@ -15,12 +15,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	}
 
 	getPacks(): Promise<PackID[]> {
-		return contributions.select({ fields: ["pack"] }).then((res) =>
-			Object.values(res)
-				.map((v) => v.pack)
-				.filter((e, i, a) => a.indexOf(e) === i)
-				.sort(),
-		);
+		return contributions.values({ field: "pack" });
 	}
 
 	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {
@@ -68,12 +63,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 
 		return (
 			contributions
-				.select({ fields: ["authors"] })
-				.then((obj) =>
-					Object.values(obj)
-						.map((o) => o.authors)
-						.flat(),
-				)
+				.values({ field: "authors", flatten: true })
 				.then((authors) =>
 					authors.forEach((id) => {
 						if (!out[id]) out[id] = { id, contributions: 1 };
@@ -104,7 +94,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		return contributions.add(params).then((id) => contributions.get(id));
 	}
 
-	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
+	addContributions(params: ContributionCreationParams[]): Promise<Contributions> {
 		return contributions
 			.addBulk(params)
 			.then((ids) => Promise.all(ids.map((id) => contributions.get(id))));

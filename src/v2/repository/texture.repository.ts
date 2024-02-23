@@ -9,9 +9,9 @@ import {
 	TextureRepository,
 	PropertyToOutput,
 } from "~/v2/interfaces";
-import { NotFoundError } from "../../tools/ApiError";
-import { textures, paths, uses, contributions, settings } from "../../firestorm";
-import { MinecraftSorter } from "../../tools/sorter";
+import { NotFoundError } from "../tools/ApiError";
+import { textures, paths, uses, contributions, settings } from "../firestorm";
+import { MinecraftSorter } from "../tools/sorter";
 
 export default class TextureFirestormRepository implements TextureRepository {
 	async getByNameIdAndTag(
@@ -122,71 +122,37 @@ export default class TextureFirestormRepository implements TextureRepository {
 				});
 		}
 
-		return this.getTextureById(intID, property) as any;
+		return this.getTextureById(intID, property);
 	}
 
-	public getTextureById(id: number, property: TextureProperty): Promise<Texture> {
+	public getTextureById<Property extends TextureProperty>(
+		id: number,
+		property: Property,
+	): Promise<PropertyToOutput<Property>> {
 		if (Number.isNaN(id) || id < 0)
 			return Promise.reject(new Error("Texture IDs must be integers greater than 0."));
 		return textures.get(id).then((t: Texture) => {
 			if (property === null) return t;
-			return t[property]();
+			return t[property as string]();
 		});
 	}
 
 	public getEditions() {
-		return uses
-			.select({
-				fields: ["edition"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.edition)
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(),
-			);
+		return uses.values({ field: "edition" }).then((res) => res.sort());
 	}
 
 	public getResolutions(): Promise<Array<number>> {
-		return contributions
-			.select({
-				fields: ["resolution"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.resolution)
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(),
-			);
+		return contributions.values({ field: "resolution" }).then((res) => res.sort());
 	}
 
 	public getTags(): Promise<Array<string>> {
-		return textures
-			.select({
-				fields: ["tags"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.tags)
-					.flat()
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(),
-			);
+		return textures.values({ field: "tags", flatten: true }).then((res) => res.sort());
 	}
 
 	public getVersions(): Promise<Array<string>> {
 		return paths
-			.select({
-				fields: ["versions"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.versions)
-					.flat()
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(MinecraftSorter)
-					.reverse(),
-			);
+			.values({ field: "versions", flatten: true })
+			.then((res) => res.sort(MinecraftSorter).reverse());
 	}
 
 	public getVersionByEdition(edition: Edition): Promise<Array<string>> {

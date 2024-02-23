@@ -6,8 +6,8 @@ import {
 	PackAll,
 	PackID,
 } from "~/v2/interfaces";
-import { submissions } from "../../firestorm/packs/submissions";
-import { packs } from "../../firestorm/packs";
+import { submissions } from "../firestorm/packs/submissions";
+import { packs } from "../firestorm/packs";
 
 export default class SubmissionFirestormRepository implements SubmissionRepository {
 	getRaw(): Promise<Record<string, Submission>> {
@@ -19,12 +19,14 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 	}
 
 	async getEveryPack(): Promise<Record<PackID, PackAll>> {
-		const submissionPacks = await submissions.readRaw().then(Object.values);
-		const fullPackPromises = submissionPacks.map(async (p) => ({
+		const submissionPacks = await submissions.readRaw();
+		const fullPackPromises = Object.values(submissionPacks).map(async (p) => ({
 			...(await packs.get(p.id)),
 			submission: p,
 		}));
+
 		return Promise.all(fullPackPromises).then((p) =>
+			// convert back to object from array
 			p.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {}),
 		);
 	}

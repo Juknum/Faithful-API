@@ -10,7 +10,7 @@ import {
 	PackPercentile,
 	PackRecord,
 } from "../interfaces/contributions";
-import ContributionFirestormRepository from "../repository/firestorm/contributions.repository";
+import ContributionFirestormRepository from "../repository/contributions.repository";
 import { lastDay, lastMonth, lastWeek, startOfDay } from "../tools/utils";
 import TextureService from "./texture.service";
 

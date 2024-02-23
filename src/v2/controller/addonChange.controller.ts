@@ -13,7 +13,7 @@ import {
 	SuccessResponse,
 	Tags,
 } from "tsoa";
-import { Express } from "express";
+import { Express, Request as ExRequest } from "express";
 import { File } from "../interfaces/files";
 import {
 	AddonReview,
@@ -34,17 +34,16 @@ export class AddonChangeController extends Controller {
 
 	/**
 	 * Create an add-on
-	 * @param body
-	 * @param request
+	 * @param body Add-on data
 	 */
 	@Post("")
 	@SuccessResponse(201, "Addon created")
 	@Security("discord", [])
 	public async addonCreate(
 		@Body() body: AddonCreationParam,
-		@Request() request: any,
+		@Request() request: ExRequest,
 	): Promise<Addon> {
-		if (!body.authors.includes(request.user))
+		if (!body.authors.includes((request as any).user))
 			throw new BadRequestError("Addon author must include the authed user");
 		return this.service.create(body);
 	}
@@ -52,8 +51,7 @@ export class AddonChangeController extends Controller {
 	/**
 	 * Update an add-on
 	 * @param id_or_slug ID or slug of the updated add-on
-	 * @param body
-	 * @param request
+	 * @param body Add-on data
 	 */
 	@Response<PermissionError>(403)
 	@Patch("{id_or_slug}")
@@ -62,14 +60,14 @@ export class AddonChangeController extends Controller {
 	public async addonUpdate(
 		@Path() id_or_slug: string,
 		@Body() body: AddonUpdateParam,
-		@Request() request: any,
+		@Request() request: ExRequest,
 	): Promise<Addon> {
 		const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
 
 		// if not an author wants to delete the addon
-		if (!addon.authors.includes(request.user)) {
+		if (!addon.authors.includes((request as any).user)) {
 			// check if admin
-			const user = await new UserService().getUserById(request.user);
+			const user = await new UserService().getUserById((request as any).user);
 			if (!user.roles.includes("Administrator"))
 				throw new BadRequestError("Addon author must include the authed user");
 		}
@@ -81,7 +79,6 @@ export class AddonChangeController extends Controller {
 	 * Set the review value of the add-on
 	 * @param id_or_slug ID or slug of the reviewed add-on
 	 * @param data Data containing, the status (pending, approved or denied) & the reason if denied (null otherwise)
-	 * @param request
 	 */
 	@Response<PermissionError>(403)
 	@Put("{id_or_slug}/review")
@@ -90,13 +87,13 @@ export class AddonChangeController extends Controller {
 	public async addonReview(
 		@Path() id_or_slug: string,
 		@Body() data: AddonReviewBody,
-		@Request() request: any,
+		@Request() request: ExRequest,
 	): Promise<void> {
 		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
 
 		const review: AddonReview = {
 			...data,
-			author: String(request.user),
+			author: String((request as any).user),
 		};
 
 		await this.service.review(addonId, review);
@@ -108,7 +105,6 @@ export class AddonChangeController extends Controller {
 	/**
 	 * Delete an add-on
 	 * @param id_or_slug ID or slug of the deleted add-on
-	 * @param request
 	 */
 	@Response<PermissionError>(403)
 	@Delete("{id_or_slug}")
@@ -120,10 +116,20 @@ export class AddonChangeController extends Controller {
 		this.service.delete(addonId);
 	}
 
+	/**
+	 * Add or change a header image to an add-on
+	 * @param id_or_slug Add-on to add header image to
+	 * @param file File to post
+	 */
 	public async postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
 		return this.service.postHeader(id_or_slug, file.originalname, file.buffer);
 	}
 
+	/**
+	 * Add a screenshot to an add-on
+	 * @param id_or_slug Add-on to add screenshot to
+	 * @param file File to post
+	 */
 	public async addonAddScreenshot(
 		id_or_slug: string,
 		file: Express.Multer.File,

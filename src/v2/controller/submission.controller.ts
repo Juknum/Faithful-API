@@ -16,6 +16,9 @@ export class SubmissionController extends Controller {
 		return this.service.getRaw();
 	}
 
+	/**
+	 * Get all submittable packs with their main pack information
+	 */
 	@Get("all")
 	public async getEveryPack(): Promise<Record<PackID, PackAll>> {
 		return this.service.getEveryPack();

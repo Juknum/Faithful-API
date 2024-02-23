@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import * as express from "express";
 import axios from "axios";
 import { APIUser } from "discord-api-types/v9";
@@ -6,8 +8,6 @@ import { UserService } from "../service/user.service";
 import AddonService from "../service/addon.service";
 import { Addon } from "../interfaces";
 import { AddonNotApprovedValues, AddonStatusValues } from "../interfaces/addons";
-
-require("dotenv").config();
 
 const userService = new UserService();
 const addonService = new AddonService();

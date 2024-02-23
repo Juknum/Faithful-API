@@ -8,7 +8,7 @@ import {
 	TextureAll,
 	PropertyToOutput,
 } from "../interfaces/textures";
-import TextureFirestormRepository from "../repository/firestorm/texture.repository";
+import TextureFirestormRepository from "../repository/texture.repository";
 import PathService from "./path.service";
 import UseService from "./use.service";
 
@@ -35,7 +35,10 @@ export default class TextureService {
 		return this.textureRepo.getRaw();
 	}
 
-	getById(id: number, property: TextureProperty): Promise<Texture> {
+	getById<Property extends TextureProperty>(
+		id: number,
+		property: Property,
+	): Promise<PropertyToOutput<Property>> {
 		if (Number.isNaN(id) || id < 0)
 			return Promise.reject(new Error("Texture IDs are integers greater than 0"));
 		return this.textureRepo.getTextureById(id, property);

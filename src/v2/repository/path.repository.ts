@@ -1,6 +1,6 @@
 import { InputPath, Path, Paths, PathRepository } from "~/v2/interfaces";
-import { ID_FIELD, WriteConfirmation } from "firestorm-db";
-import { paths } from "../../firestorm/textures/paths";
+import { EditField, ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { paths } from "../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
 	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths> {
@@ -62,12 +62,12 @@ export default class PathFirestormRepository implements PathRepository {
 	modifyVersion(oldVersion: string, newVersion: string): Promise<void> {
 		return this.getRaw()
 			.then((r) => {
-				const old: Paths = Object.values(r);
+				const old = Object.values(r);
 				const filtered = old.filter((p) => p.versions.includes(oldVersion));
-				const edits = filtered.map((p) => ({
+				const edits: EditField<Path>[] = filtered.map((p) => ({
 					id: p.id,
 					field: "versions",
-					operation: "set" as const,
+					operation: "set",
 					value: p.versions.map((v) => (v === oldVersion ? newVersion : v)),
 				}));
 
@@ -79,17 +79,14 @@ export default class PathFirestormRepository implements PathRepository {
 	addNewVersionToVersion(version: string, newVersion: string): Promise<void> {
 		return this.getRaw()
 			.then((r) => {
-				const old: Paths = Object.values(r);
+				const old = Object.values(r);
 				const filtered = old.filter((p) => p.versions.includes(version));
-				const edits = filtered.map(
-					(p) =>
-						({
-							id: p[ID_FIELD],
-							field: "versions",
-							operation: "array-push",
-							value: newVersion,
-						}) as const,
-				);
+				const edits: EditField<Path>[] = filtered.map((p) => ({
+					id: p[ID_FIELD],
+					field: "versions",
+					operation: "array-push",
+					value: newVersion,
+				}));
 
 				return paths.editFieldBulk(edits);
 			})

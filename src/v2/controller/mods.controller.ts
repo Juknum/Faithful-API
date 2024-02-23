@@ -18,6 +18,10 @@ export class ModsController extends Controller {
 		return this.service.getRaw();
 	}
 
+	/**
+	 * Get a mod thumbnail by ID
+	 * @param id Mod ID
+	 */
 	@Get("{id}/thumbnail")
 	@Response<NotFoundError>(404)
 	@SuccessResponse(302, "Redirect")
@@ -34,6 +38,10 @@ export class ModsController extends Controller {
 		request.res.redirect(url);
 	}
 
+	/**
+	 * Get the name of the mod
+	 * @param id Mod ID to get name of
+	 */
 	@Get("{id}/curseforge/name")
 	public async getCurseForgeInfo(@Path() id: string): Promise<string> {
 		// if id is a number, it's a CurseForge ID

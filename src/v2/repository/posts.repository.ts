@@ -1,17 +1,17 @@
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
-import { posts } from "../../firestorm";
-import { CreateWebsitePost, WebsitePost as Post, WebsitePostRepository } from "../../interfaces";
+import { posts } from "../firestorm";
+import { CreateWebsitePost, WebsitePost, WebsitePostRepository } from "../interfaces";
 
 export default class PostFirestormRepository implements WebsitePostRepository {
-	getRaw(): Promise<Record<string, Post>> {
+	getRaw(): Promise<Record<string, WebsitePost>> {
 		return posts.readRaw();
 	}
 
-	getById(id: number): Promise<Post> {
+	getById(id: number): Promise<WebsitePost> {
 		return posts.get(id);
 	}
 
-	getByPermalink(permalink: string): Promise<Post> {
+	getByPermalink(permalink: string): Promise<WebsitePost> {
 		return posts
 			.search([
 				{
@@ -23,7 +23,7 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 			.then((results) => results[0]);
 	}
 
-	create(postToCreate: CreateWebsitePost): Promise<Post> {
+	create(postToCreate: CreateWebsitePost): Promise<WebsitePost> {
 		const { permalink } = postToCreate;
 		return posts
 			.add(postToCreate)
@@ -31,7 +31,7 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 			.then((results) => results[0]);
 	}
 
-	update(id: number, post: CreateWebsitePost): Promise<Post> {
+	update(id: number, post: CreateWebsitePost): Promise<WebsitePost> {
 		const postWithId = {
 			...post,
 		};

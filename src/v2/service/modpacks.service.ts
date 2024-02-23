@@ -1,6 +1,6 @@
 import { Modpack } from "~/v2/interfaces";
 import { modpacks } from "../firestorm";
-import ModpacksFirestormRepository from "../repository/firestorm/modpacks.repository";
+import ModpacksFirestormRepository from "../repository/modpacks.repository";
 
 export default class ModpacksService {
 	private readonly modsRepo = new ModpacksFirestormRepository();

@@ -1,5 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
-import { users } from "../../firestorm";
+import { users } from "../firestorm";
 import {
 	Addons,
 	Contributions,
@@ -10,7 +10,7 @@ import {
 	UserRepository,
 	Username,
 	UserProfile,
-} from "../../interfaces";
+} from "../interfaces";
 
 // eslint-disable-next-line no-underscore-dangle
 const __transformUser = (user: Partial<User>): User => ({
@@ -33,14 +33,7 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getRaw(): Promise<Record<string, User>> {
-		return (
-			users
-				.readRaw()
-				.then(Object.entries)
-				// convert to entries to map, convert back to object after mapping done
-				.then((arr: [string, User][]) => arr.map(([key, el]) => [key, __transformUser(el)]))
-				.then(Object.fromEntries)
-		);
+		return users.readRaw();
 	}
 
 	getNames(): Promise<Usernames> {
@@ -49,7 +42,7 @@ export default class UserFirestormRepository implements UserRepository {
 				.select({ fields: ["id", "username", "uuid", "anonymous"] })
 				// calling Object.values as a callback gets rid of type inference
 				.then((res) => Object.values(res))
-				.then((_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[]) =>
+				.then((_users) =>
 					_users.map((el) => ({
 						id: el.id,
 						username: el.anonymous ? undefined : el.username,
@@ -78,15 +71,15 @@ export default class UserFirestormRepository implements UserRepository {
 	getProfileOrCreate(id: string): Promise<User> {
 		return users
 			.get(id)
-			.then((u) => __transformUser(u))
+			.then(__transformUser)
 			.catch((err) => {
 				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
 					const empty: User = {
+						id,
 						anonymous: false,
 						roles: [],
 						username: "",
 						uuid: "",
-						id,
 						media: [],
 					};
 					return users.set(id, empty).then(() => this.getUserById(id));
@@ -97,19 +90,18 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getUsersByName(name: string): Promise<Users> {
-		if (!name || name.length < 3)
-			return Promise.reject(new Error("User search requires at least 3 letters"));
+		if (!name) return Promise.reject(new Error("A name must be provided"));
 
 		return users
 			.search([
 				{
 					field: "username",
-					criteria: "includes",
+					criteria: name.length < 3 ? "==" : "includes",
 					value: name,
 					ignoreCase: true,
 				},
 			])
-			.then((arr: Users) => arr.map(__transformUser));
+			.then((arr) => arr.map(__transformUser));
 	}
 
 	getUsersFromRole(role: string, username?: string): Promise<Users> {
@@ -132,17 +124,11 @@ export default class UserFirestormRepository implements UserRepository {
 				ignoreCase: true,
 			});
 
-		return users.search(options).then((arr: Users) => arr.map((el) => __transformUser(el)));
+		return users.search(options).then((arr) => arr.map(__transformUser));
 	}
 
 	getRoles(): Promise<Array<string>> {
-		return users.select({ fields: ["roles"] }).then(
-			(obj) =>
-				Object.values(obj)
-					.map((el) => el.roles || []) // get roles or none
-					.flat() // flat array
-					.filter((el, index, array) => array.indexOf(el) === index), // remove duplicates
-		);
+		return users.values({ field: "roles", flatten: true });
 	}
 
 	getContributionsById(id: string): Promise<Contributions> {
@@ -154,10 +140,9 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getAddonsApprovedById(id: string): Promise<Addons> {
-		return users
-			.get(id)
-			.then((u) => u.addons())
-			.then((arr) => arr.filter((el) => el.approval.status === "approved"));
+		return this.getAddonsById(id).then((arr) =>
+			arr.filter((el) => el.approval.status === "approved"),
+		);
 	}
 
 	update(id: string, user: UserCreationParams): Promise<User> {

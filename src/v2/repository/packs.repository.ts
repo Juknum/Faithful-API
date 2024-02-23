@@ -9,9 +9,8 @@ import {
 	PackID,
 	CreationPackAll,
 	PackSearch,
-	FirestormPack,
 } from "~/v2/interfaces";
-import { contributions, packs } from "../../firestorm";
+import { contributions, packs } from "../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
 
 export default class PackFirestormRepository implements PackRepository {
@@ -35,17 +34,7 @@ export default class PackFirestormRepository implements PackRepository {
 	}
 
 	getAllTags(): Promise<string[]> {
-		return packs
-			.select({
-				fields: ["tags"],
-			})
-			.then((res) =>
-				Object.values(res)
-					.map((v) => v.tags)
-					.flat()
-					.filter((e, i, a) => a.indexOf(e) === i)
-					.sort(),
-			);
+		return packs.values({ field: "tags", flatten: true }).then((res) => res.sort());
 	}
 
 	search(params: PackSearch): Promise<Packs> {
@@ -70,9 +59,11 @@ export default class PackFirestormRepository implements PackRepository {
 				criteria: "==",
 				value: resolution,
 			});
-		const searchPromise: Promise<FirestormPack[]> = options.length
+
+		// calling Object.values as a callback gets rid of type inference
+		const searchPromise = options.length
 			? packs.search(options)
-			: packs.readRaw().then(Object.values);
+			: packs.readRaw().then((res) => Object.values(res));
 
 		return searchPromise.then(async (searched) => {
 			if (!type || type === "all") return searched;

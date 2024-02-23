@@ -89,6 +89,11 @@ export class TextureController extends Controller {
 		return this.service.getVersionByEdition(edition);
 	}
 
+	/**
+	 * Search a texture by name or tag
+	 * @param tag Tag to search by
+	 * @param name Name to search by
+	 */
 	@Get("search")
 	public searchTexture(@Query() tag?: string, @Query() name?: string): Promise<Textures> {
 		return this.service.searchByNameIdAndTag(tag, name);
