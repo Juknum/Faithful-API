@@ -8,7 +8,6 @@ import {
 	PackID,
 } from "../interfaces";
 import { contributions, users } from "../firestorm";
-import { selectDistinct } from "../tools/firestorm";
 
 export default class ContributionFirestormRepository implements ContributionsRepository {
 	getContributionById(id: string): Promise<Contribution> {
@@ -16,7 +15,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	}
 
 	getPacks(): Promise<PackID[]> {
-		return selectDistinct(contributions, "pack", true);
+		return contributions.values({ field: "pack" });
 	}
 
 	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {
@@ -63,7 +62,8 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		const out = {};
 
 		return (
-			selectDistinct(contributions, "authors", true)
+			contributions
+				.values({ field: "authors", flatten: true })
 				.then((authors) =>
 					authors.forEach((id) => {
 						if (!out[id]) out[id] = { id, contributions: 1 };

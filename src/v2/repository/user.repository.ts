@@ -11,7 +11,6 @@ import {
 	Username,
 	UserProfile,
 } from "../interfaces";
-import { selectDistinct } from "../tools/firestorm";
 
 // eslint-disable-next-line no-underscore-dangle
 const __transformUser = (user: Partial<User>): User => ({
@@ -129,7 +128,7 @@ export default class UserFirestormRepository implements UserRepository {
 	}
 
 	getRoles(): Promise<Array<string>> {
-		return selectDistinct(users, "roles", true);
+		return users.values({ field: "roles", flatten: true });
 	}
 
 	getContributionsById(id: string): Promise<Contributions> {
