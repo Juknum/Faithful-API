@@ -94,7 +94,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		return contributions.add(params).then((id) => contributions.get(id));
 	}
 
-	addContributions(params: ContributionCreationParams[]): Promise<Contribution[]> {
+	addContributions(params: ContributionCreationParams[]): Promise<Contributions> {
 		return contributions
 			.addBulk(params)
 			.then((ids) => Promise.all(ids.map((id) => contributions.get(id))));

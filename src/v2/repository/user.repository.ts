@@ -42,7 +42,7 @@ export default class UserFirestormRepository implements UserRepository {
 				.select({ fields: ["id", "username", "uuid", "anonymous"] })
 				// calling Object.values as a callback gets rid of type inference
 				.then((res) => Object.values(res))
-				.then((_users: Pick<User, "id" | "username" | "uuid" | "anonymous">[]) =>
+				.then((_users) =>
 					_users.map((el) => ({
 						id: el.id,
 						username: el.anonymous ? undefined : el.username,
