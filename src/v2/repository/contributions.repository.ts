@@ -61,9 +61,15 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	getAuthors(): Promise<ContributionsAuthors> {
 		const out = {};
 
+		// don't use values because we need duplicates
 		return (
 			contributions
-				.values({ field: "authors", flatten: true })
+				.select({ fields: ["authors"] })
+				.then((res) =>
+					Object.values(res)
+						.map((o) => o.authors)
+						.flat(),
+				)
 				.then((authors) =>
 					authors.forEach((id) => {
 						if (!out[id]) out[id] = { id, contributions: 1 };
