@@ -10,10 +10,10 @@ export class AuthController extends Controller {
 	/**
 	 * Handles Discord authorization page redirect
 	 */
-	@Get("discord/callback")
+	@Get("discord/callback/{target}")
 	public async discordAuthCallback(
+		@Path() target: string,
 		@Query() code: string,
-		@Query() state: string,
 		@Request() request: ExRequest,
 	) {
 		const params = new URLSearchParams();
@@ -38,7 +38,7 @@ export class AuthController extends Controller {
 		}
 
 		res.redirect(
-			`${this.service.targetToURL(state)}/?access_token=${encodeURIComponent(json.access_token)}&refresh_token=${encodeURIComponent(
+			`${this.service.targetToURL(target)}/?access_token=${encodeURIComponent(json.access_token)}&refresh_token=${encodeURIComponent(
 				json.refresh_token,
 			)}&expires_in=${encodeURIComponent(json.expires_in)}`,
 		);
@@ -76,16 +76,14 @@ export class AuthController extends Controller {
 	 */
 	@Get("discord/{target}")
 	public discordAuthGrant(@Path() target: string, @Request() request: ExRequest) {
-		const redirectURI = this.service.getRedirectURI(request);
+		const redirectURI = this.service.getRedirectURI(request, target);
 
 		const response = (<any>request).res as ExResponse;
 		response.redirect(
 			`https://discord.com/api/oauth2/authorize` +
 				`?client_id=${process.env.DISCORD_CLIENT_ID}` +
 				`&response_type=code&scope=identify` +
-				`&redirect_uri=${redirectURI}` +
-				`&state=${target}` +
-				``,
+				`&redirect_uri=${encodeURIComponent(redirectURI)}`,
 		);
 	}
 }
