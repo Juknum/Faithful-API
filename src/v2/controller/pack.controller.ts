@@ -57,7 +57,10 @@ export class PackController extends Controller {
 	@Put("rename/{old_pack}/{new_pack}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async renamePack(@Path() old_pack: PackID, @Path() new_pack: string): Promise<void> {
+	public async renamePack(
+		@Path() old_pack: PackID,
+		@Path() new_pack: string,
+	): Promise<{ success: boolean[] }> {
 		return this.service.renamePack(old_pack, new_pack);
 	}
 

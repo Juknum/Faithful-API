@@ -72,7 +72,7 @@ export class PathsController extends Controller {
 	public async modifyVersion(
 		@URLPath() old_version: string,
 		@URLPath() new_version: string,
-	): Promise<void> {
+	): Promise<{ success: boolean[] }> {
 		return this.service.modifyVersion(old_version, new_version);
 	}
 
@@ -84,7 +84,7 @@ export class PathsController extends Controller {
 	@Post("versions/add")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async addVersion(@Body() body: PathNewVersionParam): Promise<void> {
+	public async addVersion(@Body() body: PathNewVersionParam): Promise<{ success: boolean[] }> {
 		return this.service.addVersion(body);
 	}
 

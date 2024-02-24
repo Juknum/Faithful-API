@@ -9,11 +9,11 @@ export class FileService {
 		return this.repo.removeFileByPath(path);
 	}
 
-	public removeFilesByParentAndUse(parent: FileParent, use: FileUse) {
+	public removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<WriteConfirmation> {
 		return this.repo.removeFilesByParentAndUse(parent, use);
 	}
 
-	public removeFilesByParent(parent: FileParent) {
+	public removeFilesByParent(parent: FileParent): Promise<WriteConfirmation> {
 		return this.repo.removeFilesByParent(parent);
 	}
 
@@ -25,19 +25,24 @@ export class FileService {
 		return this.repo.addFiles(files);
 	}
 
-	public removeFileById(id: string) {
+	public removeFileById(id: string): Promise<WriteConfirmation> {
 		return this.repo.removeFileById(id);
 	}
 
-	public upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean = false) {
+	public upload(
+		path: string,
+		filename: string,
+		buffer: Buffer,
+		overwrite: Boolean = false,
+	): Promise<WriteConfirmation> {
 		return this.repo.upload(path, filename, buffer, overwrite);
 	}
 
-	public remove(path: string) {
+	public remove(path: string): Promise<WriteConfirmation> {
 		return this.repo.remove(path);
 	}
 
-	public getRaw() {
+	public getRaw(): Promise<Record<string, File>> {
 		return this.repo.getRaw();
 	}
 }

@@ -3,6 +3,10 @@ import { EditField, ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { paths } from "../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
+	getRaw(): Promise<Record<string, Path>> {
+		return paths.readRaw();
+	}
+
 	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths> {
 		return paths.search([
 			{
@@ -59,41 +63,33 @@ export default class PathFirestormRepository implements PathRepository {
 	 * @param oldVersion old version to remove on paths versions array
 	 * @param newVersion new version to replace the old version
 	 */
-	modifyVersion(oldVersion: string, newVersion: string): Promise<void> {
-		return this.getRaw()
-			.then((r) => {
-				const old = Object.values(r);
-				const filtered = old.filter((p) => p.versions.includes(oldVersion));
-				const edits: EditField<Path>[] = filtered.map((p) => ({
-					id: p.id,
-					field: "versions",
-					operation: "set",
-					value: p.versions.map((v) => (v === oldVersion ? newVersion : v)),
-				}));
+	modifyVersion(oldVersion: string, newVersion: string): Promise<{ success: boolean[] }> {
+		return this.getRaw().then((r) => {
+			const old = Object.values(r);
+			const filtered = old.filter((p) => p.versions.includes(oldVersion));
+			const edits: EditField<Path>[] = filtered.map((p) => ({
+				id: p.id,
+				field: "versions",
+				operation: "set",
+				value: p.versions.map((v) => (v === oldVersion ? newVersion : v)),
+			}));
 
-				return paths.editFieldBulk(edits);
-			})
-			.then(() => {});
+			return paths.editFieldBulk(edits);
+		});
 	}
 
-	addNewVersionToVersion(version: string, newVersion: string): Promise<void> {
-		return this.getRaw()
-			.then((r) => {
-				const old = Object.values(r);
-				const filtered = old.filter((p) => p.versions.includes(version));
-				const edits: EditField<Path>[] = filtered.map((p) => ({
-					id: p[ID_FIELD],
-					field: "versions",
-					operation: "array-push",
-					value: newVersion,
-				}));
+	addNewVersionToVersion(version: string, newVersion: string): Promise<{ success: boolean[] }> {
+		return this.getRaw().then((r) => {
+			const old = Object.values(r);
+			const filtered = old.filter((p) => p.versions.includes(version));
+			const edits: EditField<Path>[] = filtered.map((p) => ({
+				id: p[ID_FIELD],
+				field: "versions",
+				operation: "array-push",
+				value: newVersion,
+			}));
 
-				return paths.editFieldBulk(edits);
-			})
-			.then(() => {});
-	}
-
-	getRaw(): Promise<Record<string, Path>> {
-		return paths.readRaw();
+			return paths.editFieldBulk(edits);
+		});
 	}
 }

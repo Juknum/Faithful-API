@@ -45,9 +45,8 @@ export class ModsController extends Controller {
 	@Get("{id}/curseforge/name")
 	public async getCurseForgeInfo(@Path() id: string): Promise<string> {
 		// if id is a number, it's a CurseForge ID
-		if (Number.isNaN(parseInt(id, 10))) {
+		if (Number.isNaN(parseInt(id, 10)))
 			return cache.handle(`mods-curseforge-name-${id}`, () => this.service.getNameInDatabase(id));
-		}
 
 		return cache.handle(`mods-curseforge-name-${id}`, () =>
 			this.service.getCurseForgeName(parseInt(id, 10)),

@@ -20,17 +20,17 @@ export interface Paths extends Array<Path> {}
 export interface FirestormPath extends Path {}
 
 export interface PathRepository {
-	addNewVersionToVersion(version: string, newVersion: string): Promise<void>;
+	getRaw(): Promise<Record<string, Path>>;
 	getPathById(pathID: string): Promise<Path>;
 	getPathUseById(useID: string): Promise<Paths>;
 	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths>;
 	createPath(path: InputPath): Promise<Path>;
 	createPathBulk(paths: InputPath[]): Promise<Paths>;
 	updatePath(pathID: string, path: Path): Promise<Path>;
-	modifyVersion(oldVersion: string, newVersion: string): Promise<void>;
+	modifyVersion(oldVersion: string, newVersion: string): Promise<{ success: boolean[] }>;
+	addNewVersionToVersion(version: string, newVersion: string): Promise<{ success: boolean[] }>;
 	removePathById(pathID: string): Promise<WriteConfirmation>;
 	removePathsByBulk(pathIDs: string[]): Promise<WriteConfirmation>;
-	getRaw(): Promise<Record<string, Path>>;
 }
 
 export interface PathNewVersionParam {

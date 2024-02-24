@@ -4,6 +4,10 @@ import { files } from "../firestorm";
 import { File, FileParent, FileRepository, Files, FileUse } from "../interfaces/files";
 
 export class FilesFirestormRepository implements FileRepository {
+	getRaw(): Promise<Record<string, File>> {
+		return files.readRaw();
+	}
+
 	addFiles(fileList: Files): Promise<string[]> {
 		return files.addBulk(fileList);
 	}
@@ -19,13 +23,11 @@ export class FilesFirestormRepository implements FileRepository {
 	getFilesByParent(parent: FileParent): Promise<Files> {
 		return files.search([
 			{
-				// @ts-ignore
 				field: "parent.id",
 				criteria: "==",
 				value: String(parent.id),
 			},
 			{
-				// @ts-ignore
 				field: "parent.type",
 				criteria: "==",
 				value: parent.type,
@@ -57,22 +59,21 @@ export class FilesFirestormRepository implements FileRepository {
 		return this.remove(path);
 	}
 
-	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void> {
+	upload(
+		path: string,
+		filename: string,
+		buffer: Buffer,
+		overwrite: Boolean,
+	): Promise<WriteConfirmation> {
 		const form = new FormData();
 		form.append("path", path);
 		form.append("file", buffer, filename);
 		form.append("overwrite", String(overwrite === true));
 
-		// @ts-ignore
-		return firestorm.files.upload(form);
+		return firestorm.files.upload(form as any);
 	}
 
 	remove(path: string): Promise<WriteConfirmation> {
-		// @ts-ignore
 		return firestorm.files.delete(path);
-	}
-
-	getRaw(): Promise<Record<string, File>> {
-		return files.readRaw();
 	}
 }

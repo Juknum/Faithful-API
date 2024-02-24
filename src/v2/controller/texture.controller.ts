@@ -178,7 +178,7 @@ export class TextureController extends Controller {
 	@Put("merge/{add_id}/{remove_id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async mergeTextures(@Path() add_id: string, @Path() remove_id: string) {
+	public async mergeTextures(@Path() add_id: string, @Path() remove_id: string): Promise<void> {
 		return this.service.mergeTextures(add_id, remove_id);
 	}
 

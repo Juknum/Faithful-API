@@ -34,24 +34,21 @@ export class PackService {
 		return this.repository.getAllTags();
 	}
 
-	public renamePack(oldPack: PackID, newPack: string): Promise<void> {
+	public renamePack(oldPack: PackID, newPack: string): Promise<{ success: boolean[] }> {
 		this.repository.renamePack(oldPack, newPack);
 
-		return contributions
-			.readRaw()
-			.then((r) => {
-				const old = Object.values(r);
-				const filtered = old.filter((c) => c.pack === oldPack);
-				const edits: EditField<Contribution>[] = filtered.map((p) => ({
-					id: p.id,
-					field: "pack",
-					operation: "set",
-					value: newPack,
-				}));
+		return contributions.readRaw().then((r) => {
+			const old = Object.values(r);
+			const filtered = old.filter((c) => c.pack === oldPack);
+			const edits: EditField<Contribution>[] = filtered.map((p) => ({
+				id: p.id,
+				field: "pack",
+				operation: "set",
+				value: newPack,
+			}));
 
-				return contributions.editFieldBulk(edits);
-			})
-			.then(() => {});
+			return contributions.editFieldBulk(edits);
+		});
 	}
 
 	public serializeDisplayName(name: string): string {
