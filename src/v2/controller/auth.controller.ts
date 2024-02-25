@@ -16,12 +16,13 @@ export class AuthController extends Controller {
 		const redirectURI = this.service.getRedirectURI(request, target);
 
 		const response = (<any>request).res as ExResponse;
-		response.redirect(
-			`https://discord.com/api/oauth2/authorize` +
-				`?client_id=${process.env.DISCORD_CLIENT_ID}` +
-				`&response_type=code&scope=identify` +
-				`&redirect_uri=${encodeURIComponent(redirectURI)}`,
-		);
+		const params = new URLSearchParams();
+		params.append("client_id", process.env.DISCORD_CLIENT_ID);
+		params.append("response_type", "code");
+		params.append("scope", "identify");
+		params.append("redirect_uri", redirectURI);
+
+		response.redirect(`https://discord.com/api/oauth2/authorize?${params.toString()}`);
 	}
 
 	/**
@@ -55,11 +56,11 @@ export class AuthController extends Controller {
 			return;
 		}
 
-		res.redirect(
-			`${this.service.targetToURL(target)}/?access_token=${encodeURIComponent(json.access_token)}&refresh_token=${encodeURIComponent(
-				json.refresh_token,
-			)}&expires_in=${encodeURIComponent(json.expires_in)}`,
-		);
+		const redirect = new URLSearchParams();
+		redirect.append("access_token", json.access_token);
+		redirect.append("refresh_token", json.refresh_token);
+		redirect.append("expires_in", json.expires_in);
+		res.redirect(`${this.service.targetToURL(target)}?${redirect.toString()}`);
 	}
 
 	/**
@@ -78,6 +79,7 @@ export class AuthController extends Controller {
 			method: "POST",
 			body: params,
 		});
+
 		const json: any = await tokenResponse.json();
 
 		if ("error" in json) {
