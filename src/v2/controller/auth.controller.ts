@@ -8,7 +8,25 @@ export class AuthController extends Controller {
 	private readonly service = new AuthService();
 
 	/**
+	 * Redirects to Discord oauth2 authorization page
+	 * @param target Redirect target app
+	 */
+	@Get("discord/{target}")
+	public discordAuthGrant(@Path() target: string, @Request() request: ExRequest) {
+		const redirectURI = this.service.getRedirectURI(request, target);
+
+		const response = (<any>request).res as ExResponse;
+		response.redirect(
+			`https://discord.com/api/oauth2/authorize` +
+				`?client_id=${process.env.DISCORD_CLIENT_ID}` +
+				`&response_type=code&scope=identify` +
+				`&redirect_uri=${encodeURIComponent(redirectURI)}`,
+		);
+	}
+
+	/**
 	 * Handles Discord authorization page redirect
+	 * @param target Where to post the auth (provided in /auth/discord/{target})
 	 */
 	@Get("discord/callback/{target}")
 	public async discordAuthCallback(
@@ -21,7 +39,7 @@ export class AuthController extends Controller {
 		params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
 		params.append("grant_type", "authorization_code");
 		params.append("code", code);
-		params.append("redirect_uri", process.env.REDIRECT_DOMAIN.replace(/\/$/, "") + request.path);
+		params.append("redirect_uri", `${this.service.getApiUrl(request)}${request.path}`);
 		params.append("scope", "identify");
 
 		const res = (<any>request).res as ExResponse;
@@ -68,22 +86,5 @@ export class AuthController extends Controller {
 		}
 
 		res.json(json).end();
-	}
-
-	/**
-	 * Redirects to Discord oauth2 authorization page
-	 * @param target Redirect target app
-	 */
-	@Get("discord/{target}")
-	public discordAuthGrant(@Path() target: string, @Request() request: ExRequest) {
-		const redirectURI = this.service.getRedirectURI(request, target);
-
-		const response = (<any>request).res as ExResponse;
-		response.redirect(
-			`https://discord.com/api/oauth2/authorize` +
-				`?client_id=${process.env.DISCORD_CLIENT_ID}` +
-				`&response_type=code&scope=identify` +
-				`&redirect_uri=${encodeURIComponent(redirectURI)}`,
-		);
 	}
 }
