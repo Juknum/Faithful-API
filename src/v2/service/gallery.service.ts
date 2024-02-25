@@ -25,7 +25,7 @@ export default class GalleryService {
 		textureIDs: string[],
 		textureToUse: Record<string, Use>,
 		useToPath: Record<string, Path>,
-	) {
+	): Promise<string[]> {
 		const ignoredTextures: string[] =
 			(
 				await axios.get(

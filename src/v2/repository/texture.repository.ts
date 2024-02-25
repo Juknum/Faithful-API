@@ -137,7 +137,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		});
 	}
 
-	public getEditions() {
+	public getEditions(): Promise<string[]> {
 		return uses.values({ field: "edition" }).then((res) => res.sort());
 	}
 

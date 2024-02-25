@@ -44,7 +44,7 @@ export default class PathService {
 		return this.repository.getPathById(id);
 	}
 
-	updatePathById(id: string, path: Path) {
+	updatePathById(id: string, path: Path): Promise<Path> {
 		if (id !== path.id) throw new BadRequestError("Updated ID is different from ID");
 
 		return this.useService
@@ -52,7 +52,7 @@ export default class PathService {
 			.then(() => this.repository.updatePath(id, path));
 	}
 
-	async modifyVersion(oldVersion: string, newVersion: string): Promise<void> {
+	async modifyVersion(oldVersion: string, newVersion: string): Promise<{ success: boolean[] }> {
 		const allVersions = await settings.get("versions");
 		const edition = Object.entries(allVersions).find((v) => v[1].includes(oldVersion))?.[0];
 
@@ -67,7 +67,7 @@ export default class PathService {
 		return this.repository.modifyVersion(oldVersion, newVersion);
 	}
 
-	async addVersion(body: PathNewVersionParam): Promise<void> {
+	async addVersion(body: PathNewVersionParam): Promise<{ success: boolean[] }> {
 		const versions = await TextureService.getInstance().getVersionByEdition(body.edition);
 
 		// check existing version to the paths provided

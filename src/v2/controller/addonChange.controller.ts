@@ -14,6 +14,7 @@ import {
 	Tags,
 } from "tsoa";
 import { Express, Request as ExRequest } from "express";
+import { WriteConfirmation } from "firestorm-db";
 import { File } from "../interfaces/files";
 import {
 	AddonReview,
@@ -149,7 +150,7 @@ export class AddonChangeController extends Controller {
 	public async addonDeleteScreenshot(
 		@Path() id_or_slug: string,
 		@Path() index_or_slug: number | string,
-	): Promise<void> {
+	): Promise<WriteConfirmation> {
 		return this.service.deleteScreenshot(id_or_slug, index_or_slug);
 	}
 
@@ -162,7 +163,7 @@ export class AddonChangeController extends Controller {
 	@Delete("{id_or_slug}/header/")
 	@SuccessResponse(204)
 	@Security("discord", ["addon:own", "Administrator"])
-	public async addonDeleteHeader(@Path() id_or_slug: string): Promise<void> {
+	public async addonDeleteHeader(@Path() id_or_slug: string): Promise<WriteConfirmation> {
 		return this.service.deleteHeader(id_or_slug);
 	}
 }

@@ -23,8 +23,7 @@ export interface FileCreationParam extends FileDataParam {}
 export interface FirestormFile extends File {}
 
 export interface FileRepository {
-	upload(path: string, filename: string, buffer: Buffer, overwrite: Boolean): Promise<void>;
-	remove(path: string): Promise<WriteConfirmation>;
+	getRaw(): Promise<Record<string, File>>;
 	addFile(file: File): Promise<string>;
 	addFiles(files: Files): Promise<string[]>;
 	getFileById(id: string): Promise<File>;
@@ -34,5 +33,11 @@ export interface FileRepository {
 	removeFilesByParent(parent: FileParent): Promise<WriteConfirmation>;
 	removeFilesByParentAndUse(parent: FileParent, use: FileUse): Promise<WriteConfirmation>;
 	removeFileByPath(path: string): Promise<WriteConfirmation>;
-	getRaw(): Promise<Record<string, File>>;
+	upload(
+		path: string,
+		filename: string,
+		buffer: Buffer,
+		overwrite: Boolean,
+	): Promise<WriteConfirmation>;
+	remove(path: string): Promise<WriteConfirmation>;
 }

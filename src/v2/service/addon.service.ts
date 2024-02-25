@@ -1,6 +1,6 @@
 import { URL } from "url";
-import { APIEmbedField, RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
-import axios from "axios";
+import { APIEmbedField } from "discord-api-types/v10";
+import { WriteConfirmation } from "firestorm-db";
 import { UserProfile } from "../interfaces/users";
 import { Addons, Addon, AddonStatus, AddonAll, Files, File, FileParent } from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
@@ -14,14 +14,14 @@ import {
 	AddonStatusApproved,
 } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/addon.repository";
+import { discordEmbed } from "../tools/discordEmbed";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
-function toSlug(value: string) {
-	return value
+const toSlug = (value: string) =>
+	value
 		.split("")
 		.filter((c) => /[a-zA-Z0-9_-]/.test(c))
 		.join("");
-}
 
 export default class AddonService {
 	private readonly userService = new UserService();
@@ -30,10 +30,6 @@ export default class AddonService {
 
 	private readonly addonRepo = new AddonFirestormRepository();
 
-	/**
-	 * Util method to get id from
-	 * @param idOrSlug ID or slug of the requested add-on
-	 */
 	public async getIdFromPath(idOrSlug: string): Promise<[number, Addon | undefined]> {
 		const intID: number = parseInt(idOrSlug, 10);
 
@@ -190,10 +186,6 @@ export default class AddonService {
 		return this.addonRepo.getAddonByStatus(status);
 	}
 
-	/**
-	 * Check body and adds a new addon
-	 * @param body Body which will be controlled
-	 */
 	async create(body: AddonCreationParam): Promise<Addon> {
 		// authentication was already made
 		// tag values have already been verified
@@ -453,7 +445,7 @@ export default class AddonService {
 			.map((s) => this.fileService.removeFileByPath(s));
 
 		// remove addon
-		// rmeove addon links
+		// remove addon links
 		// remove real files
 		const deletePromises = [
 			this.addonRepo.delete(id),
@@ -461,7 +453,7 @@ export default class AddonService {
 			...realFiles,
 		];
 
-		return Promise.allSettled(deletePromises).then(() => {});
+		await Promise.allSettled(deletePromises);
 	}
 
 	async review(id: number, review: AddonReview): Promise<void> {
@@ -474,12 +466,10 @@ export default class AddonService {
 		this.saveUpdate(id, addon, before);
 	}
 
-	/**
-	 * Deletes the given screenshot at given index
-	 * @param idOrSlug ID or slug of the deleted add-on screenshot
-	 * @param indexOrSlug Deleted add-on screenshot index or slug
-	 */
-	public async deleteScreenshot(idOrSlug: string, indexOrSlug: number | string): Promise<void> {
+	public async deleteScreenshot(
+		idOrSlug: string,
+		indexOrSlug: number | string,
+	): Promise<WriteConfirmation> {
 		// get addonID
 		const [addonID] = await this.getAddonFromSlugOrId(idOrSlug);
 
@@ -505,14 +495,10 @@ export default class AddonService {
 		await this.fileService.removeFileById(screen.id);
 
 		// remove actual file
-		return this.fileService.remove(source).then(() => {});
+		return this.fileService.remove(source);
 	}
 
-	/**
-	 * Deletes the given screenshot at given index
-	 * @param idOrSlug ID or slug of the deleted add-on screenshot
-	 */
-	public async deleteHeader(idOrSlug: string): Promise<void> {
+	public async deleteHeader(idOrSlug: string): Promise<WriteConfirmation> {
 		// get addonID
 		const idAndAddon = await this.getAddonFromSlugOrId(idOrSlug);
 		const addonID = idAndAddon[0];
@@ -553,7 +539,7 @@ export default class AddonService {
 		await this.fileService.removeFileById(header.id);
 
 		// remove actual file
-		return this.fileService.remove(source).then(() => {});
+		return this.fileService.remove(source);
 	}
 
 	private async saveUpdate(
@@ -568,7 +554,7 @@ export default class AddonService {
 	}
 
 	private async notifyAddonChange(addon: Addon, before: AddonStatus): Promise<void> {
-		const { status } = addon.approval;
+		const { status, author } = addon.approval;
 		// webhook not set up or status hasn't changed
 		if (!process.env.WEBHOOK_URL || before === status) return;
 
@@ -578,10 +564,13 @@ export default class AddonService {
 			title = `${addon.name} is pending approval!`;
 			name = "Add-on Update";
 		} else {
-			const usernameApproval = (addon.approval.author
-				? await this.userService.getUserById(addon.approval.author).catch(() => undefined)
-				: undefined) || { username: "an unknown user" };
-			title = `${addon.name} was ${status} by ${usernameApproval.username}!`;
+			let usernameApproval = "an unknown user";
+			if (author) {
+				const username = await this.userService.getUserById(author).catch(() => undefined);
+				if (username) usernameApproval = username;
+			}
+
+			title = `${addon.name} was ${status} by ${usernameApproval}!`;
 			name = "Add-on Review";
 		}
 
@@ -594,24 +583,17 @@ export default class AddonService {
 				},
 			];
 
-		const payload: RESTPostAPIChannelMessageJSONBody = {
-			embeds: [
-				{
-					title,
-					url: `https://webapp.faithfulpack.net/#/review/addons?status=${status}&id=${String(
-						addon.id,
-					)}`,
-					author: {
-						name,
-						icon_url:
-							"https://raw.githubusercontent.com/Faithful-Resource-Pack/Branding/main/role%20icons/14%20-%20Add-On%20Maker.png",
-					},
-					fields: reason,
-					color: 7784773,
-				},
-			],
-		};
-
-		await axios.post(process.env.WEBHOOK_URL, payload);
+		discordEmbed({
+			title,
+			url: `https://webapp.faithfulpack.net/#/review/addons?status=${status}&id=${String(
+				addon.id,
+			)}`,
+			author: {
+				name,
+				icon_url:
+					"https://raw.githubusercontent.com/Faithful-Resource-Pack/Branding/main/role%20icons/14%20-%20Add-On%20Maker.png",
+			},
+			fields: reason,
+		});
 	}
 }
