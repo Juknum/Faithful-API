@@ -1,7 +1,7 @@
 import { URL } from "url";
 import { APIEmbedField } from "discord-api-types/v10";
 import { WriteConfirmation } from "firestorm-db";
-import { UserProfile } from "../interfaces/users";
+import { User, UserProfile } from "../interfaces/users";
 import { Addons, Addon, AddonStatus, AddonAll, Files, File, FileParent } from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import { UserService } from "./user.service";
@@ -47,9 +47,8 @@ export default class AddonService {
 	public async getAddonFromSlugOrId(idOrSlug: string): Promise<[number, Addon]> {
 		const idAndAddon = await this.getIdFromPath(idOrSlug);
 		const id = idAndAddon[0];
-		let addon = idAndAddon[1];
+		const addon = idAndAddon[1] || (await this.getAddon(id));
 
-		if (!addon) addon = await this.getAddon(id);
 		if (!addon) throw new NotFoundError("Add-on not found");
 
 		return [id, addon];
@@ -564,13 +563,13 @@ export default class AddonService {
 			title = `${addon.name} is pending approval!`;
 			name = "Add-on Update";
 		} else {
-			let usernameApproval = "an unknown user";
+			let username = "an unknown user";
 			if (author) {
-				const username = await this.userService.getUserById(author).catch(() => undefined);
-				if (username) usernameApproval = username;
+				const user: User = await this.userService.getUserById(author).catch(() => undefined);
+				if (user) username = user.username;
 			}
 
-			title = `${addon.name} was ${status} by ${usernameApproval}!`;
+			title = `${addon.name} was ${status} by ${username}!`;
 			name = "Add-on Review";
 		}
 
