@@ -40,7 +40,7 @@ export class AuthController extends Controller {
 		params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
 		params.append("grant_type", "authorization_code");
 		params.append("code", code);
-		params.append("redirect_uri", `${this.service.getApiUrl(request)}${request.path}`);
+		params.append("redirect_uri", `${this.service.targetToURL("api")}${request.path}`);
 		params.append("scope", "identify");
 
 		const res = (<any>request).res as ExResponse;
