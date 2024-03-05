@@ -26,30 +26,15 @@ export default class GalleryService {
 		textureToUse: Record<string, Use>,
 		useToPath: Record<string, Path>,
 	): Promise<string[]> {
-		const ignoredTextures: string[] =
-			(
-				await axios.get(
-					"https://raw.githubusercontent.com/Faithful-Resource-Pack/CompliBot/main/json/ignored_textures.json",
-				)
-			).data[edition] ?? [];
-
 		const baseURL = "https://raw.githubusercontent.com";
-		const requestURLs = await this.packService.getById(pack).then((res) => res.github[edition]);
-		if (!requestURLs) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
-
-		const defaultURLs = await this.packService
-			.getById("default")
-			.then((res) => res.github[edition]);
+		const urls = await this.packService.getById(pack).then((res) => res.github[edition]);
+		if (!urls) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
 
 		return textureIDs
 			.filter((textureID) => textureToUse[textureID])
 			.map((textureID) => textureToUse[textureID])
 			.map((use: Use) => useToPath[use.id].name)
-			.map((path) => {
-				// fall back to default if ignored (simulates default behavior)
-				const url = ignoredTextures.some((i) => path.includes(i)) ? defaultURLs : requestURLs;
-				return `${baseURL}/${url.org}/${url.repo}/${mcVersion}/${path}`;
-			});
+			.map((path) => `${baseURL}/${urls.org}/${urls.repo}/${mcVersion}/${path}`);
 	}
 
 	async search(
