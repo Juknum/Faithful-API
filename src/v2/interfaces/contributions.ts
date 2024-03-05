@@ -3,9 +3,9 @@ import { PackID } from "./packs";
 
 export interface ContributionCreationParams {
 	date: number; // unix timestamp
-	resolution: 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096; // texture resolution
+	resolution: number; // usually a square of two
 	pack: PackID; // resource pack name
-	authors: Array<string>; // discords users ids
+	authors: Array<string>; // discord user ids
 	texture: string; // texture id
 }
 
@@ -18,7 +18,7 @@ export interface ContributionsAuthor {
 	id: string; // discord user id
 	username: string; // display name
 	uuid: string; // user Minecraft uuid
-	contributions: number; // number of contributions for that user
+	contributions: number; // total contribution count
 }
 
 export interface DayData {
