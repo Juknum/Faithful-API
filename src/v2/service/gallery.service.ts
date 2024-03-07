@@ -1,6 +1,5 @@
 /* eslint-disable no-await-in-loop */
 
-import axios from "axios";
 import { textures } from "../firestorm";
 import { Edition, GalleryResult, PackID, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
 import PathFirestormRepository from "../repository/path.repository";
@@ -102,15 +101,21 @@ export default class GalleryService {
 			},
 		);
 
-		// TODO: optimize this to take less computation time
 		const animations: Record<string, MCMETA> = {};
-		// eslint-disable-next-line no-restricted-syntax
-		for (const useId of Object.keys(useToPath)) {
-			if (useToPath[useId] && useToPath[useId].mcmeta === true) {
-				const t = await textures.get(Number.parseInt(useId, 10));
-				animations[`${Number.parseInt(useId, 10)}`] = await t.mcmeta();
-			}
-		}
+
+		// mcmetas are all loaded after the Promise.all finishes (faster than loop)
+		await Promise.all(
+			Object.keys(useToPath)
+				.filter((useId) => useToPath[useId]?.mcmeta)
+				.map((useId) =>
+					textures
+						.get(Number.parseInt(useId, 10))
+						.then((t) => t.mcmeta())
+						.then((mcmeta) => {
+							animations[Number.parseInt(useId, 10)] = mcmeta;
+						}),
+				),
+		);
 
 		const urls = await this.urlsFromTextures(
 			pack,
@@ -125,7 +130,6 @@ export default class GalleryService {
 			.map((t, i) => {
 				const textureID = t.id;
 				const useID = textureToUse[textureID].id;
-
 				const path = useToPath[useID];
 
 				return {
