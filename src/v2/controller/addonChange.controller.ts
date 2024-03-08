@@ -40,7 +40,7 @@ export class AddonChangeController extends Controller {
 	@Post("")
 	@SuccessResponse(201, "Addon created")
 	@Security("discord", [])
-	public async addonCreate(
+	public addonCreate(
 		@Body() body: AddonCreationParam,
 		@Request() request: ExRequest,
 	): Promise<Addon> {
@@ -90,14 +90,14 @@ export class AddonChangeController extends Controller {
 		@Body() data: AddonReviewBody,
 		@Request() request: ExRequest,
 	): Promise<void> {
-		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
+		const [addonID] = await this.service.getIdFromPath(id_or_slug);
 
 		const review: AddonReview = {
 			...data,
 			author: String((request as any).user),
 		};
 
-		await this.service.review(addonId, review);
+		await this.service.review(addonID, review);
 
 		// refresh add-on stats
 		await cache.delete("addon-stats").catch(() => {});
@@ -112,17 +112,18 @@ export class AddonChangeController extends Controller {
 	@SuccessResponse(204)
 	@Security("discord", ["addon:own", "Administrator"])
 	public async addonDelete(@Path() id_or_slug: string): Promise<void> {
-		const addonId = (await this.service.getIdFromPath(id_or_slug))[0];
-
-		this.service.delete(addonId);
+		const [addonID] = await this.service.getIdFromPath(id_or_slug);
+		this.service.delete(addonID);
 	}
+
+	// no routes, exported to use with formHandler later
 
 	/**
 	 * Add or change a header image to an add-on
 	 * @param id_or_slug Add-on to add header image to
 	 * @param file File to post
 	 */
-	public async postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
+	public postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
 		return this.service.postHeader(id_or_slug, file.originalname, file.buffer);
 	}
 
@@ -131,10 +132,7 @@ export class AddonChangeController extends Controller {
 	 * @param id_or_slug Add-on to add screenshot to
 	 * @param file File to post
 	 */
-	public async addonAddScreenshot(
-		id_or_slug: string,
-		file: Express.Multer.File,
-	): Promise<File | void> {
+	public addonAddScreenshot(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
 		return this.service.postScreenshot(id_or_slug, file.originalname, file.buffer);
 	}
 
@@ -147,7 +145,7 @@ export class AddonChangeController extends Controller {
 	@Delete("{id_or_slug}/screenshots/{index_or_slug}")
 	@SuccessResponse(204)
 	@Security("discord", ["addon:own", "Administrator"])
-	public async addonDeleteScreenshot(
+	public addonDeleteScreenshot(
 		@Path() id_or_slug: string,
 		@Path() index_or_slug: number | string,
 	): Promise<WriteConfirmation> {
@@ -163,7 +161,7 @@ export class AddonChangeController extends Controller {
 	@Delete("{id_or_slug}/header/")
 	@SuccessResponse(204)
 	@Security("discord", ["addon:own", "Administrator"])
-	public async addonDeleteHeader(@Path() id_or_slug: string): Promise<WriteConfirmation> {
+	public addonDeleteHeader(@Path() id_or_slug: string): Promise<WriteConfirmation> {
 		return this.service.deleteHeader(id_or_slug);
 	}
 }

@@ -13,7 +13,7 @@ export class ModpacksController extends Controller {
 	 * Get the raw collection of mods
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Record<string, Modpack>> {
+	public getRaw(): Promise<Record<string, Modpack>> {
 		return this.service.getRaw();
 	}
 

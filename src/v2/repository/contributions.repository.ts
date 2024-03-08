@@ -18,7 +18,10 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		return contributions.values({ field: "pack" });
 	}
 
-	searchContributionsFrom(authors: Array<string>, packs: Array<string>): Promise<Contributions> {
+	async searchContributionsFrom(
+		authors: Array<string>,
+		packs: Array<string>,
+	): Promise<Contributions> {
 		const options: SearchOption<Contribution>[] = authors.map((author) => ({
 			field: "authors",
 			criteria: "array-contains",
@@ -26,9 +29,8 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		}));
 
 		if (packs !== null) options.push({ field: "pack", criteria: "in", value: packs });
-		return contributions
-			.search(options)
-			.then((res) => res.filter((c) => (packs === null ? true : packs.includes(c.pack))));
+		const res = await contributions.search(options);
+		return res.filter((c) => (packs === null ? true : packs.includes(c.pack)));
 	}
 
 	searchByIdAndPacks(
@@ -58,63 +60,54 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		return contributions.search(options);
 	}
 
-	getAuthors(): Promise<ContributionsAuthors> {
-		const out = {};
-
+	async getAuthors(): Promise<ContributionsAuthors> {
 		// don't use values because we need duplicates
-		return (
-			contributions
-				.select({ fields: ["authors"] })
-				.then((res) =>
-					Object.values(res)
-						.map((o) => o.authors)
-						.flat(),
-				)
-				.then((authors) =>
-					authors.forEach((id) => {
-						if (!out[id]) out[id] = { id, contributions: 1 };
-						else out[id].contributions++;
-					}),
-				)
-				.then(() => users.select({ fields: ["id", "username", "uuid", "anonymous"] }))
-				// calling Object.values as a callback gets rid of type inference
-				.then((res) => Object.values(res))
-				.then((_users) =>
-					Object.values(out).map((author: any) => {
-						const user = _users.find((u) => u.id === author.id);
+		const contributionSelect = await contributions.select({ fields: ["authors"] });
+		const authors = Object.values(contributionSelect)
+			.map((c) => c.authors)
+			.flat();
 
-						if (user)
-							return {
-								...author,
-								username: user.anonymous ? undefined : user.username,
-								uuid: user.anonymous ? undefined : user.uuid,
-							};
+		const out = authors.reduce((acc, id) => {
+			if (!acc[id]) acc[id] = { id, contributions: 1 };
+			else acc[id].contributions++;
+			return acc;
+		}, {} as ContributionsAuthors);
 
-						return author;
-					}),
-				)
-		);
+		const userSelect = await users.select({ fields: ["id", "username", "uuid", "anonymous"] });
+		console.log(out);
+		return Object.values(out).map((author: any) => {
+			const user = userSelect[author.id];
+			if (user)
+				return {
+					...author,
+					username: user.anonymous ? undefined : user.username,
+					uuid: user.anonymous ? undefined : user.uuid,
+				};
+
+			return author;
+		});
 	}
 
-	addContribution(params: ContributionCreationParams): Promise<Contribution> {
-		return contributions.add(params).then((id) => contributions.get(id));
+	async addContribution(params: ContributionCreationParams): Promise<Contribution> {
+		const id = await contributions.add(params);
+		return contributions.get(id);
 	}
 
-	addContributions(params: ContributionCreationParams[]): Promise<Contributions> {
-		return contributions
-			.addBulk(params)
-			.then((ids) => Promise.all(ids.map((id) => contributions.get(id))));
+	async addContributions(params: ContributionCreationParams[]): Promise<Contributions> {
+		const ids = await contributions.addBulk(params);
+		return Promise.all(ids.map((id) => contributions.get(id)));
 	}
 
-	updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution> {
-		return contributions.set(id, params).then(() => contributions.get(id));
+	async updateContribution(id: string, params: ContributionCreationParams): Promise<Contribution> {
+		await contributions.set(id, params);
+		return contributions.get(id);
 	}
 
 	deleteContribution(id: string): Promise<WriteConfirmation> {
 		return contributions.remove(id);
 	}
 
-	getByDateRange(begin: string, ends: string): Promise<Contributions> {
+	async getByDateRange(begin: string, ends: string): Promise<Contributions> {
 		// if ends > begin date : ------[B-----E]------
 		// elif begin > ends :    -----E]-------[B-----
 
@@ -132,35 +125,30 @@ export default class ContributionFirestormRepository implements ContributionsRep
 				},
 			]);
 
-		let res: Contributions;
-		return contributions
-			.search([
-				{
-					field: "date",
-					criteria: ">=",
-					value: "0",
-				},
-				{
-					field: "date",
-					criteria: "<=",
-					value: ends,
-				},
-			])
-			.then((startContribution) => {
-				res = startContribution;
-				return contributions.search([
-					{
-						field: "date",
-						criteria: ">=",
-						value: begin,
-					},
-					{
-						field: "date",
-						criteria: "<=",
-						value: new Date().getTime(),
-					},
-				]);
-			})
-			.then((endsContribution: any) => ({ ...res, ...endsContribution }));
+		const startContribution = await contributions.search([
+			{
+				field: "date",
+				criteria: ">=",
+				value: "0",
+			},
+			{
+				field: "date",
+				criteria: "<=",
+				value: ends,
+			},
+		]);
+		const endsContribution = await contributions.search([
+			{
+				field: "date",
+				criteria: ">=",
+				value: begin,
+			},
+			{
+				field: "date",
+				criteria: "<=",
+				value: new Date().getTime(),
+			},
+		]);
+		return { ...startContribution, ...endsContribution };
 	}
 }

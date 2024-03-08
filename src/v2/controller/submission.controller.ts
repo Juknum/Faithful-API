@@ -12,7 +12,7 @@ export class SubmissionController extends Controller {
 	 * Get the raw collection of submittable packs
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Record<string, Submission>> {
+	public getRaw(): Promise<Record<string, Submission>> {
 		return this.service.getRaw();
 	}
 
@@ -20,7 +20,7 @@ export class SubmissionController extends Controller {
 	 * Get all submittable packs with their main pack information
 	 */
 	@Get("all")
-	public async getEveryPack(): Promise<Record<PackID, PackAll>> {
+	public getEveryPack(): Promise<Record<PackID, PackAll>> {
 		return this.service.getEveryPack();
 	}
 
@@ -28,7 +28,7 @@ export class SubmissionController extends Controller {
 	 * Get a submission pack by ID
 	 */
 	@Get("{pack_id}")
-	public async getPack(@Path() pack_id: PackID): Promise<Submission> {
+	public getPack(@Path() pack_id: PackID): Promise<Submission> {
 		return this.service.getById(pack_id);
 	}
 
@@ -39,7 +39,7 @@ export class SubmissionController extends Controller {
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createPack(@Body() body: CreationSubmission): Promise<Submission> {
+	public createPack(@Body() body: CreationSubmission): Promise<Submission> {
 		return this.service.create(body.id, body);
 	}
 
@@ -51,7 +51,7 @@ export class SubmissionController extends Controller {
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async update(@Path() id: PackID, @Body() body: Submission): Promise<Submission> {
+	public update(@Path() id: PackID, @Body() body: Submission): Promise<Submission> {
 		return this.service.update(id, body);
 	}
 
@@ -62,7 +62,7 @@ export class SubmissionController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async delete(id: PackID): Promise<WriteConfirmation> {
+	public delete(id: PackID): Promise<WriteConfirmation> {
 		return this.service.delete(id);
 	}
 }

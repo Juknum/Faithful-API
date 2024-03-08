@@ -12,7 +12,7 @@ export class FileController extends Controller {
 	 */
 	@Get("raw")
 	@Security("bot")
-	public async getRaw(): Promise<Record<string, File>> {
+	public getRaw(): Promise<Record<string, File>> {
 		return this.service.getRaw();
 	}
 }

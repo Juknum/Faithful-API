@@ -19,18 +19,19 @@ export default class UseService {
 
 	private readonly pathService: PathService;
 
-	getPathUseByIdOrName(idOrName: string): Promise<Paths> {
-		return this.getUseByIdOrName(idOrName).then((use: Use) =>
-			this.pathService.getPathByUseId(use.id),
-		);
+	async getPathUseByIdOrName(idOrName: string): Promise<Paths> {
+		const use = await this.getUseByIdOrName<true>(idOrName);
+		return this.pathService.getPathByUseId(use.id);
 	}
 
 	getRaw(): Promise<Record<string, Use>> {
 		return this.useRepo.getRaw();
 	}
 
-	getUseByIdOrName(idOrName: string): Promise<Uses | Use> {
-		return this.useRepo.getUseByIdOrName(idOrName);
+	getUseByIdOrName<AlwaysID extends boolean = false>(
+		idOrName: string,
+	): Promise<AlwaysID extends true ? Use : Use | Uses> {
+		return this.useRepo.getUseByIdOrName(idOrName) as any;
 	}
 
 	async getUseByIdOrNameAndCatch(idOrName: string): Promise<Uses | Use> {

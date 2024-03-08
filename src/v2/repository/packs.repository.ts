@@ -5,7 +5,6 @@ import {
 	Packs,
 	CreationPack,
 	PackAll,
-	Submission,
 	PackID,
 	CreationPackAll,
 	PackSearch,
@@ -33,11 +32,12 @@ export default class PackFirestormRepository implements PackRepository {
 		return { ...pack, submission };
 	}
 
-	getAllTags(): Promise<string[]> {
-		return packs.values({ field: "tags", flatten: true }).then((res) => res.sort());
+	async getAllTags(): Promise<string[]> {
+		const tags = await packs.values({ field: "tags", flatten: true });
+		return tags.sort();
 	}
 
-	search(params: PackSearch): Promise<Packs> {
+	async search(params: PackSearch): Promise<Packs> {
 		const { tag, name, resolution, type } = params;
 		const options: SearchOption<Pack>[] = [];
 		if (name)
@@ -65,22 +65,22 @@ export default class PackFirestormRepository implements PackRepository {
 			? packs.search(options)
 			: packs.readRaw().then((res) => Object.values(res));
 
-		return searchPromise.then(async (searched) => {
-			if (!type || type === "all") return searched;
-			const out = (
-				await Promise.all(
-					searched.map((pack) =>
-						pack
-							.submission()
-							.then(() => pack)
-							.catch(() => undefined),
-					),
-				)
-			).filter((v) => v !== undefined);
+		const searched = await searchPromise;
+		if (!type || type === "all") return searched;
 
-			if (type === "submission") return out;
-			return searched.filter((p) => !out.includes(p));
-		});
+		const out = (
+			await Promise.all(
+				searched.map((pack) =>
+					pack
+						.submission()
+						.then(() => pack)
+						.catch(() => undefined),
+				),
+			)
+		).filter((v) => v !== undefined);
+
+		if (type === "submission") return out;
+		return searched.filter((p) => !out.includes(p));
 	}
 
 	async renamePack(oldPack: PackID, newPack: string): Promise<void> {
@@ -96,36 +96,36 @@ export default class PackFirestormRepository implements PackRepository {
 	async create(packId: string, data: CreationPackAll): Promise<CreationPackAll> {
 		const out = {} as CreationPackAll;
 		if (data.submission) {
-			// submission is stored separately so we get rid of it from main json
+			// submission is stored separately so we split it from the main payload
 			const submissionData = { id: packId, ...data.submission };
 			delete data.submission;
-			await this.submissionRepo.create(packId, submissionData as Submission).then((submission) => {
-				out.submission = submission;
-			});
+			const submission = await this.submissionRepo.create(packId, submissionData);
+			out.submission = submission;
 		}
 
-		return packs.set(packId, data).then(() => ({ id: packId, ...data, ...out }));
+		await packs.set(packId, data);
+		return { id: packId, ...data, ...out };
 	}
 
-	update(packId: PackID, newPack: CreationPack): Promise<Pack> {
+	async update(packId: PackID, newPack: CreationPack): Promise<Pack> {
 		const packWithId = { ...newPack, [ID_FIELD]: packId };
-		return packs.set(packId, packWithId).then(() => packs.get(packId));
+		await packs.set(packId, packWithId);
+		return packs.get(packId);
 	}
 
-	delete(packId: PackID): Promise<WriteConfirmation> {
+	async delete(packId: PackID): Promise<WriteConfirmation> {
 		// try removing submission data if exists too
 		this.submissionRepo.delete(packId).catch(() => {});
 
 		// remove associated contributions
-		return contributions
-			.search([
-				{
-					field: "pack",
-					criteria: "==",
-					value: packId,
-				},
-			])
-			.then((contribs) => contributions.removeBulk(contribs.map((c) => c[ID_FIELD])))
-			.then(() => packs.remove(packId));
+		const contribs = await contributions.search([
+			{
+				field: "pack",
+				criteria: "==",
+				value: packId,
+			},
+		]);
+		await contributions.removeBulk(contribs.map((c) => c[ID_FIELD]));
+		return packs.remove(packId);
 	}
 }

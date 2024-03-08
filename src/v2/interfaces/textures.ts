@@ -79,10 +79,7 @@ export interface TextureRepository {
 		nameOrID: string | number,
 		property: TextureProperty,
 	): Promise<Textures | Texture | Paths | Uses | Contributions | MCMETA>;
-	searchTextureByNameOrId(
-		nameOrID: string | number,
-		alwaysID: boolean,
-	): Promise<Textures | Texture>;
+	searchTextureByNameOrId(nameOrID: string | number): Promise<Textures | Texture>;
 	getURLById(id: number, pack: PackID, version: string): Promise<string>;
 	createTexture(texture: TextureCreationParam): Promise<Texture>;
 	deleteTexture(id: string): Promise<WriteConfirmation[]>;

@@ -23,7 +23,7 @@ export class PathsController extends Controller {
 	 * Get the raw collection of paths
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Record<string, Path>> {
+	public getRaw(): Promise<Record<string, Path>> {
 		return this.service.getRaw();
 	}
 
@@ -34,7 +34,7 @@ export class PathsController extends Controller {
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createPath(@Body() body: InputPath): Promise<Path> {
+	public createPath(@Body() body: InputPath): Promise<Path> {
 		return this.service.createPath(body);
 	}
 
@@ -43,7 +43,7 @@ export class PathsController extends Controller {
 	 * @param id Internal ID
 	 */
 	@Get("{id}")
-	public async getPathById(id: string): Promise<Path> {
+	public getPathById(id: string): Promise<Path> {
 		return this.service.getPathById(id);
 	}
 
@@ -54,7 +54,7 @@ export class PathsController extends Controller {
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async updatePath(@URLPath() id: string, @Body() body: InputPath | Path): Promise<Path> {
+	public updatePath(@URLPath() id: string, @Body() body: InputPath | Path): Promise<Path> {
 		return this.service.updatePathById(id, {
 			...body,
 			id,
@@ -69,7 +69,7 @@ export class PathsController extends Controller {
 	@Put("versions/modify/{old_version}/{new_version}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async modifyVersion(
+	public modifyVersion(
 		@URLPath() old_version: string,
 		@URLPath() new_version: string,
 	): Promise<{ success: boolean[] }> {
@@ -84,7 +84,7 @@ export class PathsController extends Controller {
 	@Post("versions/add")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async addVersion(@Body() body: PathNewVersionParam): Promise<{ success: boolean[] }> {
+	public addVersion(@Body() body: PathNewVersionParam): Promise<{ success: boolean[] }> {
 		return this.service.addVersion(body);
 	}
 
@@ -95,7 +95,7 @@ export class PathsController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async deleteUse(@URLPath() id: string): Promise<WriteConfirmation> {
+	public deleteUse(@URLPath() id: string): Promise<WriteConfirmation> {
 		return this.service.removePathById(id);
 	}
 }

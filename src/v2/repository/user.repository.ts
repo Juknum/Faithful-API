@@ -36,20 +36,13 @@ export default class UserFirestormRepository implements UserRepository {
 		return users.readRaw();
 	}
 
-	getNames(): Promise<Usernames> {
-		return (
-			users
-				.select({ fields: ["id", "username", "uuid", "anonymous"] })
-				// calling Object.values as a callback gets rid of type inference
-				.then((res) => Object.values(res))
-				.then((_users) =>
-					_users.map((el) => ({
-						id: el.id,
-						username: el.anonymous ? undefined : el.username,
-						uuid: el.anonymous ? undefined : el.uuid,
-					})),
-				)
-		);
+	async getNames(): Promise<Usernames> {
+		const fields = await users.select({ fields: ["id", "username", "uuid", "anonymous"] });
+		return Object.values(fields).map((el) => ({
+			id: el.id,
+			username: el.anonymous ? undefined : el.username,
+			uuid: el.anonymous ? undefined : el.uuid,
+		}));
 	}
 
 	getUserById(id: string): Promise<User> {
@@ -89,22 +82,21 @@ export default class UserFirestormRepository implements UserRepository {
 			});
 	}
 
-	getUsersByName(name: string): Promise<Users> {
+	async getUsersByName(name: string): Promise<Users> {
 		if (!name) return Promise.reject(new Error("A name must be provided"));
 
-		return users
-			.search([
-				{
-					field: "username",
-					criteria: name.length < 3 ? "==" : "includes",
-					value: name,
-					ignoreCase: true,
-				},
-			])
-			.then((arr) => arr.map(__transformUser));
+		const arr = await users.search([
+			{
+				field: "username",
+				criteria: name.length < 3 ? "==" : "includes",
+				value: name,
+				ignoreCase: true,
+			},
+		]);
+		return arr.map(__transformUser);
 	}
 
-	getUsersFromRole(role: string, username?: string): Promise<Users> {
+	async getUsersFromRole(role: string, username?: string): Promise<Users> {
 		if (role === "all" && !username) return users.readRaw().then(Object.values);
 		const options = [];
 
@@ -124,44 +116,46 @@ export default class UserFirestormRepository implements UserRepository {
 				ignoreCase: true,
 			});
 
-		return users.search(options).then((arr) => arr.map(__transformUser));
+		const arr = await users.search(options);
+		return arr.map(__transformUser);
 	}
 
 	getRoles(): Promise<Array<string>> {
 		return users.values({ field: "roles", flatten: true });
 	}
 
-	getContributionsById(id: string): Promise<Contributions> {
-		return users.get(id).then((u) => u.contributions());
+	async getContributionsById(id: string): Promise<Contributions> {
+		const u = await users.get(id);
+		return u.contributions();
 	}
 
-	getAddonsById(id: string): Promise<Addons> {
-		return users.get(id).then((u) => u.addons());
+	async getAddonsById(id: string): Promise<Addons> {
+		const u = await users.get(id);
+		return u.addons();
 	}
 
-	getAddonsApprovedById(id: string): Promise<Addons> {
-		return this.getAddonsById(id).then((arr) =>
-			arr.filter((el) => el.approval.status === "approved"),
-		);
+	async getAddonsApprovedById(id: string): Promise<Addons> {
+		const arr = await this.getAddonsById(id);
+		return arr.filter((el) => el.approval.status === "approved");
 	}
 
-	update(id: string, user: UserCreationParams): Promise<User> {
-		return users.set(id, user).then(() => this.getUserById(id));
+	async update(id: string, user: UserCreationParams): Promise<User> {
+		await users.set(id, user);
+		return this.getUserById(id);
 	}
 
 	delete(id: string): Promise<WriteConfirmation> {
 		return users.remove(id);
 	}
 
-	getUserProfiles(searchedUsers: string[]): Promise<UserProfile[]> {
-		return users.searchKeys(searchedUsers).then((u) =>
-			u.map((el) => ({
-				id: el.id,
-				username: el.anonymous ? undefined : el.username,
-				// ensure anonymous stays anonymous
-				uuid: el.anonymous ? undefined : el.uuid || undefined,
-				media: el.anonymous ? undefined : el.media || [],
-			})),
-		);
+	async getUserProfiles(searchedUsers: string[]): Promise<UserProfile[]> {
+		const u = await users.searchKeys(searchedUsers);
+		return u.map((el) => ({
+			id: el.id,
+			username: el.anonymous ? undefined : el.username,
+			// ensure anonymous stays anonymous
+			uuid: el.anonymous ? undefined : el.uuid || undefined,
+			media: el.anonymous ? undefined : el.media || [],
+		}));
 	}
 }

@@ -18,7 +18,6 @@ import {
 	ContributionCreationParams,
 	ContributionsAuthors,
 	ContributionStats,
-	ContributionSearch,
 	PackID,
 } from "../interfaces";
 import ContributionService from "../service/contributions.service";
@@ -34,7 +33,7 @@ export class ContributionsController extends Controller {
 	 * Get the raw collection of contributions
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Record<string, Contribution>> {
+	public getRaw(): Promise<Record<string, Contribution>> {
 		return this.service.getRaw();
 	}
 
@@ -43,7 +42,7 @@ export class ContributionsController extends Controller {
 	 */
 	@Response<NotAvailableError>(408)
 	@Get("stats")
-	public async getStats(): Promise<ContributionStats> {
+	public getStats(): Promise<ContributionStats> {
 		return cache.handle("contributions-stats", () => this.service.getStats());
 	}
 
@@ -51,7 +50,7 @@ export class ContributionsController extends Controller {
 	 * Get all resource packs with contributions
 	 */
 	@Get("packs")
-	public async getPacks(): Promise<PackID[]> {
+	public getPacks(): Promise<PackID[]> {
 		return this.service.getPacks();
 	}
 
@@ -59,7 +58,7 @@ export class ContributionsController extends Controller {
 	 * Get all users who have contributed to a resource pack before
 	 */
 	@Get("authors")
-	public async getAuthors(): Promise<ContributionsAuthors> {
+	public getAuthors(): Promise<ContributionsAuthors> {
 		return this.service.getAuthors();
 	}
 
@@ -70,18 +69,16 @@ export class ContributionsController extends Controller {
 	 * @param search Contribution to search for
 	 */
 	@Get("search")
-	public async searchWithTextureAndUser(
+	public searchWithTextureAndUser(
 		@Query() packs?: string,
 		@Query() users?: string,
 		@Query() search?: string,
 	): Promise<Contributions> {
-		const params: ContributionSearch = {
+		return this.service.search({
 			packs: packs && packs !== "all" ? packs.split("-") : null,
 			users: users ? users.split("-") : [],
 			search,
-		};
-
-		return this.service.search(params);
+		});
 	}
 
 	/**
@@ -89,7 +86,7 @@ export class ContributionsController extends Controller {
 	 * @param id Contribution ID
 	 */
 	@Get("{id}")
-	public async getContributionById(id: string): Promise<Contribution> {
+	public getContributionById(id: string): Promise<Contribution> {
 		return this.service.getById(id);
 	}
 
@@ -99,7 +96,7 @@ export class ContributionsController extends Controller {
 	 * @param packs List of resource packs joined by '-'
 	 */
 	@Get("search/{users}/{packs}")
-	public async searchContributionsFrom(users: string, packs: string): Promise<Contributions> {
+	public searchContributionsFrom(users: string, packs: string): Promise<Contributions> {
 		if (packs === "all") return this.service.searchContributionsFrom(users.split("-"), null);
 		return this.service.searchContributionsFrom(users.split("-"), packs.split("-"));
 	}
@@ -110,7 +107,7 @@ export class ContributionsController extends Controller {
 	 * @param ends Ending timestamp
 	 */
 	@Get("between/{begin}/{ends}")
-	public async getContributionInRange(begin: string, ends: string): Promise<Contributions> {
+	public getContributionInRange(begin: string, ends: string): Promise<Contributions> {
 		return this.service.getByDateRange(begin, ends);
 	}
 
@@ -119,7 +116,7 @@ export class ContributionsController extends Controller {
 	 * @param timestamp Where to start counting
 	 */
 	@Get("from/{timestamp}")
-	public async getContributionFrom(timestamp: string): Promise<Contributions> {
+	public getContributionFrom(timestamp: string): Promise<Contributions> {
 		return this.service.getByDateRange(timestamp, new Date().getTime().toString());
 	}
 
@@ -128,7 +125,7 @@ export class ContributionsController extends Controller {
 	 * @param timestamp Where to stop counting
 	 */
 	@Get("before/{timestamp}")
-	public async getContributionBefore(timestamp: string): Promise<Contributions> {
+	public getContributionBefore(timestamp: string): Promise<Contributions> {
 		return this.service.getByDateRange("0", timestamp);
 	}
 
@@ -139,7 +136,7 @@ export class ContributionsController extends Controller {
 	@Post()
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async addContribution(
+	public addContribution(
 		@Body() body: ContributionCreationParams | ContributionCreationParams[],
 	): Promise<Contribution | Contributions> {
 		return Array.isArray(body)
@@ -154,7 +151,7 @@ export class ContributionsController extends Controller {
 	@Delete("{id}")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async deleteContribution(id: string): Promise<WriteConfirmation> {
+	public deleteContribution(id: string): Promise<WriteConfirmation> {
 		return this.service.deleteContribution(id);
 	}
 
@@ -166,7 +163,7 @@ export class ContributionsController extends Controller {
 	@Put("{id}")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async updateContribution(
+	public updateContribution(
 		id: string,
 		@Body() body: ContributionCreationParams,
 	): Promise<Contribution> {

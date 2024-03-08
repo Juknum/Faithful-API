@@ -181,8 +181,9 @@ export default class TextureService {
 		return Promise.all(body.map((t) => this.createEntireTexture(t)));
 	}
 
-	changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
-		return this.getByNameOrId(id).then(() => this.textureRepo.changeTexture(id, body));
+	async changeTexture(id: string, body: TextureCreationParam): Promise<Texture> {
+		await this.getByNameOrId(id);
+		return this.textureRepo.changeTexture(id, body);
 	}
 
 	deleteTexture(id: string): Promise<WriteConfirmation[]> {

@@ -31,13 +31,15 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 		);
 	}
 
-	create(packId: string, packToCreate: CreationSubmission): Promise<Submission> {
-		return submissions.set(packId, packToCreate).then(() => submissions.get(packId));
+	async create(packId: string, packToCreate: CreationSubmission): Promise<Submission> {
+		await submissions.set(packId, packToCreate);
+		return submissions.get(packId);
 	}
 
-	update(packId: PackID, newPack: Submission): Promise<Submission> {
+	async update(packId: PackID, newPack: Submission): Promise<Submission> {
 		const packWithId = { ...newPack, [ID_FIELD]: packId };
-		return submissions.set(packId, packWithId).then(() => submissions.get(packId));
+		await submissions.set(packId, packWithId);
+		return submissions.get(packId);
 	}
 
 	delete(packId: PackID): Promise<WriteConfirmation> {

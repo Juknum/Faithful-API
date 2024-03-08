@@ -8,31 +8,30 @@ export default class ModsFirestormRepository implements ModsRepository {
 		return mods.readRaw();
 	}
 
-	public getThumbnail(id: number): Promise<string> {
-		return axios(`https://api.curseforge.com/v1/mods/${id}`, {
+	public async getThumbnail(id: number): Promise<string> {
+		const res = await axios(`https://api.curseforge.com/v1/mods/${id}`, {
 			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
-		}).then((res) => {
-			const url = res?.data?.data?.logo?.thumbnailUrl;
-			if (url) return url;
+		});
+		const url = res?.data?.data?.logo?.thumbnailUrl;
 
-			// else
-			throw new NotFoundError("No thumbnail found for this mod");
-		}); // fixes bug where no logo provided : 400 : Cannot read 'thumbnailUrl' of null
+		// fixes bug where no logo provided : 400 : Cannot read 'thumbnailUrl' of null
+		if (url) return url;
+		throw new NotFoundError("No thumbnail found for this mod");
 	}
 
-	public getCurseForgeName(id: number): Promise<string> {
-		return axios(`https://api.curseforge.com/v1/mods/${id}`, {
+	public async getCurseForgeName(id: number): Promise<string> {
+		const res = await axios(`https://api.curseforge.com/v1/mods/${id}`, {
 			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
-		}).then((res) => {
-			const name = res?.data?.data?.name;
-			if (name) return name;
+		});
+		const name = res?.data?.data?.name;
 
-			// else
-			throw new NotFoundError("No name found for this mod");
-		}); // Preventive fix if there is somehow no name
+		// Preventive fix if there is somehow no name
+		if (name) return name;
+		throw new NotFoundError("No name found for this mod");
 	}
 
-	public getNameInDatabase(id: string): Promise<string> {
-		return mods.get(id).then((res: Mod) => res.name);
+	public async getNameInDatabase(id: string): Promise<string> {
+		const res = await mods.get(id);
+		return res.name;
 	}
 }

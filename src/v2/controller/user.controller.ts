@@ -48,8 +48,8 @@ export class UserController extends Controller {
 	 */
 	@Post("profile")
 	@Security("discord", [])
-	public async setProfile(@Body() body: UserProfile, @Request() request: any): Promise<void> {
-		await this.userService.setProfileById(request.user, body);
+	public setProfile(@Body() body: UserProfile, @Request() request: any): Promise<void> {
+		return this.userService.setProfileById(request.user, body);
 	}
 
 	/**
@@ -57,7 +57,7 @@ export class UserController extends Controller {
 	 */
 	@Post("newprofile")
 	@Security("discord", [])
-	public async createProfile(@Request() request: any): Promise<User> {
+	public createProfile(@Request() request: any): Promise<User> {
 		return this.userService.getProfileOrCreate(request.user);
 	}
 
@@ -67,7 +67,7 @@ export class UserController extends Controller {
 	@Get("raw")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async getRaw(): Promise<Record<string, User>> {
+	public getRaw(): Promise<Record<string, User>> {
 		return this.userService.getRaw();
 	}
 
@@ -76,7 +76,7 @@ export class UserController extends Controller {
 	 */
 	@Response<NotAvailableError>(408)
 	@Get("stats")
-	public async getStats(): Promise<UserStats> {
+	public getStats(): Promise<UserStats> {
 		return cache.handle("user-stats", () => this.userService.getStats());
 	}
 
@@ -84,7 +84,7 @@ export class UserController extends Controller {
 	 * Get all usernames, UUIDs, and IDs
 	 */
 	@Get("names")
-	public async getNames(): Promise<Usernames> {
+	public getNames(): Promise<Usernames> {
 		return this.userService.getNames();
 	}
 
@@ -92,7 +92,7 @@ export class UserController extends Controller {
 	 * Get all discord roles the database has
 	 */
 	@Get("roles")
-	public async getRoles(): Promise<Array<string>> {
+	public getRoles(): Promise<Array<string>> {
 		return this.userService.getRoles();
 	}
 
@@ -101,7 +101,7 @@ export class UserController extends Controller {
 	 * @param role The role to search for
 	 */
 	@Get("role/{role}")
-	public async getUsersFromRole(@Path() role: string): Promise<Users> {
+	public getUsersFromRole(@Path() role: string): Promise<Users> {
 		return this.userService.getUsersFromRole(role, null);
 	}
 
@@ -123,7 +123,7 @@ export class UserController extends Controller {
 	 * @param id_or_username User ID/Username (join by "," if multiple)
 	 */
 	@Get("{id_or_username}")
-	public async getUser(@Path() id_or_username: string): Promise<User | Users> {
+	public getUser(@Path() id_or_username: string): Promise<User | Users> {
 		if (typeof id_or_username === "string" && id_or_username.includes(",")) {
 			const idArray = id_or_username.split(",");
 			return Promise.allSettled(idArray.map((id) => this.userService.getUsersByNameOrId(id))).then(
@@ -143,7 +143,7 @@ export class UserController extends Controller {
 	 * @param id User ID
 	 */
 	@Get("{id}/contributions")
-	public async getContributions(@Path() id: string): Promise<Contributions> {
+	public getContributions(@Path() id: string): Promise<Contributions> {
 		return this.userService.getContributions(id);
 	}
 
@@ -152,7 +152,7 @@ export class UserController extends Controller {
 	 * @param id User ID
 	 */
 	@Get("{id}/name")
-	public async getName(@Path() id: string): Promise<Username> {
+	public getName(@Path() id: string): Promise<Username> {
 		return this.userService.getNameById(id);
 	}
 
@@ -161,7 +161,7 @@ export class UserController extends Controller {
 	 * @param id User ID
 	 */
 	@Get("{id}/addons/approved")
-	public async getAddons(@Path() id: string): Promise<Addons> {
+	public getAddons(@Path() id: string): Promise<Addons> {
 		return this.userService.getAddons(id);
 	}
 
@@ -190,7 +190,7 @@ export class UserController extends Controller {
 	@Post("{id}")
 	@Security("discord", [])
 	@Security("bot")
-	public async create(@Path() id: string, @Body() body: UserCreationParams): Promise<User> {
+	public create(@Path() id: string, @Body() body: UserCreationParams): Promise<User> {
 		return this.userService.create(id, { ...body, id, media: [] });
 	}
 
@@ -233,7 +233,7 @@ export class UserController extends Controller {
 	@Put("{id}/roles")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async setRoles(@Path() id: string, @Body() roles: Array<string>): Promise<User> {
+	public setRoles(@Path() id: string, @Body() roles: Array<string>): Promise<User> {
 		return this.userService.setRoles(id, roles);
 	}
 
@@ -244,7 +244,7 @@ export class UserController extends Controller {
 	@Delete("{id}")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public async delete(@Path() id: string): Promise<WriteConfirmation> {
+	public delete(@Path() id: string): Promise<WriteConfirmation> {
 		return this.userService.delete(id);
 	}
 }

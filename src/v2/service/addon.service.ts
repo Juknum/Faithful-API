@@ -71,14 +71,14 @@ export default class AddonService {
 		return this.addonRepo.getAddonById(id);
 	}
 
-	getAddonAuthors(id: number): Promise<Array<string>> {
-		return this.getAddon(id).then((addon: Addon) => addon.authors);
+	async getAddonAuthors(id: number): Promise<Array<string>> {
+		const addon = await this.getAddon(id);
+		return addon.authors;
 	}
 
-	getAddonAuthorsProfiles(idOrSlug: string): Promise<UserProfile[]> {
-		return this.getAddonFromSlugOrId(idOrSlug).then(([, addon]) =>
-			this.userService.getUserProfiles(addon.authors),
-		);
+	async getAddonAuthorsProfiles(idOrSlug: string): Promise<UserProfile[]> {
+		const [, addon] = await this.getAddonFromSlugOrId(idOrSlug);
+		return this.userService.getUserProfiles(addon.authors);
 	}
 
 	getFiles(id: number): Promise<Files> {
@@ -87,53 +87,54 @@ export default class AddonService {
 		return this.addonRepo.getFilesById(id);
 	}
 
-	getAll(id: number): Promise<AddonAll> {
+	async getAll(id: number): Promise<AddonAll> {
 		if (Number.isNaN(id) || id < 0)
 			return Promise.reject(new Error("Addons IDs are integer greater than 0"));
 
-		return Promise.all([this.getAddon(id), this.getFiles(id)]).then((results) => ({
+		const results = await Promise.all([this.getAddon(id), this.getFiles(id)]);
+		return {
 			...results[0],
 			files: results[1],
-		}));
+		};
 	}
 
-	getStats(asAdmin: boolean): Promise<AddonStatsAdmin> {
-		return this.getRaw()
-			.then((entries) =>
-				Object.values(entries).filter((a) => asAdmin || a.approval.status === AddonStatusApproved),
-			)
-			.then((values) =>
-				values.reduce(
-					(acc, val) => {
-						acc[val.approval.status]++;
-						val.options.tags.forEach((t) => {
-							acc.numbers[t] = (acc.numbers[t] || 0) + 1;
-						});
-						return acc;
-					},
-					{
-						approved: 0,
-						pending: 0,
-						denied: 0,
-						archived: 0,
-						numbers: {},
-					} as AddonStatsAdmin,
-				),
-			);
-	}
-
-	getScreenshotsFiles(id: number): Promise<Files> {
-		return this.getFiles(id).then(
-			(files: Files) => files.filter((f: File) => f.use === "screenshot" || f.use === "carousel"), // TODO: only keep screenshots
+	async getStats(asAdmin: boolean): Promise<AddonStatsAdmin> {
+		const entries = await this.getRaw();
+		const values = Object.values(entries).filter(
+			(a) => asAdmin || a.approval.status === AddonStatusApproved,
+		);
+		return values.reduce(
+			(acc, val) => {
+				acc[val.approval.status]++;
+				val.options.tags.forEach((t) => {
+					acc.numbers[t] = (acc.numbers[t] || 0) + 1;
+				});
+				return acc;
+			},
+			{
+				approved: 0,
+				pending: 0,
+				denied: 0,
+				archived: 0,
+				numbers: {},
+			} as AddonStatsAdmin,
 		);
 	}
 
-	getScreenshotsIds(id: number): Promise<Array<string>> {
-		return this.getScreenshotsFiles(id).then((files) => Object.values(files).map((f) => f.id));
+	async getScreenshotsFiles(id: number): Promise<Files> {
+		const files = await this.getFiles(id);
+		// TODO: only keep screenshots
+		return files.filter((f: File) => f.use === "screenshot" || f.use === "carousel");
 	}
 
-	getScreenshots(id: number): Promise<Array<string>> {
-		return this.getScreenshotsFiles(id).then((files) => Object.values(files).map((f) => f.source));
+	async getScreenshotsIds(id: number): Promise<Array<string>> {
+		const files = await this.getScreenshotsFiles(id);
+		return Object.values(files).map((f) => f.id);
+	}
+
+	async getScreenshots(id: number): Promise<Array<string>> {
+		const files = await this.getScreenshotsFiles(id);
+		return Object.values(files).map((f) => f.source);
 	}
 
 	async getScreenshotURL(id: number, index: number): Promise<string> {
@@ -230,37 +231,29 @@ export default class AddonService {
 			},
 		};
 
-		let addonCreated: Addon;
-		let addonCreatedId: string | number;
-		return this.addonRepo
-			.create(addon)
-			.then((savedAddon) => {
-				addonCreated = savedAddon;
-				addonCreatedId = savedAddon.id;
+		const addonCreated = await this.addonRepo.create(addon);
 
-				const files: Files = [];
-				downloads.forEach((d) => {
-					d.links.forEach((link) => {
-						files.push({
-							name: d.key,
-							use: "download",
-							type: "url",
-							parent: {
-								type: "addons",
-								id: String(addonCreatedId),
-							},
-							source: link,
-						});
-					});
+		const files: Files = [];
+		downloads.forEach((d) => {
+			d.links.forEach((link) => {
+				files.push({
+					name: d.key,
+					use: "download",
+					type: "url",
+					parent: {
+						type: "addons",
+						id: String(addonCreated.id),
+					},
+					source: link,
 				});
-
-				return Promise.all(files.map((file) => this.fileService.addFile(file)));
-			})
-			.then(async () => {
-				addonCreated.id = addonCreatedId;
-				await this.notifyAddonChange(addonCreated, null).catch(console.error);
-				return addonCreated;
 			});
+		});
+
+		await Promise.all(files.map((file) => this.fileService.addFile(file)));
+		// wait for all files to be added
+
+		await this.notifyAddonChange(addonCreated, null).catch(console.error);
+		return addonCreated;
 	}
 
 	async update(id: number, body: AddonCreationParam, reason: string): Promise<Addon> {
@@ -330,9 +323,11 @@ export default class AddonService {
 		};
 
 		// update addon, reupload download links
-		return Promise.all([this.saveUpdate(id, addon, before), this.fileService.addFiles(files)]).then(
-			(results) => results[0],
-		);
+		const [results] = await Promise.all([
+			this.saveUpdate(id, addon, before),
+			this.fileService.addFiles(files),
+		]);
+		return results;
 	}
 
 	public async postHeader(
@@ -340,10 +335,7 @@ export default class AddonService {
 		filename: string,
 		buffer: Buffer,
 	): Promise<void | File> {
-		// get addonID
-		const idAndAddon = await this.getAddonFromSlugOrId(idOrSlug);
-		const addonID = idAndAddon[0];
-		const addon = idAndAddon[1];
+		const [addonID, addon] = await this.getAddonFromSlugOrId(idOrSlug);
 		const { slug } = addon;
 
 		const before = addon.approval?.status || null;
@@ -388,10 +380,7 @@ export default class AddonService {
 		filename: string,
 		buffer: Buffer,
 	): Promise<void | File> {
-		// get add-on ID
-		const idAndAddon = await this.getAddonFromSlugOrId(idOrSlug);
-		const addonID = idAndAddon[0];
-		const addon = idAndAddon[1];
+		const [addonID, addon] = await this.getAddonFromSlugOrId(idOrSlug);
 		const { slug } = addon;
 
 		const before = addon.approval?.status || null;
@@ -469,7 +458,6 @@ export default class AddonService {
 		idOrSlug: string,
 		indexOrSlug: number | string,
 	): Promise<WriteConfirmation> {
-		// get addonID
 		const [addonID] = await this.getAddonFromSlugOrId(idOrSlug);
 
 		// get existing screenshots
@@ -498,10 +486,7 @@ export default class AddonService {
 	}
 
 	public async deleteHeader(idOrSlug: string): Promise<WriteConfirmation> {
-		// get addonID
-		const idAndAddon = await this.getAddonFromSlugOrId(idOrSlug);
-		const addonID = idAndAddon[0];
-		const addon = idAndAddon[1];
+		const [addonID, addon] = await this.getAddonFromSlugOrId(idOrSlug);
 
 		const before = addon.approval?.status || null;
 

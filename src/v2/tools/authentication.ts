@@ -1,8 +1,8 @@
 import "dotenv/config";
 
-import * as express from "express";
+import { Request as ExRequest } from "express";
 import axios from "axios";
-import { APIUser } from "discord-api-types/v9";
+import { APIUser } from "discord-api-types/v10";
 import { PermissionError, NotFoundError, ApiError, ForbiddenError } from "./ApiError";
 import { UserService } from "../service/user.service";
 import AddonService from "../service/addon.service";
@@ -14,7 +14,7 @@ const addonService = new AddonService();
 
 /* eslint-disable import/prefer-default-export */
 export async function expressAuthentication(
-	request: express.Request,
+	request: ExRequest,
 	securityName: string,
 	scopes?: string[],
 ): Promise<any> {

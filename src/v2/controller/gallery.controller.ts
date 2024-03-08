@@ -30,7 +30,7 @@ export class GalleryController extends Controller {
 	 * @param search Gallery search
 	 */
 	@Get("{pack}/{edition}/{mc_version}/{tag}/")
-	public async search(
+	public search(
 		@Path() pack: AcceptedRes | PackID,
 		@Path() edition: Edition,
 		@Path() mc_version: string,

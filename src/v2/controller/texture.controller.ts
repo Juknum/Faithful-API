@@ -43,7 +43,7 @@ export class TextureController extends Controller {
 	 * Get the raw collection of textures
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Record<string, Texture>> {
+	public getRaw(): Promise<Record<string, Texture>> {
 		return this.service.getRaw();
 	}
 
@@ -51,7 +51,7 @@ export class TextureController extends Controller {
 	 * Get Minecraft editions supported by the database
 	 */
 	@Get("editions")
-	public async getEditions(): Promise<Array<string>> {
+	public getEditions(): Promise<Array<string>> {
 		return this.service.getEditions();
 	}
 
@@ -59,7 +59,7 @@ export class TextureController extends Controller {
 	 * Get all the tags from all textures (Block, UI, etc)
 	 */
 	@Get("tags")
-	public async getTags(): Promise<Array<string>> {
+	public getTags(): Promise<Array<string>> {
 		return this.service.getTags();
 	}
 
@@ -68,7 +68,7 @@ export class TextureController extends Controller {
 	 * Integer array of square 2
 	 */
 	@Get("resolutions")
-	public async getResolutions(): Promise<Array<number>> {
+	public getResolutions(): Promise<Array<number>> {
 		return this.service.getResolutions();
 	}
 
@@ -76,7 +76,7 @@ export class TextureController extends Controller {
 	 * Get all existing Minecraft versions supported in the database
 	 */
 	@Get("versions")
-	public async getVersions(): Promise<Array<string>> {
+	public getVersions(): Promise<Array<string>> {
 		return this.service.getVersions();
 	}
 
@@ -104,7 +104,7 @@ export class TextureController extends Controller {
 	 * @param id_or_name Texture ID or texture name (join by "," if multiple)
 	 */
 	@Get("{id_or_name}")
-	public async getTexture(@Path() id_or_name: string | number): Promise<Texture | Textures> {
+	public getTexture(@Path() id_or_name: string | number): Promise<Texture | Textures> {
 		if (typeof id_or_name === "string" && id_or_name.includes(",")) {
 			const id_array = id_or_name.split(",");
 			return Promise.allSettled(id_array.map((id) => this.service.getByNameOrId(id))).then((res) =>
@@ -123,7 +123,7 @@ export class TextureController extends Controller {
 	 * @param property Property from the texture
 	 */
 	@Get("{id_or_name}/{property}")
-	public async getTexturesProperty(
+	public getTexturesProperty(
 		@Path() id_or_name: string | number,
 		@Path() property: TextureProperty,
 	): Promise<
@@ -178,7 +178,7 @@ export class TextureController extends Controller {
 	@Put("merge/{add_id}/{remove_id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async mergeTextures(@Path() add_id: string, @Path() remove_id: string): Promise<void> {
+	public mergeTextures(@Path() add_id: string, @Path() remove_id: string): Promise<void> {
 		return this.service.mergeTextures(add_id, remove_id);
 	}
 
@@ -189,7 +189,7 @@ export class TextureController extends Controller {
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createTexture(@Body() body: TextureCreationParam): Promise<Texture> {
+	public createTexture(@Body() body: TextureCreationParam): Promise<Texture> {
 		return this.service.createTexture(body);
 	}
 
@@ -200,7 +200,7 @@ export class TextureController extends Controller {
 	@Post("multiple")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async createMultipleTextures(@Body() body: EntireTextureToCreate[]): Promise<Textures> {
+	public createMultipleTextures(@Body() body: EntireTextureToCreate[]): Promise<Textures> {
 		return this.service.createEntireTextures(body);
 	}
 
@@ -212,10 +212,7 @@ export class TextureController extends Controller {
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async changeTexture(
-		@Path() id: string,
-		@Body() body: TextureCreationParam,
-	): Promise<Texture> {
+	public changeTexture(@Path() id: string, @Body() body: TextureCreationParam): Promise<Texture> {
 		return this.service.changeTexture(id, body);
 	}
 
@@ -226,7 +223,7 @@ export class TextureController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async deleteTexture(id: string): Promise<WriteConfirmation[]> {
+	public deleteTexture(id: string): Promise<WriteConfirmation[]> {
 		return this.service.deleteTexture(id);
 	}
 }

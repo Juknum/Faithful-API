@@ -1,5 +1,5 @@
 import { InputPath, Path, Paths, PathRepository } from "~/v2/interfaces";
-import { EditField, ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { paths } from "../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
@@ -32,13 +32,14 @@ export default class PathFirestormRepository implements PathRepository {
 		]);
 	}
 
-	createPath(path: InputPath): Promise<Path> {
-		// breaks without structuredClone, not sure why
-		return paths.add(structuredClone(path)).then((id) => ({ ...structuredClone(path), id }));
+	async createPath(path: InputPath): Promise<Path> {
+		const id = await paths.add(path);
+		return { ...path, id };
 	}
 
-	createPathBulk(pathArray: InputPath[]): Promise<Paths> {
-		return paths.addBulk(pathArray).then((ids) => paths.searchKeys(ids));
+	async createPathBulk(pathArray: InputPath[]): Promise<Paths> {
+		const ids = await paths.addBulk(pathArray);
+		return paths.searchKeys(ids);
 	}
 
 	removePathById(pathID: string): Promise<WriteConfirmation> {
@@ -53,43 +54,41 @@ export default class PathFirestormRepository implements PathRepository {
 		return paths.get(pathID);
 	}
 
-	updatePath(pathID: string, path: Path): Promise<Path> {
-		// breaks without structuredClone, not sure why
-		return paths.set(pathID, structuredClone(path)).then(() => this.getPathById(pathID));
+	async updatePath(pathID: string, path: Path): Promise<Path> {
+		await paths.set(pathID, path);
+		return this.getPathById(pathID);
 	}
 
-	/**
-	 * Changes all the old version presence in all paths with the new one
-	 * @param oldVersion old version to remove on paths versions array
-	 * @param newVersion new version to replace the old version
-	 */
-	modifyVersion(oldVersion: string, newVersion: string): Promise<{ success: boolean[] }> {
-		return this.getRaw().then((r) => {
-			const old = Object.values(r);
-			const filtered = old.filter((p) => p.versions.includes(oldVersion));
-			const edits: EditField<Path>[] = filtered.map((p) => ({
-				id: p.id,
-				field: "versions",
-				operation: "set",
-				value: p.versions.map((v) => (v === oldVersion ? newVersion : v)),
-			}));
-
-			return paths.editFieldBulk(edits);
-		});
+	async modifyVersion(oldVersion: string, newVersion: string): Promise<{ success: boolean[] }> {
+		const raw = await this.getRaw();
+		return paths.editFieldBulk(
+			Object.values(raw)
+				.filter((p) => p.versions.includes(oldVersion))
+				.map((p) => ({
+					id: p.id,
+					field: "versions",
+					operation: "set",
+					// replace old version with new version
+					value: p.versions.map((v) => (v === oldVersion ? newVersion : v)),
+				})),
+		);
 	}
 
-	addNewVersionToVersion(version: string, newVersion: string): Promise<{ success: boolean[] }> {
-		return this.getRaw().then((r) => {
-			const old = Object.values(r);
-			const filtered = old.filter((p) => p.versions.includes(version));
-			const edits: EditField<Path>[] = filtered.map((p) => ({
-				id: p[ID_FIELD],
-				field: "versions",
-				operation: "array-push",
-				value: newVersion,
-			}));
-
-			return paths.editFieldBulk(edits);
-		});
+	async addNewVersionToVersion(
+		version: string,
+		newVersion: string,
+	): Promise<{ success: boolean[] }> {
+		const raw = await this.getRaw();
+		return paths.editFieldBulk(
+			Object.values(raw)
+				.filter((p) => p.versions.includes(version))
+				.map((p) => ({
+					id: p[ID_FIELD],
+					field: "versions",
+					operation: "array-push",
+					// add new version to version array
+					value: newVersion,
+				})),
+		);
 	}
 }

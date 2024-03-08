@@ -38,7 +38,6 @@ export default class AddonFirestormRepository implements AddonRepository {
 	}
 
 	create(addon: Addon): Promise<Addon> {
-		const { slug } = addon;
 		return addons
 			.add(addon)
 			.then(() =>
@@ -46,7 +45,7 @@ export default class AddonFirestormRepository implements AddonRepository {
 					{
 						field: "slug",
 						criteria: "==",
-						value: slug,
+						value: addon.slug,
 					},
 				]),
 			)

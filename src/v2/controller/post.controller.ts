@@ -42,7 +42,7 @@ export class PostController extends Controller {
 	@Security("discord", ["administrator"])
 	@Security("bot")
 	@Get("/raw")
-	public async getRaw(): Promise<Record<string, WebsitePost>> {
+	public getRaw(): Promise<Record<string, WebsitePost>> {
 		return this.service.getRaw();
 	}
 
@@ -51,7 +51,7 @@ export class PostController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Get("/")
-	public async getAll(): Promise<Record<string, WebsitePost>> {
+	public getAll(): Promise<Record<string, WebsitePost>> {
 		return this.service.getRaw().then((r) => filterRecord(r, (p) => p.published));
 	}
 
@@ -62,7 +62,7 @@ export class PostController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Get("bypermalink")
-	public async getPostByPermalink(@Query() permalink: string): Promise<WebsitePost> {
+	public getPostByPermalink(@Query() permalink: string): Promise<WebsitePost> {
 		return cache.handle(`website-post-${encodeURI(permalink)}`, () =>
 			this.service.getByPermalink(permalink),
 		);
@@ -74,7 +74,7 @@ export class PostController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Get("{id}")
-	public async getPostById(@Path() id: number): Promise<WebsitePost> {
+	public getPostById(@Path() id: number): Promise<WebsitePost> {
 		return cache.handle(`website-post-${id}`, () => this.service.getById(id));
 	}
 
@@ -86,13 +86,11 @@ export class PostController extends Controller {
 	@Get("{id}/header")
 	@SuccessResponse(302, "Redirect")
 	public async getHeaderForPost(@Path() id: number, @Request() request: ExRequest): Promise<void> {
-		const post = await this.service.getById(id);
-		const { headerImg } = post;
-
+		const { headerImg } = await this.service.getById(id);
 		if (!headerImg) throw new NotFoundError("Post header image not found");
 
 		const response = (<any>request).res as ExResponse;
-		response.redirect(headerImg, 302);
+		response.redirect(302, headerImg);
 	}
 
 	/**
@@ -101,7 +99,7 @@ export class PostController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Get("{id}/downloads")
-	public async getPostDownloads(@Path() id: number): Promise<WebsitePostDownloadRecord | null> {
+	public getPostDownloads(@Path() id: number): Promise<WebsitePostDownloadRecord | null> {
 		return cache.handle(`website-post-downloads-${id}`, () => this.service.getDownloadsForId(id));
 	}
 
@@ -111,7 +109,7 @@ export class PostController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Get("{id}/changelog")
-	public async getPostChangelog(@Path() id: number): Promise<WebsitePostChangelogRecord | null> {
+	public getPostChangelog(@Path() id: number): Promise<WebsitePostChangelogRecord | null> {
 		return this.service.getChangelogForId(id);
 	}
 
@@ -127,7 +125,7 @@ export class PostController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["administrator"])
 	@Post("")
-	public async createPost(@Body() postToCreate: CreateWebsitePost): Promise<WebsitePost> {
+	public createPost(@Body() postToCreate: CreateWebsitePost): Promise<WebsitePost> {
 		postToCreate.description = this.sanitizeDescription(postToCreate.description);
 		return this.service.create(postToCreate);
 	}

@@ -12,7 +12,7 @@ export class PackController extends Controller {
 	 * Get the raw collection of packs
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Record<string, Pack>> {
+	public getRaw(): Promise<Record<string, Pack>> {
 		return this.service.getRaw();
 	}
 
@@ -20,7 +20,7 @@ export class PackController extends Controller {
 	 * Get all the tags from all packs (faithful, progart, etc)
 	 */
 	@Get("tags")
-	public async getAllTags(): Promise<string[]> {
+	public getAllTags(): Promise<string[]> {
 		return this.service.getAllTags();
 	}
 
@@ -31,7 +31,7 @@ export class PackController extends Controller {
 	 * @param resolution Resolution to search by
 	 */
 	@Get("search")
-	public async searchPacks(
+	public searchPacks(
 		@Query() tag?: string,
 		@Query() name?: string,
 		@Query() resolution?: number,
@@ -45,7 +45,7 @@ export class PackController extends Controller {
 	 * @param pack_id Supported pack
 	 */
 	@Get("{pack_id}")
-	public async getPack(@Path() pack_id: PackID): Promise<Pack> {
+	public getPack(@Path() pack_id: PackID): Promise<Pack> {
 		return this.service.getById(pack_id);
 	}
 
@@ -57,7 +57,7 @@ export class PackController extends Controller {
 	@Put("rename/{old_pack}/{new_pack}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async renamePack(
+	public renamePack(
 		@Path() old_pack: PackID,
 		@Path() new_pack: string,
 	): Promise<{ success: boolean[] }> {
@@ -69,7 +69,7 @@ export class PackController extends Controller {
 	 * @param pack_id Pack ID
 	 */
 	@Get("{pack_id}/all")
-	public async getWithSubmission(@Path() pack_id: PackID): Promise<PackAll> {
+	public getWithSubmission(@Path() pack_id: PackID): Promise<PackAll> {
 		return this.service.getWithSubmission(pack_id);
 	}
 
@@ -80,7 +80,7 @@ export class PackController extends Controller {
 	@Post("")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async create(@Body() body: CreationPackAll): Promise<CreationPackAll> {
+	public create(@Body() body: CreationPackAll): Promise<CreationPackAll> {
 		return this.service.create(body);
 	}
 
@@ -92,7 +92,7 @@ export class PackController extends Controller {
 	@Put("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async update(@Path() id: PackID, @Body() body: Pack): Promise<Pack> {
+	public update(@Path() id: PackID, @Body() body: Pack): Promise<Pack> {
 		return this.service.update(id, body);
 	}
 
@@ -103,7 +103,7 @@ export class PackController extends Controller {
 	@Delete("{id}")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public async delete(id: PackID): Promise<WriteConfirmation> {
+	public delete(id: PackID): Promise<WriteConfirmation> {
 		return this.service.delete(id);
 	}
 }

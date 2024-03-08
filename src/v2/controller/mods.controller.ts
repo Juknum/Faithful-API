@@ -14,7 +14,7 @@ export class ModsController extends Controller {
 	 * Get the raw collection of mods
 	 */
 	@Get("raw")
-	public async getRaw(): Promise<Record<string, Mod>> {
+	public getRaw(): Promise<Record<string, Mod>> {
 		return this.service.getRaw();
 	}
 
@@ -43,7 +43,7 @@ export class ModsController extends Controller {
 	 * @param id Mod ID to get name of
 	 */
 	@Get("{id}/curseforge/name")
-	public async getCurseForgeInfo(@Path() id: string): Promise<string> {
+	public getCurseForgeInfo(@Path() id: string): Promise<string> {
 		// if id is a number, it's a CurseForge ID
 		if (Number.isNaN(parseInt(id, 10)))
 			return cache.handle(`mods-curseforge-name-${id}`, () => this.service.getNameInDatabase(id));

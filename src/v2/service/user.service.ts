@@ -19,33 +19,32 @@ export class UserService {
 		return this.repository.getRaw();
 	}
 
-	public getStats(): Promise<UserStats> {
+	public async getStats(): Promise<UserStats> {
 		const allRoles = [] as string[];
-		return this.getRaw().then((users) =>
-			Object.values(users).reduce(
-				(acc, user) => {
-					acc.total++;
-					if (user.anonymous) acc.total_anonymous++;
+		const users = await this.getRaw();
+		return Object.values(users).reduce(
+			(acc, user) => {
+				acc.total++;
+				if (user.anonymous) acc.total_anonymous++;
 
-					user.roles.forEach((role) => {
-						if (!allRoles.includes(role)) {
-							allRoles.push(role);
-							acc.total_roles++;
+				user.roles.forEach((role) => {
+					if (!allRoles.includes(role)) {
+						allRoles.push(role);
+						acc.total_roles++;
 
-							acc.total_per_roles[role] = 0;
-						}
-						acc.total_per_roles[role]++;
-					});
+						acc.total_per_roles[role] = 0;
+					}
+					acc.total_per_roles[role]++;
+				});
 
-					return acc;
-				},
-				{
-					total: 0,
-					total_anonymous: 0,
-					total_roles: 0,
-					total_per_roles: {},
-				} as UserStats,
-			),
+				return acc;
+			},
+			{
+				total: 0,
+				total_anonymous: 0,
+				total_roles: 0,
+				total_per_roles: {},
+			} as UserStats,
 		);
 	}
 

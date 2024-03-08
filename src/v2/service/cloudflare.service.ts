@@ -8,39 +8,37 @@ export default class CloudflareService {
 		token: TOKEN,
 	});
 
-	private zoneIds(): Promise<Array<String>> {
+	private async zoneIds(): Promise<Array<String>> {
 		// https://cloudflare.github.io/node-cloudflare/#zonesbrowse
-		return this.cf.zones.browse().then((res) => res.result.map((e) => e.id));
+		const res = await this.cf.zones.browse();
+		return res.result.map((e) => e.id);
 	}
 
-	public purge(): Promise<any> {
+	public async purge(): Promise<any> {
 		// https://cloudflare.github.io/node-cloudflare/#zonesbrowse
 		// https://api.cloudflare.com/#zone-list-zones
 		// permission needed: #zone:read
-		return this.cf.zones
-			.browse()
-			.then((res) =>
-				// https://cloudflare.github.io/node-cloudflare/#zonespurgecache
-				// https://api.cloudflare.com/#zone-purge-all-files
-				// permission needed: #cache_purge:edit
-				Promise.all(
-					res.result
-						.map((e) => e.id)
-						.map((id) =>
-							this.cf.zones.purgeCache(id, {
-								purge_everything: true,
-							}),
-						),
-				),
-			)
-			.then((response) => {
-				if (Array.isArray(response))
-					response.forEach((zone) => {
-						delete zone.result;
-					});
+		const res = await this.cf.zones.browse();
 
-				return response;
+		// https://cloudflare.github.io/node-cloudflare/#zonespurgecache
+		// https://api.cloudflare.com/#zone-purge-all-files
+		// permission needed: #cache_purge:edit
+		const response = await Promise.all(
+			res.result
+				.map((e) => e.id)
+				.map((id) =>
+					this.cf.zones.purgeCache(id, {
+						purge_everything: true,
+					}),
+				),
+		);
+
+		if (Array.isArray(response))
+			response.forEach((zone) => {
+				delete zone.result;
 			});
+
+		return response;
 	}
 
 	public async dev(mode: "on" | "off"): Promise<any> {
@@ -67,8 +65,6 @@ export default class CloudflareService {
 			),
 		);
 
-		const result = responses.map((r) => r.data);
-
-		return result;
+		return responses.map((r) => r.data);
 	}
 }

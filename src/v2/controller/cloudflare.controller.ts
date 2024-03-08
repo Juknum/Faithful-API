@@ -11,7 +11,7 @@ export class CloudflareController extends Controller {
 	 */
 	@Get("purge")
 	@Security("cloudflare")
-	public async purge(): Promise<void> {
+	public purge(): Promise<void> {
 		return this.service.purge();
 	}
 
@@ -26,7 +26,7 @@ export class CloudflareController extends Controller {
 	 */
 	@Get("dev/{mode}")
 	@Security("cloudflare")
-	public async dev(@Path() mode: "on" | "off"): Promise<any> {
+	public dev(@Path() mode: "on" | "off"): Promise<any> {
 		return this.service.dev(mode);
 	}
 }
