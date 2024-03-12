@@ -74,7 +74,6 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		}, {} as ContributionsAuthors);
 
 		const userSelect = await users.select({ fields: ["id", "username", "uuid", "anonymous"] });
-		console.log(out);
 		return Object.values(out).map((author: any) => {
 			const user = userSelect[author.id];
 			if (user)
