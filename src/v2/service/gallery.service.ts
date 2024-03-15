@@ -2,14 +2,14 @@
 
 import { textures } from "../firestorm";
 import { Edition, GalleryResult, PackID, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
-import PathFirestormRepository from "../repository/path.repository";
 import { NotFoundError } from "../tools/ApiError";
 import { PackService } from "./pack.service";
+import PathService from "./path.service";
 import TextureService from "./texture.service";
 import UseService from "./use.service";
 
 export default class GalleryService {
-	private readonly pathRepo = new PathFirestormRepository();
+	private readonly pathService = new PathService();
 
 	private readonly useService = new UseService();
 
@@ -55,7 +55,7 @@ export default class GalleryService {
 		if (usesFound.length === 0) return [];
 		const useIDs = usesFound.map((u) => u.id);
 
-		const pathsFound = await this.pathRepo.getPathsByUseIdsAndVersion(useIDs, mcVersion);
+		const pathsFound = await this.pathService.getPathsByUseIdsAndVersion(useIDs, mcVersion);
 		if (pathsFound.length === 0) return [];
 
 		// ? From this we can go up, to filter with the found results

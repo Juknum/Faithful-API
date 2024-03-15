@@ -164,10 +164,10 @@ export default class TextureService {
 		await this.useService.createMultipleUses(fullUsesToCreate);
 
 		// create paths
-		const pathsToAdd = input.uses.reduce((acc, u, ui) => {
-			const paths: InputPath[] = u.paths.map((p) => ({
+		const pathsToAdd = input.uses.reduce((acc, cur, i) => {
+			const paths: InputPath[] = cur.paths.map((p) => ({
 				...p,
-				use: useIDs[ui],
+				use: useIDs[i],
 			}));
 			return [...acc, ...paths];
 		}, [] as InputPath[]);

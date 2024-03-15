@@ -19,29 +19,33 @@ export default class PathService {
 		else this.useService = new UseService(this);
 	}
 
-	private readonly repository = new PathFirestormRepository();
+	private readonly repo = new PathFirestormRepository();
 
 	getRaw(): Promise<Record<string, Path>> {
-		return this.repository.getRaw();
+		return this.repo.getRaw();
 	}
 
 	getPathByUseId(useID: string): Promise<Paths> {
-		return this.repository.getPathUseById(useID);
+		return this.repo.getPathUseById(useID);
+	}
+
+	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths> {
+		return this.repo.getPathsByUseIdsAndVersion(useIDs, version);
 	}
 
 	createPath(path: InputPath): Promise<Path> {
 		// verify use existence
 		return this.useService
 			.getUseByIdOrName(path.use) // verify use existence
-			.then(() => this.repository.createPath(path));
+			.then(() => this.repo.createPath(path));
 	}
 
 	createMultiplePaths(paths: InputPath[]): Promise<Paths> {
-		return this.repository.createPathBulk(paths);
+		return this.repo.createPathBulk(paths);
 	}
 
 	getPathById(id: string): Promise<Path> {
-		return this.repository.getPathById(id);
+		return this.repo.getPathById(id);
 	}
 
 	updatePathById(id: string, path: Path): Promise<Path> {
@@ -49,7 +53,7 @@ export default class PathService {
 
 		return this.useService
 			.getUseByIdOrName(path.use) // verify use existence
-			.then(() => this.repository.updatePath(id, path));
+			.then(() => this.repo.updatePath(id, path));
 	}
 
 	async modifyVersion(oldVersion: string, newVersion: string): Promise<{ success: boolean[] }> {
@@ -64,7 +68,7 @@ export default class PathService {
 			value: allVersions[edition].map((v: string) => (v === oldVersion ? newVersion : v)),
 		});
 
-		return this.repository.modifyVersion(oldVersion, newVersion);
+		return this.repo.modifyVersion(oldVersion, newVersion);
 	}
 
 	async addVersion(body: PathNewVersionParam): Promise<{ success: boolean[] }> {
@@ -86,14 +90,14 @@ export default class PathService {
 			value: versionArray,
 		});
 
-		return this.repository.addNewVersionToVersion(body.version, body.newVersion);
+		return this.repo.addNewVersionToVersion(body.version, body.newVersion);
 	}
 
 	removePathById(pathID: string): Promise<WriteConfirmation> {
-		return this.repository.removePathById(pathID);
+		return this.repo.removePathById(pathID);
 	}
 
 	removePathByBulk(pathIDs: string[]): Promise<WriteConfirmation> {
-		return this.repository.removePathsByBulk(pathIDs);
+		return this.repo.removePathsByBulk(pathIDs);
 	}
 }

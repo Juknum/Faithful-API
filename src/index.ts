@@ -168,12 +168,11 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 		const finalError = new ApiError(name, code, message);
 
 		// modify error to give more context and details with data
-		let modified:
-			| {
-					name: string;
-					message: string;
-			  }
-			| undefined;
+		let modified: {
+			name: string;
+			message: string;
+		};
+
 		if (err?.response?.data !== undefined) {
 			modified = {
 				name: finalError.name,

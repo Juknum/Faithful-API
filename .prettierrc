@@ -1,11 +1,11 @@
 {
-    "semi": true,
-    "trailingComma": "all",
-    "singleQuote": false,
-    "printWidth": 100,
-    "useTabs": true,
-    "endOfLine": "lf",
-    "bracketSpacing": true,
-    "arrowParens": "always",
-    "parser": "typescript"
+	"semi": true,
+	"trailingComma": "all",
+	"singleQuote": false,
+	"printWidth": 100,
+	"useTabs": true,
+	"endOfLine": "lf",
+	"bracketSpacing": true,
+	"arrowParens": "always",
+	"parser": "typescript"
 }

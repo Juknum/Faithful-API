@@ -1,36 +1,36 @@
 {
-  "compilerOptions": {
-    "lib": [
-      "ES2020.Promise",
-      "ESNext"
-    ],
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "target": "ESNext",
-    "outDir": "dist",
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "baseUrl": "src",
-    "paths": {
-      "@/*": [
-        "../*"
-      ],
-      "~/*": [
-        "*"
-      ]
-    }
-  },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src"
-  ]
+	"compilerOptions": {
+		"lib": [
+			"ES2020.Promise",
+			"ESNext"
+		],
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"target": "ESNext",
+		"outDir": "dist",
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+		"declaration": true,
+		"allowJs": true,
+		"resolveJsonModule": true,
+		"baseUrl": "src",
+		"paths": {
+			"@/*": [
+				"../*"
+			],
+			"~/*": [
+				"*"
+			]
+		}
+	},
+	"exclude": [
+		"node_modules"
+	],
+	"include": [
+		"src"
+	]
 }

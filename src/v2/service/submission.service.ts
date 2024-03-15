@@ -7,24 +7,24 @@ import { PackService } from "./pack.service";
 export class SubmissionService {
 	private readonly packService = new PackService();
 
-	private readonly repository = new SubmissionFirestormRepository();
+	private readonly repo = new SubmissionFirestormRepository();
 
 	public getRaw(): Promise<Record<string, Submission>> {
-		return this.repository.getRaw();
+		return this.repo.getRaw();
 	}
 
 	public getEveryPack(): Promise<Record<PackID, PackAll>> {
-		return this.repository.getEveryPack();
+		return this.repo.getEveryPack();
 	}
 
 	public getById(id: PackID): Promise<Submission> {
-		return this.repository.getById(id);
+		return this.repo.getById(id);
 	}
 
 	public create(id: PackID, pack: CreationSubmission): Promise<Submission> {
 		return this.packService
 			.getById(id) // verify parent pack exists already
-			.then(() => this.repository.create(id, pack));
+			.then(() => this.repo.create(id, pack));
 	}
 
 	public update(id: PackID, pack: Submission): Promise<Submission> {
@@ -32,10 +32,10 @@ export class SubmissionService {
 
 		return this.packService
 			.getById(id) // verify parent pack exists already
-			.then(() => this.repository.update(id, pack));
+			.then(() => this.repo.update(id, pack));
 	}
 
 	public delete(id: PackID): Promise<WriteConfirmation> {
-		return this.repository.delete(id);
+		return this.repo.delete(id);
 	}
 }

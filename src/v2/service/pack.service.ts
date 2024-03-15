@@ -12,30 +12,30 @@ import {
 import PackFirestormRepository from "../repository/packs.repository";
 
 export class PackService {
-	private readonly repository = new PackFirestormRepository();
+	private readonly repo = new PackFirestormRepository();
 
 	public getRaw(): Promise<Record<string, Pack>> {
-		return this.repository.getRaw();
+		return this.repo.getRaw();
 	}
 
 	public getById(id: PackID): Promise<Pack> {
-		return this.repository.getById(id);
+		return this.repo.getById(id);
 	}
 
 	public search(params: PackSearch): Promise<Packs> {
-		return this.repository.search(params);
+		return this.repo.search(params);
 	}
 
 	public getWithSubmission(id: PackID): Promise<PackAll> {
-		return this.repository.getWithSubmission(id);
+		return this.repo.getWithSubmission(id);
 	}
 
 	public getAllTags(): Promise<string[]> {
-		return this.repository.getAllTags();
+		return this.repo.getAllTags();
 	}
 
 	public async renamePack(oldPack: PackID, newPack: string): Promise<{ success: boolean[] }> {
-		this.repository.renamePack(oldPack, newPack);
+		this.repo.renamePack(oldPack, newPack);
 
 		const r = await contributions.readRaw();
 		const old = Object.values(r);
@@ -61,14 +61,14 @@ export class PackService {
 
 	public create(body: CreationPackAll): Promise<CreationPackAll> {
 		if (!body.id) body.id = this.serializeDisplayName(body.name);
-		return this.repository.create(body.id, body);
+		return this.repo.create(body.id, body);
 	}
 
 	public update(id: PackID, pack: Pack): Promise<Pack> {
-		return this.repository.update(id, pack);
+		return this.repo.update(id, pack);
 	}
 
 	public delete(id: PackID): Promise<WriteConfirmation> {
-		return this.repository.delete(id);
+		return this.repo.delete(id);
 	}
 }

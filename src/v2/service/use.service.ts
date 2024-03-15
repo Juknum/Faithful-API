@@ -15,7 +15,7 @@ export default class UseService {
 		else this.pathService = new PathService(this);
 	}
 
-	private readonly useRepo = new UseFirestormRepository();
+	private readonly repo = new UseFirestormRepository();
 
 	private readonly pathService: PathService;
 
@@ -25,68 +25,52 @@ export default class UseService {
 	}
 
 	getRaw(): Promise<Record<string, Use>> {
-		return this.useRepo.getRaw();
+		return this.repo.getRaw();
 	}
 
 	getUseByIdOrName<AlwaysID extends boolean = false>(
 		idOrName: string,
 	): Promise<AlwaysID extends true ? Use : Use | Uses> {
-		return this.useRepo.getUseByIdOrName(idOrName) as any;
+		return this.repo.getUseByIdOrName(idOrName) as any;
 	}
 
-	async getUseByIdOrNameAndCatch(idOrName: string): Promise<Uses | Use> {
+	async doesUseExist(idOrName: string): Promise<boolean> {
 		const res = await this.getUseByIdOrName(idOrName);
-		if (Array.isArray(res) ? res.length > 0 : res !== undefined) return res;
-		throw new NotFoundError(`Use ID not found`);
+		return Array.isArray(res) ? res.length > 0 : res !== undefined;
 	}
 
-	updateUse(id: string, modifiedUse: CreationUse): Promise<Use> {
-		return this.getUseByIdOrNameAndCatch(id).then(() =>
-			this.useRepo.set({
-				id,
-				...modifiedUse,
-			}),
-		);
-	}
-
-	deleteUse(id: string): Promise<WriteConfirmation[]> {
-		return this.useRepo.deleteUse(id);
-	}
-
-	getUsesByIdsAndEdition(idArr: number[], edition: string): Promise<Uses> {
-		return this.useRepo.getUsesByIdAndEdition(idArr, edition);
-	}
-
-	getUsesByEdition(edition: string): Promise<Uses> {
-		return this.useRepo.getUsesByEdition(edition);
-	}
-
-	createUse(use: Use): Promise<Use> {
-		return new Promise((resolve, reject) => {
-			this.getUseByIdOrNameAndCatch(use.id)
-				.then(() => {
-					reject(new BadRequestError(`Texture use ID ${use.id} already exists`));
-				})
-				.catch(() => {
-					this.useRepo
-						.set(use)
-						.then(() => this.getUseByIdOrName(use.id))
-						.then((res) => resolve(res as Use))
-						.catch((...args) => reject(args));
-				});
+	async updateUse(id: string, modifiedUse: CreationUse): Promise<Use> {
+		const exists = await this.doesUseExist(id);
+		if (!exists) throw new NotFoundError("Use ID not found");
+		return this.repo.set({
+			id,
+			...modifiedUse,
 		});
 	}
 
-	createMultipleUses(uses: Uses): Promise<Uses> {
-		return Promise.all(
-			uses.map(
-				(u) =>
-					new Promise((resolve, reject) => {
-						this.getUseByIdOrNameAndCatch(u.id)
-							.then(() => reject())
-							.catch(() => resolve(undefined));
-					}),
-			),
-		).then(() => this.useRepo.setMultiple(uses));
+	deleteUse(id: string): Promise<WriteConfirmation[]> {
+		return this.repo.deleteUse(id);
+	}
+
+	getUsesByIdsAndEdition(idArr: number[], edition: string): Promise<Uses> {
+		return this.repo.getUsesByIdAndEdition(idArr, edition);
+	}
+
+	getUsesByEdition(edition: string): Promise<Uses> {
+		return this.repo.getUsesByEdition(edition);
+	}
+
+	async createUse(use: Use): Promise<Use> {
+		console.log(use.id);
+		const exists = await this.doesUseExist(use.id);
+		if (exists) throw new BadRequestError(`Texture use ID ${use.id} already exists`);
+
+		return this.repo.set(use);
+	}
+
+	async createMultipleUses(uses: Uses): Promise<Uses> {
+		const exists = await Promise.all(uses.map((u) => this.doesUseExist(u.id)));
+		if (exists.some((v) => v)) throw new BadRequestError(`A use ID already exists`);
+		return this.repo.setMultiple(uses);
 	}
 }
