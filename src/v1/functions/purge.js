@@ -1,14 +1,14 @@
 require('dotenv').config()
-const axios = require('axios')
 
 /** @type {import('cloudflare')} cf */
-const cf = require('cloudflare')({
-  token: process.env.CLOUDFLARE_KEY
+const CloudFlare = require('cloudflare');
+const cf = new CloudFlare({
+  apiToken: process.env.CLOUDFLARE_KEY
 });
 
 module.exports = {
   purge: function (password) {
-    if(password != process.env.PURGE_PASSWORD) return Promise.reject(new Error('Incorrect purge password'))
+    if(password != process.env.CLOUDFLARE_PASSWORD) return Promise.reject(new Error('Incorrect purge password'))
 
     // https://cloudflare.github.io/node-cloudflare/#zonesbrowse
     // https://api.cloudflare.com/#zone-list-zones
