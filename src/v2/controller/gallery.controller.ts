@@ -10,7 +10,7 @@ import {
 import GalleryService from "../service/gallery.service";
 import TextureService from "../service/texture.service";
 import cache from "../tools/cache";
-import { PackService } from "../service/pack.service";
+import PackService from "../service/pack.service";
 
 @Route("gallery")
 @Tags("Gallery")

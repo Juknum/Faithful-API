@@ -19,12 +19,8 @@
 		"resolveJsonModule": true,
 		"baseUrl": "src",
 		"paths": {
-			"@/*": [
-				"../*"
-			],
-			"~/*": [
-				"*"
-			]
+			"@/*": ["../*"],
+			"~/*": ["*"],
 		}
 	},
 	"exclude": [

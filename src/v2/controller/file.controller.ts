@@ -1,5 +1,5 @@
 import { Controller, Get, Route, Tags, Security } from "tsoa";
-import { FileService } from "../service/file.service";
+import FileService from "../service/file.service";
 import { File } from "../interfaces";
 
 @Route("files")

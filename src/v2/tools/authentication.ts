@@ -4,7 +4,7 @@ import { Request as ExRequest } from "express";
 import axios from "axios";
 import { APIUser } from "discord-api-types/v10";
 import { PermissionError, NotFoundError, ApiError, ForbiddenError } from "./ApiError";
-import { UserService } from "../service/user.service";
+import UserService from "../service/user.service";
 import AddonService from "../service/addon.service";
 import { Addon } from "../interfaces";
 import { AddonNotApprovedValues, AddonStatusValues } from "../interfaces/addons";

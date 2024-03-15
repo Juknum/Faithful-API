@@ -3,7 +3,7 @@
 import { textures } from "../firestorm";
 import { Edition, GalleryResult, PackID, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";
-import { PackService } from "./pack.service";
+import PackService from "./pack.service";
 import PathService from "./path.service";
 import TextureService from "./texture.service";
 import UseService from "./use.service";

@@ -2,9 +2,9 @@ import { WriteConfirmation } from "firestorm-db";
 import { Submission, CreationSubmission, PackID, PackAll } from "../interfaces";
 import SubmissionFirestormRepository from "../repository/submissions.repository";
 import { BadRequestError } from "../tools/ApiError";
-import { PackService } from "./pack.service";
+import PackService from "./pack.service";
 
-export class SubmissionService {
+export default class SubmissionService {
 	private readonly packService = new PackService();
 
 	private readonly repo = new SubmissionFirestormRepository();

@@ -24,7 +24,7 @@ import {
 	AddonUpdateParam,
 } from "../interfaces/addons";
 import { PermissionError, BadRequestError } from "../tools/ApiError";
-import { UserService } from "../service/user.service";
+import UserService from "../service/user.service";
 import AddonService from "../service/addon.service";
 import cache from "../tools/cache";
 

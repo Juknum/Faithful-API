@@ -12,7 +12,7 @@ import {
 import UserFirestormRepository from "../repository/user.repository";
 import { BadRequestError } from "../tools/ApiError";
 
-export class UserService {
+export default class UserService {
 	private readonly repo = new UserFirestormRepository();
 
 	public getRaw(): Promise<Record<string, User>> {

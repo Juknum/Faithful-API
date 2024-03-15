@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Query, Route, Security, Tags } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
-import { PackService } from "../service/pack.service";
+import PackService from "../service/pack.service";
 import { PackID, CreationPackAll, Pack, PackAll, PackType, Packs } from "../interfaces";
 
 @Route("packs")

@@ -11,7 +11,7 @@ import {
 } from "../interfaces";
 import PackFirestormRepository from "../repository/packs.repository";
 
-export class PackService {
+export default class PackService {
 	private readonly repo = new PackFirestormRepository();
 
 	public getRaw(): Promise<Record<string, Pack>> {

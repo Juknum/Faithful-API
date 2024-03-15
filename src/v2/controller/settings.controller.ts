@@ -12,7 +12,7 @@ import {
 } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
 import { NotFoundError, PermissionError } from "../tools/ApiError";
-import { SettingsService } from "../service/settings.service";
+import SettingsService from "../service/settings.service";
 
 @Route("settings")
 @Tags("Settings")

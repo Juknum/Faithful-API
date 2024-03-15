@@ -1,9 +1,9 @@
 import { WriteConfirmation } from "firestorm-db";
-import { FilesFirestormRepository } from "../repository/files.repository";
+import { FileFirestormRepository } from "../repository/files.repository";
 import { FileParent, FileUse, File, Files } from "../interfaces/files";
 
-export class FileService {
-	private readonly repo = new FilesFirestormRepository();
+export default class FileService {
+	private readonly repo = new FileFirestormRepository();
 
 	public removeFileByPath(path: string): Promise<WriteConfirmation> {
 		return this.repo.removeFileByPath(path);

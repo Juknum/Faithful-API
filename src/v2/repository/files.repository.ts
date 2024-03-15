@@ -3,7 +3,7 @@ import FormData from "form-data";
 import { files } from "../firestorm";
 import { File, FileParent, FileRepository, Files, FileUse } from "../interfaces/files";
 
-export class FilesFirestormRepository implements FileRepository {
+export class FileFirestormRepository implements FileRepository {
 	getRaw(): Promise<Record<string, File>> {
 		return files.readRaw();
 	}

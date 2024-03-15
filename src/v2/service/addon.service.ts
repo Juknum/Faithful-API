@@ -4,8 +4,8 @@ import { WriteConfirmation } from "firestorm-db";
 import { User, UserProfile } from "../interfaces/users";
 import { Addons, Addon, AddonStatus, AddonAll, Files, File, FileParent } from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
-import { UserService } from "./user.service";
-import { FileService } from "./file.service";
+import UserService from "./user.service";
+import FileService from "./file.service";
 import {
 	AddonCreationParam,
 	AddonDataParam,
