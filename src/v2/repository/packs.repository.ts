@@ -8,7 +8,7 @@ import {
 	PackID,
 	CreationPackAll,
 	PackSearch,
-} from "~/v2/interfaces";
+} from "../interfaces";
 import { contributions, packs } from "../firestorm";
 import SubmissionFirestormRepository from "./submissions.repository";
 

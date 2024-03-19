@@ -1,4 +1,4 @@
-import { Mod } from "~/v2/interfaces";
+import { Mod } from "../interfaces";
 import { mods } from "../firestorm";
 import ModsFirestormRepository from "../repository/mods.repository";
 

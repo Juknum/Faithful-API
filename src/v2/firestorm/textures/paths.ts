@@ -1,5 +1,5 @@
 import firestorm from "firestorm-db";
-import { FirestormPath } from "~/v2/interfaces";
+import { FirestormPath } from "../../interfaces";
 import "../config";
 
 export const paths = firestorm.collection<FirestormPath>("paths");

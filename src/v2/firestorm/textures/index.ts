@@ -12,7 +12,7 @@ import {
 	MCMETA,
 	PackGitHub,
 	Edition,
-} from "~/v2/interfaces";
+} from "../../interfaces";
 import "../config";
 
 import { uses } from "./uses";

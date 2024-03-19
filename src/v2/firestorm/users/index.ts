@@ -1,5 +1,5 @@
 import firestorm from "firestorm-db";
-import { Contributions, Addons, FirestormUser } from "~/v2/interfaces";
+import { Contributions, Addons, FirestormUser } from "../../interfaces";
 import { contributions } from "..";
 import { addons } from "../addons";
 import "../config";

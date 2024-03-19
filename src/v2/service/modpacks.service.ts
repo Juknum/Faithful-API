@@ -1,4 +1,4 @@
-import { Modpack } from "~/v2/interfaces";
+import { Modpack } from "../interfaces";
 import { modpacks } from "../firestorm";
 import ModpacksFirestormRepository from "../repository/modpacks.repository";
 

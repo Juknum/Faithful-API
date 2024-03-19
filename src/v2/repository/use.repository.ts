@@ -1,6 +1,6 @@
 /* eslint-disable arrow-body-style */
-import { Use, UseRepository, Uses } from "~/v2/interfaces";
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { Use, UseRepository, Uses } from "../interfaces";
 import { paths, uses } from "../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {

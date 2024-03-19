@@ -1,5 +1,5 @@
 import firestorm from "firestorm-db";
-import { FirestormPack } from "~/v2/interfaces";
+import { FirestormPack } from "../../interfaces";
 import "../config";
 import { submissions } from "./submissions";
 

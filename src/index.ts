@@ -9,12 +9,12 @@ import { ValidateError } from "tsoa";
 import responseTime from "response-time";
 import cors from "cors";
 import apiErrorHandler from "api-error-handler";
+import { readFileSync, readdirSync } from "fs";
 import { RegisterRoutes } from "../build/routes";
 import { ApiError } from "./v2/tools/ApiError";
 import { AddonChangeController } from "./v2/controller/addonChange.controller";
 import formHandler from "./v2/tools/FormHandler";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NO_CACHE = process.env.NO_CACHE === "true";
 const PORT = process.env.PORT || 8000;
 
@@ -82,12 +82,13 @@ app.all("/v1/*", (req, res) => {
 	res.status(400).json({
 		message: "API v1 has been discontinued; please switch to API v2 for all new endpoints.",
 	});
-	
 });
 
 RegisterRoutes(app);
 
-let swaggerDoc = require("../public/swagger.json");
+// for some reason TS reads this file as being in the root dir
+//! DO NOT add an extra dot so the path is actually correct (no idea why)
+let swaggerDoc = JSON.parse(readFileSync("./public/swagger.json", { encoding: "utf8" }));
 
 // manual things
 const adc = new AddonChangeController();

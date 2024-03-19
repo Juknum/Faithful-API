@@ -5,7 +5,7 @@ import {
 	CreationSubmission,
 	PackAll,
 	PackID,
-} from "~/v2/interfaces";
+} from "../interfaces";
 import { submissions } from "../firestorm/packs/submissions";
 import { packs } from "../firestorm/packs";
 

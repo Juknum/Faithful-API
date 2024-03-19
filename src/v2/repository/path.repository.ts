@@ -1,5 +1,5 @@
-import { InputPath, Path, Paths, PathRepository } from "~/v2/interfaces";
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { InputPath, Path, Paths, PathRepository } from "../interfaces";
 import { paths } from "../firestorm/textures/paths";
 
 export default class PathFirestormRepository implements PathRepository {
