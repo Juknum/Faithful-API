@@ -77,6 +77,14 @@ app.listen(PORT, () => {
 
 app.use(apiErrorHandler());
 
+// show deprecation for v1 API
+app.all("/v1/*", (req, res) => {
+	res.status(400).json({
+		message: "API v1 has been discontinued; please switch to API v2 for all new endpoints.",
+	});
+	
+});
+
 RegisterRoutes(app);
 
 let swaggerDoc = require("../public/swagger.json");
@@ -116,17 +124,14 @@ swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
 
 // TODO: find out what the fuck we are doing
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options as SwaggerUiOptions));
-
-const v1 = require("./v1");
-
-app.use("/v1", v1);
-
 app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promise<void> => {
-	let code = null;
+	let code: number;
 	if (err instanceof ValidateError) {
 		console.error("ValidateError", err);
-		const warn = `Caught Validation Error for ${req.path}: ${JSON.stringify(err.fields)}`;
-		console.warn(warn, err.fields);
+		console.warn(
+			`Caught Validation Error for ${req.path}: ${JSON.stringify(err.fields)}`,
+			err.fields,
+		);
 
 		code = 422;
 
@@ -159,7 +164,7 @@ app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promi
 
 		if (!name) {
 			try {
-				name = status(code).replace(/ /, "");
+				name = status(code).replace(/ /g, "");
 			} catch {
 				// you tried your best, we don't blame you
 			}

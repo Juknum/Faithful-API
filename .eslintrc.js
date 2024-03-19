@@ -2,7 +2,6 @@ module.exports = {
 	root: true,
 	extends: ["airbnb-base", "prettier", "plugin:import/recommended", "plugin:import/typescript"],
 	ignorePatterns: [
-		"src/v1/**/*",
 		"dist/**/*",
 		"build/**/*",
 		"public/swagger.json",
