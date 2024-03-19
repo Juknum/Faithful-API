@@ -26,7 +26,6 @@ export interface FirestormUse extends Use {
 
 export interface UseRepository {
 	getUsesByIdAndEdition(idArr: number[], edition: string): Promise<Uses>;
-	getUsesByEdition(edition: string): Promise<Uses>;
 	getRaw(): Promise<Record<string, Use>>;
 	getUseByIdOrName(idOrName: string): Promise<Uses | Use>;
 	deleteUse(id: string): Promise<WriteConfirmation[]>;

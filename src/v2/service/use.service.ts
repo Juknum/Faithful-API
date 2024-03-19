@@ -56,12 +56,7 @@ export default class UseService {
 		return this.repo.getUsesByIdAndEdition(idArr, edition);
 	}
 
-	getUsesByEdition(edition: string): Promise<Uses> {
-		return this.repo.getUsesByEdition(edition);
-	}
-
 	async createUse(use: Use): Promise<Use> {
-		console.log(use.id);
 		const exists = await this.doesUseExist(use.id);
 		if (exists) throw new BadRequestError(`Texture use ID ${use.id} already exists`);
 

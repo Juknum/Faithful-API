@@ -9,7 +9,7 @@ import { ValidateError } from "tsoa";
 import responseTime from "response-time";
 import cors from "cors";
 import apiErrorHandler from "api-error-handler";
-import { readFileSync, readdirSync } from "fs";
+import { readFileSync } from "fs";
 import { RegisterRoutes } from "../build/routes";
 import { ApiError } from "./v2/tools/ApiError";
 import { AddonChangeController } from "./v2/controller/addonChange.controller";

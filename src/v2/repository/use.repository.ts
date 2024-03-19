@@ -4,16 +4,6 @@ import { Use, UseRepository, Uses } from "../interfaces";
 import { paths, uses } from "../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
-	getUsesByEdition(edition: string): Promise<Uses> {
-		return uses.search([
-			{
-				field: "edition",
-				criteria: "==",
-				value: edition,
-			},
-		]);
-	}
-
 	getUsesByIdAndEdition(idArr: number[], edition: string): Promise<Uses> {
 		return uses.search([
 			{
