@@ -79,7 +79,7 @@ app.use(apiErrorHandler());
 
 // show deprecation for v1 API
 app.all("/v1/*", (req, res) => {
-	res.status(400).json({
+	res.status(410).json({
 		message: "API v1 has been discontinued; please switch to API v2 for all new endpoints.",
 	});
 });
