@@ -28,7 +28,7 @@ import { NotAvailableError, NotFoundError, PermissionError } from "../tools/ApiE
 import cache from "../tools/cache";
 
 @Route("addons")
-@Tags("Addons")
+@Tags("Add-ons")
 export class AddonController extends Controller {
 	private readonly service = new AddonService();
 

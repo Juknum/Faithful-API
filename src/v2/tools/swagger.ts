@@ -2,6 +2,8 @@ import { JsonObject } from "swagger-ui-express";
 import { Controller } from "tsoa";
 import multer from "multer";
 import { Application, NextFunction, Response as ExResponse, Request as ExRequest } from "express";
+import { readFileSync } from "fs";
+import { AddonChangeController } from "../controller/addonChange.controller";
 import { expressAuthentication } from "./authentication";
 import { BadRequestError } from "./ApiError";
 
@@ -23,7 +25,12 @@ const upload = multer({
 	},
 });
 
-function returnHandler(response: any, statusCode?: number, data?: any, headers: any = {}) {
+function returnHandler(
+	response: ExResponse,
+	statusCode?: number,
+	data?: any,
+	headers: Record<string, string | string[] | undefined> = {},
+) {
 	if (response.headersSent) return;
 	Object.keys(headers).forEach((name) => response.set(name, headers[name]));
 	if (
@@ -32,21 +39,18 @@ function returnHandler(response: any, statusCode?: number, data?: any, headers: 
 		data.readable &&
 		// eslint-disable-next-line no-underscore-dangle
 		typeof data._read === "function"
-	) {
+	)
 		data.pipe(response);
-	} else if (data !== null && data !== undefined) {
-		response.status(statusCode || 200).json(data);
-	} else {
-		response.status(statusCode || 204).end();
-	}
+	else if (data !== null && data !== undefined) response.status(statusCode || 200).json(data);
+	else response.status(statusCode || 204).end();
 }
 
 function promiseHandler(
-	controllerObj: any,
+	controllerObj: Controller,
 	promise: any,
-	response: any,
-	successStatus: any,
-	next: any,
+	response: ExResponse,
+	successStatus: number,
+	next: NextFunction,
 ) {
 	return Promise.resolve(promise)
 		.then((data) => {
@@ -65,7 +69,7 @@ interface SwaggerDocOptions {
 	description: string;
 }
 
-export default function formHandler(
+export function formHandler(
 	app: Application,
 	url: string,
 	controller: Controller,
@@ -75,7 +79,7 @@ export default function formHandler(
 ): JsonObject {
 	app.post(
 		url,
-		async (req: ExRequest, res: ExResponse, next: NextFunction) => {
+		async (req: ExRequest, _res: ExResponse, next: NextFunction) => {
 			(req as any).user = await expressAuthentication(req, "discord", ["addon:own"]).catch((err) =>
 				next(err),
 			);
@@ -135,7 +139,7 @@ export default function formHandler(
 			},
 		},
 		description: swaggerDocOptions.description,
-		tags: ["Addons submission"],
+		tags: ["Add-on Submissions"],
 		security: [swaggerDocOptions.security],
 		parameters: [
 			{
@@ -166,5 +170,44 @@ export default function formHandler(
 		},
 	};
 
+	return swaggerDoc;
+}
+
+export default function formatSwaggerDoc(app: Application, path: string) {
+	// don't pass it in directly so the object reference isn't mutated
+	let swaggerDoc = JSON.parse(readFileSync(path, { encoding: "utf8" }));
+
+	// manual things
+	const adc = new AddonChangeController();
+	const screenDelete = swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
+	const headerDelete = swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
+	delete swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
+	delete swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
+	swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/header", adc, adc.postHeader, swaggerDoc, {
+		prefix: "/v2",
+		operationId: "PostHeader",
+		security: {
+			discord: ["addon:own"],
+		},
+		description: "Post header file for addon",
+	});
+	swaggerDoc.paths["/addons/{id_or_slug}/header"].delete = headerDelete;
+
+	swaggerDoc = formHandler(
+		app,
+		"/v2/addons/:id_or_slug/screenshots",
+		adc,
+		adc.addonAddScreenshot,
+		swaggerDoc,
+		{
+			prefix: "/v2",
+			operationId: "PostScreenshot",
+			security: {
+				discord: ["addon:own"],
+			},
+			description: "Post screenshot file for addon",
+		},
+	);
+	swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
 	return swaggerDoc;
 }

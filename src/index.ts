@@ -1,131 +1,84 @@
 import "dotenv/config";
 
 import status from "statuses";
-import * as firestorm from "firestorm-db";
-import express, { Application, Request, Response, NextFunction } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
-import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
+import swaggerUi from "swagger-ui-express";
 import { ValidateError } from "tsoa";
 import responseTime from "response-time";
 import cors from "cors";
 import apiErrorHandler from "api-error-handler";
-import { readFileSync } from "fs";
 import { RegisterRoutes } from "../build/routes";
 import { ApiError } from "./v2/tools/ApiError";
-import { AddonChangeController } from "./v2/controller/addonChange.controller";
-import formHandler from "./v2/tools/FormHandler";
+import formatSwaggerDoc from "./v2/tools/swagger";
 
 const NO_CACHE = process.env.NO_CACHE === "true";
 const PORT = process.env.PORT || 8000;
 
-firestorm.address(process.env.FIRESTORM_URL);
-firestorm.token(process.env.FIRESTORM_TOKEN);
+// TODO: find out what the fuck we are doing
+const app = express()
+	.disable("x-powered-by")
+	.use(
+		// Use body parser to read sent json payloads
+		//! DO NOT DELETE THE BODY PARSER, IT IS USED TO AGGREGATE DATA AND TRANSFORM IT
+		//! SPENT 2 HOURS ON THIS SHIT
+		bodyParser.json(),
+		bodyParser.urlencoded({
+			extended: true,
+		}),
+		//! DO NOT DELETE
+		responseTime(),
+		express.static("public", {
+			extensions: ["html", "xml", "json"],
+		}),
+		cors({
+			origin: "*",
+			allowedHeaders: ["discord", "content-type"],
+		}),
+		apiErrorHandler(),
+	);
 
-const app: Application = express();
-app.disable("x-powered-by");
-
-// Use body parser to read sent json payloads
-//! DO NOT DELETE THE BODY PARSER, IT IS USED TO AGGREGATE DATA AND TRANSFORM IT
-//! SPENT 2 HOURS ON THIS SHIT
-app.use(bodyParser.json());
-app.use(
-	bodyParser.urlencoded({
-		extended: true,
-	}),
-);
-
-//! DO NOT DELETE
-app.use(responseTime());
-
-app.use(
-	express.static("public", {
-		extensions: ["html", "xml", "json"],
-	}),
-);
-
-app.get("/", (req, res) => {
-	res.redirect("/docs");
-});
-
-app.use(
-	cors({
-		origin: "*",
-		allowedHeaders: ["discord", "content-type"],
-	}),
-);
-
-// @types/swagger-ui-express is not updated
-interface UpdatedSwaggerUiOptions extends Omit<SwaggerUiOptions, "customJs"> {
-	customJs: string | string[];
-}
-
-const options: UpdatedSwaggerUiOptions = {
-	customCssUrl: "/custom.css",
-	customJs: ["/custom.js", "/custom_dom.js"],
-	swaggerOptions: {
-		tryItOutEnabled: true,
-	},
-	customfavIcon: "https://database.faithfulpack.net/images/branding/site/favicon.ico",
-	customSiteTitle: "Faithful API",
-};
-
+// start process
 app.listen(PORT, () => {
 	console.log(`Using database at ${process.env.FIRESTORM_URL}`);
 	console.log(`API started at http://localhost:${PORT}`);
-	if (NO_CACHE) console.log(`Started with no cache`);
+	if (NO_CACHE) console.log("Cache is disabled!");
 });
 
-app.use(apiErrorHandler());
-
 // show deprecation for v1 API
-app.all("/v1/*", (req, res) => {
+app.all("/v1/*", (_req, res) => {
 	res.status(410).json({
-		message: "API v1 has been discontinued; please switch to API v2 for all new endpoints.",
+		message: "API v1 has been discontinued. Please switch to API v2 for all new endpoints.",
 	});
 });
 
+// start v2 api
 RegisterRoutes(app);
 
-// for some reason TS reads this file as being in the root dir
-//! DO NOT add an extra dot so the path is actually correct (no idea why)
-let swaggerDoc = JSON.parse(readFileSync("./public/swagger.json", { encoding: "utf8" }));
+// redirect docs
+app.get("/", (_req, res) => res.redirect("/docs"));
 
-// manual things
-const adc = new AddonChangeController();
-const screenDelete = swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
-const headerDelete = swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
-delete swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
-delete swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
-swaggerDoc = formHandler(app, "/v2/addons/:id_or_slug/header", adc, adc.postHeader, swaggerDoc, {
-	prefix: "/v2",
-	operationId: "PostHeader",
-	security: {
-		discord: ["addon:own"],
-	},
-	description: "Post header file for addon",
-});
-swaggerDoc.paths["/addons/{id_or_slug}/header"].delete = headerDelete;
-
-swaggerDoc = formHandler(
-	app,
-	"/v2/addons/:id_or_slug/screenshots",
-	adc,
-	adc.addonAddScreenshot,
-	swaggerDoc,
-	{
-		prefix: "/v2",
-		operationId: "PostScreenshot",
-		security: {
-			discord: ["addon:own"],
-		},
-		description: "Post screenshot file for addon",
-	},
+// serve docs
+app.use(
+	"/docs",
+	swaggerUi.serve,
+	swaggerUi.setup(
+		formatSwaggerDoc(app, "./public/swagger.json"),
+		// @types/swagger-ui-express isn't updated and complains
+		{
+			customCssUrl: "/custom.css",
+			customJs: ["/custom.js", "/custom_dom.js"],
+			swaggerOptions: {
+				tryItOutEnabled: true,
+			},
+			customfavIcon: "https://database.faithfulpack.net/images/branding/site/favicon.ico",
+			customSiteTitle: "Faithful API",
+		} as any,
+	),
 );
-swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
 
-// TODO: find out what the fuck we are doing
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc, options as SwaggerUiOptions));
-app.use(async (err: any, req: Request, res: Response, next: NextFunction): Promise<void> => {
+// handle errors
+app.use((err: any, req: Request, res: Response, next: NextFunction): Promise<void> => {
 	let code: number;
 	if (err instanceof ValidateError) {
 		console.error("ValidateError", err);

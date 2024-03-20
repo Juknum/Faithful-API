@@ -129,7 +129,7 @@ export default class AddonService {
 	async getScreenshotsFiles(id: number): Promise<Files> {
 		const files = await this.getFiles(id);
 		// TODO: only keep screenshots
-		return files.filter((f: File) => f.use === "screenshot" || f.use === "carousel");
+		return files.filter((f) => ["screenshot", "carousel"].includes(f.use));
 	}
 
 	async getScreenshotsIds(id: number): Promise<Array<string>> {
@@ -150,9 +150,7 @@ export default class AddonService {
 			throw new NotFoundError("Files not found");
 		}
 
-		const screenshotFile = files.filter((f) => f.use === "screenshot" || f.use === "carousel")[
-			index
-		]; // TODO: only keep screenshots
+		const screenshotFile = files.filter((f) => ["screenshot", "carousel"].includes(f.use))[index]; // TODO: only keep screenshots
 
 		// if no header file, not found
 		if (screenshotFile === undefined) {
@@ -169,16 +167,12 @@ export default class AddonService {
 		const files = await this.getFiles(id);
 
 		// if no files, not found
-		if (files === undefined) {
-			throw new NotFoundError("Files not found");
-		}
+		if (files === undefined) throw new NotFoundError("Files not found");
 
-		const headerFile = files.filter((f) => f.use === "header")[0];
+		const headerFile = files.find((f) => f.use === "header");
 
 		// if no header file, not found
-		if (headerFile === undefined) {
-			throw new NotFoundError("File not found");
-		}
+		if (headerFile === undefined) throw new NotFoundError("File not found");
 
 		return headerFile.source;
 	}
@@ -206,11 +200,8 @@ export default class AddonService {
 			throw new BadRequestError("One author ID or more doesn't exist");
 		});
 
-		authors.forEach((author) => {
-			if (!author.username) {
-				throw new BadRequestError("All authors must have a username");
-			}
-		});
+		if (authors.some((author) => !author.username))
+			throw new BadRequestError("All authors must have a username");
 
 		// get the slug
 		const slugValue = toSlug(body.name);
@@ -276,11 +267,8 @@ export default class AddonService {
 			throw new BadRequestError("One author ID or more doesn't exist");
 		});
 
-		authors.forEach((author) => {
-			if (!author.username) {
-				throw new BadRequestError("All authors must have a username");
-			}
-		});
+		if (authors.some((author) => !author.username))
+			throw new BadRequestError("All authors must have a username");
 
 		const { downloads } = body;
 		delete body.downloads;
