@@ -1,5 +1,3 @@
-/* eslint-disable no-await-in-loop */
-
 import { textures } from "../firestorm";
 import { Edition, GalleryResult, PackID, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";

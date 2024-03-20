@@ -1,12 +1,5 @@
 import { Controller, Get, Path, Query, Route, Tags } from "tsoa";
-import {
-	AcceptedRes,
-	GalleryModalResult,
-	GalleryResult,
-	PackID,
-	Texture,
-	Edition,
-} from "../interfaces";
+import { AcceptedRes, GalleryModalResult, GalleryResult, PackID, Edition } from "../interfaces";
 import GalleryService from "../service/gallery.service";
 import TextureService from "../service/texture.service";
 import cache from "../tools/cache";
@@ -58,7 +51,7 @@ export class GalleryController extends Controller {
 	}
 
 	/**
-	 * Get modal information with urls, mcmeta, texture, uses and paths
+	 * Get gallery modal data with urls, mcmeta, texture, uses and paths
 	 * @param id Searched texture name
 	 * @param mc_version Minecraft version for the images
 	 */
@@ -79,7 +72,7 @@ export class GalleryController extends Controller {
 
 		const all = await this.textureService.getPropertyByNameOrId(id, "all");
 
-		const texture = (await this.textureService.getByNameOrId(id)) as Texture;
+		const texture = await this.textureService.getByNameOrId<true>(id);
 
 		return {
 			contributions: all.contributions,

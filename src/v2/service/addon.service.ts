@@ -10,6 +10,7 @@ import {
 	AddonCreationParam,
 	AddonDataParam,
 	AddonReview,
+	AddonStats,
 	AddonStatsAdmin,
 	AddonStatusApproved,
 } from "../interfaces/addons";
@@ -98,27 +99,31 @@ export default class AddonService {
 		};
 	}
 
-	async getStats(asAdmin: boolean): Promise<AddonStatsAdmin> {
+	async getStats<IsAdmin extends boolean>(
+		isAdmin: IsAdmin,
+	): Promise<IsAdmin extends true ? AddonStatsAdmin : AddonStats> {
 		const entries = await this.getRaw();
-		const values = Object.values(entries).filter(
-			(a) => asAdmin || a.approval.status === AddonStatusApproved,
-		);
-		return values.reduce(
-			(acc, val) => {
-				acc[val.approval.status]++;
-				val.options.tags.forEach((t) => {
-					acc.numbers[t] = (acc.numbers[t] || 0) + 1;
-				});
-				return acc;
-			},
-			{
-				approved: 0,
-				pending: 0,
-				denied: 0,
-				archived: 0,
-				numbers: {},
-			} as AddonStatsAdmin,
-		);
+
+		// don't initialize non-approved addon keys if not admin
+		const starter: Partial<AddonStatsAdmin> = isAdmin
+			? { approved: 0, pending: 0, denied: 0, archived: 0 }
+			: { approved: 0 };
+
+		return Object.values(entries)
+			.filter((a) => isAdmin || a.approval.status === AddonStatusApproved)
+			.reduce(
+				(acc, val) => {
+					acc[val.approval.status]++;
+					val.options.tags.forEach((t) => {
+						acc.numbers[t] = (acc.numbers[t] || 0) + 1;
+					});
+					return acc;
+				},
+				{
+					...starter,
+					numbers: {},
+				} as AddonStatsAdmin,
+			);
 	}
 
 	async getScreenshotsFiles(id: number): Promise<Files> {

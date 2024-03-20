@@ -27,7 +27,6 @@ import {
 import { BadRequestError, NotFoundError, PermissionError } from "../tools/ApiError";
 import cache from "../tools/cache";
 import PostService from "../service/post.service";
-import { filterRecord } from "../tools/extract";
 
 @Route("posts")
 @Tags("Posts")
@@ -52,7 +51,12 @@ export class PostController extends Controller {
 	@Response<NotFoundError>(404)
 	@Get("/")
 	public getAll(): Promise<Record<string, WebsitePost>> {
-		return this.service.getRaw().then((r) => filterRecord(r, (p) => p.published));
+		return this.service.getRaw().then((r) =>
+			Object.keys(r).reduce((acc, cur) => {
+				if (r[cur].published) acc[cur] = r[cur];
+				return acc;
+			}, {}),
+		);
 	}
 
 	/**

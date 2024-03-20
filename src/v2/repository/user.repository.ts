@@ -12,8 +12,7 @@ import {
 	UserProfile,
 } from "../interfaces";
 
-// eslint-disable-next-line no-underscore-dangle
-const __transformUser = (user: Partial<User>): User => ({
+const mapUser = (user: Partial<User>): User => ({
 	// falsy checking
 	id: user.id,
 	username: user.username || "",
@@ -48,7 +47,7 @@ export default class UserFirestormRepository implements UserRepository {
 	getUserById(id: string): Promise<User> {
 		return users
 			.get(id)
-			.then((u) => __transformUser(u))
+			.then(mapUser)
 			.catch((err) => {
 				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
 					const formattedError: any = new Error("User not found");
@@ -64,7 +63,7 @@ export default class UserFirestormRepository implements UserRepository {
 	getProfileOrCreate(id: string): Promise<User> {
 		return users
 			.get(id)
-			.then(__transformUser)
+			.then(mapUser)
 			.catch((err) => {
 				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
 					const empty: User = {
@@ -93,7 +92,7 @@ export default class UserFirestormRepository implements UserRepository {
 				ignoreCase: true,
 			},
 		]);
-		return arr.map(__transformUser);
+		return arr.map(mapUser);
 	}
 
 	async getUsersFromRole(role: string, username?: string): Promise<Users> {
@@ -117,7 +116,7 @@ export default class UserFirestormRepository implements UserRepository {
 			});
 
 		const arr = await users.search(options);
-		return arr.map(__transformUser);
+		return arr.map(mapUser);
 	}
 
 	getRoles(): Promise<Array<string>> {

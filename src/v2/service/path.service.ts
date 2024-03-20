@@ -9,13 +9,9 @@ import { settings } from "../firestorm";
 export default class PathService {
 	private readonly useService: UseService;
 
-	constructor();
-
-	constructor(useService: UseService);
-
-	constructor(...args: any[]) {
-		// eslint-disable-next-line prefer-destructuring
-		if (args.length > 0) this.useService = args[0];
+	// workaround for the classes requiring each other (infinite loop)
+	constructor(service?: UseService) {
+		if (service !== undefined) this.useService = service;
 		else this.useService = new UseService(this);
 	}
 
@@ -72,6 +68,7 @@ export default class PathService {
 	}
 
 	async addVersion(body: PathNewVersionParam): Promise<{ success: boolean[] }> {
+		// stupid workaround for recursion (the classes require each other)
 		const versions = await TextureService.getInstance().getVersionByEdition(body.edition);
 
 		// check existing version to the paths provided

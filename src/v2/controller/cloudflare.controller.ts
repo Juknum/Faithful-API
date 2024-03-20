@@ -1,4 +1,6 @@
 import { Controller, Get, Path, Route, Security, Tags } from "tsoa";
+import { CachePurgeResponse } from "cloudflare/resources";
+import { ZonesDevelopmentMode } from "cloudflare/resources/zones/settings/development-mode";
 import CloudflareService from "../service/cloudflare.service";
 
 @Route("cloudflare")
@@ -11,7 +13,7 @@ export class CloudflareController extends Controller {
 	 */
 	@Get("purge")
 	@Security("cloudflare")
-	public purge(): Promise<void> {
+	public purge(): Promise<CachePurgeResponse[]> {
 		return this.service.purge();
 	}
 
@@ -26,7 +28,7 @@ export class CloudflareController extends Controller {
 	 */
 	@Get("dev/{mode}")
 	@Security("cloudflare")
-	public dev(@Path() mode: "on" | "off"): Promise<any> {
+	public dev(@Path() mode: "on" | "off"): Promise<ZonesDevelopmentMode[]> {
 		return this.service.dev(mode);
 	}
 }

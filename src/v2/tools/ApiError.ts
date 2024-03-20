@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 export class ApiError extends Error {
-	private statusCode: number;
+	readonly statusCode: number;
 
 	constructor(name: string, statusCode: number, message?: string) {
 		super(message);

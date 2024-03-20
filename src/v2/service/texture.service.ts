@@ -20,10 +20,10 @@ export default class TextureService {
 	private readonly pathService = new PathService();
 
 	// eslint-disable-next-line no-use-before-define
-	static instance: TextureService | null = null;
+	static instance: TextureService;
 
 	static getInstance() {
-		if (TextureService.instance === null) TextureService.instance = new TextureService();
+		if (!TextureService.instance) TextureService.instance = new TextureService();
 		return TextureService.instance;
 	}
 
@@ -81,8 +81,11 @@ export default class TextureService {
 			.catch(() => Promise.reject(new Error("Service failed to make request")));
 	}
 
-	getByNameOrId(nameOrID: string | number): Promise<Textures | Texture> {
-		return this.textureRepo.searchTextureByNameOrId(nameOrID);
+	// AlwaysID is a typescript hack to make sure the correct types are always returned
+	getByNameOrId<AlwaysID extends boolean>(
+		nameOrID: string | number,
+	): Promise<AlwaysID extends true ? Texture : Texture | Textures> {
+		return this.textureRepo.searchTextureByNameOrId<AlwaysID>(nameOrID);
 	}
 
 	getURLById(id: number, pack: PackID, version: string): Promise<string> {
@@ -146,7 +149,7 @@ export default class TextureService {
 		const textureID = createdTexture[ID_FIELD];
 
 		// create uses
-		const [useIDs, fullUsesToCreate]: [string[], Uses] = input.uses.reduce(
+		const [useIDs, fullUsesToCreate] = input.uses.reduce(
 			(acc, u, ui) => {
 				const useID = String(textureID) + String.fromCharCode("a".charCodeAt(0) + ui);
 				const use = {
@@ -159,7 +162,7 @@ export default class TextureService {
 				acc[1].push(use);
 				return acc;
 			},
-			[[], []],
+			[[] as string[], [] as Uses],
 		);
 		await this.useService.createMultipleUses(fullUsesToCreate);
 

@@ -5,19 +5,16 @@ import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import PathService from "./path.service";
 
 export default class UseService {
-	constructor();
+	private readonly pathService: PathService;
 
-	constructor(pathService: PathService);
-
-	constructor(...args: any[]) {
-		// eslint-disable-next-line prefer-destructuring
-		if (args.length) this.pathService = args[0];
+	// workaround for the classes requiring each other (infinite loop)
+	constructor(service?: PathService) {
+		if (service !== undefined) this.pathService = service;
 		else this.pathService = new PathService(this);
+		// this.textureService = TextureService.getInstance();
 	}
 
 	private readonly repo = new UseFirestormRepository();
-
-	private readonly pathService: PathService;
 
 	async getPathUseByIdOrName(idOrName: string): Promise<Paths> {
 		const use = await this.getUseByIdOrName<true>(idOrName);

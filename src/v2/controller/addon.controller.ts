@@ -26,7 +26,6 @@ import {
 import AddonService from "../service/addon.service";
 import { NotAvailableError, NotFoundError, PermissionError } from "../tools/ApiError";
 import cache from "../tools/cache";
-import { extract } from "../tools/extract";
 
 @Route("addons")
 @Tags("Addons")
@@ -97,14 +96,7 @@ export class AddonController extends Controller {
 	@Response<NotAvailableError>(408)
 	@Get("stats")
 	public getStats(): Promise<AddonStats> {
-		return cache.handle("addon-stats", () =>
-			this.service.getStats(false).then((res) =>
-				extract<AddonStats>({
-					approved: true,
-					numbers: true,
-				})(res),
-			),
-		);
+		return cache.handle("addon-stats", () => this.service.getStats(false));
 	}
 
 	/**

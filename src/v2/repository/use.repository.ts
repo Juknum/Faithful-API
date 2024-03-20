@@ -1,4 +1,3 @@
-/* eslint-disable arrow-body-style */
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { Use, UseRepository, Uses } from "../interfaces";
 import { paths, uses } from "../firestorm";
@@ -58,12 +57,12 @@ export default class UseFirestormRepository implements UseRepository {
 		return uses
 			.get(useID) // assure you find the texture and get path method
 			.then((gatheredUse) => gatheredUse.getPaths())
-			.then((foundPaths) => {
-				return Promise.all([
+			.then((foundPaths) =>
+				Promise.all([
 					uses.remove(useID),
 					paths.removeBulk(foundPaths.map((p) => p[ID_FIELD])), // delete all paths
-				]);
-			});
+				]),
+			);
 	}
 
 	removeUsesByBulk(useIDs: string[]): Promise<WriteConfirmation[][]> {

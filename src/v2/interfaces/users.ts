@@ -62,7 +62,6 @@ export interface FirestormUser extends User {
 	addons(): Promise<Addons>;
 }
 
-/* eslint-disable no-unused-vars */
 export interface UserRepository {
 	getProfileOrCreate(id: string): Promise<User>;
 	getUserProfiles(authors: string[]): Promise<UserProfile[]>;
