@@ -149,7 +149,7 @@ export default class TextureService {
 		const textureID = createdTexture[ID_FIELD];
 
 		// create uses
-		const [useIDs, fullUsesToCreate] = input.uses.reduce(
+		const [useIDs, usesToAdd] = input.uses.reduce(
 			(acc, u, ui) => {
 				const useID = String(textureID) + String.fromCharCode("a".charCodeAt(0) + ui);
 				const use = {
@@ -164,7 +164,7 @@ export default class TextureService {
 			},
 			[[] as string[], [] as Uses],
 		);
-		await this.useService.createMultipleUses(fullUsesToCreate);
+		await this.useService.createMultipleUses(usesToAdd);
 
 		// create paths
 		const pathsToAdd = input.uses.reduce((acc, cur, i) => {

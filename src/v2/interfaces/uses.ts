@@ -31,6 +31,6 @@ export interface UseRepository {
 	deleteUse(id: string): Promise<WriteConfirmation[]>;
 	set(use: Use): Promise<Use>;
 	setMultiple(uses: Uses): Promise<Uses>;
-	removeUseById(useID: string): Promise<WriteConfirmation[]>;
-	removeUsesByBulk(useIDs: string[]): Promise<WriteConfirmation[][]>;
+	removeUseById(useID: string): Promise<[WriteConfirmation, WriteConfirmation]>;
+	removeUsesByBulk(useIDs: string[]): Promise<[WriteConfirmation, WriteConfirmation][]>;
 }

@@ -44,28 +44,26 @@ export default class UseFirestormRepository implements UseRepository {
 
 	set(use: Use): Promise<Use> {
 		// Clone object because Firestorm removes ID fields internally
-		// JS works on references so use.id would become undefined after being set
+		// JS objects work on references so use.id would become undefined after being set
 		return uses.set(use.id, structuredClone(use)).then(() => uses.get(use.id));
 	}
 
-	setMultiple(useArray: Uses): Promise<Uses> {
+	async setMultiple(useArray: Uses): Promise<Uses> {
 		const useIDs = useArray.map((u) => u.id);
-		return uses.setBulk(useIDs, useArray).then(() => uses.searchKeys(useIDs));
+		await uses.setBulk(useIDs, useArray);
+		return uses.searchKeys(useIDs);
 	}
 
-	removeUseById(useID: string): Promise<WriteConfirmation[]> {
-		return uses
-			.get(useID) // assure you find the texture and get path method
-			.then((gatheredUse) => gatheredUse.getPaths())
-			.then((foundPaths) =>
-				Promise.all([
-					uses.remove(useID),
-					paths.removeBulk(foundPaths.map((p) => p[ID_FIELD])), // delete all paths
-				]),
-			);
+	async removeUseById(useID: string): Promise<[WriteConfirmation, WriteConfirmation]> {
+		const gatheredUse = await uses.get(useID); // assure you find the texture and get path method
+		const foundPaths = await gatheredUse.getPaths();
+		return Promise.all([
+			uses.remove(useID),
+			paths.removeBulk(foundPaths.map((p) => p[ID_FIELD])), // delete all paths
+		]);
 	}
 
-	removeUsesByBulk(useIDs: string[]): Promise<WriteConfirmation[][]> {
+	removeUsesByBulk(useIDs: string[]): Promise<[WriteConfirmation, WriteConfirmation][]> {
 		return Promise.all(useIDs.map((useID) => this.removeUseById(useID)));
 	}
 }
