@@ -37,7 +37,7 @@ export default class AddonService {
 		// if slug
 		if (Number.isNaN(intID) || intID.toString() !== idOrSlug) {
 			const addon = await this.getAddonBySlug(idOrSlug);
-			if (!addon) throw new NotFoundError("Add-on not found");
+			if (!addon) throw new NotFoundError(`Add-on ${idOrSlug} not found`);
 			return [addon.id as number, addon];
 		}
 
@@ -50,7 +50,7 @@ export default class AddonService {
 		const id = idAndAddon[0];
 		const addon = idAndAddon[1] || (await this.getAddon(id));
 
-		if (!addon) throw new NotFoundError("Add-on not found");
+		if (!addon) throw new NotFoundError(`Add-on ${idOrSlug} not found`);
 
 		return [id, addon];
 	}
@@ -68,7 +68,7 @@ export default class AddonService {
 
 	getAddon(id: number): Promise<Addon> {
 		if (Number.isNaN(id) || id < 0)
-			return Promise.reject(new Error("Addons IDs are integer greater than 0"));
+			return Promise.reject(new Error("Add-on IDs are integers greater than 0"));
 		return this.addonRepo.getAddonById(id);
 	}
 
@@ -84,13 +84,13 @@ export default class AddonService {
 
 	getFiles(id: number): Promise<Files> {
 		if (Number.isNaN(id) || id < 0)
-			return Promise.reject(new Error("Addons IDs are integer greater than 0"));
+			return Promise.reject(new Error("Add-on IDs are integers greater than 0"));
 		return this.addonRepo.getFilesById(id);
 	}
 
 	async getAll(id: number): Promise<AddonAll> {
 		if (Number.isNaN(id) || id < 0)
-			return Promise.reject(new Error("Addons IDs are integer greater than 0"));
+			return Promise.reject(new Error("Add-on IDs are integers greater than 0"));
 
 		const results = await Promise.all([this.getAddon(id), this.getFiles(id)]);
 		return {
