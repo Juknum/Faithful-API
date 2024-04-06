@@ -31,22 +31,25 @@ export class AuthController extends Controller {
 	 */
 	@Get("discord/callback/{target}")
 	public async discordAuthCallback(
-		@Path() target: string,
-		@Query() code: string,
 		@Request() request: ExRequest,
+		@Path() target: string,
+		@Query() code?: string,
 	) {
-		const params = new URLSearchParams();
-		params.append("client_id", process.env.DISCORD_CLIENT_ID);
-		params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
-		params.append("grant_type", "authorization_code");
-		params.append("code", code);
-		params.append("redirect_uri", `${this.service.targetToURL("api")}${request.path}`);
-		params.append("scope", "identify");
-
 		const res = (<any>request).res as ExResponse;
+		// when you press cancel on the discord screen
+		if (!code) return res.redirect(this.service.targetToURL(target));
+
+		const discordParams = new URLSearchParams();
+		discordParams.append("client_id", process.env.DISCORD_CLIENT_ID);
+		discordParams.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
+		discordParams.append("grant_type", "authorization_code");
+		discordParams.append("code", code);
+		discordParams.append("redirect_uri", `${this.service.targetToURL("api")}${request.path}`);
+		discordParams.append("scope", "identify");
+
 		const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
 			method: "POST",
-			body: params,
+			body: discordParams,
 		});
 
 		const json: any = await tokenResponse.json();
@@ -56,11 +59,11 @@ export class AuthController extends Controller {
 			return;
 		}
 
-		const redirect = new URLSearchParams();
-		redirect.append("access_token", json.access_token);
-		redirect.append("refresh_token", json.refresh_token);
-		redirect.append("expires_in", json.expires_in);
-		res.redirect(`${this.service.targetToURL(target)}?${redirect.toString()}`);
+		const targetParams = new URLSearchParams();
+		targetParams.append("access_token", json.access_token);
+		targetParams.append("refresh_token", json.refresh_token);
+		targetParams.append("expires_in", json.expires_in);
+		res.redirect(`${this.service.targetToURL(target)}?${targetParams.toString()}`);
 	}
 
 	/**
