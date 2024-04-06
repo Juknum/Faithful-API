@@ -1,6 +1,6 @@
 import Cloudflare from "cloudflare";
 import { CachePurgeResponse } from "cloudflare/resources";
-import { ZonesDevelopmentMode } from "cloudflare/resources/zones/settings/development-mode";
+import { ZoneSettingDevelopmentMode } from "cloudflare/resources/zones/settings/development-mode";
 
 const TOKEN = process.env.CLOUDFLARE_KEY;
 
@@ -29,7 +29,7 @@ export default class CloudflareService {
 		);
 	}
 
-	public async dev(mode: "on" | "off"): Promise<ZonesDevelopmentMode[]> {
+	public async dev(mode: "on" | "off"): Promise<ZoneSettingDevelopmentMode[]> {
 		// permission needed: #zone_settings:edit
 		const ids = await this.zoneIds();
 		return Promise.all(

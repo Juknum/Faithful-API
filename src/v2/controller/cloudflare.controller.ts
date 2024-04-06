@@ -1,6 +1,6 @@
 import { Controller, Get, Path, Route, Security, Tags } from "tsoa";
 import { CachePurgeResponse } from "cloudflare/resources";
-import { ZonesDevelopmentMode } from "cloudflare/resources/zones/settings/development-mode";
+import { ZoneSettingDevelopmentMode } from "cloudflare/resources/zones/settings/development-mode";
 import CloudflareService from "../service/cloudflare.service";
 
 @Route("cloudflare")
@@ -28,7 +28,7 @@ export class CloudflareController extends Controller {
 	 */
 	@Get("dev/{mode}")
 	@Security("cloudflare")
-	public dev(@Path() mode: "on" | "off"): Promise<ZonesDevelopmentMode[]> {
+	public dev(@Path() mode: "on" | "off"): Promise<ZoneSettingDevelopmentMode[]> {
 		return this.service.dev(mode);
 	}
 }
