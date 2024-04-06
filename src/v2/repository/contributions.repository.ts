@@ -68,8 +68,8 @@ export default class ContributionFirestormRepository implements ContributionsRep
 			.flat();
 
 		const out = authors.reduce((acc, id) => {
-			if (!acc[id]) acc[id] = { id, contributions: 1 };
-			else acc[id].contributions++;
+			if (!acc[id]) acc[id] = { id, contributions: 0 };
+			acc[id].contributions++;
 			return acc;
 		}, {} as ContributionsAuthors);
 
