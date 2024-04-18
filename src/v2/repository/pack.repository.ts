@@ -10,7 +10,7 @@ import {
 	PackSearch,
 } from "../interfaces";
 import { contributions, packs } from "../firestorm";
-import SubmissionFirestormRepository from "./submissions.repository";
+import SubmissionFirestormRepository from "./submission.repository";
 
 export default class PackFirestormRepository implements PackRepository {
 	private readonly submissionRepo = new SubmissionFirestormRepository();

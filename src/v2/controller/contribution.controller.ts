@@ -20,13 +20,13 @@ import {
 	ContributionStats,
 	PackID,
 } from "../interfaces";
-import ContributionService from "../service/contributions.service";
+import ContributionService from "../service/contribution.service";
 import { NotAvailableError } from "../tools/ApiError";
 import cache from "../tools/cache";
 
 @Route("contributions")
 @Tags("Contributions")
-export class ContributionsController extends Controller {
+export class ContributionController extends Controller {
 	private readonly service = new ContributionService();
 
 	/**
