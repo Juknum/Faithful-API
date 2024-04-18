@@ -1,5 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
-import { Use, Uses, Paths, CreationUse } from "../interfaces";
+import { Use, Uses, Paths, CreationUse, EntireUseToCreate, InputPath } from "../interfaces";
 import UseFirestormRepository from "../repository/use.repository";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import PathService from "./path.service";
@@ -58,6 +58,23 @@ export default class UseService {
 		if (exists) throw new BadRequestError(`Texture use ID ${use.id} already exists`);
 
 		return this.repo.set(use);
+	}
+
+	async appendUse(textureID: string, use: EntireUseToCreate): Promise<void> {
+		const bestLetter = await this.repo.getLastUseLetter(textureID);
+		const nextLetter = String.fromCharCode(bestLetter.charCodeAt(0) + 1);
+		const newUseID = `${textureID}${nextLetter}`;
+		const pathsWithUse: InputPath[] = use.paths.map((p) => ({ ...p, use: newUseID }));
+
+		const useToCreate = {
+			id: newUseID,
+			name: use.name,
+			edition: use.edition,
+			texture: Number(textureID),
+		};
+
+		await this.createUse(useToCreate);
+		if (pathsWithUse.length) await this.pathService.createMultiplePaths(pathsWithUse);
 	}
 
 	async createMultipleUses(uses: Uses): Promise<Uses> {

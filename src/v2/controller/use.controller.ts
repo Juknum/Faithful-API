@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Path, Post, Put, Route, Security, Tags } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
-import { Use, Uses, Paths, CreationUse } from "../interfaces";
+import { Use, Uses, Paths, CreationUse, EntireUseToCreate } from "../interfaces";
 import UseService from "../service/use.service";
 
 @Route("uses")
@@ -17,7 +17,7 @@ export class UseController extends Controller {
 	}
 
 	/**
-	 * Adds a new texture use to the database for a given texture ID and body
+	 * Add a texture use with an already-known use ID
 	 * @param body Texture use to create
 	 */
 	@Post("")
@@ -26,6 +26,15 @@ export class UseController extends Controller {
 		return this.service.createUse({
 			...body,
 		});
+	}
+
+	/**
+	 * Append a use onto a texture
+	 */
+	@Post("{texture_id}")
+	@Security("discord", ["administrator"])
+	public appendUse(@Path() texture_id: string, @Body() body: EntireUseToCreate): Promise<void> {
+		return this.service.appendUse(texture_id, body);
 	}
 
 	/**

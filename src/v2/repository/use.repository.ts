@@ -38,6 +38,24 @@ export default class UseFirestormRepository implements UseRepository {
 		);
 	}
 
+	async getLastUseLetter(textureID: string): Promise<string> {
+		const foundUses = await uses.search([
+			{
+				field: "texture",
+				criteria: "==",
+				value: textureID,
+			},
+		]);
+
+		return foundUses.reduce((best, cur) => {
+			const letter = (cur[ID_FIELD] as string).match(/\D/g)?.[0];
+			if (!letter) return best;
+
+			if (letter.charCodeAt(0) > best.charCodeAt(0)) return letter;
+			return best;
+		}, "a");
+	}
+
 	deleteUse(id: string): Promise<WriteConfirmation[]> {
 		return this.removeUseById(id);
 	}

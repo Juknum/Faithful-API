@@ -11,6 +11,8 @@ export interface CreationUse extends BaseUse {
 }
 
 export interface EntireUseToCreate extends BaseUse {
+	// only needed when making uses + paths after texture creation
+	texture?: number;
 	paths: CreationPath[]; // all the paths to be created
 }
 
@@ -28,6 +30,7 @@ export interface UseRepository {
 	getUsesByIdAndEdition(idArr: number[], edition: string): Promise<Uses>;
 	getRaw(): Promise<Record<string, Use>>;
 	getUseByIdOrName(idOrName: string): Promise<Uses | Use>;
+	getLastUseLetter(textureID: string): Promise<string>;
 	deleteUse(id: string): Promise<WriteConfirmation[]>;
 	set(use: Use): Promise<Use>;
 	setMultiple(uses: Uses): Promise<Uses>;
