@@ -2,16 +2,13 @@ import axios from "axios";
 import firestorm from "firestorm-db";
 import {
 	Paths,
-	Uses,
 	Contributions,
 	TextureAll,
 	Path,
-	Use,
+	Uses,
 	PackID,
 	FirestormTexture,
 	MCMETA,
-	PackGitHub,
-	Edition,
 } from "../../interfaces";
 import "../config";
 
@@ -30,41 +27,31 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			},
 		]);
 
-	el.paths = (): Promise<Paths> =>
-		el
-			.uses()
-			.then((_uses) =>
-				Promise.all(_uses.map((_use) => uses.get(_use.id).then((u) => u.getPaths()))),
-			)
-			.then((arr) => arr.flat());
+	el.paths = async (): Promise<Paths> => {
+		const textureUses = await el.uses();
+		const proms = await Promise.all(
+			textureUses.map((_use) => uses.get(_use.id).then((u) => u.getPaths())),
+		);
+		return proms.flat();
+	};
 
-	el.url = (pack: PackID, version: string): Promise<string> => {
+	el.url = async (pack: PackID, version: string): Promise<string> => {
 		const baseURL = "https://raw.githubusercontent.com";
 
-		let urls: Partial<Record<Edition, PackGitHub>>;
+		const { github } = await packs.get(pack);
+		const texturePaths = await el.paths();
+
+		// get matching path for version
 		let path: Path;
+		if (version === "latest") {
+			path = texturePaths[0];
+			version = path.versions.sort(MinecraftSorter).at(-1);
+		} else path = texturePaths.find((p) => p.versions.includes(version));
 
-		return packs
-			.get(pack)
-			.then((p) => {
-				urls = p.github;
-				return el.paths();
-			})
-			.then((texturePaths) => {
-				// eq to [0]
-				if (version === "latest") {
-					[path] = texturePaths;
-					version = path.versions.sort(MinecraftSorter).at(-1);
-				} else path = texturePaths.find((p: Path) => p.versions.includes(version));
-
-				return el.uses();
-			})
-			.then((_uses: Uses) => {
-				const { edition } = _uses.find((u: Use) => u.id === path.use);
-				if (!urls[edition])
-					throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
-				return `${baseURL}/${urls[edition].org}/${urls[edition].repo}/${version}/${path.name}`;
-			});
+		const textureUses = await el.uses();
+		const { edition } = textureUses.find((u) => u.id === path.use);
+		if (!github[edition]) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
+		return `${baseURL}/${github[edition].org}/${github[edition].repo}/${version}/${path.name}`;
 	};
 
 	el.contributions = (): Promise<Contributions> =>
@@ -76,27 +63,20 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			},
 		]);
 
-	el.mcmeta = (): Promise<MCMETA> =>
-		el
-			.paths()
-			.then((ps) => ps.find((path: Path) => path.mcmeta) || null)
-			.then((p) => Promise.all([el.uses(), p]))
-			.then(([us, p]) => {
-				if (p === null) return [null, null];
-				return [us.find((use: Use) => use.id === p.use), p];
-			})
-			.then(([u, p]: [Use, Path | null]) => {
-				if (u === null || p === null) return null;
-				return axios
-					.get(
-						`https://raw.githubusercontent.com/Faithful-Pack/Default-Java/${
-							p.versions.sort(MinecraftSorter).reverse()[0]
-						}/${p.name}.mcmeta`,
-					)
-					.catch(() => null); // avoid crash if mcmeta file cannot be found
-			})
+	el.mcmeta = async (): Promise<MCMETA> => {
+		const texturePaths = await el.paths();
+		const foundPath = texturePaths.find((path) => path.mcmeta === true);
+		if (!foundPath) return {};
+		return axios
+			.get(
+				// mcmetas only exist on java edition
+				`https://raw.githubusercontent.com/Faithful-Pack/Default-Java/${foundPath.versions
+					.sort(MinecraftSorter)
+					.at(-1)}/${foundPath.name}.mcmeta`,
+			)
 			.then((res) => (res ? res.data : {}))
-			.catch(() => {});
+			.catch(() => ({})); // avoid crash if mcmeta file cannot be found
+	};
 
 	el.all = async (): Promise<TextureAll> => ({
 		id: el.id,

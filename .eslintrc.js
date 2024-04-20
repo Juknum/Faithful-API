@@ -17,6 +17,7 @@ module.exports = {
 		"no-param-reassign": "off",
 		"consistent-return": "off",
 		"import/prefer-default-export": "off",
+		"prefer-destructuring": "off",
 		"class-methods-use-this": "off",
 		"import/extensions": [
 			"error",
