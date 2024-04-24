@@ -61,8 +61,8 @@ export default class UseService {
 	}
 
 	async appendUse(textureID: string, use: EntireUseToCreate): Promise<void> {
-		const bestLetter = await this.repo.getLastUseLetter(textureID);
-		const nextLetter = String.fromCharCode(bestLetter.charCodeAt(0) + 1);
+		const lastLetter = await this.repo.lastCharCode(textureID);
+		const nextLetter = String.fromCharCode(lastLetter + 1);
 		const newUseID = `${textureID}${nextLetter}`;
 		const pathsWithUse: InputPath[] = use.paths.map((p) => ({ ...p, use: newUseID }));
 
@@ -75,6 +75,12 @@ export default class UseService {
 
 		await this.createUse(useToCreate);
 		if (pathsWithUse.length) await this.pathService.createMultiplePaths(pathsWithUse);
+	}
+
+	async addMultipleUses(textureID: string, uses: EntireUseToCreate[]): Promise<void> {
+		// fix concurrency issues (eslint complains because it's less optimized)
+		// eslint-disable-next-line no-await-in-loop, no-restricted-syntax
+		for (const use of uses) await this.appendUse(textureID, use);
 	}
 
 	async createMultipleUses(uses: Uses): Promise<Uses> {
