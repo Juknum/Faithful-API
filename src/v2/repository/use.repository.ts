@@ -38,7 +38,7 @@ export default class UseFirestormRepository implements UseRepository {
 		);
 	}
 
-	async lastCharCode(textureID: string): Promise<number> {
+	async getLastUseLetter(textureID: string): Promise<string> {
 		const foundUses = await uses.search([
 			{
 				field: "texture",
@@ -47,17 +47,13 @@ export default class UseFirestormRepository implements UseRepository {
 			},
 		]);
 
-		return foundUses.reduce(
-			(best, cur) => {
-				const letter = (cur[ID_FIELD] as string).match(/\D/g)?.[0];
-				if (!letter) return best;
+		return foundUses.reduce((best, cur) => {
+			const letter = (cur[ID_FIELD] as string).match(/\D/g)?.[0];
+			if (!letter) return best;
 
-				if (letter.charCodeAt(0) > best) return letter.charCodeAt(0);
-				return best;
-			},
-			// subtract one since we're adding one later
-			"a".charCodeAt(0) - 1,
-		);
+			if (letter.charCodeAt(0) > best.charCodeAt(0)) return letter;
+			return best;
+		}, "a");
 	}
 
 	deleteUse(id: string): Promise<WriteConfirmation[]> {

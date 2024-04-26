@@ -1,10 +1,11 @@
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
-import { PackID, Texture, Textures, EntireUseToCreate } from "../interfaces";
+import { PackID, Texture, Textures, InputPath, Uses, FirestormUse } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
 	TextureCreationParam,
 	TextureProperty,
+	TextureAll,
 	PropertyToOutput,
 } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/texture.repository";
@@ -93,24 +94,46 @@ export default class TextureService {
 
 	async mergeTextures(addID: string, removeID: string) {
 		// append the uses of the removed texture to the uses of the kept texture
-		const { uses: usesToRemove, paths: pathsToRemove } = await this.getPropertyByNameOrId(
-			removeID,
-			"all",
-		);
+		const addTexture: TextureAll = await this.getPropertyByNameOrId(addID, "all");
 
-		// no need to delete use properties because it gets overwritten later anyways
-		const usesToAdd: EntireUseToCreate[] = usesToRemove.map((use: any) => ({
-			...use,
-			paths: pathsToRemove
-				.filter((p) => p.use === use[ID_FIELD])
-				.map((path) => {
-					delete path[ID_FIELD];
-					delete path.use;
-					return path;
+		// get most recent use id from texture to add
+		const latestLetter = addTexture.uses
+			.reduce((best, cur) => {
+				const letter = cur[ID_FIELD].at(-1);
+				if (best > letter) return best;
+				return letter;
+			}, "a")
+			.charCodeAt(0);
+		const usesToRemove = await this.getPropertyByNameOrId(removeID, "uses");
+
+		// two dimensional array
+		const pathsToRemove = await Promise.all(usesToRemove.map((a: FirestormUse) => a.getPaths()));
+
+		const pathsToAdd = [];
+
+		const usesToAdd = usesToRemove.map((use, i) => {
+			// find corresponding set of paths for use
+			const pathsWithUse = pathsToRemove.find((p) => p?.[0]?.use === use[ID_FIELD]);
+			use[ID_FIELD] = addID + String.fromCharCode(latestLetter + i + 1);
+			use.texture = Number(addID);
+
+			if (!pathsWithUse) return use;
+
+			pathsToAdd.push(
+				...pathsWithUse.map((p) => {
+					// randomly generated when added later
+					delete p[ID_FIELD];
+					p.use = use[ID_FIELD];
+					return p;
 				}),
-		}));
+			);
 
-		await this.useService.addMultipleUses(addID, usesToAdd);
+			return use;
+		});
+
+		// use names, etc are all preserved
+		if (usesToAdd.length) await this.useService.createMultipleUses(usesToAdd);
+		if (pathsToAdd.length) await this.pathService.createMultiplePaths(pathsToAdd);
 		await this.deleteTexture(removeID);
 	}
 
@@ -125,7 +148,34 @@ export default class TextureService {
 		});
 		const textureID = createdTexture[ID_FIELD];
 
-		await this.useService.addMultipleUses(textureID, input.uses);
+		// create uses
+		const [useIDs, usesToAdd] = input.uses.reduce(
+			(acc, u, ui) => {
+				const useID = String(textureID) + String.fromCharCode("a".charCodeAt(0) + ui);
+				const use = {
+					name: u.name,
+					edition: u.edition,
+					texture: Number.parseInt(textureID, 10),
+					id: useID,
+				};
+				acc[0].push(useID);
+				acc[1].push(use);
+				return acc;
+			},
+			[[] as string[], [] as Uses],
+		);
+		await this.useService.createMultipleUses(usesToAdd);
+
+		// create paths
+		const pathsToAdd = input.uses.reduce((acc, cur, i) => {
+			const paths: InputPath[] = cur.paths.map((p) => ({
+				...p,
+				use: useIDs[i],
+			}));
+			return [...acc, ...paths];
+		}, [] as InputPath[]);
+		await this.pathService.createMultiplePaths(pathsToAdd);
+
 		return createdTexture;
 	}
 

@@ -30,7 +30,7 @@ export interface UseRepository {
 	getUsesByIdAndEdition(idArr: number[], edition: string): Promise<Uses>;
 	getRaw(): Promise<Record<string, Use>>;
 	getUseByIdOrName(idOrName: string): Promise<Uses | Use>;
-	lastCharCode(textureID: string): Promise<number>;
+	getLastUseLetter(textureID: string): Promise<string>;
 	deleteUse(id: string): Promise<WriteConfirmation[]>;
 	set(use: Use): Promise<Use>;
 	setMultiple(uses: Uses): Promise<Uses>;
