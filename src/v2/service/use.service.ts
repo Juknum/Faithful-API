@@ -1,5 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
-import { Use, Uses, Paths, CreationUse, EntireUseToCreate, InputPath } from "../interfaces";
+import { Use, Uses, Paths, CreationUse, EntireUseToCreate, InputPath, GalleryEdition } from "../interfaces";
 import UseFirestormRepository from "../repository/use.repository";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import PathService from "./path.service";
@@ -49,8 +49,8 @@ export default class UseService {
 		return this.repo.deleteUse(id);
 	}
 
-	getUsesByIdsAndEdition(idArr: number[], edition: string): Promise<Uses> {
-		return this.repo.getUsesByIdAndEdition(idArr, edition);
+	getUsesByIdsAndEdition(idArr: number[], edition: GalleryEdition): Promise<Uses> {
+		return this.repo.getUsesByIdsAndEdition(idArr, edition);
 	}
 
 	async createUse(use: Use): Promise<Use> {

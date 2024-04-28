@@ -1,6 +1,14 @@
-import { textures } from "../firestorm";
-import { Edition, GalleryResult, PackID, Path, MCMETA, Textures, Use, Uses } from "../interfaces";
-import { NotFoundError } from "../tools/ApiError";
+import { settings, textures } from "../firestorm";
+import {
+	GalleryResult,
+	PackID,
+	Path,
+	MCMETA,
+	Textures,
+	Use,
+	Uses,
+	GalleryEdition,
+} from "../interfaces";
 import PackService from "./pack.service";
 import PathService from "./path.service";
 import TextureService from "./texture.service";
@@ -17,26 +25,30 @@ export default class GalleryService {
 
 	async urlsFromTextures(
 		pack: PackID,
-		edition: Edition,
 		mcVersion: string,
 		textureIDs: string[],
 		textureToUse: Record<string, Use>,
 		useToPath: Record<string, Path>,
 	): Promise<string[]> {
 		const baseURL = "https://raw.githubusercontent.com";
-		const urls = await this.packService.getById(pack).then((res) => res.github[edition]);
-		if (!urls) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);
+		const github = await this.packService.getById(pack).then((res) => res.github);
+		const s = await settings.readRaw();
 
 		return textureIDs
 			.filter((textureID) => textureToUse[textureID])
 			.map((textureID) => textureToUse[textureID])
-			.map((use: Use) => useToPath[use.id].name)
-			.map((path) => `${baseURL}/${urls.org}/${urls.repo}/${mcVersion}/${path}`);
+			.map((use) => [useToPath[use.id].name, use.edition])
+			.map(
+				([path, edition]) =>
+					`${baseURL}/${github[edition].org}/${github[edition].repo}/${
+						mcVersion === "latest" ? s.versions[edition][0] : mcVersion
+					}/${path}`,
+			);
 	}
 
 	async search(
 		pack: PackID,
-		edition: Edition,
+		edition: GalleryEdition,
 		mcVersion: string,
 		tag?: string,
 		search?: string,
@@ -66,6 +78,7 @@ export default class GalleryService {
 		// first filter with matching uses
 		const { useToPath, usesFiltered } = usesFound.reduce(
 			(acc, u) => {
+				// use first matching path (urls only need one)
 				const path = pathsFound.find((p) => p.use === u.id);
 
 				if (path) {
@@ -117,7 +130,6 @@ export default class GalleryService {
 
 		const urls = await this.urlsFromTextures(
 			pack,
-			edition,
 			mcVersion,
 			ids.map((id) => String(id)),
 			textureToUse,

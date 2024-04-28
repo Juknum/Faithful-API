@@ -1,5 +1,5 @@
 import { Uses } from "./uses";
-import { Texture, MCMETA } from "./textures";
+import { Texture, MCMETA, Edition } from "./textures";
 import { Contributions } from "./contributions";
 import { PackID } from "./packs";
 import { Paths } from "./paths";
@@ -15,6 +15,8 @@ export interface GalleryResult {
 }
 
 export type AcceptedRes = "16x" | "32x" | "64x";
+
+export type GalleryEdition = Edition | "all";
 
 export interface GalleryModalResult {
 	contributions: Contributions;

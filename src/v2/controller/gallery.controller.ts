@@ -1,5 +1,5 @@
 import { Controller, Get, Path, Query, Route, Tags } from "tsoa";
-import { AcceptedRes, GalleryModalResult, GalleryResult, PackID, Edition } from "../interfaces";
+import { AcceptedRes, GalleryModalResult, GalleryResult, PackID, GalleryEdition } from "../interfaces";
 import GalleryService from "../service/gallery.service";
 import TextureService from "../service/texture.service";
 import cache from "../tools/cache";
@@ -25,7 +25,7 @@ export class GalleryController extends Controller {
 	@Get("{pack}/{edition}/{mc_version}/{tag}/")
 	public search(
 		@Path() pack: AcceptedRes | PackID,
-		@Path() edition: Edition,
+		@Path() edition: GalleryEdition,
 		@Path() mc_version: string,
 		@Path() tag: string,
 		@Query() search?: string,

@@ -1,25 +1,39 @@
-import { ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { ID_FIELD, SearchOption, WriteConfirmation } from "firestorm-db";
 import { InputPath, Path, Paths, PathRepository } from "../interfaces";
 import { paths } from "../firestorm/textures/paths";
+import { settings } from "../firestorm";
 
 export default class PathFirestormRepository implements PathRepository {
 	getRaw(): Promise<Record<string, Path>> {
 		return paths.readRaw();
 	}
 
-	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths> {
-		return paths.search([
+	async getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths> {
+		const search: SearchOption<Path>[] = [
 			{
 				field: "use",
 				criteria: "in",
 				value: useIDs,
 			},
-			{
+		];
+
+		if (version === "latest") {
+			const s = await settings.readRaw();
+			search.push({
+				field: "versions",
+				criteria: "array-contains-any",
+				value: Object.entries(s.versions)
+					.filter(([k]) => k !== "id")
+					// latest is always at top
+					.map(([, obj]) => obj[0]),
+			});
+		} else
+			search.push({
 				field: "versions",
 				criteria: "array-contains",
 				value: version,
-			},
-		]);
+			});
+		return paths.search(search);
 	}
 
 	getPathUseById(useID: string): Promise<Paths> {

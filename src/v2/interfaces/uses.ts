@@ -1,5 +1,6 @@
 import { WriteConfirmation } from "firestorm-db";
 import { CreationPath, Paths } from "./paths";
+import { GalleryEdition } from "./gallery";
 
 export interface BaseUse {
 	name: string; // use name
@@ -27,7 +28,7 @@ export interface FirestormUse extends Use {
 }
 
 export interface UseRepository {
-	getUsesByIdAndEdition(idArr: number[], edition: string): Promise<Uses>;
+	getUsesByIdsAndEdition(idArr: number[], edition: GalleryEdition): Promise<Uses>;
 	getRaw(): Promise<Record<string, Use>>;
 	getUseByIdOrName(idOrName: string): Promise<Uses | Use>;
 	getLastUseLetter(textureID: string): Promise<string>;

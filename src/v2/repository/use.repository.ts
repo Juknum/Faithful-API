@@ -1,21 +1,23 @@
-import { ID_FIELD, WriteConfirmation } from "firestorm-db";
-import { Use, UseRepository, Uses } from "../interfaces";
+import { ID_FIELD, SearchOption, WriteConfirmation } from "firestorm-db";
+import { GalleryEdition, Use, UseRepository, Uses } from "../interfaces";
 import { paths, uses } from "../firestorm";
 
 export default class UseFirestormRepository implements UseRepository {
-	getUsesByIdAndEdition(idArr: number[], edition: string): Promise<Uses> {
-		return uses.search([
+	getUsesByIdsAndEdition(idArr: number[], edition: GalleryEdition): Promise<Uses> {
+		const search: SearchOption<Use>[] = [
 			{
 				field: "texture",
 				criteria: "in",
 				value: idArr,
 			},
-			{
+		];
+		if (edition !== "all")
+			search.push({
 				field: "edition",
 				criteria: "==",
 				value: edition,
-			},
-		]);
+			});
+		return uses.search(search);
 	}
 
 	getRaw(): Promise<Record<string, Use>> {
