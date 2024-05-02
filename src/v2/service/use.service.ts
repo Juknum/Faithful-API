@@ -1,5 +1,13 @@
 import { WriteConfirmation } from "firestorm-db";
-import { Use, Uses, Paths, CreationUse, EntireUseToCreate, InputPath, GalleryEdition } from "../interfaces";
+import {
+	Use,
+	Uses,
+	Paths,
+	CreationUse,
+	EntireUseToCreate,
+	InputPath,
+	GalleryEdition,
+} from "../interfaces";
 import UseFirestormRepository from "../repository/use.repository";
 import { BadRequestError, NotFoundError } from "../tools/ApiError";
 import PathService from "./path.service";
@@ -60,9 +68,15 @@ export default class UseService {
 		return this.repo.set(use);
 	}
 
+	async createMultipleUses(uses: Uses): Promise<Uses> {
+		const exists = await Promise.all(uses.map((u) => this.doesUseExist(u.id)));
+		if (exists.some((v) => v)) throw new BadRequestError(`A use ID already exists`);
+		return this.repo.setMultiple(uses);
+	}
+
 	async appendUse(textureID: string, use: EntireUseToCreate): Promise<void> {
-		const bestLetter = await this.repo.getLastUseLetter(textureID);
-		const nextLetter = String.fromCharCode(bestLetter.charCodeAt(0) + 1);
+		const lastCharCode = await this.repo.lastCharCode(textureID);
+		const nextLetter = String.fromCharCode(lastCharCode + 1);
 		const newUseID = `${textureID}${nextLetter}`;
 		const pathsWithUse: InputPath[] = use.paths.map((p) => ({ ...p, use: newUseID }));
 
@@ -77,9 +91,24 @@ export default class UseService {
 		if (pathsWithUse.length) await this.pathService.createMultiplePaths(pathsWithUse);
 	}
 
-	async createMultipleUses(uses: Uses): Promise<Uses> {
-		const exists = await Promise.all(uses.map((u) => this.doesUseExist(u.id)));
-		if (exists.some((v) => v)) throw new BadRequestError(`A use ID already exists`);
-		return this.repo.setMultiple(uses);
+	async appendMultipleUses(textureID: string, uses: EntireUseToCreate[]): Promise<void> {
+		const lastCharCode = await this.repo.lastCharCode(textureID);
+		const pathsToCreate: InputPath[] = [];
+		const usesToCreate = uses.map((use, charOffset) => {
+			// add one to start after the previous letter
+			const nextLetter = String.fromCharCode(lastCharCode + 1 + charOffset);
+			const newUseID = `${textureID}${nextLetter}`
+			// flat paths array to save requests
+			if (use.paths?.length) pathsToCreate.push(...use.paths.map((p) => ({ ...p, use: newUseID })));
+			return {
+				id: newUseID,
+				name: use.name,
+				edition: use.edition,
+				texture: Number(textureID),
+			};
+		});
+
+		await this.createMultipleUses(usesToCreate);
+		if (pathsToCreate.length) await this.pathService.createMultiplePaths(pathsToCreate);
 	}
 }

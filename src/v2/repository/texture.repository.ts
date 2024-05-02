@@ -23,11 +23,11 @@ export default class TextureFirestormRepository implements TextureRepository {
 		if (tag === undefined && search === undefined) return this.getRaw().then(Object.values);
 
 		// * number id: get + includes tag?
-		const numberID = search !== undefined ? parseInt(search, 10) : NaN;
-		if (!Number.isNaN(numberID) && numberID.toString() === search.toString()) {
-			const tex: Texture = await textures.get(numberID).catch(() => undefined);
+		const numberID = search !== undefined ? Number(search) : NaN;
+		if (!Number.isNaN(numberID)) {
+			const tex = await textures.get(numberID).catch(() => {});
+			if (!tex) return [];
 
-			if (tex === undefined) return [];
 			if (tag === undefined || tex.tags.includes(tag)) return [tex];
 
 			return [];
@@ -81,48 +81,43 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return this.searchTexturePropertyByNameOrId<null>(nameOrID, null) as any;
 	}
 
-	public searchTexturePropertyByNameOrId<Property extends TextureProperty>(
+	public async searchTexturePropertyByNameOrId<Property extends TextureProperty>(
 		nameOrID: string | number,
 		property: Property,
 	): Promise<PropertyToOutput<Property>> {
-		const intID: number = parseInt(nameOrID as string, 10);
+		const intID = Number(nameOrID);
 
-		if (Number.isNaN(intID) || intID.toString() !== nameOrID.toString()) {
-			nameOrID = nameOrID.toString();
+		if (!Number.isNaN(intID)) return this.getTextureById(intID, property);
+		const name = nameOrID.toString();
 
-			/**
-			 * What do we do ? How do we search ?
-			 * - if it starts/ends with an "_", the name is considered as incomplete => include mode
-			 * - if not, the name is considered as full                              => exact match mode
-			 * 		- if no results for the exact match (and search is long enough), use the include mode instead
-			 */
-			if (nameOrID.startsWith("_") || nameOrID.endsWith("_")) {
-				return textures
-					.search([{ field: "name", criteria: "includes", value: nameOrID, ignoreCase: true }])
-					.then((texturesFound: Textures) => {
-						if (property === null) return texturesFound;
-						return Promise.all(texturesFound.map((t) => t[property as string]()));
-					});
-			}
-
-			return textures
-				.search([{ field: "name", criteria: "==", value: nameOrID, ignoreCase: true }])
-				.then((res) => {
-					// super costly to search "includes" with a short name, return whatever we have
-					if (nameOrID.toString().length < 3) return res;
-					if (res.length === 0)
-						return textures.search([
-							{ field: "name", criteria: "includes", value: nameOrID, ignoreCase: true },
-						]);
-					return res;
-				})
-				.then((otherTexturesFound: Textures) => {
-					if (property === null) return otherTexturesFound;
-					return Promise.all(otherTexturesFound.map((t) => t[property as string]()));
-				});
+		/**
+		 * TEXTURE SEARCH ALGORITHM
+		 * - if it starts/ends with an "_", considered partial search => include mode
+		 * - if not, the name is considered as full                   => exact match mode
+		 * - if there's no results for the exact match (and search is long enough), switch to include
+		 */
+		if (name.startsWith("_") || name.endsWith("_")) {
+			const partialMatches = await textures.search([
+				{ field: "name", criteria: "includes", value: name, ignoreCase: true },
+			]);
+			if (property === null) return partialMatches as any;
+			return Promise.all(partialMatches.map((t) => t[property as string]()));
 		}
 
-		return this.getTextureById(intID, property);
+		return textures
+			.search([{ field: "name", criteria: "==", value: name, ignoreCase: true }])
+			.then((exactMatches) => {
+				// return whatever we have if short name
+				if (name.length < 3 || exactMatches.length) return exactMatches;
+				// partial search if no exact results found
+				return textures.search([
+					{ field: "name", criteria: "includes", value: name, ignoreCase: true },
+				]);
+			})
+			.then((includeMatches) => {
+				if (property === null) return includeMatches;
+				return Promise.all(includeMatches.map((t) => t[property as string]()));
+			});
 	}
 
 	public getTextureById<Property extends TextureProperty>(
