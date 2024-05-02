@@ -1,11 +1,10 @@
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
-import { PackID, Texture, Textures, InputPath, Uses, FirestormUse, EntireUseToCreate } from "../interfaces";
+import { PackID, Texture, Textures, EntireUseToCreate } from "../interfaces";
 import {
 	Edition,
 	EntireTextureToCreate,
 	TextureCreationParam,
 	TextureProperty,
-	TextureAll,
 	PropertyToOutput,
 } from "../interfaces/textures";
 import TextureFirestormRepository from "../repository/texture.repository";

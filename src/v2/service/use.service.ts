@@ -97,7 +97,7 @@ export default class UseService {
 		const usesToCreate = uses.map((use, charOffset) => {
 			// add one to start after the previous letter
 			const nextLetter = String.fromCharCode(lastCharCode + 1 + charOffset);
-			const newUseID = `${textureID}${nextLetter}`
+			const newUseID = `${textureID}${nextLetter}`;
 			// flat paths array to save requests
 			if (use.paths?.length) pathsToCreate.push(...use.paths.map((p) => ({ ...p, use: newUseID })));
 			return {
