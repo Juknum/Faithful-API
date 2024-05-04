@@ -75,17 +75,9 @@ export default class PathService {
 		if (!versions.includes(body.version))
 			return Promise.reject(new BadRequestError("Incorrect input path version provided"));
 
-		const versionArray: string[] = (await settings.get("versions"))[body.edition];
-
-		// add to start of array, array-push would add to end and mess up ordering otherwise
-		versionArray.unshift(body.newVersion);
-
-		settings.editField({
-			id: "versions",
-			field: body.edition,
-			operation: "set",
-			value: versionArray,
-		});
+		const s = await settings.readRaw();
+		s.versions[body.edition] = [body.newVersion, ...versions];
+		settings.writeRaw(s);
 
 		return this.repo.addNewVersionToVersion(body.version, body.newVersion);
 	}
