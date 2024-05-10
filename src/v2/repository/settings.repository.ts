@@ -4,7 +4,7 @@ import { SettingsRepository } from "../interfaces";
 
 export default class SettingsFirestormRepository implements SettingsRepository {
 	getRaw(): Promise<Record<string, any>> {
-		return settings.readRaw();
+		return settings.readRaw(true);
 	}
 
 	update(body: Record<string, any>): Promise<WriteConfirmation> {

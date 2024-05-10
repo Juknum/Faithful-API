@@ -52,7 +52,7 @@ export default class PathService {
 			.then(() => this.repo.updatePath(id, path));
 	}
 
-	async modifyVersion(oldVersion: string, newVersion: string): Promise<{ success: boolean[] }> {
+	async modifyVersion(oldVersion: string, newVersion: string): Promise<WriteConfirmation> {
 		const allVersions = await settings.get("versions");
 		const edition = Object.entries(allVersions).find((v) => v[1].includes(oldVersion))?.[0];
 
@@ -67,7 +67,7 @@ export default class PathService {
 		return this.repo.modifyVersion(oldVersion, newVersion);
 	}
 
-	async addVersion(body: PathNewVersionParam): Promise<{ success: boolean[] }> {
+	async addVersion(body: PathNewVersionParam): Promise<WriteConfirmation> {
 		// stupid workaround for recursion (the classes require each other)
 		const versions = await TextureService.getInstance().getVersionByEdition(body.edition);
 
@@ -75,9 +75,13 @@ export default class PathService {
 		if (!versions.includes(body.version))
 			return Promise.reject(new BadRequestError("Incorrect input path version provided"));
 
-		const s = await settings.readRaw();
-		s.versions[body.edition] = [body.newVersion, ...versions];
-		settings.writeRaw(s);
+		settings.editField({
+			id: "versions",
+			field: body.edition,
+			operation: "array-splice",
+			// equivalent of array_unshift (new versions go at start of list)
+			value: [0, 0, body.newVersion],
+		});
 
 		return this.repo.addNewVersionToVersion(body.version, body.newVersion);
 	}

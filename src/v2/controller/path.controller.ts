@@ -72,7 +72,7 @@ export class PathsController extends Controller {
 	public modifyVersion(
 		@URLPath() old_version: string,
 		@URLPath() new_version: string,
-	): Promise<{ success: boolean[] }> {
+	): Promise<WriteConfirmation> {
 		return this.service.modifyVersion(old_version, new_version);
 	}
 
@@ -84,7 +84,7 @@ export class PathsController extends Controller {
 	@Post("versions/add")
 	@Security("bot")
 	@Security("discord", ["administrator"])
-	public addVersion(@Body() body: PathNewVersionParam): Promise<{ success: boolean[] }> {
+	public addVersion(@Body() body: PathNewVersionParam): Promise<WriteConfirmation> {
 		return this.service.addVersion(body);
 	}
 

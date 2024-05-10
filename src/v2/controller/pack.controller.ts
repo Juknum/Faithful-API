@@ -60,7 +60,7 @@ export class PackController extends Controller {
 	public renamePack(
 		@Path() old_pack: PackID,
 		@Path() new_pack: string,
-	): Promise<{ success: boolean[] }> {
+	): Promise<WriteConfirmation> {
 		return this.service.renamePack(old_pack, new_pack);
 	}
 

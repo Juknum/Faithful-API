@@ -18,12 +18,12 @@ export default class PathFirestormRepository implements PathRepository {
 		];
 
 		if (version === "latest") {
-			const s = await settings.readRaw();
+			const s = await settings.readRaw(true);
 			search.push({
 				field: "versions",
 				criteria: "array-contains-any",
 				value: Object.entries(s.versions)
-					.filter(([k]) => k !== "id")
+					.filter(([k]) => k !== ID_FIELD)
 					// latest is always at top
 					.map(([, obj]) => obj[0]),
 			});
@@ -73,7 +73,7 @@ export default class PathFirestormRepository implements PathRepository {
 		return this.getPathById(pathID);
 	}
 
-	async modifyVersion(oldVersion: string, newVersion: string): Promise<{ success: boolean[] }> {
+	async modifyVersion(oldVersion: string, newVersion: string): Promise<WriteConfirmation> {
 		const raw = await this.getRaw();
 		return paths.editFieldBulk(
 			Object.values(raw)
@@ -88,10 +88,7 @@ export default class PathFirestormRepository implements PathRepository {
 		);
 	}
 
-	async addNewVersionToVersion(
-		version: string,
-		newVersion: string,
-	): Promise<{ success: boolean[] }> {
+	async addNewVersionToVersion(version: string, newVersion: string): Promise<WriteConfirmation> {
 		const raw = await this.getRaw();
 		return paths.editFieldBulk(
 			Object.values(raw)

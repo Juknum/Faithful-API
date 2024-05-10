@@ -1,14 +1,6 @@
-import { EditField, WriteConfirmation } from "firestorm-db";
+import { WriteConfirmation } from "firestorm-db";
 import { contributions } from "../firestorm";
-import {
-	Pack,
-	Packs,
-	PackID,
-	PackSearch,
-	CreationPackAll,
-	PackAll,
-	Contribution,
-} from "../interfaces";
+import { Pack, Packs, PackID, PackSearch, CreationPackAll, PackAll } from "../interfaces";
 import PackFirestormRepository from "../repository/pack.repository";
 
 export default class PackService {
@@ -34,19 +26,20 @@ export default class PackService {
 		return this.repo.getAllTags();
 	}
 
-	public async renamePack(oldPack: PackID, newPack: string): Promise<{ success: boolean[] }> {
+	public async renamePack(oldPack: PackID, newPack: string): Promise<WriteConfirmation> {
 		this.repo.renamePack(oldPack, newPack);
 
 		const r = await contributions.readRaw();
 		const old = Object.values(r);
 		const filtered = old.filter((c) => c.pack === oldPack);
-		const edits: EditField<Contribution>[] = filtered.map((p) => ({
-			id: p.id,
-			field: "pack",
-			operation: "set",
-			value: newPack,
-		}));
-		return contributions.editFieldBulk(edits);
+		return contributions.editFieldBulk(
+			filtered.map((p) => ({
+				id: p.id,
+				field: "pack",
+				operation: "set",
+				value: newPack,
+			})),
+		);
 	}
 
 	public serializeDisplayName(name: string): string {
