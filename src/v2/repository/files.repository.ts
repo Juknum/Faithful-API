@@ -70,7 +70,7 @@ export class FileFirestormRepository implements FileRepository {
 		form.append("file", buffer, filename);
 		form.append("overwrite", String(overwrite === true));
 
-		return firestorm.files.upload(form as any);
+		return firestorm.files.upload(form);
 	}
 
 	remove(path: string): Promise<WriteConfirmation> {
