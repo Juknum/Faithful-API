@@ -68,9 +68,7 @@ export default class UseFirestormRepository implements UseRepository {
 	}
 
 	set(use: Use): Promise<Use> {
-		// Clone object because Firestorm removes ID fields internally
-		// JS objects work on references so use.id would become undefined after being set
-		return uses.set(use.id, structuredClone(use)).then(() => uses.get(use.id));
+		return uses.set(use.id, use).then(() => uses.get(use.id));
 	}
 
 	async setMultiple(useArray: Uses): Promise<Uses> {
