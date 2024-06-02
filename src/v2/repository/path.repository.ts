@@ -79,7 +79,7 @@ export default class PathFirestormRepository implements PathRepository {
 			Object.values(raw)
 				.filter((p) => p.versions.includes(oldVersion))
 				.map((p) => ({
-					id: p.id,
+					id: p[ID_FIELD],
 					field: "versions",
 					operation: "set",
 					// replace old version with new version

@@ -1,5 +1,5 @@
-import { WriteConfirmation } from "firestorm-db";
-import { users } from "../firestorm";
+import { ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { users, contributions, addons } from "../firestorm";
 import {
 	Addons,
 	Contributions,
@@ -117,6 +117,43 @@ export default class UserFirestormRepository implements UserRepository {
 
 		const arr = await users.search(options);
 		return arr.map(mapUser);
+	}
+
+	async changeUserID(oldID: string, newID: string): Promise<WriteConfirmation> {
+		const user = await users.get(oldID);
+		user[ID_FIELD] = newID;
+		users.set(newID, user);
+
+		// replace user's contributions
+		const rawContributions = await contributions.readRaw();
+		await contributions.editFieldBulk(
+			Object.values(rawContributions)
+				.filter((c) => c.authors.includes(oldID))
+				.map((c) => ({
+					id: c[ID_FIELD],
+					field: "authors",
+					operation: "set",
+					// replace old user with new user and remove duplicates
+					value: Array.from(new Set(c.authors.map((v) => (v === oldID ? newID : v)))),
+				})),
+		);
+
+		// replace user's addons
+		const rawAddons = await addons.readRaw();
+		await addons.editFieldBulk(
+			Object.values(rawAddons)
+				.filter((a) => a.authors.includes(oldID))
+				.map((a) => ({
+					id: a[ID_FIELD],
+					field: "authors",
+					operation: "set",
+					// replace old user with new user and remove duplicates
+					value: Array.from(new Set(a.authors.map((v) => (v === oldID ? newID : v)))),
+				})),
+		);
+
+		// remove user after set succeeds (prevent accidentally deleting user)
+		return users.remove(oldID);
 	}
 
 	getRoles(): Promise<Array<string>> {

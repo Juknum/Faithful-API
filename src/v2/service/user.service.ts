@@ -101,6 +101,10 @@ export default class UserService {
 		return this.repo.getAddonsById(id);
 	}
 
+	public changeUserID(oldID: string, newID: string): Promise<WriteConfirmation> {
+		return this.repo.changeUserID(oldID, newID);
+	}
+
 	public getProfileOrCreate(id: string): Promise<User> {
 		return this.repo.getProfileOrCreate(id);
 	}

@@ -183,6 +183,16 @@ export class UserController extends Controller {
 		return this.userService.getAllAddons(id);
 	}
 
+	@Put("change/{old_id}/{new_id}")
+	@Security("discord", ["administrator"])
+	@Security("bot")
+	public async changeUserID(
+		@Path() old_id: string,
+		@Path() new_id: string,
+	): Promise<WriteConfirmation> {
+		return this.userService.changeUserID(old_id, new_id);
+	}
+
 	/**
 	 * Create user data
 	 * @param body User data
