@@ -13,7 +13,7 @@ export default class PostService {
 
 	public async getByIdOrPermalink(idOrPermalink: string): Promise<WebsitePost> {
 		let postFound: WebsitePost | undefined; // undefined
-		const parsed = Number.parseInt(idOrPermalink, 10);
+		const parsed = Number(idOrPermalink);
 
 		if (!Number.isNaN(parsed)) postFound = await this.getById(parsed).catch(() => undefined);
 

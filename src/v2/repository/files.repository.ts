@@ -63,7 +63,7 @@ export class FileFirestormRepository implements FileRepository {
 		path: string,
 		filename: string,
 		buffer: Buffer,
-		overwrite: Boolean,
+		overwrite: boolean,
 	): Promise<WriteConfirmation> {
 		const form = new FormData();
 		form.append("path", path);

@@ -59,7 +59,7 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			{
 				field: "texture",
 				criteria: "==",
-				value: parseInt(el[firestorm.ID_FIELD], 10),
+				value: Number(el[firestorm.ID_FIELD]),
 			},
 		]);
 

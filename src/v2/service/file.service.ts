@@ -33,7 +33,7 @@ export default class FileService {
 		path: string,
 		filename: string,
 		buffer: Buffer,
-		overwrite: Boolean = false,
+		overwrite = false,
 	): Promise<WriteConfirmation> {
 		return this.repo.upload(path, filename, buffer, overwrite);
 	}

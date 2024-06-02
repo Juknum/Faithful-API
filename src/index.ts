@@ -99,10 +99,9 @@ app.use((err: any, req: Request, res: Response, next: NextFunction): Promise<voi
 		if (err.isAxiosError)
 			console.error("axios error: body, headers, err", req.body, req.headers, err);
 		code =
-			parseInt(
+			Number(
 				(typeof err.status === "number" ? err.status : err.statusCode) ||
 					(err.response ? err.response.status : err.code),
-				10,
 			) || 400;
 		const message =
 			(err.response && err.response.data

@@ -32,10 +32,10 @@ export default class AddonService {
 	private readonly addonRepo = new AddonFirestormRepository();
 
 	public async getIdFromPath(idOrSlug: string): Promise<[number, Addon | undefined]> {
-		const intID: number = parseInt(idOrSlug, 10);
+		const intID = Number(idOrSlug);
 
 		// if slug
-		if (Number.isNaN(intID) || intID.toString() !== idOrSlug) {
+		if (Number.isNaN(intID)) {
 			const addon = await this.getAddonBySlug(idOrSlug);
 			if (!addon) throw new NotFoundError(`Add-on ${idOrSlug} not found`);
 			return [addon.id as number, addon];
@@ -523,7 +523,7 @@ export default class AddonService {
 		id: number,
 		addon: Addon,
 		before: AddonStatus,
-		notify: Boolean = true,
+		notify = true,
 	): Promise<Addon> {
 		const a = await this.addonRepo.update(id, addon);
 		if (notify) await this.notifyAddonChange(a, before).catch(console.error);

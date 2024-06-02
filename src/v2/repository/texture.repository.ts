@@ -92,9 +92,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 
 		/**
 		 * TEXTURE SEARCH ALGORITHM
-		 * - if it starts/ends with an "_", considered partial search => include mode
-		 * - if not, the name is considered as full                   => exact match mode
-		 * - if there's no results for the exact match (and search is long enough), switch to include
+		 * - if starts/ends with "_", partial search => include mode
+		 * - if not, the name is considered as full  => exact match mode
+		 * - if no results for exact (and search is long enough), switch to include
 		 */
 		if (name.startsWith("_") || name.endsWith("_")) {
 			const partialMatches = await textures.search([

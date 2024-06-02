@@ -25,7 +25,7 @@ export default {
 		return readFile(keyToPath(key)).then((content) => {
 			const json = JSON.parse(content.toString());
 			const timestampStr = Object.keys(json)[0];
-			const timestamp = Number.parseInt(timestampStr, 10);
+			const timestamp = Number(timestampStr);
 
 			return [new Date().getTime() - timestamp > CACHE_DURATION, json[timestampStr]];
 		});

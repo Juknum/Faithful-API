@@ -59,7 +59,7 @@ export default class GalleryService {
 		const texturesFound = await this.textureService.getByNameIdAndTag(tag, search);
 
 		if (texturesFound.length === 0) return [];
-		const ids = texturesFound.map((t) => Number.parseInt(t.id, 10));
+		const ids = texturesFound.map((t) => Number(t.id));
 
 		const usesFound = await this.useService.getUsesByIdsAndEdition(ids, edition);
 		if (usesFound.length === 0) return [];
@@ -119,6 +119,7 @@ export default class GalleryService {
 			Object.keys(useToPath)
 				.filter((useId) => useToPath[useId]?.mcmeta)
 				.map((useId) =>
+					// use parseInt to strip the last character
 					textures
 						.get(Number.parseInt(useId, 10))
 						.then((t) => t.mcmeta())

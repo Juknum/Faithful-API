@@ -70,7 +70,7 @@ export default class UserService {
 		const str = idOrUsername.split("");
 		let same = true;
 		int.forEach((i, index) => {
-			same = !!(i.toString() === str[index] && same === true);
+			same = i.toString() === str[index] && same === true;
 		});
 
 		if (same) return this.getUserById(idOrUsername);

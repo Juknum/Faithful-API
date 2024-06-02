@@ -35,7 +35,7 @@ export class SettingsController extends Controller {
 	@SuccessResponse(200)
 	@Response<NotFoundError>(404)
 	@Get("{path}")
-	public async get(@Path() path: String): Promise<any> {
+	public async get(@Path() path: string): Promise<any> {
 		const splitPath = path.split(".");
 
 		const response = await this.settingsService.get(splitPath);

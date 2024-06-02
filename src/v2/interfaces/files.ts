@@ -37,7 +37,7 @@ export interface FileRepository {
 		path: string,
 		filename: string,
 		buffer: Buffer,
-		overwrite: Boolean,
+		overwrite: boolean,
 	): Promise<WriteConfirmation>;
 	remove(path: string): Promise<WriteConfirmation>;
 }
