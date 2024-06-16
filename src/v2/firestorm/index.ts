@@ -3,7 +3,7 @@ export * from "./textures/paths";
 export * from "./textures/uses";
 export * from "./textures/contributions";
 export * from "./users";
-export * from "./posts/files";
+export * from "./files";
 export * from "./addons";
 export * from "./settings";
 export * from "./packs";

@@ -1,8 +1,8 @@
 import firestorm from "firestorm-db";
-import { Contributions, Addons, FirestormUser } from "../../interfaces";
-import { contributions } from "..";
-import { addons } from "../addons";
-import "../config";
+import { Contributions, Addons, FirestormUser } from "../interfaces";
+import { contributions } from ".";
+import { addons } from "./addons";
+import "./config";
 
 export const users = firestorm.collection<FirestormUser>("users", (el) => {
 	el.contributions = (): Promise<Contributions> =>
