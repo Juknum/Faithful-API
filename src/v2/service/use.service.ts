@@ -75,8 +75,8 @@ export default class UseService {
 	}
 
 	async appendUse(textureID: string, use: EntireUseToCreate): Promise<void> {
-		const lastCharCode = await this.repo.lastCharCode(textureID);
-		const nextLetter = String.fromCharCode(lastCharCode + 1);
+		const nextCharCode = await this.repo.nextCharCode(textureID);
+		const nextLetter = String.fromCharCode(nextCharCode);
 		const newUseID = `${textureID}${nextLetter}`;
 		const pathsWithUse: InputPath[] = use.paths.map((p) => ({ ...p, use: newUseID }));
 
@@ -92,11 +92,11 @@ export default class UseService {
 	}
 
 	async appendMultipleUses(textureID: string, uses: EntireUseToCreate[]): Promise<void> {
-		const lastCharCode = await this.repo.lastCharCode(textureID);
+		const nextCharCode = await this.repo.nextCharCode(textureID);
 		const pathsToCreate: InputPath[] = [];
 		const usesToCreate = uses.map((use, charOffset) => {
-			// add one to start after the previous letter
-			const nextLetter = String.fromCharCode(lastCharCode + 1 + charOffset);
+			// get next letter for each use
+			const nextLetter = String.fromCharCode(nextCharCode + charOffset);
 			const newUseID = `${textureID}${nextLetter}`;
 			// flat paths array to save requests
 			if (use.paths?.length) pathsToCreate.push(...use.paths.map((p) => ({ ...p, use: newUseID })));
