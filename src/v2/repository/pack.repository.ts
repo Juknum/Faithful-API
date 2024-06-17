@@ -1,4 +1,5 @@
 import { ID_FIELD, SearchOption, WriteConfirmation } from "firestorm-db";
+import SubmissionService from "../service/submission.service";
 import {
 	PackRepository,
 	Pack,
@@ -10,7 +11,6 @@ import {
 	PackSearch,
 } from "../interfaces";
 import { contributions, packs } from "../firestorm";
-import SubmissionService from "v2/service/submission.service";
 
 export default class PackFirestormRepository implements PackRepository {
 	private readonly submissionRepo = new SubmissionService();
