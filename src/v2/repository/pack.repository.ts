@@ -10,10 +10,10 @@ import {
 	PackSearch,
 } from "../interfaces";
 import { contributions, packs } from "../firestorm";
-import SubmissionFirestormRepository from "./submission.repository";
+import SubmissionService from "v2/service/submission.service";
 
 export default class PackFirestormRepository implements PackRepository {
-	private readonly submissionRepo = new SubmissionFirestormRepository();
+	private readonly submissionRepo = new SubmissionService();
 
 	getRaw(): Promise<Record<string, Pack>> {
 		return packs.readRaw();
