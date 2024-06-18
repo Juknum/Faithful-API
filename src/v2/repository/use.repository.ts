@@ -40,7 +40,7 @@ export default class UseFirestormRepository implements UseRepository {
 		);
 	}
 
-	async nextCharCode(textureID: string): Promise<number> {
+	async lastCharCode(textureID: string): Promise<number> {
 		const foundUses = await uses.search([
 			{
 				field: "texture",
@@ -58,8 +58,8 @@ export default class UseFirestormRepository implements UseRepository {
 
 				if (curCode > best) return curCode;
 				return best;
-			}, // start at a and work upwards
-			"a".charCodeAt(0),
+			}, // subtract one since we're adding one later
+			"a".charCodeAt(0) - 1,
 		);
 	}
 
