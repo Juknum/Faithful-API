@@ -55,6 +55,7 @@ export interface AddonCreationParam extends AddonDataParam {
 
 export interface AddonUpdateParam extends AddonCreationParam {
 	reason: string;
+	slug?: string; // only used for admin edits
 }
 
 export interface AddonAll extends Addon {
