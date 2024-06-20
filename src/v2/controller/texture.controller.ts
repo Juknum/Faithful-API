@@ -64,8 +64,8 @@ export class TextureController extends Controller {
 	}
 
 	/**
-	 * Get current contributed resolutions in the database
-	 * Integer array of square 2
+	 * Get all pack resolutions in the database
+	 * @returns array of integers
 	 */
 	@Get("resolutions")
 	public getResolutions(): Promise<Array<number>> {

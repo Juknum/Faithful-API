@@ -10,7 +10,7 @@ import {
 	PropertyToOutput,
 } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";
-import { textures, paths, uses, contributions, settings } from "../firestorm";
+import { textures, paths, uses, contributions, settings, packs } from "../firestorm";
 import { MinecraftSorter } from "../tools/sorter";
 
 export default class TextureFirestormRepository implements TextureRepository {
@@ -137,7 +137,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public getResolutions(): Promise<Array<number>> {
-		return contributions.values({ field: "resolution" }).then((res) => res.sort());
+		return packs.values({ field: "resolution" }).then((res) => res.sort());
 	}
 
 	public getTags(): Promise<Array<string>> {

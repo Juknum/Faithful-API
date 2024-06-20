@@ -3,7 +3,6 @@ import { PackID } from "./packs";
 
 export interface ContributionCreationParams {
 	date: number; // unix timestamp
-	resolution: number; // usually a square of two
 	pack: PackID; // resource pack name
 	authors: Array<string>; // discord user ids
 	texture: string; // texture id
