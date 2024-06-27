@@ -70,7 +70,7 @@ export default {
 		let regex = /cache-.+\.json$/;
 		if (pattern) {
 			const p = pattern.toString().split("/")[1];
-			regex = new RegExp(`cache-${p}\.json$`);
+			regex = new RegExp(`cache-${p}.json$`);
 		}
 		return readdir(folder()).then((entries) =>
 			Promise.all(entries.filter((f) => regex.test(f)).map((f) => unlink(join(folder(), f)))),
