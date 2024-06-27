@@ -1,4 +1,4 @@
-import { Controller, Get, Path, Query, Route, Tags } from "tsoa";
+import { Controller, Get, Path, Query, Route, Security, Tags } from "tsoa";
 import {
 	AcceptedRes,
 	GalleryModalResult,
@@ -88,5 +88,15 @@ export class GalleryController extends Controller {
 			urls,
 			texture,
 		};
+	}
+
+	/**
+	 * Purge gallery cache
+	 */
+	@Get("cache/purge")
+	@Security("bot")
+	@Security("discord", ["administrator"])
+	public purgeCache(): Promise<void[]> {
+		return cache.purge(/gallery-.+/);
 	}
 }

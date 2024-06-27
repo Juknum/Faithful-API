@@ -1,6 +1,7 @@
 import { readdir, readFile, unlink, writeFile } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
+import { existsSync, mkdirSync } from "fs";
 
 const NO_CACHE = process.env.NO_CACHE === "true";
 
@@ -10,7 +11,11 @@ const REWRITE_INDEX = 0;
 const WRITE_INDEX = 0;
 const VALUE_INDEX = 1;
 
-const folder = () => tmpdir();
+const folder = () => {
+	const path = join(tmpdir(), "faithful_api");
+	if (!existsSync(path)) mkdirSync(path, { recursive: true });
+	return path;
+};
 
 const keyToPath = (key: string): string => {
 	const escapedKey = key.replace(/(\/|\\)/g, "-");
@@ -35,12 +40,10 @@ export default {
 		json[new Date().getTime()] = value;
 		return writeFile(keyToPath(key), JSON.stringify(json));
 	},
-
 	delete(key: string): Promise<void> {
 		const path = keyToPath(key);
 		return unlink(path);
 	},
-
 	handle<T>(key: string, callback: () => T): T {
 		return this.read(key)
 			.catch(() => Promise.all([true, callback()]))
@@ -63,10 +66,14 @@ export default {
 				return Promise.resolve(value);
 			});
 	},
-	purge() {
-		const REGEX = /cache-[.]\.json$/;
-		readdir(folder()).then((entries) =>
-			Promise.all(entries.filter((f) => REGEX.test(f)).map((f) => unlink(f))),
+	purge(pattern?: RegExp): Promise<void[]> {
+		let regex = /cache-.+\.json$/;
+		if (pattern) {
+			const p = pattern.toString().split("/")[1];
+			regex = new RegExp(`cache-${p}\.json$`);
+		}
+		return readdir(folder()).then((entries) =>
+			Promise.all(entries.filter((f) => regex.test(f)).map((f) => unlink(join(folder(), f)))),
 		);
 	},
 };
