@@ -2,11 +2,10 @@ import { WriteConfirmation } from "firestorm-db";
 
 export interface Post {
 	id: string; // post unique id
-	name: string; // addon name (> 5 && < 30)
-	description: string; // addon description (> 256 && < 4096)
+	name: string; // post name (> 5 && < 30)
+	description: string; // post description (> 256 && < 4096)
 	authors: Array<string>; // discord users IDs
-	comments: boolean; // true if comments are enabled on this addon
-	slug: string; // used in link & as comments id (ex: 'www.faithfulpack.net/addons/Faithful3D')
+	slug: string; // used in link (ex: 'www.faithfulpack.net/faithful32x/R2')
 }
 export interface Posts extends Array<Post> {}
 
