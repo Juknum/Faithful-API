@@ -3,7 +3,7 @@ import { Request as ExRequest } from "express";
 import { Mod } from "../interfaces";
 import { NotFoundError } from "../tools/ApiError";
 import ModsService from "../service/mods.service";
-import cache from "../tools/cache";
+import * as cache from "../tools/cache";
 
 @Route("mods")
 @Tags("Mods")

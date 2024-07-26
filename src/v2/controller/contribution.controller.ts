@@ -22,7 +22,7 @@ import {
 } from "../interfaces";
 import ContributionService from "../service/contribution.service";
 import { NotAvailableError } from "../tools/ApiError";
-import cache from "../tools/cache";
+import * as cache from "../tools/cache";
 
 @Route("contributions")
 @Tags("Contributions")

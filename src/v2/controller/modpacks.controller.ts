@@ -2,7 +2,7 @@ import { Controller, Get, Path, Request, Route, SuccessResponse, Tags } from "ts
 import { Request as ExRequest } from "express";
 import { Modpack } from "../interfaces";
 import ModpacksService from "../service/modpacks.service";
-import cache from "../tools/cache";
+import * as cache from "../tools/cache";
 
 @Route("modpacks")
 @Tags("Modpacks")

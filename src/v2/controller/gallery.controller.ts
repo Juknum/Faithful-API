@@ -8,7 +8,7 @@ import {
 } from "../interfaces";
 import GalleryService from "../service/gallery.service";
 import TextureService from "../service/texture.service";
-import cache from "../tools/cache";
+import * as cache from "../tools/cache";
 import PackService from "../service/pack.service";
 
 @Route("gallery")

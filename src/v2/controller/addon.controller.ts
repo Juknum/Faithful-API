@@ -1,4 +1,4 @@
-import { Request as ExRequest, Response as ExResponse } from "express";
+import { Request as ExRequest } from "express";
 import {
 	Controller,
 	Get,
@@ -25,7 +25,7 @@ import {
 
 import AddonService from "../service/addon.service";
 import { NotAvailableError, NotFoundError, PermissionError } from "../tools/ApiError";
-import cache from "../tools/cache";
+import * as cache from "../tools/cache";
 
 @Route("addons")
 @Tags("Add-ons")
@@ -141,8 +141,7 @@ export class AddonController extends Controller {
 		let headerFileURL = await this.service.getHeaderFileURL(addonID);
 		if (headerFileURL.startsWith("/")) headerFileURL = process.env.DB_IMAGE_ROOT + headerFileURL;
 
-		const response = (<any>request).res as ExResponse;
-		response.redirect(headerFileURL);
+		request.res.redirect(headerFileURL);
 	}
 
 	/**
@@ -248,8 +247,7 @@ export class AddonController extends Controller {
 	) {
 		const [addonID] = await this.service.getAddonFromSlugOrId(id_or_slug);
 		const screenshotURL = await this.service.getScreenshotURL(addonID, index);
-		const response = (<any>request).res as ExResponse;
-		response.redirect(screenshotURL);
+		request.res.redirect(screenshotURL);
 	}
 
 	/**

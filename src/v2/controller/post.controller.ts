@@ -1,4 +1,4 @@
-import { Request as ExRequest, Response as ExResponse } from "express";
+import { Request as ExRequest } from "express";
 import {
 	Controller,
 	Get,
@@ -25,7 +25,7 @@ import {
 } from "../interfaces";
 
 import { BadRequestError, NotFoundError, PermissionError } from "../tools/ApiError";
-import cache from "../tools/cache";
+import * as cache from "../tools/cache";
 import PostService from "../service/post.service";
 
 @Route("posts")
@@ -93,8 +93,7 @@ export class PostController extends Controller {
 		const { headerImg } = await this.service.getById(id);
 		if (!headerImg) throw new NotFoundError("Post header image not found");
 
-		const response = (<any>request).res as ExResponse;
-		response.redirect(302, headerImg);
+		request.res.redirect(302, headerImg);
 	}
 
 	/**

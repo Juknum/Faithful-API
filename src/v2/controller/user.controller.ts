@@ -26,7 +26,7 @@ import {
 	Username,
 } from "../interfaces";
 import UserService from "../service/user.service";
-import cache from "../tools/cache";
+import * as cache from "../tools/cache";
 
 @Route("users")
 @Tags("Users")

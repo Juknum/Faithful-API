@@ -10,15 +10,7 @@ export default class SettingsService {
 
 	async get(keys: string[]): Promise<any> {
 		const raw = await this.raw();
-
-		let result = raw[keys[0]];
-		let i = 1;
-		while (i < keys.length && result !== undefined) {
-			result = result[keys[i]];
-			i += 1;
-		}
-
-		return result;
+		return keys.reduce((acc, cur) => acc[cur], raw);
 	}
 
 	update(body: Record<string, any>): Promise<WriteConfirmation> {

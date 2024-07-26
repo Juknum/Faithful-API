@@ -1,4 +1,4 @@
-import { Request as ExRequest, Response as ExResponse } from "express";
+import { Request as ExRequest } from "express";
 import { Body, Controller, Get, Path, Post, Query, Request, Route, Tags } from "tsoa";
 import AuthService from "../service/auth.service";
 
@@ -15,14 +15,13 @@ export class AuthController extends Controller {
 	public discordAuthGrant(@Path() target: string, @Request() request: ExRequest) {
 		const redirectURI = this.service.getRedirectURI(request, target);
 
-		const response = (<any>request).res as ExResponse;
 		const params = new URLSearchParams();
 		params.append("client_id", process.env.DISCORD_CLIENT_ID);
 		params.append("response_type", "code");
 		params.append("scope", "identify");
 		params.append("redirect_uri", redirectURI);
 
-		response.redirect(`https://discord.com/api/oauth2/authorize?${params.toString()}`);
+		request.res.redirect(`https://discord.com/api/oauth2/authorize?${params.toString()}`);
 	}
 
 	/**
@@ -35,9 +34,8 @@ export class AuthController extends Controller {
 		@Path() target: string,
 		@Query() code?: string,
 	) {
-		const res = (<any>request).res as ExResponse;
 		// when you press cancel on the discord screen
-		if (!code) return res.redirect(this.service.targetToURL(target));
+		if (!code) return request.res.redirect(this.service.targetToURL(target));
 
 		const discordParams = new URLSearchParams();
 		discordParams.append("client_id", process.env.DISCORD_CLIENT_ID);
@@ -55,7 +53,7 @@ export class AuthController extends Controller {
 		const json: any = await tokenResponse.json();
 
 		if ("error" in json) {
-			res.status(500).json(json).end();
+			request.res.status(500).json(json).end();
 			return;
 		}
 
@@ -63,7 +61,7 @@ export class AuthController extends Controller {
 		targetParams.append("access_token", json.access_token);
 		targetParams.append("refresh_token", json.refresh_token);
 		targetParams.append("expires_in", json.expires_in);
-		res.redirect(`${this.service.targetToURL(target)}?${targetParams.toString()}`);
+		request.res.redirect(`${this.service.targetToURL(target)}?${targetParams.toString()}`);
 	}
 
 	/**
@@ -77,7 +75,6 @@ export class AuthController extends Controller {
 		params.append("grant_type", "refresh_token");
 		params.append("refresh_token", refresh_token);
 
-		const res = (<any>request).res as ExResponse;
 		const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
 			method: "POST",
 			body: params,
@@ -86,10 +83,10 @@ export class AuthController extends Controller {
 		const json: any = await tokenResponse.json();
 
 		if ("error" in json) {
-			res.status(500).json(json).end();
+			request.res.status(500).json(json).end();
 			return;
 		}
 
-		res.json(json).end();
+		request.res.json(json).end();
 	}
 }
