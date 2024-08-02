@@ -16,8 +16,7 @@ const folder = () => {
 
 const keyToPath = (key: string): string => {
 	const escapedKey = key.replace(/(\/|\\)/g, "-");
-	const p = join(folder(), `cache-${escapedKey}.json`);
-	return p;
+	return join(folder(), `cache-${escapedKey}.json`);
 };
 
 export interface CacheData<T> {
