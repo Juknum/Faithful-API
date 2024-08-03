@@ -139,7 +139,7 @@ export default class GalleryService {
 				const useID = textureToUse[t.id].id;
 				const pathID = useToPath[useID].id;
 				return {
-					id: t.id,
+					textureID: t.id,
 					useID,
 					pathID,
 					name: String(t.name),

@@ -5,7 +5,7 @@ import { PackID } from "./packs";
 import { Paths } from "./paths";
 
 export interface GalleryResult {
-	id: string;
+	textureID: string;
 	useID: string;
 	pathID: string;
 	name: string;
