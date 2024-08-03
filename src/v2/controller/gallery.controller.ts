@@ -24,15 +24,15 @@ export class GalleryController extends Controller {
 	 * Get gallery data with provided information
 	 * @param pack Pack being searched
 	 * @param edition Edition to search
-	 * @param mc_version Version to search
+	 * @param version Version to search
 	 * @param tag Tag to search
 	 * @param search Gallery search
 	 */
-	@Get("{pack}/{edition}/{mc_version}/{tag}/")
+	@Get("{pack}/{edition}/{version}/{tag}/")
 	public search(
 		@Path() pack: AcceptedRes | PackID,
 		@Path() edition: GalleryEdition,
-		@Path() mc_version: string,
+		@Path() version: string,
 		@Path() tag: string,
 		@Query() search?: string,
 	): Promise<GalleryResult[]> {
@@ -45,11 +45,11 @@ export class GalleryController extends Controller {
 		// legacy translation layer
 		const packID: PackID = Object.keys(RES_TO_PACKS).includes(pack) ? RES_TO_PACKS[pack] : pack;
 
-		return cache.handle(`gallery-${packID}-${edition}-${mc_version}-${tag}-${search ?? ""}`, () =>
+		return cache.handle(`gallery-${packID}-${edition}-${version}-${tag}-${search ?? ""}`, () =>
 			this.service.search(
 				packID,
 				edition,
-				mc_version,
+				version,
 				tag.toLowerCase() !== "all" ? tag : undefined,
 				search !== undefined && search.trim() !== "" ? search.trim() : undefined,
 			),
@@ -59,14 +59,14 @@ export class GalleryController extends Controller {
 	/**
 	 * Get gallery modal data with urls, mcmeta, texture, uses and paths
 	 * @param id Searched texture name
-	 * @param mc_version Minecraft version for the images
+	 * @param version Minecraft version for the images
 	 */
-	@Get("modal/{id}/{mc_version}")
-	public async modal(@Path() id: number, @Path() mc_version: string): Promise<GalleryModalResult> {
+	@Get("modal/{id}/{version}")
+	public async modal(@Path() id: number, @Path() version: string): Promise<GalleryModalResult> {
 		const packIDs = Object.keys(await this.packService.getRaw());
 		const urls: Record<PackID, string> = (
 			await Promise.allSettled(
-				packIDs.map((p) => this.textureService.getURLById(id, p, mc_version)),
+				packIDs.map((p) => this.textureService.getURLById(id, p, version)),
 			)
 		)
 			.map((e, i) => [packIDs[i], e])

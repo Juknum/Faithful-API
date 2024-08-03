@@ -5,13 +5,13 @@ import { PackID } from "./packs";
 import { Paths } from "./paths";
 
 export interface GalleryResult {
-	name: string;
-	pathID: string;
-	tags: string[];
-	textureID: string;
-	mcmeta: MCMETA;
-	url: string;
+	id: string;
 	useID: string;
+	pathID: string;
+	name: string;
+	tags: string[];
+	mcmeta: MCMETA; // unused currently
+	url: string;
 }
 
 export type AcceptedRes = "16x" | "32x" | "64x";

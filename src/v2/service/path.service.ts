@@ -25,8 +25,18 @@ export default class PathService {
 		return this.repo.getPathUseById(useID);
 	}
 
-	getPathsByUseIdsAndVersion(useIDs: string[], version: string): Promise<Paths> {
-		return this.repo.getPathsByUseIdsAndVersion(useIDs, version);
+	async getPathsByUseIdsAndVersion(
+		useIDs: string[],
+		version: string,
+	): Promise<Record<string, Path>> {
+		// return object for faster lookup
+		const paths = await this.repo.getPathsByUseIdsAndVersion(useIDs, version);
+		return paths.reduce((acc, cur) => {
+			// return after first path found (usually the most important one is first)
+			if (acc[cur.use]) return acc;
+			acc[cur.use] = cur;
+			return acc;
+		}, {});
 	}
 
 	createPath(path: InputPath): Promise<Path> {
@@ -45,7 +55,7 @@ export default class PathService {
 	}
 
 	updatePathById(id: string, path: Path): Promise<Path> {
-		if (id !== path.id) throw new BadRequestError("Updated ID is different from ID");
+		if (id !== path.id) throw new BadRequestError("Updated ID is different from existing ID");
 
 		return this.useService
 			.getUseByIdOrName(path.use) // verify use existence
