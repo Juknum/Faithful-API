@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 
-export class ApiError extends Error {
+export class APIError extends Error {
 	readonly statusCode: number;
 
 	constructor(name: string, statusCode: number, message?: string) {
@@ -10,25 +10,25 @@ export class ApiError extends Error {
 	}
 }
 
-export class BadRequestError extends ApiError {
+export class BadRequestError extends APIError {
 	constructor(message?: string) {
 		super("BadRequest", 400, message);
 	}
 }
 
-export class NotFoundError extends ApiError {
+export class NotFoundError extends APIError {
 	constructor(message?: string) {
 		super("NotFound", 404, message);
 	}
 }
 
-export class NotAvailableError extends ApiError {
+export class NotAvailableError extends APIError {
 	constructor(message?: string) {
 		super("ResourceNotAvailableYet", 408, message);
 	}
 }
 
-export class ForbiddenError extends ApiError {
+export class ForbiddenError extends APIError {
 	constructor(message?: string) {
 		super("Forbidden", 403, message);
 	}

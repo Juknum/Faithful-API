@@ -11,7 +11,7 @@ import {
 	Tags,
 } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
-import { NotFoundError, PermissionError } from "../tools/ApiError";
+import { NotFoundError, PermissionError } from "../tools/errors";
 import SettingsService from "../service/settings.service";
 
 @Route("settings")

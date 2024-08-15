@@ -15,7 +15,7 @@ import "../config";
 import { uses } from "./uses";
 import { contributions, packs } from "..";
 import { MinecraftSorter } from "../../tools/sorter";
-import { NotFoundError } from "../../tools/ApiError";
+import { NotFoundError } from "../../tools/errors";
 
 export const textures = firestorm.collection<FirestormTexture>("textures", (el) => {
 	el.uses = (): Promise<Uses> =>

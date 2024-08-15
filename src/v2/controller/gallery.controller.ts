@@ -65,9 +65,7 @@ export class GalleryController extends Controller {
 	public async modal(@Path() id: number, @Path() version: string): Promise<GalleryModalResult> {
 		const packIDs = Object.keys(await this.packService.getRaw());
 		const urls: Record<PackID, string> = (
-			await Promise.allSettled(
-				packIDs.map((p) => this.textureService.getURLById(id, p, version)),
-			)
+			await Promise.allSettled(packIDs.map((p) => this.textureService.getURLById(id, p, version)))
 		)
 			.map((e, i) => [packIDs[i], e])
 			.filter((p: [PackID, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")

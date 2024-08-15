@@ -13,7 +13,7 @@ import {
 	Tags,
 } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
-import { BadRequestError, ForbiddenError, NotAvailableError } from "../tools/ApiError";
+import { BadRequestError, ForbiddenError, NotAvailableError } from "../tools/errors";
 import {
 	Addons,
 	Contributions,

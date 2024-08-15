@@ -1,5 +1,5 @@
 import axios from "axios";
-import { NotFoundError } from "../tools/ApiError";
+import { NotFoundError } from "../tools/errors";
 import { mods } from "../firestorm";
 import { Mod, ModsRepository } from "../interfaces";
 

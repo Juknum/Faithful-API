@@ -5,7 +5,7 @@ import { Application, NextFunction, Response as ExResponse, Request as ExRequest
 import { readFileSync } from "fs";
 import { AddonChangeController } from "../controller/addonChange.controller";
 import { expressAuthentication } from "./authentication";
-import { BadRequestError } from "./ApiError";
+import { BadRequestError } from "./errors";
 
 const MIME_TYPES_ACCEPTED = ["image/gif", "image/png", "image/jpeg"];
 

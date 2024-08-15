@@ -3,7 +3,7 @@ import "dotenv/config";
 import { Request as ExRequest } from "express";
 import axios from "axios";
 import { APIUser } from "discord-api-types/v10";
-import { PermissionError, NotFoundError, ApiError, ForbiddenError } from "./ApiError";
+import { PermissionError, NotFoundError, APIError, ForbiddenError } from "./errors";
 import UserService from "../service/user.service";
 import AddonService from "../service/addon.service";
 import { Addon } from "../interfaces";
@@ -80,13 +80,13 @@ export async function expressAuthentication(
 				.then((response) => response.data)
 				.catch(
 					(err) =>
-						new ApiError(
+						new APIError(
 							"Discord Error",
 							err?.response?.status,
 							err?.response?.data?.message || err.message,
 						),
 				);
-			if (discordUser instanceof ApiError) return Promise.reject(discordUser);
+			if (discordUser instanceof APIError) return Promise.reject(discordUser);
 
 			// proven (authentified)
 

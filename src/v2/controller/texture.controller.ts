@@ -32,7 +32,7 @@ import {
 	EntireTextureToCreate,
 } from "../interfaces";
 import TextureService from "../service/texture.service";
-import { NotFoundError } from "../tools/ApiError";
+import { NotFoundError } from "../tools/errors";
 
 @Route("textures")
 @Tags("Textures")

@@ -1,5 +1,5 @@
 import { Request as ExRequest } from "express";
-import { NotFoundError } from "../tools/ApiError";
+import { NotFoundError } from "../tools/errors";
 
 // REDIRECT URL IS '<origin>/auth/<provider>/callback/<target>'
 const REDIRECT_URI_PATHNAME = "/callback/";

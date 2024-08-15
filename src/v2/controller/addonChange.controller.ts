@@ -23,7 +23,7 @@ import {
 	AddonReviewBody,
 	AddonUpdateParam,
 } from "../interfaces/addons";
-import { PermissionError, BadRequestError } from "../tools/ApiError";
+import { PermissionError, BadRequestError } from "../tools/errors";
 import UserService from "../service/user.service";
 import AddonService from "../service/addon.service";
 import * as cache from "../tools/cache";

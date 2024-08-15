@@ -9,7 +9,7 @@ import {
 	TextureRepository,
 	PropertyToOutput,
 } from "../interfaces";
-import { NotFoundError } from "../tools/ApiError";
+import { NotFoundError } from "../tools/errors";
 import { textures, paths, uses, contributions, settings, packs } from "../firestorm";
 import { MinecraftSorter } from "../tools/sorter";
 

@@ -10,7 +10,7 @@ import {
 	Username,
 } from "../interfaces";
 import UserFirestormRepository from "../repository/user.repository";
-import { BadRequestError } from "../tools/ApiError";
+import { BadRequestError } from "../tools/errors";
 
 export default class UserService {
 	private readonly repo = new UserFirestormRepository();
