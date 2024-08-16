@@ -146,7 +146,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public async getVersions(): Promise<Array<string>> {
-		const s = await settings.readRaw();
+		const s = await settings.readRaw(true);
 		return Object.values(s.versions).flat().sort(MinecraftSorter).reverse();
 	}
 
