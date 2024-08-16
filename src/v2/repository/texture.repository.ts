@@ -146,8 +146,8 @@ export default class TextureFirestormRepository implements TextureRepository {
 	}
 
 	public async getVersions(): Promise<Array<string>> {
-		const versions = await settings.get("versions");
-		return Object.values(versions).flat().sort(MinecraftSorter).reverse();
+		const s = await settings.readRaw();
+		return Object.values(s.versions).flat().sort(MinecraftSorter).reverse();
 	}
 
 	public async getVersionByEdition(edition: Edition): Promise<Array<string>> {
@@ -156,8 +156,9 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return versions[edition];
 	}
 
-	public createTexture(texture: TextureCreationParam): Promise<Texture> {
-		return textures.add(texture).then((id: string) => this.searchTextureByNameOrId<true>(id));
+	public async createTexture(texture: TextureCreationParam): Promise<Texture> {
+		const id = await textures.add(texture);
+		return this.searchTextureByNameOrId<true>(id);
 	}
 
 	public async deleteTexture(id: string): Promise<WriteConfirmation[]> {

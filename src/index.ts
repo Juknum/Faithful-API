@@ -109,7 +109,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 	if (process.env.VERBOSE === "true")
 		console.error(
-			`[${new Date().toUTCString()}] Code, Message, Stack ${code}`, message, "\n", stack,
+			`[${new Date().toUTCString()}] Code, Message, Stack ${code}`,
+			message,
+			"\n",
+			stack,
 		);
 
 	let name = err?.response?.data?.name || err.name;
