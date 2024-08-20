@@ -1,6 +1,6 @@
 import Cloudflare from "cloudflare";
 import { CachePurgeResponse } from "cloudflare/resources/cache/cache";
-import { DevelopmentMode } from "cloudflare/resources/zones/settings/development-mode";
+import { SettingEditResponse } from "cloudflare/resources/zones/settings";
 
 const TOKEN = process.env.CLOUDFLARE_KEY;
 
@@ -29,12 +29,12 @@ export default class CloudflareService {
 		);
 	}
 
-	public async dev(mode: "on" | "off"): Promise<DevelopmentMode[]> {
+	public async dev(mode: "on" | "off"): Promise<SettingEditResponse[]> {
 		// permission needed: #zone_settings:edit
 		const ids = await this.zoneIds();
 		return Promise.all(
 			ids.map((id) =>
-				this.cf.zones.settings.developmentMode.edit({
+				this.cf.zones.settings.edit("development_mode", {
 					zone_id: id,
 					value: mode,
 				}),
