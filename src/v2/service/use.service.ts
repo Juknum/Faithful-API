@@ -99,7 +99,14 @@ export default class UseService {
 			const nextLetter = String.fromCharCode(lastCharCode + 1 + charOffset);
 			const newUseID = `${textureID}${nextLetter}`;
 			// flat paths array to save requests
-			if (use.paths?.length) pathsToCreate.push(...use.paths.map((p) => ({ ...p, use: newUseID })));
+			if (use.paths?.length) {
+				pathsToCreate.push(
+					...use.paths.map((p: InputPath) => {
+						p.use = newUseID;
+						return p;
+					}),
+				);
+			}
 			return {
 				id: newUseID,
 				name: use.name,
