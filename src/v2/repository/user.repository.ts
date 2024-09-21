@@ -1,4 +1,6 @@
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { AxiosError } from "axios";
+import { APIUser } from "discord-api-types/v10";
 import { users, contributions, addons } from "../firestorm";
 import {
 	Addons,
@@ -60,25 +62,29 @@ export default class UserFirestormRepository implements UserRepository {
 			});
 	}
 
-	getProfileOrCreate(id: string): Promise<User> {
-		return users
-			.get(id)
-			.then(mapUser)
-			.catch((err) => {
-				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
-					const empty: User = {
-						id,
-						anonymous: false,
-						roles: [],
-						username: "",
-						uuid: "",
-						media: [],
-					};
-					return users.set(id, empty).then(() => this.getUserById(id));
-				}
-
-				return Promise.reject(err);
-			});
+	async getProfileOrCreate(discordUser: APIUser): Promise<User> {
+		const { id, global_name } = discordUser;
+		let user: User;
+		try {
+			user = await users.get(id);
+		} catch (err) {
+			// create if failed with 404
+			if (err instanceof AxiosError && err.response.status === 404) {
+				const empty: User = {
+					id,
+					anonymous: false,
+					roles: [],
+					// use discord username as default username (can be changed later in webapp)
+					username: global_name || "",
+					uuid: "",
+					media: [],
+				};
+				await users.set(id, empty);
+				user = await users.get(id);
+				// non-get related error, throw
+			} else throw err;
+		}
+		return mapUser(user);
 	}
 
 	async getUsersByName(name: string): Promise<Users> {

@@ -55,8 +55,8 @@ export class UserController extends Controller {
 	/**
 	 * Create a new blank user profile
 	 */
-	@Post("newprofile")
-	@Security("discord", [])
+	@Get("newprofile")
+	@Security("discord", ["account:create"])
 	public createProfile(@Request() request: any): Promise<User> {
 		return this.userService.getProfileOrCreate(request.user);
 	}
@@ -252,7 +252,7 @@ export class UserController extends Controller {
 	 * @param id User ID to be deleted
 	 */
 	@Delete("{id}")
-	@Security("discord", ["administrator"])
+	@Security("discord", ["account:delete", "administrator"])
 	@Security("bot")
 	public delete(@Path() id: string): Promise<WriteConfirmation> {
 		return this.userService.delete(id);

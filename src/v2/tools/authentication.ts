@@ -18,6 +18,7 @@ export async function expressAuthentication(
 	scopes?: string[],
 ): Promise<any> {
 	let token: string;
+	scopes ||= [];
 
 	// if there is no auth (no discord header)
 	// but if we want access with no auth for approved only
@@ -96,6 +97,15 @@ export async function expressAuthentication(
 			// but only after discord login
 			if (scopes.length === 0) return Promise.resolve(discordID);
 
+			// resolve whole user object
+			if (scopes.includes("account:create")) return Promise.resolve(discordUser);
+
+			if (scopes.includes("account:delete")) {
+				const { id } = request.params;
+				// make sure id in request and params match
+				if (discordUser.id === id) return Promise.resolve(discordUser.id);
+			}
+
 			if (
 				(scopes.includes("addon:approved") || scopes.includes("addon:own")) &&
 				"id_or_slug" in request.params
@@ -109,7 +119,7 @@ export async function expressAuthentication(
 					const addon: Addon = (await addonService.getAddonFromSlugOrId(idOrSlug))[1];
 
 					// check if C: author
-					if (addon.authors.includes(discordID)) return discordID;
+					if (addon.authors.includes(discordID)) return Promise.resolve(discordID);
 					//* else if not author check if D: admin or roles, uses the rest of authentication with roles
 				}
 			}

@@ -1,4 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
+import { APIUser } from "discord-api-types/v10";
 import {
 	Addons,
 	Contributions,
@@ -105,8 +106,8 @@ export default class UserService {
 		return this.repo.changeUserID(oldID, newID);
 	}
 
-	public getProfileOrCreate(id: string): Promise<User> {
-		return this.repo.getProfileOrCreate(id);
+	public getProfileOrCreate(user: APIUser): Promise<User> {
+		return this.repo.getProfileOrCreate(user);
 	}
 
 	public async setProfileById(id: string, body: UserProfile): Promise<void> {

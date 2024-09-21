@@ -1,4 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
+import { APIUser } from "discord-api-types/v10";
 import { Contributions } from "./contributions";
 import { Addons } from "./addons";
 
@@ -63,7 +64,7 @@ export interface FirestormUser extends User {
 }
 
 export interface UserRepository {
-	getProfileOrCreate(id: string): Promise<User>;
+	getProfileOrCreate(discordUser: APIUser): Promise<User>;
 	getUserProfiles(authors: string[]): Promise<UserProfile[]>;
 	getNameById(id: string): Promise<Username>;
 	getRaw(): Promise<Record<string, User>>;
