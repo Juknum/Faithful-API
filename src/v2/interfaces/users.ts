@@ -7,6 +7,7 @@ export interface Media {
 	type:
 		| "CurseForge"
 		| "GitHub"
+		| "Modrinth"
 		| "Patreon"
 		| "Paypal"
 		| "Planet Minecraft"
