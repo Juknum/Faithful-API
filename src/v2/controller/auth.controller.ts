@@ -1,5 +1,5 @@
 import { Request as ExRequest } from "express";
-import { Body, Controller, Get, Path, Post, Query, Request, Route, Tags } from "tsoa";
+import { BodyProp, Controller, Get, Path, Post, Query, Request, Route, Tags } from "tsoa";
 import AuthService from "../service/auth.service";
 
 @Route("auth")
@@ -68,7 +68,11 @@ export class AuthController extends Controller {
 	 * Handles Discord refresh for new sessions
 	 */
 	@Post("discord/refresh")
-	public async discordAuthRefresh(@Body() refresh_token: string, @Request() request: ExRequest) {
+	public async discordAuthRefresh(
+		// use body prop since we only need the one key
+		@BodyProp() refresh_token: string,
+		@Request() request: ExRequest,
+	) {
 		const params = new URLSearchParams();
 		params.append("client_id", process.env.DISCORD_CLIENT_ID);
 		params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
