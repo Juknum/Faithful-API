@@ -16,11 +16,7 @@ import {
 } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/addon.repository";
 import { discordEmbed } from "../tools/discordEmbed";
-
-const MIME_TYPES_ACCEPTED = [
-	// from https://github.com/sindresorhus/file-type/blob/0e91f7be09fbe7f1ac3928d96b7a23b611532d52/core.js#L323
-	[0xff, 0xd8, 0xff], // image/jpeg
-];
+import { getMediaType } from "../tools/mediaType";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 const toSlug = (value: string) =>
@@ -29,6 +25,8 @@ const toSlug = (value: string) =>
 		.filter((c) => /[a-zA-Z0-9_-]/.test(c))
 		.join("");
 
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg"];
+
 export default class AddonService {
 	private readonly userService = new UserService();
 
@@ -36,19 +34,12 @@ export default class AddonService {
 
 	private readonly addonRepo = new AddonFirestormRepository();
 
-	private imageTypeCorrect(buffer: Buffer, accepted: Array<Array<number>>) {
-		let match = false;
-		let acc_i = 0;
-		const buf_len = buffer.length;
-		while (!match && acc_i < accepted.length) {
-			if (accepted[acc_i].length <= buf_len) {
-				// if all bytes matches, no one is different and find returns undefined
-				match = accepted[acc_i].find((v, i) => buffer[i] !== v) === undefined;
-			}
-			acc_i++;
-		}
-
-		if (!match) throw new BadRequestError("Incorrect mime type for input file");
+	private validateImageType(buffer: Buffer) {
+		const mediaType = getMediaType(buffer);
+		if (ACCEPTED_IMAGE_TYPES.includes(mediaType))
+			throw new BadRequestError(
+				`Incorrect MIME type for input file: got ${mediaType}, expected ${ACCEPTED_IMAGE_TYPES.join(" | ")}`,
+			);
 	}
 
 	public async getIdFromPath(idOrSlug: string): Promise<[number, Addon | undefined]> {
@@ -348,7 +339,7 @@ export default class AddonService {
 		filename: string,
 		buffer: Buffer,
 	): Promise<void | File> {
-		this.imageTypeCorrect(buffer, MIME_TYPES_ACCEPTED);
+		this.validateImageType(buffer);
 
 		const [addonID, addon] = await this.getAddonFromSlugOrId(idOrSlug);
 		const { slug } = addon;
@@ -395,7 +386,7 @@ export default class AddonService {
 		filename: string,
 		buffer: Buffer,
 	): Promise<void | File> {
-		this.imageTypeCorrect(buffer, MIME_TYPES_ACCEPTED);
+		this.validateImageType(buffer);
 
 		const [addonID, addon] = await this.getAddonFromSlugOrId(idOrSlug);
 		const { slug } = addon;
