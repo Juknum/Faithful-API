@@ -13,9 +13,9 @@ import {
 	SuccessResponse,
 	Tags,
 } from "tsoa";
-import { Express, Request as ExRequest } from "express";
+import { Request as ExRequest } from "express";
 import { WriteConfirmation } from "firestorm-db";
-import { File } from "../interfaces/files";
+import { File, MulterFile } from "../interfaces/files";
 import {
 	AddonReview,
 	Addon,
@@ -123,7 +123,7 @@ export class AddonChangeController extends Controller {
 	 * @param id_or_slug Add-on to add header image to
 	 * @param file File to post
 	 */
-	public postHeader(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
+	public postHeader(id_or_slug: string, file: MulterFile): Promise<File | void> {
 		return this.service.postHeader(id_or_slug, file.originalname, file);
 	}
 
@@ -132,7 +132,7 @@ export class AddonChangeController extends Controller {
 	 * @param id_or_slug Add-on to add screenshot to
 	 * @param file File to post
 	 */
-	public addonAddScreenshot(id_or_slug: string, file: Express.Multer.File): Promise<File | void> {
+	public addonAddScreenshot(id_or_slug: string, file: MulterFile): Promise<File | void> {
 		return this.service.postScreenshot(id_or_slug, file.originalname, file);
 	}
 

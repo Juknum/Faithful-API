@@ -2,7 +2,7 @@ import { URL } from "url";
 import { APIEmbedField } from "discord-api-types/v10";
 import { WriteConfirmation } from "firestorm-db";
 import { User, UserProfile } from "../interfaces/users";
-import { Addons, Addon, AddonStatus, AddonAll, Files, File, FileParent } from "../interfaces";
+import { Addons, Addon, AddonStatus, AddonAll, Files, File, FileParent, MulterFile } from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/errors";
 import UserService from "./user.service";
 import FileService from "./file.service";
@@ -16,7 +16,6 @@ import {
 } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/addon.repository";
 import { discordEmbed } from "../tools/discordEmbed";
-import { Express } from "express";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 const toSlug = (value: string) =>
@@ -336,7 +335,7 @@ export default class AddonService {
 	public async postHeader(
 		idOrSlug: string,
 		filename: string,
-		multerFile: Express.Multer.File,
+		multerFile: MulterFile,
 	): Promise<void | File> {
 		this.validateImageType(multerFile.mimetype);
 		const { buffer } = multerFile;
@@ -384,7 +383,7 @@ export default class AddonService {
 	public async postScreenshot(
 		idOrSlug: string,
 		filename: string,
-		multerFile: Express.Multer.File,
+		multerFile: MulterFile,
 	): Promise<void | File> {
 		this.validateImageType(multerFile.mimetype);
 		const { buffer } = multerFile;
