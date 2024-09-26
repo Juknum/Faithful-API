@@ -16,7 +16,6 @@ import {
 } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/addon.repository";
 import { discordEmbed } from "../tools/discordEmbed";
-import { getMediaType } from "../tools/mediaType";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 const toSlug = (value: string) =>
@@ -34,8 +33,7 @@ export default class AddonService {
 
 	private readonly addonRepo = new AddonFirestormRepository();
 
-	private validateImageType(buffer: Buffer) {
-		const mediaType = getMediaType(buffer);
+	private validateImageType(mediaType: string) {
 		if (ACCEPTED_IMAGE_TYPES.includes(mediaType))
 			throw new BadRequestError(
 				`Incorrect MIME type for input file: got ${mediaType}, expected ${ACCEPTED_IMAGE_TYPES.join(" | ")}`,
@@ -337,9 +335,10 @@ export default class AddonService {
 	public async postHeader(
 		idOrSlug: string,
 		filename: string,
-		buffer: Buffer,
+		multerFile: Express.Multer.File,
 	): Promise<void | File> {
-		this.validateImageType(buffer);
+		this.validateImageType(multerFile.mimetype);
+		const { buffer } = multerFile;
 
 		const [addonID, addon] = await this.getAddonFromSlugOrId(idOrSlug);
 		const { slug } = addon;
@@ -384,9 +383,10 @@ export default class AddonService {
 	public async postScreenshot(
 		idOrSlug: string,
 		filename: string,
-		buffer: Buffer,
+		multerFile: Express.Multer.File,
 	): Promise<void | File> {
-		this.validateImageType(buffer);
+		this.validateImageType(multerFile.mimetype);
+		const { buffer } = multerFile;
 
 		const [addonID, addon] = await this.getAddonFromSlugOrId(idOrSlug);
 		const { slug } = addon;
@@ -482,7 +482,7 @@ export default class AddonService {
 		// delete eventual url beginning
 		try {
 			source = new URL(source).pathname;
-		} catch (_error) {
+		} catch {
 			// don't worry it's not important, you tried
 		}
 
@@ -515,7 +515,7 @@ export default class AddonService {
 		// delete eventual url beginning
 		try {
 			source = new URL(source).pathname;
-		} catch (_error) {
+		} catch {
 			// don't worry it's not important, you tried
 		}
 
