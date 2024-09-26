@@ -86,10 +86,13 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 			err.fields,
 		);
 
-		return res.status(422).json({
-			message: "Validation Failed",
-			details: err?.fields,
-		});
+		res
+			.status(422)
+			.json({
+				message: "Validation Failed",
+				details: err?.fields,
+			})
+			.end();
 	}
 
 	if (!err) return next();

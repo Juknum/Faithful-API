@@ -16,6 +16,7 @@ import {
 } from "../interfaces/addons";
 import AddonFirestormRepository from "../repository/addon.repository";
 import { discordEmbed } from "../tools/discordEmbed";
+import { Express } from "express";
 
 // filter & keep only values that are in a-Z & 0-9 & _ or -
 const toSlug = (value: string) =>
