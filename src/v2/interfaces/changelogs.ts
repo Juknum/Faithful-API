@@ -5,7 +5,7 @@ export interface Change {
 	contribution?: Contribution;
 	comment: string; // additional comment
 }
-export interface Changes extends Array<Change> {}
+export type Changes = Change[];
 
 export interface Changelog {
 	id: string; // changelog unique id
@@ -15,4 +15,4 @@ export interface Changelog {
 	removed: Changes;
 	fixed: Changes;
 }
-export interface Changelogs extends Array<Changelog> {}
+export type Changelogs = Changelog[];

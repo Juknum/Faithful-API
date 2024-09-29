@@ -7,7 +7,7 @@ export interface Post {
 	authors: Array<string>; // discord users IDs
 	slug: string; // used in link (ex: 'www.faithfulpack.net/faithful32x/R2')
 }
-export interface Posts extends Array<Post> {}
+export type Posts = Post[];
 
 interface WebsitePostDownload {
 	name: string; // download label

@@ -2,7 +2,16 @@ import { URL } from "url";
 import { APIEmbedField } from "discord-api-types/v10";
 import { WriteConfirmation } from "firestorm-db";
 import { User, UserProfile } from "../interfaces/users";
-import { Addons, Addon, AddonStatus, AddonAll, Files, File, FileParent, MulterFile } from "../interfaces";
+import {
+	Addons,
+	Addon,
+	AddonStatus,
+	AddonAll,
+	Files,
+	File,
+	FileParent,
+	MulterFile,
+} from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/errors";
 import UserService from "./user.service";
 import FileService from "./file.service";

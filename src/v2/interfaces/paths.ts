@@ -15,7 +15,7 @@ export interface Path extends InputPath {
 	id: string; // path unique id
 }
 
-export interface Paths extends Array<Path> {}
+export type Paths = Path[];
 
 export interface FirestormPath extends Path {}
 

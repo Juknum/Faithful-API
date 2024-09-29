@@ -21,7 +21,7 @@ export interface Use extends CreationUse {
 	id: string; // use unique id
 }
 
-export interface Uses extends Array<Use> {}
+export type Uses = Use[];
 
 export interface FirestormUse extends Use {
 	getPaths(): Promise<Paths>;

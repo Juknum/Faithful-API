@@ -11,7 +11,7 @@ export interface Modpack {
 	}>;
 }
 
-export interface Modpacks extends Array<Modpack> {}
+export type Modpacks = Modpack[];
 
 export interface FirestormModpack extends Modpack {}
 

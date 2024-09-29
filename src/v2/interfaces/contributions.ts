@@ -12,7 +12,7 @@ export interface Contribution extends ContributionCreationParams {
 	id: string; // contribution unique id
 }
 
-export interface Contributions extends Array<Contribution> {}
+export type Contributions = Contribution[];
 export interface ContributionsAuthor {
 	id: string; // discord user id
 	username: string; // display name
@@ -48,7 +48,7 @@ export interface ContributionSearch {
 	search?: string;
 }
 
-export interface ContributionsAuthors extends Array<ContributionsAuthor> {}
+export type ContributionsAuthors = ContributionsAuthor[];
 
 export interface FirestormContribution extends Contribution {}
 

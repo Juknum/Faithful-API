@@ -11,7 +11,7 @@ export interface TextureCreationParam {
 export interface Texture extends TextureCreationParam {
 	id: string; // texture unique id
 }
-export interface Textures extends Array<Texture> {}
+export type Textures = Texture[];
 
 export interface MCMETA {
 	animation?: {
@@ -28,7 +28,7 @@ export interface TextureAll extends Texture {
 	contributions: Contributions;
 }
 
-export interface TexturesAll extends Array<TextureAll> {}
+export type TexturesAll = TextureAll[];
 
 export interface EntireTextureToCreate extends TextureCreationParam {
 	uses: EntireUseToCreate[];

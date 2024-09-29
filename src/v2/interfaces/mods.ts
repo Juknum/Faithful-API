@@ -11,7 +11,7 @@ export interface Mod {
 	blacklisted: boolean; // if true, the mod is fully blacklisted
 }
 
-export interface Mods extends Array<Mod> {}
+export type Mods = Mod[];
 
 export interface FirestormMod extends Mod {}
 

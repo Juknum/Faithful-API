@@ -43,7 +43,7 @@ export interface CreationPackAll extends CreationPack {
 	submission?: FirstCreationSubmission;
 }
 
-export interface Packs extends Array<Pack> {}
+export type Packs = Pack[];
 
 export interface FirestormPack extends Pack {
 	submission(): Promise<Submission>;

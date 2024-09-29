@@ -6,17 +6,14 @@ export interface AddonDownload {
 	links: string[];
 }
 
-export const AddonTagValues = ["Java", "32x", "Bedrock", "64x"] as const;
-
-export type AddonTag = typeof AddonTagValues;
-export type AddonTagArray = Array<AddonTag[number]>;
-
-export const AddonNotApprovedValues = ["archived", "denied", "pending"] as const;
-export type AddonProperty = "files" | "all";
-export type AddonNotApproved = (typeof AddonNotApprovedValues)[number];
+export const AddonStatusNotApproved = ["archived", "denied", "pending"] as const;
 export const AddonStatusApproved = "approved" as const;
-export const AddonStatusValues = [...AddonNotApprovedValues, AddonStatusApproved] as const;
+export const AddonStatusValues = [...AddonStatusNotApproved, AddonStatusApproved] as const;
+
+export type AddonNotApproved = (typeof AddonStatusNotApproved)[number];
 export type AddonStatus = (typeof AddonStatusValues)[number];
+
+export type AddonProperty = "files" | "all";
 
 export interface AddonReviewBody {
 	status: null | AddonStatus;
@@ -35,13 +32,13 @@ export interface Addon {
 	authors: Array<string>; // discord users IDs
 	options: {
 		optifine: boolean; // true if the pack require optifine to work properly
-		tags: AddonTagArray; // Edition + Resolution
+		tags: string[]; // Editions + Resolutions
 	};
 	embed_description?: string;
 	last_updated?: number;
 	approval: AddonReview;
 }
-export interface Addons extends Array<Addon> {}
+export type Addons = Addon[];
 
 export type AddonDataParam = Pick<
 	Addon,
@@ -60,11 +57,11 @@ export interface AddonUpdateParam extends AddonCreationParam {
 export interface AddonAll extends Addon {
 	files: Files;
 }
-export interface AddonsAll extends Array<AddonAll> {}
+export type AddonsAll = AddonAll[];
 
 export interface AddonStats {
 	approved: number;
-	numbers: Record<AddonTag[number], number>;
+	numbers: Record<string, number>;
 }
 
 export interface AddonStatsAdmin extends AddonStats {

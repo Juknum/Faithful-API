@@ -7,7 +7,7 @@ import { PermissionError, NotFoundError, APIError, ForbiddenError } from "./erro
 import UserService from "../service/user.service";
 import AddonService from "../service/addon.service";
 import { Addon } from "../interfaces";
-import { AddonNotApprovedValues, AddonStatusValues } from "../interfaces/addons";
+import { AddonStatusNotApproved, AddonStatusValues } from "../interfaces/addons";
 
 const userService = new UserService();
 const addonService = new AddonService();
@@ -37,7 +37,7 @@ export async function expressAuthentication(
 				}
 
 				// if addon status & not approved status
-				if (AddonNotApprovedValues.includes(request.params.id_or_slug as any))
+				if (AddonStatusNotApproved.includes(request.params.id_or_slug as any))
 					return Promise.reject(new ForbiddenError());
 			}
 
@@ -45,7 +45,7 @@ export async function expressAuthentication(
 			// if you are looking at a status
 			if (
 				AddonStatusValues.includes(request.params.id_or_slug as any) &&
-				!AddonNotApprovedValues.includes(request.params.id_or_slug as any)
+				!AddonStatusNotApproved.includes(request.params.id_or_slug as any)
 			)
 				return Promise.resolve(undefined);
 		}
@@ -112,7 +112,7 @@ export async function expressAuthentication(
 			) {
 				const { id_or_slug: idOrSlug } = request.params;
 				if ((AddonStatusValues as ReadonlyArray<string>).includes(idOrSlug)) {
-					if (!(AddonNotApprovedValues as ReadonlyArray<string>).includes(idOrSlug))
+					if (!(AddonStatusNotApproved as ReadonlyArray<string>).includes(idOrSlug))
 						return Promise.resolve(discordID);
 					//* check if D: admin or roles, uses the rest of authentication with roles
 				} else {

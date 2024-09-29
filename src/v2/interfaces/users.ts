@@ -21,7 +21,7 @@ export interface Media {
 		| "Other";
 	link: string;
 }
-export interface Medias extends Array<Media> {}
+export type Medias = Media[];
 
 export interface UserCreationParams {
 	username: string; // username displayed online
@@ -36,7 +36,7 @@ export interface Username {
 	uuid: string;
 }
 
-export interface Usernames extends Array<Username> {}
+export type Usernames = Username[];
 
 export interface UserProfile {
 	id?: string;
@@ -50,7 +50,7 @@ export interface User extends UserCreationParams {
 	media?: Medias;
 }
 
-export interface Users extends Array<User> {}
+export type Users = User[];
 
 export interface UserStats {
 	total: number;

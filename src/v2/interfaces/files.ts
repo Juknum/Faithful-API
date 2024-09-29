@@ -3,7 +3,7 @@ import { Express } from "express";
 
 // multer monkey patches express's types and eslint really doesn't like that
 // so we need to export this separately to prevent issues
-export interface MulterFile extends Express.Multer.File {}
+export type MulterFile = Express.Multer.File;
 
 export interface FileParent {
 	type: string; // collection name (addon, post...)
@@ -19,7 +19,7 @@ export interface File {
 	parent: FileParent;
 	source: string; // file content/url (ex: 'database.faithfulpack.net/images/test.png')
 }
-export interface Files extends Array<File> {}
+export type Files = File[];
 
 //! needs to be approved & finished by @TheRolfFR
 export type FileDataParam = Pick<File, "name" | "use" | "type">;
