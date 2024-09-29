@@ -3,7 +3,7 @@ import { Edition } from "./textures";
 
 export interface CreationPath {
 	name: string; // texture path ('textures/block/stone.png')
-	versions: Array<string>; // MC versions
+	versions: string[]; // MC versions
 	mcmeta: boolean; // true if animated
 }
 

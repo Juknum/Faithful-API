@@ -6,7 +6,7 @@ import { PackID } from "./packs";
 
 export interface TextureCreationParam {
 	name: string | number; // texture name
-	tags: Array<string>; // texture tags (block, item...)
+	tags: string[]; // texture tags (block, item...)
 }
 export interface Texture extends TextureCreationParam {
 	id: string; // texture unique id
@@ -17,7 +17,7 @@ export interface MCMETA {
 	animation?: {
 		interpolate?: boolean;
 		frametime?: number;
-		frames?: Array<number | { index: number; time: number }>;
+		frames?: (number | { index: number; time: number })[];
 	};
 }
 
@@ -70,11 +70,11 @@ export interface TextureRepository {
 		forcePartial?: boolean,
 	): Promise<Textures>;
 	getTextureById(id: number, property: TextureProperty): Promise<PropertyToOutput<TextureProperty>>;
-	getVersions(): Promise<Array<string>>;
-	getEditions(): Promise<Array<string>>;
-	getResolutions(): Promise<Array<number>>;
-	getTags(): Promise<Array<string>>;
-	getVersionByEdition(edition: Edition): Promise<Array<string>>;
+	getVersions(): Promise<string[]>;
+	getEditions(): Promise<string[]>;
+	getResolutions(): Promise<number[]>;
+	getTags(): Promise<string[]>;
+	getVersionByEdition(edition: Edition): Promise<string[]>;
 	searchTexturePropertyByNameOrId(
 		nameOrID: string | number,
 		property: TextureProperty,

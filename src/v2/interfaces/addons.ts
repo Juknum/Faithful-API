@@ -29,7 +29,7 @@ export interface Addon {
 	name: string; // addon name (> 5 && < 30)
 	slug: string; // used in link (ex: 'www.faithfulpack.net/addons/Faithful3D')
 	description: string; // addon description (> 256 && < 4096)
-	authors: Array<string>; // discord users IDs
+	authors: string[]; // discord users IDs
 	options: {
 		optifine: boolean; // true if the pack require optifine to work properly
 		tags: string[]; // Editions + Resolutions

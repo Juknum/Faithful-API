@@ -179,7 +179,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/files/screenshots")
-	public async getScreenshots(@Path() id_or_slug: string): Promise<Array<string>> {
+	public async getScreenshots(@Path() id_or_slug: string): Promise<string[]> {
 		const [addonID] = await this.service.getAddonFromSlugOrId(id_or_slug);
 		const screens = await this.service.getScreenshots(addonID);
 		return screens.map((s) => (s.startsWith("/") ? process.env.DB_IMAGE_ROOT + s : s));
@@ -193,7 +193,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:own", "administrator"])
 	@Get("{id_or_slug}/files/screenshots-ids")
-	public async getScreenshotsIds(@Path() id_or_slug: string): Promise<Array<string>> {
+	public async getScreenshotsIds(@Path() id_or_slug: string): Promise<string[]> {
 		const [addonID] = await this.service.getAddonFromSlugOrId(id_or_slug);
 		return this.service.getScreenshotsIds(addonID);
 	}
@@ -206,7 +206,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}/files/downloads")
-	public async getDownloads(@Path() id_or_slug: string): Promise<Array<AddonDownload>> {
+	public async getDownloads(@Path() id_or_slug: string): Promise<AddonDownload[]> {
 		const [addonID] = await this.service.getAddonFromSlugOrId(id_or_slug);
 		const files = await this.service.getFiles(addonID);
 		return Object.values(

@@ -111,8 +111,8 @@ export async function expressAuthentication(
 				"id_or_slug" in request.params
 			) {
 				const { id_or_slug: idOrSlug } = request.params;
-				if ((AddonStatusValues as ReadonlyArray<string>).includes(idOrSlug)) {
-					if (!(AddonStatusNotApproved as ReadonlyArray<string>).includes(idOrSlug))
+				if ((AddonStatusValues as readonly string[]).includes(idOrSlug)) {
+					if (!(AddonStatusNotApproved as readonly string[]).includes(idOrSlug))
 						return Promise.resolve(discordID);
 					//* check if D: admin or roles, uses the rest of authentication with roles
 				} else {

@@ -92,7 +92,7 @@ export class UserController extends Controller {
 	 * Get all discord roles the database has
 	 */
 	@Get("roles")
-	public getRoles(): Promise<Array<string>> {
+	public getRoles(): Promise<string[]> {
 		return this.userService.getRoles();
 	}
 
@@ -243,7 +243,7 @@ export class UserController extends Controller {
 	@Put("{id}/roles")
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	public setRoles(@Path() id: string, @Body() roles: Array<string>): Promise<User> {
+	public setRoles(@Path() id: string, @Body() roles: string[]): Promise<User> {
 		return this.userService.setRoles(id, roles);
 	}
 

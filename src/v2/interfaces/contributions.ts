@@ -4,7 +4,7 @@ import { PackID } from "./packs";
 export interface ContributionCreationParams {
 	date: number; // unix timestamp
 	pack: PackID; // resource pack name
-	authors: Array<string>; // discord user ids
+	authors: string[]; // discord user ids
 	texture: string; // texture id
 }
 
@@ -62,9 +62,9 @@ export interface ContributionsRepository {
 	getAuthors(): Promise<ContributionsAuthors>;
 	getPacks(): Promise<PackID[]>;
 	searchByIdAndPacks(
-		textureIDs: Array<string>,
-		packs: Array<string>,
-		users?: Array<string>,
+		textureIDs: string[],
+		packs: string[],
+		users?: string[],
 	): Promise<Contributions>;
-	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions>;
+	searchContributionsFrom(users: string[], packs: string[]): Promise<Contributions>;
 }

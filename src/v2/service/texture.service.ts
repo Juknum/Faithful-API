@@ -51,23 +51,23 @@ export default class TextureService {
 		return this.textureRepo.getByNameIdAndTag(tag, search, true);
 	}
 
-	getVersions(): Promise<Array<string>> {
+	getVersions(): Promise<string[]> {
 		return this.textureRepo.getVersions();
 	}
 
-	getVersionByEdition(edition: Edition): Promise<Array<string>> {
+	getVersionByEdition(edition: Edition): Promise<string[]> {
 		return this.textureRepo.getVersionByEdition(edition);
 	}
 
-	getEditions(): Promise<Array<string>> {
+	getEditions(): Promise<string[]> {
 		return this.textureRepo.getEditions();
 	}
 
-	getTags(): Promise<Array<string>> {
+	getTags(): Promise<string[]> {
 		return this.textureRepo.getTags();
 	}
 
-	getResolutions(): Promise<Array<number>> {
+	getResolutions(): Promise<number[]> {
 		return this.textureRepo.getResolutions();
 	}
 

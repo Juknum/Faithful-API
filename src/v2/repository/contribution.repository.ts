@@ -18,10 +18,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 		return contributions.values({ field: "pack" });
 	}
 
-	async searchContributionsFrom(
-		authors: Array<string>,
-		packs: Array<string>,
-	): Promise<Contributions> {
+	async searchContributionsFrom(authors: string[], packs: string[]): Promise<Contributions> {
 		const options: SearchOption<Contribution>[] = authors.map((author) => ({
 			field: "authors",
 			criteria: "array-contains",

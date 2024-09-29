@@ -136,21 +136,21 @@ export default class TextureFirestormRepository implements TextureRepository {
 		return uses.values({ field: "edition" }).then((res) => res.sort());
 	}
 
-	public getResolutions(): Promise<Array<number>> {
+	public getResolutions(): Promise<number[]> {
 		return packs.values({ field: "resolution" }).then((res) => res.sort());
 	}
 
-	public async getTags(): Promise<Array<string>> {
+	public async getTags(): Promise<string[]> {
 		const res = await textures.values({ field: "tags", flatten: true });
 		return res.sort();
 	}
 
-	public async getVersions(): Promise<Array<string>> {
+	public async getVersions(): Promise<string[]> {
 		const s = await settings.readRaw(true);
 		return Object.values(s.versions).flat().sort(MinecraftSorter).reverse();
 	}
 
-	public async getVersionByEdition(edition: Edition): Promise<Array<string>> {
+	public async getVersionByEdition(edition: Edition): Promise<string[]> {
 		const versions = await settings.get("versions");
 		if (!versions[edition]) throw new NotFoundError("edition not found");
 		return versions[edition];

@@ -57,7 +57,7 @@ export default class UserService {
 		return this.repo.getNameById(id);
 	}
 
-	public getRoles(): Promise<Array<string>> {
+	public getRoles(): Promise<string[]> {
 		return this.repo.getRoles();
 	}
 

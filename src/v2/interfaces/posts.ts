@@ -4,7 +4,7 @@ export interface Post {
 	id: string; // post unique id
 	name: string; // post name (> 5 && < 30)
 	description: string; // post description (> 256 && < 4096)
-	authors: Array<string>; // discord users IDs
+	authors: string[]; // discord users IDs
 	slug: string; // used in link (ex: 'www.faithfulpack.net/faithful32x/R2')
 }
 export type Posts = Post[];

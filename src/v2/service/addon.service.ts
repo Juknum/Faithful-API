@@ -90,7 +90,7 @@ export default class AddonService {
 		return this.addonRepo.getAddonById(id);
 	}
 
-	async getAddonAuthors(id: number): Promise<Array<string>> {
+	async getAddonAuthors(id: number): Promise<string[]> {
 		const addon = await this.getAddon(id);
 		return addon.authors;
 	}
@@ -150,12 +150,12 @@ export default class AddonService {
 		return files.filter((f) => ["screenshot", "carousel"].includes(f.use));
 	}
 
-	async getScreenshotsIds(id: number): Promise<Array<string>> {
+	async getScreenshotsIds(id: number): Promise<string[]> {
 		const files = await this.getScreenshotsFiles(id);
 		return Object.values(files).map((f) => f.id);
 	}
 
-	async getScreenshots(id: number): Promise<Array<string>> {
+	async getScreenshots(id: number): Promise<string[]> {
 		const files = await this.getScreenshotsFiles(id);
 		return Object.values(files).map((f) => f.source);
 	}

@@ -27,7 +27,7 @@ export interface UserCreationParams {
 	username: string; // username displayed online
 	uuid: string; // minecraft profile UUID
 	anonymous: boolean; // true if the user is anonymous
-	roles: Array<string>; // discord roles the user has, that can be modified by admin only
+	roles: string[]; // discord roles the user has, that can be modified by admin only
 }
 
 export interface Username {

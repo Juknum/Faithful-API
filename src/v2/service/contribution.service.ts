@@ -97,7 +97,7 @@ export default class ContributionService {
 		return this.contributionRepo.getAuthors();
 	}
 
-	searchContributionsFrom(users: Array<string>, packs: Array<string>): Promise<Contributions> {
+	searchContributionsFrom(users: string[], packs: string[]): Promise<Contributions> {
 		return this.contributionRepo.searchContributionsFrom(users, packs);
 	}
 

@@ -162,7 +162,7 @@ export default class UserFirestormRepository implements UserRepository {
 		return users.remove(oldID);
 	}
 
-	getRoles(): Promise<Array<string>> {
+	getRoles(): Promise<string[]> {
 		return users.values({ field: "roles", flatten: true });
 	}
 

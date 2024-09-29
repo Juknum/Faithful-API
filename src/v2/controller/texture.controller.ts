@@ -51,7 +51,7 @@ export class TextureController extends Controller {
 	 * Get Minecraft editions supported by the database
 	 */
 	@Get("editions")
-	public getEditions(): Promise<Array<string>> {
+	public getEditions(): Promise<string[]> {
 		return this.service.getEditions();
 	}
 
@@ -59,7 +59,7 @@ export class TextureController extends Controller {
 	 * Get all the tags from all textures (Block, UI, etc)
 	 */
 	@Get("tags")
-	public getTags(): Promise<Array<string>> {
+	public getTags(): Promise<string[]> {
 		return this.service.getTags();
 	}
 
@@ -68,7 +68,7 @@ export class TextureController extends Controller {
 	 * @returns array of integers
 	 */
 	@Get("resolutions")
-	public getResolutions(): Promise<Array<number>> {
+	public getResolutions(): Promise<number[]> {
 		return this.service.getResolutions();
 	}
 
@@ -76,7 +76,7 @@ export class TextureController extends Controller {
 	 * Get all existing Minecraft versions supported in the database
 	 */
 	@Get("versions")
-	public getVersions(): Promise<Array<string>> {
+	public getVersions(): Promise<string[]> {
 		return this.service.getVersions();
 	}
 
@@ -85,7 +85,7 @@ export class TextureController extends Controller {
 	 * @param edition Existing edition inside the settings collection
 	 */
 	@Get("versions/{edition}")
-	public getVersionByEdition(@Path() edition: Edition): Promise<Array<string>> {
+	public getVersionByEdition(@Path() edition: Edition): Promise<string[]> {
 		return this.service.getVersionByEdition(edition);
 	}
 
