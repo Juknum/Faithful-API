@@ -253,7 +253,6 @@ export class UserController extends Controller {
 	 */
 	@Delete("{id}")
 	@Security("discord", ["account:delete", "administrator"])
-	@Security("bot")
 	public delete(@Path() id: string): Promise<WriteConfirmation> {
 		return this.userService.delete(id);
 	}

@@ -117,7 +117,7 @@ export class AddonController extends Controller {
 	@Response<PermissionError>(403)
 	@Security("discord", ["addon:approved", "administrator"])
 	@Get("{id_or_slug}")
-	public async getAddon(@Path() id_or_slug: string): Promise<Addon | Addons> {
+	public async getAddon(@Path() id_or_slug: string | AddonStatus): Promise<Addon | Addons> {
 		if (AddonStatusValues.includes(id_or_slug as AddonStatus))
 			return this.getAddonsByStatus(id_or_slug as AddonStatus);
 		const [, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
