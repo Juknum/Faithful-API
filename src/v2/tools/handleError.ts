@@ -37,7 +37,7 @@ export default function handleError(err: any, route: string): APIError {
 		printed = true;
 	}
 	// print some empty lines between each error so scrolling through logs doesn't give you a migraine
-	if (printed) console.log("\n\n");
+	if (printed) console.error("\n\n");
 
 	let name = err?.response?.data?.name || err.name;
 
