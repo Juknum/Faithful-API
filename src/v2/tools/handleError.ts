@@ -7,7 +7,7 @@ import { APIError } from "./errors";
  * @param err error to handle
  * @returns front-end API error to show user
  */
-export default function handleError(err: any, route: string): APIError {
+export default function handleError(err: any, route: string, method: string): APIError {
 	const code =
 		Number(
 			(typeof err.status === "number" ? err.status : err.statusCode) ||
@@ -21,7 +21,7 @@ export default function handleError(err: any, route: string): APIError {
 
 	let printed = false;
 	if (process.env.VERBOSE === "true") {
-		console.error(`[${new Date().toUTCString()}] ${route}`);
+		console.error(`[${new Date().toUTCString()}] ${method} ${route}`);
 		// if the message already includes a stack don't print it twice
 		if (message?.stack) console.error(`(${code})`, message);
 		else console.error(`(${code})`, message, "\n", stack);

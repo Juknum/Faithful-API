@@ -89,7 +89,7 @@ export async function expressAuthentication(
 			}
 
 			// check add-on ownership
-			if (scopes.includes("addon:own")) {
+			if (scopes.includes("addon:own") || scopes.includes("addon:approved")) {
 				const idOrSlug = request.params.id_or_slug;
 				if (isSlug(idOrSlug)) {
 					const addon: Addon = (await addonService.getAddonFromSlugOrId(idOrSlug))[1];

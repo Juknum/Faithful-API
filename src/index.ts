@@ -81,7 +81,7 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
 	if (!err) return next();
 
 	// logs and handles errors
-	const apiError = handleError(err, req.path);
+	const apiError = handleError(err, req.path, req.method);
 	if (err instanceof ValidateError) {
 		res
 			.status(422)
