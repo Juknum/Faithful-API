@@ -67,7 +67,7 @@ export async function purge(pattern?: string | RegExp): Promise<void[]> {
  * @param key cache key to write
  * @param value data to write
  */
-export function write(key: string, value: any): Promise<void> {
+export function write<T>(key: string, value: T): Promise<void> {
 	const json = {};
 	json[Date.now()] = value;
 	return writeFile(keyToPath(key), JSON.stringify(json));

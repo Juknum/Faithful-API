@@ -8,6 +8,7 @@ import {
 	PackID,
 	CreationPackAll,
 	PackSearch,
+	FirestormPack,
 } from "../interfaces";
 import { contributions, packs } from "../firestorm";
 import SubmissionFirestormRepository from "./submission.repository";
@@ -25,7 +26,7 @@ export default class PackFirestormRepository implements PackRepository {
 
 	async getWithSubmission(id: PackID): Promise<PackAll> {
 		const pack = await packs.get(id);
-		const submission = await this.submissionRepo.getById(id).catch(() => null);
+		const submission = await this.submissionRepo.getById(id).catch<null>(() => null);
 
 		// faithful pack with no submission information found
 		if (!submission) return { ...pack, submission: {} };
@@ -70,7 +71,7 @@ export default class PackFirestormRepository implements PackRepository {
 
 		const out = (
 			await Promise.all(
-				searched.map((pack) =>
+				searched.map<Promise<FirestormPack>>((pack) =>
 					pack
 						.submission()
 						.then(() => pack)
@@ -86,7 +87,7 @@ export default class PackFirestormRepository implements PackRepository {
 	async renamePack(oldPack: PackID, newPack: string): Promise<void> {
 		const data: CreationPackAll = await this.getById(oldPack);
 		data.id = newPack;
-		const submission = await this.submissionRepo.getById(oldPack).catch(() => null);
+		const submission = await this.submissionRepo.getById(oldPack).catch<null>(() => null);
 		if (submission) data.submission = submission;
 		this.delete(oldPack);
 		this.submissionRepo.delete(oldPack);

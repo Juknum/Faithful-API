@@ -69,10 +69,10 @@ export class GalleryController extends Controller {
 		)
 			.map((e, i) => [packIDs[i], e])
 			.filter((p: [PackID, PromiseFulfilledResult<string>]) => p[1].status === "fulfilled")
-			.reduce(
-				(acc, p: [PackID, PromiseFulfilledResult<string>]) => ({ ...acc, [p[0]]: p[1].value }),
-				{} as Record<PackID, string>,
-			);
+			.reduce((acc, p: [PackID, PromiseFulfilledResult<string>]) => {
+				acc[p[0]] = p[1].value;
+				return acc;
+			}, {});
 
 		const all = await this.textureService.getPropertyByNameOrId(id, "all");
 

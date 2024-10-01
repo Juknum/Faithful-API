@@ -12,7 +12,7 @@ export default class PostService {
 	private readonly postRepo = new PostFirestormRepository();
 
 	public async getByIdOrPermalink(idOrPermalink: string): Promise<WebsitePost> {
-		let postFound: WebsitePost | undefined; // undefined
+		let postFound: WebsitePost | undefined;
 		const parsed = Number(idOrPermalink);
 
 		if (!Number.isNaN(parsed)) postFound = await this.getById(parsed).catch(() => undefined);

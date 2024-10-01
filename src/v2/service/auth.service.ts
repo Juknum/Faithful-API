@@ -8,7 +8,7 @@ const REDIRECT_URI_PATHNAME = "/callback/";
 
 export default class AuthService {
 	rawTargetToURL(target: string): string {
-		const url = JSON.parse(process.env.AUTH_URLS)[target];
+		const url: string = JSON.parse(process.env.AUTH_URLS)[target];
 		if (!url) throw new NotFoundError("Target not found!");
 		return url;
 	}

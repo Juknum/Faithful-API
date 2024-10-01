@@ -1,4 +1,4 @@
-import { ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { ID_FIELD, SearchOption, WriteConfirmation } from "firestorm-db";
 import {
 	Edition,
 	PackID,
@@ -34,7 +34,7 @@ export default class TextureFirestormRepository implements TextureRepository {
 		}
 
 		// tag or string search
-		const criterias = [];
+		const criterias: SearchOption<Texture>[] = [];
 
 		if (tag !== undefined) {
 			criterias.push({
@@ -147,7 +147,10 @@ export default class TextureFirestormRepository implements TextureRepository {
 
 	public async getVersions(): Promise<string[]> {
 		const s = await settings.readRaw(true);
-		return Object.values(s.versions).flat().sort(MinecraftSorter).reverse();
+		return Object.values(s.versions as string[])
+			.flat()
+			.sort(MinecraftSorter)
+			.reverse();
 	}
 
 	public async getVersionByEdition(edition: Edition): Promise<string[]> {

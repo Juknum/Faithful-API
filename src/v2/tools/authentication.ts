@@ -102,7 +102,7 @@ export async function expressAuthentication(
 			// add dev role when developing stuff only
 			if (scopes.length && process.env.DEV.toLowerCase() === "true") scopes.push("Developer");
 
-			const user = await userService.getUserById(discordID).catch(() => null);
+			const user = await userService.getUserById(discordID).catch<null>(() => null);
 
 			let roles: string[] = user?.roles || [];
 			if (!Array.isArray(roles)) roles = [];
@@ -124,4 +124,9 @@ export async function expressAuthentication(
 		default:
 			throw new NotFoundError("Invalid security name provided");
 	}
+}
+
+// saves some type gymnastics to be able to declare it at once
+export interface ExRequestWithAuth<T> extends ExRequest {
+	user: T;
 }

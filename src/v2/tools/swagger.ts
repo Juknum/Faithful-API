@@ -1,10 +1,10 @@
-import { JsonObject } from "swagger-ui-express";
-import { Controller } from "tsoa";
+import { Controller, Swagger } from "tsoa";
 import multer from "multer";
 import { Application, NextFunction, Response as ExResponse, Request as ExRequest } from "express";
 import { readFileSync } from "fs";
+import { MulterFile } from "v2/interfaces";
 import { AddonChangeController } from "../controller/addonChange.controller";
-import { expressAuthentication } from "./authentication";
+import { expressAuthentication, ExRequestWithAuth } from "./authentication";
 import { BadRequestError } from "./errors";
 
 const MIME_TYPES_ACCEPTED = ["image/gif", "image/png", "image/jpeg"];
@@ -73,14 +73,14 @@ export function formHandler(
 	app: Application,
 	url: string,
 	controller: Controller,
-	method: Function,
-	swaggerDoc: JsonObject,
+	method: (this: Controller, param: any, file: MulterFile, req: ExRequest) => any,
+	swaggerDoc: Swagger.Spec3,
 	swaggerDocOptions: SwaggerDocOptions,
-): JsonObject {
+): Swagger.Spec3 {
 	app.post(
 		url,
-		async (req: ExRequest, _res: ExResponse, next: NextFunction) => {
-			(req as any).user = await expressAuthentication(req, "discord", ["addon:own"]).catch((err) =>
+		async (req: ExRequestWithAuth<string>, _res: ExResponse, next: NextFunction) => {
+			req.user = await expressAuthentication(req, "discord", ["addon:own"]).catch((err) =>
 				next(err),
 			);
 			next();
@@ -88,11 +88,13 @@ export function formHandler(
 		upload.single("file"),
 		(req: ExRequest, res: ExResponse, next: NextFunction) => {
 			try {
-				const promise = method.apply(controller, [
+				// bind method to controller object
+				const promise = method.call(
+					controller,
 					req.params[Object.keys(req.params)[0]],
 					req.file,
 					req,
-				]);
+				);
 				promiseHandler(controller, promise, res, 200, next);
 			} catch (error) {
 				next(error);
@@ -102,8 +104,8 @@ export function formHandler(
 
 	// add doc
 	const pathCorrected = url.replace(swaggerDocOptions.prefix, "").replace(/:([A-ZA-z_]+)/, "{$1}");
-	if (!("paths" in swaggerDoc)) swaggerDoc.paths = {};
-	if (!(pathCorrected in swaggerDoc.paths)) swaggerDoc.paths[pathCorrected] = {};
+	swaggerDoc.paths ||= {};
+	swaggerDoc.paths[pathCorrected] ||= {};
 	swaggerDoc.paths[pathCorrected].post = {
 		operationId: swaggerDocOptions.operationId,
 		responses: {
@@ -146,6 +148,7 @@ export function formHandler(
 				description: "ID or slug of the requested add-on",
 				in: "path",
 				name: "id_or_slug",
+				type: "string",
 				required: true,
 				schema: {
 					type: "string",
@@ -175,7 +178,7 @@ export function formHandler(
 
 export default function formatSwaggerDoc(app: Application, path: string) {
 	// don't pass it in directly so the object reference isn't mutated
-	let swaggerDoc = JSON.parse(readFileSync(path, { encoding: "utf8" }));
+	let swaggerDoc: Swagger.Spec3 = JSON.parse(readFileSync(path, { encoding: "utf8" }));
 
 	// manual things
 	const adc = new AddonChangeController();

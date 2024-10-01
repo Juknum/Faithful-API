@@ -1,5 +1,6 @@
 import { Request as ExRequest } from "express";
 import { BodyProp, Controller, Get, Path, Post, Query, Request, Route, Tags } from "tsoa";
+import { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import AuthService from "../service/auth.service";
 
 @Route("auth")
@@ -50,7 +51,7 @@ export class AuthController extends Controller {
 			body: discordParams,
 		});
 
-		const json: any = await tokenResponse.json();
+		const json = (await tokenResponse.json()) as RESTPostOAuth2AccessTokenResult;
 
 		if ("error" in json) {
 			request.res.status(500).json(json).end();
@@ -60,7 +61,7 @@ export class AuthController extends Controller {
 		const targetParams = new URLSearchParams();
 		targetParams.append("access_token", json.access_token);
 		targetParams.append("refresh_token", json.refresh_token);
-		targetParams.append("expires_in", json.expires_in);
+		targetParams.append("expires_in", String(json.expires_in));
 		request.res.redirect(`${this.service.targetToURL(target)}?${targetParams.toString()}`);
 	}
 
@@ -84,7 +85,7 @@ export class AuthController extends Controller {
 			body: params,
 		});
 
-		const json: any = await tokenResponse.json();
+		const json = (await tokenResponse.json()) as RESTPostOAuth2AccessTokenResult;
 
 		if ("error" in json) {
 			request.res.status(500).json(json).end();

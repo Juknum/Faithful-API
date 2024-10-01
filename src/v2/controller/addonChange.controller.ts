@@ -13,7 +13,6 @@ import {
 	SuccessResponse,
 	Tags,
 } from "tsoa";
-import { Request as ExRequest } from "express";
 import { WriteConfirmation } from "firestorm-db";
 import { File, MulterFile } from "../interfaces/files";
 import {
@@ -27,6 +26,7 @@ import { PermissionError, BadRequestError } from "../tools/errors";
 import UserService from "../service/user.service";
 import AddonService from "../service/addon.service";
 import * as cache from "../tools/cache";
+import { ExRequestWithAuth } from "../tools/authentication";
 
 @Route("addons")
 @Tags("Add-on Submissions")
@@ -42,9 +42,9 @@ export class AddonChangeController extends Controller {
 	@Security("discord", [])
 	public addonCreate(
 		@Body() body: AddonCreationParam,
-		@Request() request: ExRequest,
+		@Request() request: ExRequestWithAuth<string>,
 	): Promise<Addon> {
-		if (!body.authors.includes((request as any).user))
+		if (!body.authors.includes(request.user))
 			throw new BadRequestError("Addon author must include the authed user");
 		return this.service.create(body);
 	}
@@ -61,14 +61,14 @@ export class AddonChangeController extends Controller {
 	public async addonUpdate(
 		@Path() id_or_slug: string,
 		@Body() body: AddonUpdateParam,
-		@Request() request: ExRequest,
+		@Request() request: ExRequestWithAuth<string>,
 	): Promise<Addon> {
 		const [id, addon] = await this.service.getAddonFromSlugOrId(id_or_slug);
 
 		// if not an author wants to delete the addon
-		if (!addon.authors.includes((request as any).user)) {
+		if (!addon.authors.includes(request.user)) {
 			// check if admin
-			const user = await new UserService().getUserById((request as any).user);
+			const user = await new UserService().getUserById(request.user);
 			if (!user.roles.includes("Administrator"))
 				throw new BadRequestError("Addon author must include the authed user");
 		}
@@ -88,13 +88,13 @@ export class AddonChangeController extends Controller {
 	public async addonReview(
 		@Path() id_or_slug: string,
 		@Body() data: AddonReviewBody,
-		@Request() request: ExRequest,
+		@Request() request: ExRequestWithAuth<string>,
 	): Promise<void> {
 		const [addonID] = await this.service.getIdFromPath(id_or_slug);
 
 		const review: AddonReview = {
 			...data,
-			author: String((request as any).user),
+			author: String(request.user),
 		};
 
 		await this.service.review(addonID, review);

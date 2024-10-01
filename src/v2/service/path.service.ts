@@ -63,7 +63,7 @@ export default class PathService {
 	}
 
 	async modifyVersion(oldVersion: string, newVersion: string): Promise<WriteConfirmation> {
-		const allVersions = await settings.get("versions");
+		const allVersions: string[] = await settings.get("versions");
 		const edition = Object.entries(allVersions).find((v) => v[1].includes(oldVersion))?.[0];
 
 		settings.editField({

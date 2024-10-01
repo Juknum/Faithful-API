@@ -6,6 +6,7 @@ import {
 	ContributionsRepository,
 	ContributionsAuthors,
 	PackID,
+	ContributionsAuthor,
 } from "../interfaces";
 import { contributions, users } from "../firestorm";
 
@@ -64,21 +65,19 @@ export default class ContributionFirestormRepository implements ContributionsRep
 			.map((c) => c.authors)
 			.flat();
 
-		const out = authors.reduce((acc, id) => {
+		const out: Record<string, ContributionsAuthor> = authors.reduce((acc, id) => {
 			if (!acc[id]) acc[id] = { id, contributions: 0 };
 			acc[id].contributions++;
 			return acc;
-		}, {} as ContributionsAuthors);
+		}, {});
 
 		const userSelect = await users.select({ fields: ["id", "username", "uuid", "anonymous"] });
-		return Object.values(out).map((author: any) => {
+		return Object.values(out).map((author) => {
 			const user = userSelect[author.id];
-			if (user)
-				return {
-					...author,
-					username: user.anonymous ? undefined : user.username,
-					uuid: user.anonymous ? undefined : user.uuid,
-				};
+			if (user) {
+				author.username = user.anonymous ? undefined : user.username;
+				author.uuid = user.anonymous ? undefined : user.uuid;
+			}
 
 			return author;
 		});

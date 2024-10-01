@@ -13,6 +13,7 @@ import {
 	Tags,
 } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
+import { APIUser } from "discord-api-types/v10";
 import { BadRequestError, ForbiddenError, NotAvailableError } from "../tools/errors";
 import {
 	Addons,
@@ -27,6 +28,7 @@ import {
 } from "../interfaces";
 import UserService from "../service/user.service";
 import * as cache from "../tools/cache";
+import { ExRequestWithAuth } from "../tools/authentication";
 
 @Route("users")
 @Tags("Users")
@@ -38,7 +40,7 @@ export class UserController extends Controller {
 	 */
 	@Get("profile")
 	@Security("discord", [])
-	public getProfile(@Request() request: any): Promise<User> {
+	public getProfile(@Request() request: ExRequestWithAuth<string>): Promise<User> {
 		return this.userService.getUserById(request.user);
 	}
 
@@ -48,7 +50,10 @@ export class UserController extends Controller {
 	 */
 	@Post("profile")
 	@Security("discord", [])
-	public setProfile(@Body() body: UserProfile, @Request() request: any): Promise<void> {
+	public setProfile(
+		@Body() body: UserProfile,
+		@Request() request: ExRequestWithAuth<string>,
+	): Promise<void> {
 		return this.userService.setProfileById(request.user, body);
 	}
 
@@ -57,7 +62,7 @@ export class UserController extends Controller {
 	 */
 	@Get("newprofile")
 	@Security("discord", ["account:create"])
-	public createProfile(@Request() request: any): Promise<User> {
+	public createProfile(@Request() request: ExRequestWithAuth<APIUser>): Promise<User> {
 		return this.userService.getProfileOrCreate(request.user);
 	}
 
@@ -172,7 +177,10 @@ export class UserController extends Controller {
 	@Get("{id}/addons")
 	@Security("discord", [])
 	@Security("bot")
-	public async getAllAddons(@Path() id: string, @Request() request: any): Promise<Addons> {
+	public async getAllAddons(
+		@Path() id: string,
+		@Request() request: ExRequestWithAuth<string>,
+	): Promise<Addons> {
 		if (id !== request.user) {
 			// check if admin
 			const user = await new UserService().getUserById(request.user);
@@ -215,7 +223,7 @@ export class UserController extends Controller {
 	public async set(
 		@Path() id: string,
 		@Body() body: UserCreationParams,
-		@Request() request: any,
+		@Request() request: ExRequestWithAuth<string>,
 	): Promise<User> {
 		// the security middleware adds a key user with anything inside when validated, see security middleware Promise return type
 		if (id !== request.user) {

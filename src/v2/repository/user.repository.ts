@@ -13,6 +13,7 @@ import {
 	Username,
 	UserProfile,
 } from "../interfaces";
+import { NotFoundError } from "../tools/errors";
 
 const mapUser = (user: Partial<User>): User => ({
 	// falsy checking
@@ -51,10 +52,9 @@ export default class UserFirestormRepository implements UserRepository {
 			.get(id)
 			.then(mapUser)
 			.catch((err) => {
-				if (err.isAxiosError && err.response && err.response.statusCode === 404) {
-					const formattedError: any = new Error("User not found");
-					formattedError.code = 404;
-
+				if (err.isAxiosError && err.response?.statusCode === 404) {
+					// prettier error message
+					const formattedError = new NotFoundError("User not found");
 					return Promise.reject(formattedError);
 				}
 

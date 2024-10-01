@@ -28,7 +28,12 @@ export default function handleError(err: any, route: string): APIError {
 		printed = true;
 	}
 	if (err instanceof AxiosError) {
-		console.error("Axios Error: Request, Response\n:request:", err.request, "\nresponse:", err.response);
+		console.error(
+			"Axios Error: Request, Response\n:request:",
+			err.request,
+			"\nresponse:",
+			err.response,
+		);
 		printed = true;
 	}
 	// print some empty lines between each error so scrolling through logs doesn't give you a migraine

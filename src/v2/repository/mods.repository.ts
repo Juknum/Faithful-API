@@ -12,7 +12,7 @@ export default class ModsFirestormRepository implements ModsRepository {
 		const res = await axios(`https://api.curseforge.com/v1/mods/${id}`, {
 			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
 		});
-		const url = res?.data?.data?.logo?.thumbnailUrl;
+		const url: string = res?.data?.data?.logo?.thumbnailUrl;
 
 		// fixes bug where no logo provided : 400 : Cannot read 'thumbnailUrl' of null
 		if (url) return url;
@@ -23,7 +23,7 @@ export default class ModsFirestormRepository implements ModsRepository {
 		const res = await axios(`https://api.curseforge.com/v1/mods/${id}`, {
 			headers: { "x-api-key": process.env.CURSEFORGE_API_KEY },
 		});
-		const name = res?.data?.data?.name;
+		const name: string = res?.data?.data?.name;
 
 		// Preventive fix if there is somehow no name
 		if (name) return name;
