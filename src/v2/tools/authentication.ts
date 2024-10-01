@@ -93,7 +93,7 @@ export async function expressAuthentication(
 				const idOrSlug = request.params.id_or_slug;
 				if (isSlug(idOrSlug)) {
 					const addon: Addon = (await addonService.getAddonFromSlugOrId(idOrSlug))[1];
-					if (addon.authors.includes(discordID)) return true;
+					if (addon.authors.includes(discordID)) return discordID;
 				}
 				// if it's a status continue to role checks
 			}
