@@ -9,7 +9,7 @@ export async function discordEmbed(embed: APIEmbed): Promise<void> {
 	if (!process.env.WEBHOOK_URL) return;
 
 	// faithful green by default
-	if (!embed.color) embed.color = 7784773;
+	embed.color ??= 7784773;
 
 	await axios.post(process.env.WEBHOOK_URL, { embeds: [embed] });
 }

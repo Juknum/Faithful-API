@@ -586,9 +586,7 @@ export default class AddonService {
 
 		discordEmbed({
 			title,
-			url: `https://webapp.faithfulpack.net/#/review/addons?status=${status}&id=${String(
-				addon.id,
-			)}`,
+			url: `https://webapp.faithfulpack.net/review/addons?status=${status}&id=${addon.id}`,
 			author: {
 				name,
 				icon_url:
