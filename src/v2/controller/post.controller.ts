@@ -90,10 +90,10 @@ export class PostController extends Controller {
 	@Get("{id}/header")
 	@SuccessResponse(302, "Redirect")
 	public async getHeaderForPost(@Path() id: number, @Request() request: ExRequest): Promise<void> {
-		const { headerImg } = await this.service.getById(id);
-		if (!headerImg) throw new NotFoundError("Post header image not found");
+		const { header_img } = await this.service.getById(id);
+		if (!header_img) throw new NotFoundError("Post header image not found");
 
-		request.res.redirect(302, headerImg);
+		request.res.redirect(302, header_img);
 	}
 
 	/**
