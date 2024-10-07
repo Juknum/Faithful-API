@@ -6,11 +6,13 @@ import { APIUser } from "discord-api-types/v10";
 import { PermissionError, NotFoundError, APIError } from "./errors";
 import UserService from "../service/user.service";
 import AddonService from "../service/addon.service";
+import PostService from "../service/post.service";
 import { Addon } from "../interfaces";
 import { AddonStatusApproved, AddonStatusValues } from "../interfaces/addons";
 
 const userService = new UserService();
 const addonService = new AddonService();
+const postService = new PostService();
 
 const isSlug = (idOrSlug: string): boolean => !AddonStatusValues.includes(idOrSlug as any);
 function getRequestKey({ headers, query }: ExRequest, key: string, queryAllowed = false): string {
@@ -28,15 +30,22 @@ export async function expressAuthentication(
 ): Promise<any> {
 	scopes ||= [];
 
-	// handle public add-ons without a token (for website etc)
-	if (scopes.includes("addon:approved") && "id_or_slug" in request.params) {
-		// /v2/addons/approved is public, safe to send
-		if (request.params.id_or_slug === AddonStatusApproved) return true;
+	// handle public add-ons/posts without a token (for website etc)
+	if ("id_or_slug" in request.params) {
+		if (scopes.includes("addon:approved")) {
+			// /v2/addons/approved is public, safe to send
+			if (request.params.id_or_slug === AddonStatusApproved) return true;
 
-		// it's an addon slug and not a status
-		if (isSlug(request.params.id_or_slug)) {
-			const addon = (await addonService.getAddonFromSlugOrId(request.params.id_or_slug))[1];
-			if (addon.approval.status === AddonStatusApproved) return true;
+			// it's an addon slug and not a status
+			if (isSlug(request.params.id_or_slug)) {
+				const addon = (await addonService.getAddonFromSlugOrId(request.params.id_or_slug))[1];
+				if (addon.approval.status === AddonStatusApproved) return true;
+			}
+		}
+		if (scopes.includes("post:approved")) {
+			if (request.params.id_or_slug === "approved") return true;
+			const post = await postService.getByIdOrPermalink(request.params.id_or_slug);
+			if (post.published === true) return true;
 		}
 	}
 

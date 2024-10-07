@@ -1,10 +1,20 @@
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { posts } from "../firestorm";
-import { CreateWebsitePost, WebsitePost, WebsitePostRepository } from "../interfaces";
+import { CreateWebsitePost, WebsitePost, WebsitePostRepository, WebsitePosts } from "../interfaces";
 
 export default class PostFirestormRepository implements WebsitePostRepository {
 	getRaw(): Promise<Record<string, WebsitePost>> {
 		return posts.readRaw();
+	}
+
+	getApproved(): Promise<WebsitePosts> {
+		return posts.search([
+			{
+				field: "published",
+				criteria: "==",
+				value: true,
+			},
+		]);
 	}
 
 	getById(id: number): Promise<WebsitePost> {
@@ -25,10 +35,7 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 
 	create(postToCreate: CreateWebsitePost): Promise<WebsitePost> {
 		const { permalink } = postToCreate;
-		return posts
-			.add(postToCreate)
-			.then(() => this.getByPermalink(permalink))
-			.then((results) => results[0]);
+		return posts.add(postToCreate).then(() => this.getByPermalink(permalink));
 	}
 
 	update(id: number, post: CreateWebsitePost): Promise<WebsitePost> {
@@ -40,6 +47,6 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 	}
 
 	delete(id: number): Promise<WriteConfirmation> {
-		return posts.remove(String(id));
+		return posts.remove(id);
 	}
 }

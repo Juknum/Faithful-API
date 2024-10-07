@@ -1,9 +1,10 @@
 import { WriteConfirmation } from "firestorm-db";
 import {
-	WebsitePostDownloadRecord,
-	WebsitePostChangelogRecord,
+	PostDownload,
+	PostChangelog,
 	WebsitePost,
 	CreateWebsitePost,
+	WebsitePosts,
 } from "../interfaces";
 import { NotFoundError } from "../tools/errors";
 import PostFirestormRepository from "../repository/posts.repository";
@@ -11,14 +12,20 @@ import PostFirestormRepository from "../repository/posts.repository";
 export default class PostService {
 	private readonly postRepo = new PostFirestormRepository();
 
-	public async getByIdOrPermalink(idOrPermalink: string): Promise<WebsitePost> {
+	getByPermalink(permalink: string): Promise<WebsitePost> {
+		return this.postRepo
+			.getByPermalink(permalink)
+			.catch(() => Promise.reject(new NotFoundError("Post not found")));
+	}
+
+	public async getByIdOrPermalink(idOrSlug: string): Promise<WebsitePost> {
 		let postFound: WebsitePost | undefined;
-		const parsed = Number(idOrPermalink);
+		const parsed = Number(idOrSlug);
 
 		if (!Number.isNaN(parsed)) postFound = await this.getById(parsed).catch(() => undefined);
 
 		if (postFound === undefined)
-			postFound = await this.getByPermalink(idOrPermalink).catch(() => undefined);
+			postFound = await this.getByPermalink(idOrSlug).catch(() => undefined);
 
 		if (postFound !== undefined) return postFound;
 
@@ -35,18 +42,16 @@ export default class PostService {
 			.catch(() => Promise.reject(new NotFoundError("Post not found")));
 	}
 
-	getByPermalink(permalink: string): Promise<WebsitePost> {
-		return this.postRepo
-			.getByPermalink(permalink)
-			.catch(() => Promise.reject(new NotFoundError("Post not found")));
+	getApprovedPosts(): Promise<WebsitePosts> {
+		return this.postRepo.getApproved();
 	}
 
-	async getDownloadsForId(id: number): Promise<WebsitePostDownloadRecord | null> {
+	async getDownloadsForId(id: number): Promise<PostDownload | null> {
 		const post = await this.getById(id);
 		return post.downloads || null;
 	}
 
-	async getChangelogForId(id: number): Promise<WebsitePostChangelogRecord | null> {
+	async getChangelogForId(id: number): Promise<PostChangelog | null> {
 		const post = await this.getById(id);
 		return post.changelog || null;
 	}

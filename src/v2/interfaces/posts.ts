@@ -1,20 +1,13 @@
 import { WriteConfirmation } from "firestorm-db";
 
-export interface Post {
-	id: string; // post unique id
-	name: string; // post name (> 5 && < 30)
-	description: string; // post description (> 256 && < 4096)
-	authors: string[]; // discord users IDs
-	slug: string; // used in link (ex: 'www.faithfulpack.net/faithful32x/R2')
-}
-export type Posts = Post[];
+export type PostDownload =
+	| Record<string, Record<string, string>> // each category: names -> links
+	| Record<string, string>; // just names -> links
 
-interface WebsitePostDownload {
-	name: string; // download label
-	url: string; // download URL
+export interface PostChangelog {
+	// recursive type so we need an interface (idk why either blame typescript)
+	[key: string]: PostChangelog | string;
 }
-export type WebsitePostDownloadRecord = Record<string, WebsitePostDownload[]>;
-export type WebsitePostChangelogRecord = Record<string, Record<string, string[]>>;
 
 export interface CreateWebsitePost {
 	title: string; // Post main title
@@ -23,18 +16,21 @@ export interface CreateWebsitePost {
 	header_img?: string; // header image url
 	description: string; // post HTML content
 	published: boolean;
-	downloads?: WebsitePostDownloadRecord; // possible downloads attached
-	changelog?: WebsitePostChangelogRecord; // possible article changelog attached
+	downloads?: PostDownload; // attached downloads
+	changelog?: PostChangelog; // attached article changelog
 }
 
 export interface WebsitePost extends CreateWebsitePost {
 	id: string;
 }
 
+export type WebsitePosts = WebsitePost[];
+
 export interface FirestormPost extends WebsitePost {}
 
 export interface WebsitePostRepository {
 	getRaw(): Promise<Record<string, WebsitePost>>;
+	getApproved(): Promise<WebsitePost[]>;
 	getById(id: number): Promise<WebsitePost>;
 	getByPermalink(permalink: string): Promise<WebsitePost>;
 	create(post: CreateWebsitePost): Promise<WebsitePost>;

@@ -13,15 +13,15 @@ import {
 	Body,
 	Put,
 	Delete,
-	Query,
 } from "tsoa";
 import DOMPurify from "isomorphic-dompurify";
 import { WriteConfirmation } from "firestorm-db";
 import {
-	WebsitePostDownloadRecord,
-	WebsitePostChangelogRecord,
+	PostDownload,
+	PostChangelog,
 	WebsitePost,
 	CreateWebsitePost,
+	WebsitePosts,
 } from "../interfaces";
 
 import { BadRequestError, NotFoundError, PermissionError } from "../tools/errors";
@@ -40,46 +40,23 @@ export class PostController extends Controller {
 	@Response<NotFoundError>(404)
 	@Security("discord", ["administrator"])
 	@Security("bot")
-	@Get("/raw")
+	@Get("raw")
 	public getRaw(): Promise<Record<string, WebsitePost>> {
 		return this.service.getRaw();
 	}
 
 	/**
-	 * Get all the published posts
+	 * Get any add-on by ID, status, or slug (needs to be authenticated for non-approved add-on)
+	 * Note: slugs with slashes need to be escaped (/ -> %2F)
+	 * @param id_or_slug Desired post slug
+	 * @example Slug "/faithful64x/B4"
 	 */
 	@Response<NotFoundError>(404)
-	@Get("/")
-	public getAll(): Promise<Record<string, WebsitePost>> {
-		return this.service.getRaw().then((r) =>
-			Object.keys(r).reduce((acc, cur) => {
-				if (r[cur].published) acc[cur] = r[cur];
-				return acc;
-			}, {}),
-		);
-	}
-
-	/**
-	 * Get any post with permalink
-	 * @param permalink Desired post permalink
-	 * @example Permalink "/faithful64x/B4"
-	 */
-	@Response<NotFoundError>(404)
-	@Get("bypermalink")
-	public getPostByPermalink(@Query() permalink: string): Promise<WebsitePost> {
-		return cache.handle(`website-post-${encodeURI(permalink)}`, () =>
-			this.service.getByPermalink(permalink),
-		);
-	}
-
-	/**
-	 * Get any post by ID
-	 * @param id Desired post ID
-	 */
-	@Response<NotFoundError>(404)
-	@Get("{id}")
-	public getPostById(@Path() id: number): Promise<WebsitePost> {
-		return cache.handle(`website-post-${id}`, () => this.service.getById(id));
+	@Security("discord", ["post:approved", "administrator"])
+	@Get("{id_or_slug}")
+	public getPostByPermalink(@Path() id_or_slug: string): Promise<WebsitePost | WebsitePosts> {
+		if (id_or_slug === "approved") return this.service.getApprovedPosts();
+		return this.service.getByIdOrPermalink(id_or_slug);
 	}
 
 	/**
@@ -102,7 +79,7 @@ export class PostController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Get("{id}/downloads")
-	public getPostDownloads(@Path() id: number): Promise<WebsitePostDownloadRecord | null> {
+	public getPostDownloads(@Path() id: number): Promise<PostDownload | null> {
 		return cache.handle(`website-post-downloads-${id}`, () => this.service.getDownloadsForId(id));
 	}
 
@@ -112,7 +89,7 @@ export class PostController extends Controller {
 	 */
 	@Response<NotFoundError>(404)
 	@Get("{id}/changelog")
-	public getPostChangelog(@Path() id: number): Promise<WebsitePostChangelogRecord | null> {
+	public getPostChangelog(@Path() id: number): Promise<PostChangelog | null> {
 		return this.service.getChangelogForId(id);
 	}
 
