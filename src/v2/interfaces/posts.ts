@@ -4,13 +4,8 @@ export type PostDownload =
 	| Record<string, Record<string, string>> // each category: names -> links
 	| Record<string, string>; // just names -> links
 
-interface NestedChangelog {
-	// recursive type (can be arbitrarily grouped)
-	[key: string]: NestedChangelog | string | string[];
-}
-
-// workaround for index signatures not being supported by validation
-export type PostChangelog = Record<string, NestedChangelog>;
+// swagger doesn't support recursive types so this is the best we can do
+export type PostChangelog = Record<string, any>;
 
 export interface CreateWebsitePost {
 	title: string; // Post main title
