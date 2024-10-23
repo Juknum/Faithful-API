@@ -7,7 +7,7 @@ export interface PostDownload {
 
 export interface PostChangelog {
 	// recursive type (arbitrary nesting possible as long as it terminates with strings somewhere)
-	[category: string]: (string | PostChangelog)[];
+	[category: string]: PostChangelog | (string | PostChangelog)[];
 }
 
 export interface CreateWebsitePost {

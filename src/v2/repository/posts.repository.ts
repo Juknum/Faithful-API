@@ -21,16 +21,15 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 		return posts.get(id);
 	}
 
-	getByPermalink(permalink: string): Promise<WebsitePost> {
-		return posts
-			.search([
-				{
-					criteria: "==",
-					field: "permalink",
-					value: permalink,
-				},
-			])
-			.then((results) => results[0]);
+	async getByPermalink(permalink: string): Promise<WebsitePost> {
+		const results = await posts.search([
+			{
+				criteria: "==",
+				field: "permalink",
+				value: permalink,
+			},
+		]);
+		return results[0];
 	}
 
 	create(postToCreate: CreateWebsitePost): Promise<WebsitePost> {
@@ -41,8 +40,8 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 	update(id: number, post: CreateWebsitePost): Promise<WebsitePost> {
 		const postWithId = {
 			...post,
+			[ID_FIELD]: String(id),
 		};
-		postWithId[ID_FIELD] = String(id);
 		return posts.set(id, postWithId).then(() => posts.get(id));
 	}
 

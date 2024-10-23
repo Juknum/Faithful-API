@@ -113,7 +113,7 @@ export class PostController extends Controller {
 	/**
 	 * Updates the post to the given ID
 	 * @param id Post ID
-	 * @param postToCreate Post information
+	 * @param postToUpdate Post information
 	 */
 	@Response<BadRequestError>(400)
 	@Response<PermissionError>(403)
@@ -121,10 +121,13 @@ export class PostController extends Controller {
 	@Put("{id}")
 	public updatePost(
 		@Path() id: number,
-		@Body() postToCreate: CreateWebsitePost,
+		@Body() postToUpdate: CreateWebsitePost,
 	): Promise<WebsitePost> {
-		postToCreate.description = this.sanitizeDescription(postToCreate.description);
-		return this.service.update(id, postToCreate);
+		postToUpdate.description = this.sanitizeDescription(postToUpdate.description);
+
+		console.log(JSON.stringify(postToUpdate.changelog, null, 4));
+
+		return this.service.update(id, postToUpdate);
 	}
 
 	/**
