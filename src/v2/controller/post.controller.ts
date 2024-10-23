@@ -93,10 +93,6 @@ export class PostController extends Controller {
 		return this.service.getChangelogForId(id);
 	}
 
-	private sanitizeDescription(input: string): string {
-		return DOMPurify.sanitize(input);
-	}
-
 	/**
 	 * Creates post and returns the created post
 	 * @param postToCreate Post information
@@ -106,7 +102,8 @@ export class PostController extends Controller {
 	@Security("discord", ["administrator"])
 	@Post("")
 	public createPost(@Body() postToCreate: CreateWebsitePost): Promise<WebsitePost> {
-		postToCreate.description = this.sanitizeDescription(postToCreate.description);
+		// sanitize from the start
+		postToCreate.description = DOMPurify.sanitize(postToCreate.description);
 		return this.service.create(postToCreate);
 	}
 
@@ -124,9 +121,6 @@ export class PostController extends Controller {
 		@Body() postToUpdate: CreateWebsitePost,
 	): Promise<WebsitePost> {
 		postToUpdate.description = this.sanitizeDescription(postToUpdate.description);
-
-		console.log(JSON.stringify(postToUpdate.changelog, null, 4));
-
 		return this.service.update(id, postToUpdate);
 	}
 
