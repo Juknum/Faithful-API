@@ -1,11 +1,14 @@
 import { WriteConfirmation } from "firestorm-db";
 
-export type PostDownload =
-	| Record<string, Record<string, string>> // each category: names -> links
-	| Record<string, string>; // just names -> links
+export interface PostDownload {
+	// for some reason index signatures work but records don't (???)
+	[category: string]: Record<string, string> | string;
+}
 
-// swagger doesn't support recursive types so this is the best we can do
-export type PostChangelog = Record<string, any>;
+export interface PostChangelog {
+	// recursive type (arbitrary nesting possible as long as it terminates with strings somewhere)
+	[category: string]: (string | PostChangelog)[];
+}
 
 export interface CreateWebsitePost {
 	title: string; // Post main title
