@@ -120,7 +120,7 @@ export class PostController extends Controller {
 		@Path() id: number,
 		@Body() postToUpdate: CreateWebsitePost,
 	): Promise<WebsitePost> {
-		postToUpdate.description = this.sanitizeDescription(postToUpdate.description);
+		postToUpdate.description = DOMPurify.sanitize(postToUpdate.description);
 		return this.service.update(id, postToUpdate);
 	}
 
