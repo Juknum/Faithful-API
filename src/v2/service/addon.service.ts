@@ -208,7 +208,7 @@ export default class AddonService {
 		// tag values have already been verified
 
 		// remove double authors
-		body.authors = body.authors.filter((v, i, a) => a.indexOf(v) === i);
+		body.authors = Array.from(new Set(body.authors));
 
 		// verify existing authors
 		// return value not interesting
@@ -275,7 +275,7 @@ export default class AddonService {
 		// tag values have already been verified
 
 		// remove double authors
-		body.authors = body.authors.filter((v, i, a) => a.indexOf(v) === i);
+		body.authors = Array.from(new Set(body.authors));
 
 		// verify existing authors
 		// return value not interesting
