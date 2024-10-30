@@ -48,6 +48,8 @@ export const textures = firestorm.collection<FirestormTexture>("textures", (el) 
 			version = path.versions.sort(MinecraftSorter).at(-1);
 		} else path = texturePaths.find((p) => p.versions.includes(version));
 
+		if (!path) throw new NotFoundError(`No path found for version ${version}`);
+
 		const textureUses = await el.uses();
 		const { edition } = textureUses.find((u) => u.id === path.use);
 		if (!github[edition]) throw new NotFoundError(`Pack ${pack} doesn't support this edition yet!`);

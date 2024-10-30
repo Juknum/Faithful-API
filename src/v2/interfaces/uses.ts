@@ -1,10 +1,11 @@
 import { WriteConfirmation } from "firestorm-db";
 import { CreationPath, Paths } from "./paths";
 import { GalleryEdition } from "./gallery";
+import { Edition } from "./textures";
 
 export interface BaseUse {
 	name: string; // use name
-	edition: string; // game edition
+	edition: Edition; // game edition
 }
 
 export interface CreationUse extends BaseUse {
