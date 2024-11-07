@@ -25,10 +25,9 @@ export default class ContributionService {
 
 	async getStats(): Promise<ContributionStats> {
 		const cs = await this.getRaw();
-		let total_authors = 0;
-		let total_contributions = 0;
 
-		const authors = {};
+		// set ensures unique values much more quickly than a check object/array iteration
+		const authors = new Set();
 
 		let total_last_week = 0;
 		let total_last_month = 0;
@@ -41,18 +40,11 @@ export default class ContributionService {
 		const aggregate: PackRecord = {} as PackRecord;
 
 		Object.values(cs).forEach((cur) => {
-			total_contributions += 1;
+			cur.authors.forEach((a) => authors.add(a));
 
-			cur.authors.forEach((a) => {
-				if (!authors[a]) {
-					authors[a] = true;
-					total_authors++;
-				}
-			});
-
-			const { pack, date: timestamp } = cur;
+			const { pack, date } = cur;
 			//! Group data by the start of date if time dont coincide
-			const start_of_day = startOfDay(timestamp).getTime();
+			const start_of_day = startOfDay(date).getTime();
 
 			aggregate[pack] ||= {};
 			aggregate[pack][start_of_day] ||= {
@@ -61,9 +53,9 @@ export default class ContributionService {
 			};
 			aggregate[pack][start_of_day].count++;
 
-			if (timestamp >= last_week) total_last_week += 1;
-			if (timestamp >= last_month) total_last_month += 1;
-			if (timestamp >= last_day) total_last_day += 1;
+			if (date >= last_week) total_last_week += 1;
+			if (date >= last_month) total_last_month += 1;
+			if (date >= last_day) total_last_day += 1;
 		});
 
 		const finalActivity = {} as PackData;
@@ -79,8 +71,8 @@ export default class ContributionService {
 		});
 
 		return {
-			total_authors,
-			total_contributions,
+			total_authors: authors.size,
+			total_contributions: Object.keys(cs).length,
 			total_last_day,
 			total_last_week,
 			total_last_month,
