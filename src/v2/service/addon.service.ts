@@ -43,7 +43,7 @@ export default class AddonService {
 	private readonly addonRepo = new AddonFirestormRepository();
 
 	private validateImageType(mediaType: string) {
-		if (ACCEPTED_IMAGE_TYPES.includes(mediaType))
+		if (!ACCEPTED_IMAGE_TYPES.includes(mediaType))
 			throw new BadRequestError(
 				`Incorrect MIME type for input file: got ${mediaType}, expected ${ACCEPTED_IMAGE_TYPES.join(" | ")}`,
 			);
