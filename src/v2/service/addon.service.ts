@@ -204,11 +204,14 @@ export default class AddonService {
 	}
 
 	async create(body: AddonCreationParam): Promise<Addon> {
-		// authentication was already made
+		// authentication already happened
 		// tag values have already been verified
 
 		// remove double authors
 		body.authors = Array.from(new Set(body.authors));
+
+		// remove trailing/leading spaces from addon name
+		body.name = body.name.trim();
 
 		// verify existing authors
 		// return value not interesting
@@ -271,11 +274,14 @@ export default class AddonService {
 	}
 
 	async update(id: number, body: AddonCreationParam, reason: string): Promise<Addon> {
-		// authentication was already made
+		// authentication already happened
 		// tag values have already been verified
 
 		// remove double authors
 		body.authors = Array.from(new Set(body.authors));
+
+		// remove trailing/leading spaces from addon name
+		body.name = body.name.trim();
 
 		// verify existing authors
 		// return value not interesting
