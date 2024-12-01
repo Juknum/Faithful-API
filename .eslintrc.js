@@ -1,7 +1,7 @@
 module.exports = {
 	root: true,
 	extends: ["airbnb-base", "prettier", "plugin:import/recommended", "plugin:import/typescript"],
-	ignorePatterns: ["dist/**/*", "build/**/*", "public/swagger.json", "public/custom.js"],
+	ignorePatterns: ["dist/**/*", "build/**/*", "public/swagger.json", "public/*"],
 	parser: "@typescript-eslint/parser",
 	plugins: ["@typescript-eslint", "prettier", "import"],
 	rules: {

@@ -66,7 +66,7 @@ app.use(
 		// @types/swagger-ui-express isn't updated and complains
 		{
 			customCssUrl: "/custom.css",
-			customJs: ["/custom.js", "/custom_dom.js"],
+			customJs: ["/custom.js", "/customDOM.js"],
 			swaggerOptions: {
 				tryItOutEnabled: true,
 			},

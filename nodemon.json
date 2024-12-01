@@ -2,7 +2,7 @@
 	"exec": "npm run exec",
 	"watch": [
 		"src",
-		"public/custom.js",
+		"public/custom*",
 		".env"
 	],
 	"ext": "ts, css, json"
