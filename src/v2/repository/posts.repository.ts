@@ -1,4 +1,4 @@
-import { ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { WriteConfirmation } from "firestorm-db";
 import { posts } from "../firestorm";
 import { CreateWebsitePost, WebsitePost, WebsitePostRepository, WebsitePosts } from "../interfaces";
 
@@ -32,17 +32,14 @@ export default class PostFirestormRepository implements WebsitePostRepository {
 		return results[0];
 	}
 
-	create(postToCreate: CreateWebsitePost): Promise<WebsitePost> {
-		const { permalink } = postToCreate;
-		return posts.add(postToCreate).then(() => this.getByPermalink(permalink));
+	async create(postToCreate: CreateWebsitePost): Promise<WebsitePost> {
+		await posts.add(postToCreate);
+		return this.getByPermalink(postToCreate.permalink);
 	}
 
-	update(id: number, post: CreateWebsitePost): Promise<WebsitePost> {
-		const postWithId = {
-			...post,
-			[ID_FIELD]: String(id),
-		};
-		return posts.set(id, postWithId).then(() => posts.get(id));
+	async update(id: number, post: CreateWebsitePost): Promise<WebsitePost> {
+		await posts.set(id, post);
+		return posts.get(id);
 	}
 
 	delete(id: number): Promise<WriteConfirmation> {

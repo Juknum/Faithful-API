@@ -27,10 +27,7 @@ export default class PackFirestormRepository implements PackRepository {
 	async getWithSubmission(id: PackID): Promise<PackAll> {
 		const pack = await packs.get(id);
 		const submission = await this.submissionRepo.getById(id).catch<null>(() => null);
-
-		// faithful pack with no submission information found
-		if (!submission) return { ...pack, submission: {} };
-		return { ...pack, submission };
+		return { ...pack, submission: submission || {} };
 	}
 
 	async getAllTags(): Promise<string[]> {
@@ -109,8 +106,7 @@ export default class PackFirestormRepository implements PackRepository {
 	}
 
 	async update(packId: PackID, newPack: CreationPack): Promise<Pack> {
-		const packWithId = { ...newPack, [ID_FIELD]: packId };
-		await packs.set(packId, packWithId);
+		await packs.set(packId, newPack);
 		return packs.get(packId);
 	}
 

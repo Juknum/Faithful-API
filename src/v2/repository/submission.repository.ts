@@ -1,4 +1,4 @@
-import { ID_FIELD, WriteConfirmation } from "firestorm-db";
+import { WriteConfirmation } from "firestorm-db";
 import {
 	SubmissionRepository,
 	Submission,
@@ -40,8 +40,7 @@ export default class SubmissionFirestormRepository implements SubmissionReposito
 	}
 
 	async update(packId: PackID, newPack: Submission): Promise<Submission> {
-		const packWithId = { ...newPack, [ID_FIELD]: packId };
-		await submissions.set(packId, packWithId);
+		await submissions.set(packId, newPack);
 		return submissions.get(packId);
 	}
 
