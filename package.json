@@ -39,7 +39,6 @@
 		"ts-node": "^10.9.2"
 	},
 	"dependencies": {
-		"@tsoa/runtime": "^6.5.1",
 		"api-error-handler": "^1.0.0",
 		"axios": "^1.7.9",
 		"body-parser": "^1.20.3",
@@ -55,6 +54,6 @@
 		"response-time": "^2.3.3",
 		"statuses": "^2.0.1",
 		"swagger-ui-express": "^5.0.1",
-		"tsoa": "^6.5.1"
+		"tsoa": "^6.6.0"
 	}
 }

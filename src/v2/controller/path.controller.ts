@@ -79,7 +79,6 @@ export class PathsController extends Controller {
 	/**
 	 * Add a version to existing paths
 	 * @param body Version name, edition it belongs to, and reference version if needed
-	 * @returns
 	 */
 	@Post("versions/add")
 	@Security("bot")
