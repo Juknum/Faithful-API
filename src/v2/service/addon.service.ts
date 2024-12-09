@@ -26,11 +26,13 @@ import {
 import AddonFirestormRepository from "../repository/addon.repository";
 import { discordEmbed } from "../tools/discordEmbed";
 
-// filter & keep only values that are in a-Z & 0-9 & _ or -
+// filter & keep only values that are in a-z & 0-9 & _ or -
 const toSlug = (value: string) =>
 	value
+		.toLowerCase()
+		.replace(/ /g, "-")
 		.split("")
-		.filter((c) => /[a-zA-Z0-9_-]/.test(c))
+		.filter((c) => /[a-z0-9_-]/.test(c))
 		.join("");
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg"];
