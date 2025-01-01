@@ -70,7 +70,7 @@ app.use(
 			swaggerOptions: {
 				tryItOutEnabled: true,
 			},
-			customfavIcon: "https://database.faithfulpack.net/images/branding/site/favicon.ico",
+			customfavIcon: "https://database.faithfulpack.net/images/branding/logos/favicon.ico",
 			customSiteTitle: "Faithful API",
 		} as any,
 	),
