@@ -25,7 +25,7 @@ export default class PostService {
 		if (!Number.isNaN(parsed)) postFound = await this.getById(parsed).catch(() => undefined);
 
 		if (postFound === undefined)
-			postFound = await this.getByPermalink(idOrSlug).catch(() => undefined);
+			postFound = await this.getByPermalink(decodeURIComponent(idOrSlug)).catch(() => undefined);
 
 		if (postFound !== undefined) return postFound;
 
