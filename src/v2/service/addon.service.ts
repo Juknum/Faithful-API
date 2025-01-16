@@ -598,7 +598,7 @@ export default class AddonService {
 			author: {
 				name,
 				icon_url:
-					"https://raw.githubusercontent.com/Faithful-Resource-Pack/Branding/main/role_icons/14%20-%20Add-On%20Maker.png",
+					"https://raw.githubusercontent.com/Faithful-Resource-Pack/Branding/main/role_icons/contributor/add_on_maker.png",
 			},
 			fields: reason,
 		});
