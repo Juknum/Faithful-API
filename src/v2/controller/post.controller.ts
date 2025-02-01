@@ -13,6 +13,7 @@ import {
 	Body,
 	Put,
 	Delete,
+	Query,
 } from "tsoa";
 import DOMPurify from "isomorphic-dompurify";
 import { WriteConfirmation } from "firestorm-db";
@@ -46,9 +47,19 @@ export class PostController extends Controller {
 	}
 
 	/**
-	 * Get any add-on by ID, status, or slug (needs to be authenticated for non-approved add-on)
+	 * Get the latest posts
+	 * @param count Number of posts to get (default 6)
+	 * @returns Latest posts
+	 */
+	@Get("top")
+	public getTopPosts(@Query() count = 6): Promise<WebsitePosts> {
+		return this.service.getTopPosts(count);
+	}
+
+	/**
+	 * Get any post by ID, status, or permalink (needs to be authenticated for non-approved post)
 	 * Note: slugs with slashes need to be escaped (/ -> %2F)
-	 * @param id_or_slug Desired post slug
+	 * @param id_or_slug Desired post permalink
 	 * @example Slug "/faithful64x/B4"
 	 */
 	@Response<NotFoundError>(404)

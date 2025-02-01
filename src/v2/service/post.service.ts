@@ -46,6 +46,12 @@ export default class PostService {
 		return this.postRepo.getApproved();
 	}
 
+	async getTopPosts(count: number): Promise<WebsitePosts> {
+		const allPosts = await this.getApprovedPosts();
+		const sorted = allPosts.sort((a, b) => +new Date(b.date) - +new Date(a.date));
+		return sorted.slice(0, count);
+	}
+
 	async getDownloadsForId(id: number): Promise<PostDownload | null> {
 		const post = await this.getById(id);
 		return post.downloads || null;
