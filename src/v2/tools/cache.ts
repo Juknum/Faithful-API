@@ -5,7 +5,6 @@ import { existsSync, mkdirSync } from "fs";
 
 const NO_CACHE = process.env.NO_CACHE === "true";
 
-const CACHE_DURATION = 86400000; // one day
 const CACHE_FOLDER = "faithful_api";
 
 const folder = () => {
@@ -29,9 +28,10 @@ export interface CacheData<T> {
 /**
  * Asynchronously read a cache file
  * @param key cache key to read
+ * @param duration duration cache should persist in seconds (default 1 day)
  * @returns Found data and whether that data has expired
  */
-export async function read<T>(key: string): Promise<CacheData<T>> {
+export async function read<T>(key: string, duration = 86400000): Promise<CacheData<T>> {
 	if (NO_CACHE) return Promise.reject();
 
 	const content = await readFile(keyToPath(key), { encoding: "utf8" });
@@ -39,7 +39,7 @@ export async function read<T>(key: string): Promise<CacheData<T>> {
 	const timestampStr = Object.keys(json)[0];
 	const timestamp = Number(timestampStr);
 	return {
-		expired: new Date().getTime() - timestamp > CACHE_DURATION,
+		expired: Date.now() - timestamp > duration,
 		data: json[timestampStr],
 	};
 }
@@ -68,6 +68,7 @@ export async function purge(pattern?: string | RegExp): Promise<void[]> {
  * @param value data to write
  */
 export function write<T>(key: string, value: T): Promise<void> {
+	// this probably isn't the best way to store data but it works
 	const json = {};
 	json[Date.now()] = value;
 	return writeFile(keyToPath(key), JSON.stringify(json));
@@ -77,10 +78,15 @@ export function write<T>(key: string, value: T): Promise<void> {
  * Read cache and write if expired or doesn't exist using callback results
  * @param key key to write to/read from
  * @param callback fallback data to use
+ * @param duration duration cache should persist in seconds (default 1 day)
  * @returns found data
  */
-export async function handle<T>(key: string, callback: () => T | Promise<T>): Promise<T> {
-	const cacheData = await read<T>(key).catch<CacheData<T>>(() => ({
+export async function handle<T>(
+	key: string,
+	callback: () => T | Promise<T>,
+	duration?: number, // one day
+): Promise<T> {
+	const cacheData = await read<T>(key, duration).catch<CacheData<T>>(() => ({
 		// no cache file exists or cache is disabled, use callback to regenerate
 		expired: true,
 	}));
