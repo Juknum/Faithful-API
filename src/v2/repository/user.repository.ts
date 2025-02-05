@@ -140,7 +140,9 @@ export default class UserFirestormRepository implements UserRepository {
 					field: "authors",
 					operation: "set",
 					// replace old user with new user and remove duplicates
-					value: Array.from(new Set(c.authors.map((v) => (v === oldID ? newID : v)))),
+					value: Array.from(
+						new Set(c.authors.map((author) => (author === oldID ? newID : author))),
+					),
 				})),
 		);
 
@@ -154,7 +156,9 @@ export default class UserFirestormRepository implements UserRepository {
 					field: "authors",
 					operation: "set",
 					// replace old user with new user and remove duplicates
-					value: Array.from(new Set(a.authors.map((v) => (v === oldID ? newID : v)))),
+					value: Array.from(
+						new Set(a.authors.map((author) => (author === oldID ? newID : author))),
+					),
 				})),
 		);
 

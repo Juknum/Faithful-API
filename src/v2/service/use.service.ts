@@ -70,7 +70,7 @@ export default class UseService {
 
 	async createMultipleUses(uses: Uses): Promise<Uses> {
 		const exists = await Promise.all(uses.map((u) => this.doesUseExist(u.id)));
-		if (exists.some((v) => v)) throw new BadRequestError(`A use ID already exists`);
+		if (exists.some((u) => u)) throw new BadRequestError(`A use ID already exists`);
 		return this.repo.setMultiple(uses);
 	}
 

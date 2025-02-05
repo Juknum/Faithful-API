@@ -75,7 +75,7 @@ export default class PackFirestormRepository implements PackRepository {
 						.catch(() => undefined),
 				),
 			)
-		).filter((v) => v !== undefined);
+		).filter((pack) => pack !== undefined);
 
 		if (type === "submission") return out;
 		return searched.filter((p) => !out.includes(p));
