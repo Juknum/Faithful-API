@@ -141,7 +141,7 @@ export default class ContributionFirestormRepository implements ContributionsRep
 			{
 				field: "date",
 				criteria: "<=",
-				value: new Date().getTime(),
+				value: Date.now(),
 			},
 		]);
 		return { ...startContribution, ...endsContribution };

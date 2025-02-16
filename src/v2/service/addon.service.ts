@@ -241,7 +241,7 @@ export default class AddonService {
 
 		const addon: Addon = {
 			...addonDataParams,
-			last_updated: new Date().getTime(),
+			last_updated: Date.now(),
 			slug: slugValue,
 			approval: {
 				status: "pending",
@@ -333,7 +333,7 @@ export default class AddonService {
 		const addon: Addon = {
 			...savedAddon,
 			...addonDataParams,
-			last_updated: new Date().getTime(),
+			last_updated: Date.now(),
 			approval: {
 				status: "pending",
 				author: null,
@@ -411,7 +411,7 @@ export default class AddonService {
 		const before = addon.approval?.status || null;
 
 		// new random name based on time and random part
-		const newName = new Date().getTime().toString(36) + Math.random().toString(36).slice(2);
+		const newName = Date.now().toString(36) + Math.random().toString(36).slice(2);
 
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/${newName}.${extension}`;

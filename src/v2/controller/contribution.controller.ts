@@ -117,7 +117,7 @@ export class ContributionController extends Controller {
 	 */
 	@Get("from/{timestamp}")
 	public getContributionFrom(timestamp: string): Promise<Contributions> {
-		return this.service.getByDateRange(timestamp, new Date().getTime().toString());
+		return this.service.getByDateRange(timestamp, Date.now().toString());
 	}
 
 	/**
