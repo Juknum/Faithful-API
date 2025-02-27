@@ -132,7 +132,10 @@ export default class TextureService {
 	async createEntireTextures(body: EntireTextureToCreate[]): Promise<Textures> {
 		const res: Textures = [];
 		// must be done synchronously to prevent id collisions
-		for (const tex of body) res.push(await this.createEntireTexture(tex));
+		for (const tex of body) {
+			// eslint-disable-next-line no-await-in-loop
+			res.push(await this.createEntireTexture(tex));
+		}
 		return res;
 	}
 

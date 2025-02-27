@@ -37,7 +37,7 @@ export default class ContributionService {
 		const last_week = startOfDay(lastWeek()).getTime();
 		const last_day = startOfDay(lastDay()).getTime();
 
-		const aggregate: PackRecord = {} as PackRecord;
+		const aggregate: PackRecord = {};
 
 		Object.values(cs).forEach((cur) => {
 			cur.authors.forEach((a) => authors.add(a));

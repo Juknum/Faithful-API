@@ -38,13 +38,13 @@ export default class ContributionFirestormRepository implements ContributionsRep
 	): Promise<Contributions> {
 		const options = [];
 		if (authors) {
-			authors.forEach((author) => {
-				options.push({
+			options.push(
+				...authors.map((author) => ({
 					field: "authors",
 					criteria: "array-contains",
 					value: author,
-				});
-			});
+				})),
+			);
 		}
 
 		if (packs) options.push({ field: "pack", criteria: "in", value: packs });

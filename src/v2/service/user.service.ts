@@ -23,7 +23,7 @@ export default class UserService {
 	public async getStats(): Promise<UserStats> {
 		const allRoles = [] as string[];
 		const users = await this.getRaw();
-		return Object.values(users).reduce(
+		return Object.values(users).reduce<UserStats>(
 			(acc, user) => {
 				acc.total++;
 				if (user.anonymous) acc.total_anonymous++;
@@ -40,12 +40,7 @@ export default class UserService {
 
 				return acc;
 			},
-			{
-				total: 0,
-				total_anonymous: 0,
-				total_roles: 0,
-				total_per_roles: {},
-			} as UserStats,
+			{ total: 0, total_anonymous: 0, total_roles: 0, total_per_roles: {} },
 		);
 	}
 
@@ -67,15 +62,11 @@ export default class UserService {
 
 	public getUsersByNameOrId(idOrUsername: string): Promise<User | Users> {
 		// can't parse discord ids directly into a number because precision can be lost
-		const int = idOrUsername.split("").map((s) => parseInt(s, 10));
 		const str = idOrUsername.split("");
-		let same = true;
-		int.forEach((i, index) => {
-			same = i.toString() === str[index] && same === true;
-		});
+		const int = str.map((s) => parseInt(s, 10));
+		const same = int.every((i, index) => i.toString() === str[index]);
 
-		if (same) return this.getUserById(idOrUsername);
-		return this.getUsersByName(idOrUsername);
+		return same ? this.getUserById(idOrUsername) : this.getUsersByName(idOrUsername);
 	}
 
 	public getUserById(id: string): Promise<User> {

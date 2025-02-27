@@ -113,10 +113,7 @@ export default class AddonService {
 			return Promise.reject(new Error("Add-on IDs are integers greater than 0"));
 
 		const results = await Promise.all([this.getAddon(id), this.getFiles(id)]);
-		return {
-			...results[0],
-			files: results[1],
-		};
+		return { ...results[0], files: results[1] };
 	}
 
 	async getStats<IsAdmin extends boolean>(
@@ -139,10 +136,7 @@ export default class AddonService {
 					});
 					return acc;
 				},
-				{
-					...starter,
-					numbers: {},
-				} as AddonStatsAdmin,
+				{ ...starter, numbers: {} } as AddonStatsAdmin,
 			);
 	}
 
@@ -166,21 +160,15 @@ export default class AddonService {
 		const files = await this.getFiles(id);
 
 		// if no files, not found
-		if (files === undefined) {
-			throw new NotFoundError("Files not found");
-		}
+		if (files === undefined) throw new NotFoundError("Files not found");
 
 		const screenshotFile = files.filter((f) => ["screenshot", "carousel"].includes(f.use))[index]; // TODO: only keep screenshots
 
 		// if no header file, not found
-		if (screenshotFile === undefined) {
-			throw new NotFoundError("File not found");
-		}
+		if (screenshotFile === undefined) throw new NotFoundError("File not found");
 
 		const src = screenshotFile.source;
-		const final = src.startsWith("/") ? process.env.DB_IMAGE_ROOT + src : src;
-
-		return final;
+		return src.startsWith("/") ? process.env.DB_IMAGE_ROOT + src : src;
 	}
 
 	async getHeaderFileURL(id: number): Promise<string> {
@@ -252,21 +240,16 @@ export default class AddonService {
 
 		const addonCreated = await this.addonRepo.create(addon);
 
-		const files: Files = [];
-		downloads.forEach((d) => {
-			d.links.forEach((link) => {
-				files.push({
-					name: d.key,
-					use: "download",
-					type: "url",
-					parent: {
-						type: "addons",
-						id: String(addonCreated.id),
-					},
-					source: link,
-				});
-			});
-		});
+		// one to many relationship
+		const files: Files = downloads.flatMap((d) =>
+			d.links.map((link) => ({
+				name: d.key,
+				use: "download",
+				type: "url",
+				parent: { type: "addons", id: String(addonCreated.id) },
+				source: link,
+			})),
+		);
 
 		await Promise.all(files.map((file) => this.fileService.addFile(file)));
 		// wait for all files to be added
@@ -299,30 +282,18 @@ export default class AddonService {
 		const { downloads } = body;
 		delete body.downloads;
 
-		const files: Files = [];
-		downloads.forEach((d) => {
-			d.links.forEach((link) => {
-				files.push({
-					name: d.key,
-					use: "download",
-					type: "url",
-					parent: {
-						type: "addons",
-						id: String(id),
-					},
-					source: link,
-				});
-			});
-		});
+		const files: Files = downloads.flatMap((d) =>
+			d.links.map((link) => ({
+				name: d.key,
+				use: "download",
+				type: "url",
+				parent: { type: "addons", id: String(id) },
+				source: link,
+			})),
+		);
 
 		await this.fileService
-			.removeFilesByParentAndUse(
-				{
-					type: "addons",
-					id: String(id),
-				},
-				"download",
-			)
+			.removeFilesByParentAndUse({ type: "addons", id: String(id) }, "download")
 			.catch((err) => {
 				throw new BadRequestError(err);
 			});

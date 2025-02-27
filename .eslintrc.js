@@ -19,6 +19,7 @@ module.exports = {
 		"import/prefer-default-export": "off",
 		"prefer-destructuring": "off",
 		"class-methods-use-this": "off",
+		"no-restricted-syntax": ["off", "ForOfStatement"],
 		"import/extensions": [
 			"error",
 			"ignorePackages",
