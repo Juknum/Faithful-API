@@ -3,11 +3,17 @@ import multer from "multer";
 import { Application, NextFunction, Response as ExResponse, Request as ExRequest } from "express";
 import { readFileSync } from "fs";
 import { MulterFile } from "v2/interfaces";
+import { ModsController } from "../controller/mods.controller";
 import { AddonChangeController } from "../controller/addonChange.controller";
 import { expressAuthentication, ExRequestWithAuth } from "./authentication";
 import { BadRequestError } from "./errors";
 
-const MIME_TYPES_ACCEPTED = ["image/gif", "image/png", "image/jpeg"];
+const MIME_TYPES_ACCEPTED = [
+	"image/gif", 
+	"image/png", 
+	"image/jpeg",
+	"application/java-archive",
+];
 
 const upload = multer({
 	limits: {
@@ -181,6 +187,7 @@ export default function formatSwaggerDoc(app: Application, path: string) {
 	let swaggerDoc: Swagger.Spec3 = JSON.parse(readFileSync(path, { encoding: "utf8" }));
 
 	// manual things
+	// -- AddonChangeController
 	const adc = new AddonChangeController();
 	const screenDelete = swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"];
 	const headerDelete = swaggerDoc.paths["/addons/{id_or_slug}/header"].delete;
@@ -212,5 +219,21 @@ export default function formatSwaggerDoc(app: Application, path: string) {
 		},
 	);
 	swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
+
+	// -- ModsController
+	const modsController = new ModsController();
+	const modsUpload = swaggerDoc.paths["/mods/upload"];
+	delete swaggerDoc.paths["/mods/upload"];
+
+	swaggerDoc = formHandler(app, "/v2/mods/upload", modsController, modsController.uploadMod, swaggerDoc, {
+		prefix: "/v2",
+		operationId: "UploadMod",
+		security: {
+			discord: ["Administrator", "Developer"],
+		},
+		description: "Upload mod file",
+	});
+	swaggerDoc.paths["/mods/upload"] = modsUpload;
+
 	return swaggerDoc;
 }

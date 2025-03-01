@@ -9,5 +9,6 @@ export * from "./settings";
 export * from "./packs";
 export * from "./packs/submissions";
 export * from "./modding";
+export * from './modding/mods-version'
 export * from "./modding/modpacks";
 export * from "./posts";

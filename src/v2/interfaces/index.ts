@@ -4,6 +4,7 @@ export * from "./contributions";
 export * from "./files";
 export * from "./gallery";
 export * from "./modpacks";
+export * from "./mods-versions";
 export * from "./mods";
 export * from "./paths";
 export * from "./posts";

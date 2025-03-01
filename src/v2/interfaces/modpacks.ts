@@ -1,4 +1,4 @@
-import { Mods } from "./mods";
+import { Mod } from "./mods";
 
 export interface Modpack {
 	id: string; // modpack id (curseforge project id)
@@ -7,7 +7,7 @@ export interface Modpack {
 	versions: Array<{
 		id: string; // modpack version
 		minecraft: string; // minecraft version (ex: "1.18")
-		mods: Mods;
+		mods: Mod[];
 	}>;
 }
 
