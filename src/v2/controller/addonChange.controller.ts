@@ -153,7 +153,7 @@ export class AddonChangeController extends Controller {
 	}
 
 	/**
-	 * Delete an add-on screenshot
+	 * Delete an add-on header
 	 * @param id_or_slug ID or slug of the deleted add-on screenshot
 	 * @param index Deleted add-on screenshot index
 	 */
