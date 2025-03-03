@@ -14,7 +14,10 @@ import {
 } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
 import { APIUser } from "discord-api-types/v10";
-import { BadRequestError, ForbiddenError, NotAvailableError } from "../tools/errors";
+import { BadRequestError, ForbiddenError, NotAvailableError } from "@common/tools/errors";
+import * as cache from "@common/tools/cache";
+import { ExRequestWithAuth } from "@common/tools/authentication";
+
 import {
 	Addons,
 	Contributions,
@@ -27,8 +30,6 @@ import {
 	Username,
 } from "../interfaces";
 import UserService from "../service/user.service";
-import * as cache from "../tools/cache";
-import { ExRequestWithAuth } from "../tools/authentication";
 
 @Route("users")
 @Tags("Users")

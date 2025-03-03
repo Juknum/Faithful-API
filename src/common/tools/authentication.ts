@@ -3,12 +3,13 @@ import "dotenv/config";
 import { Request as ExRequest } from "express";
 import axios from "axios";
 import { APIUser } from "discord-api-types/v10";
+import UserService from "@v2/service/user.service";
+import AddonService from "@v2/service/addon.service";
+import PostService from "@v2/service/post.service";
+import { Addon } from "@v2/interfaces";
+import { AddonStatusApproved, AddonStatusValues } from "@v2/interfaces/addons";
+
 import { PermissionError, NotFoundError, APIError } from "./errors";
-import UserService from "../service/user.service";
-import AddonService from "../service/addon.service";
-import PostService from "../service/post.service";
-import { Addon } from "../interfaces";
-import { AddonStatusApproved, AddonStatusValues } from "../interfaces/addons";
 
 const userService = new UserService();
 const addonService = new AddonService();

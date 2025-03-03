@@ -1,4 +1,6 @@
 import { Request as ExRequest } from "express";
+import { NotAvailableError, NotFoundError, PermissionError } from "@common/tools/errors";
+import * as cache from "@common/tools/cache";
 import {
 	Controller,
 	Get,
@@ -24,8 +26,6 @@ import {
 } from "../interfaces";
 
 import AddonService from "../service/addon.service";
-import { NotAvailableError, NotFoundError, PermissionError } from "../tools/errors";
-import * as cache from "../tools/cache";
 
 @Route("addons")
 @Tags("Add-ons")

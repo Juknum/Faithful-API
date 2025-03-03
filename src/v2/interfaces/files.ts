@@ -1,9 +1,4 @@
 import { WriteConfirmation } from "firestorm-db";
-import { Express } from "express";
-
-// multer monkey patches express's types and eslint really doesn't like that
-// so we need to export this separately to prevent issues
-export type MulterFile = Express.Multer.File;
 
 export interface FileParent {
 	type: string; // collection name (addon, post...)

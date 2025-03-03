@@ -1,4 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
+import { BadRequestError, NotFoundError } from "@common/tools/errors";
 import {
 	Use,
 	Uses,
@@ -9,7 +10,6 @@ import {
 	GalleryEdition,
 } from "../interfaces";
 import UseFirestormRepository from "../repository/use.repository";
-import { BadRequestError, NotFoundError } from "../tools/errors";
 import PathService from "./path.service";
 
 export default class UseService {

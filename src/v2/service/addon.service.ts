@@ -1,6 +1,9 @@
 import { URL } from "url";
 import { APIEmbedField } from "discord-api-types/v10";
 import { WriteConfirmation } from "firestorm-db";
+import { BadRequestError, NotFoundError } from "@common/tools/errors";
+import { MulterFile } from "@common/types";
+
 import { User, UserProfile } from "../interfaces/users";
 import {
 	Addons,
@@ -10,9 +13,7 @@ import {
 	Files,
 	File,
 	FileParent,
-	MulterFile,
 } from "../interfaces";
-import { BadRequestError, NotFoundError } from "../tools/errors";
 import UserService from "./user.service";
 import FileService from "./file.service";
 import {

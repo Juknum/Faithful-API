@@ -1,5 +1,7 @@
 import axios from "axios";
 import firestorm from "firestorm-db";
+import { NotFoundError } from "@common/tools/errors";
+
 import {
 	Paths,
 	Contributions,
@@ -15,7 +17,6 @@ import "../config";
 import { uses } from "./uses";
 import { contributions, packs } from "..";
 import { MinecraftSorter } from "../../tools/sorter";
-import { NotFoundError } from "../../tools/errors";
 
 export const textures = firestorm.collection<FirestormTexture>("textures", (el) => {
 	el.uses = (): Promise<Uses> =>

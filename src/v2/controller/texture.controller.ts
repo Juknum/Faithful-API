@@ -16,6 +16,7 @@ import {
 } from "tsoa";
 import { Request as ExRequest } from "express";
 import { WriteConfirmation } from "firestorm-db";
+import { NotFoundError } from "@common/tools/errors";
 import {
 	Contributions,
 	Paths,
@@ -32,7 +33,6 @@ import {
 	EntireTextureToCreate,
 } from "../interfaces";
 import TextureService from "../service/texture.service";
-import { NotFoundError } from "../tools/errors";
 
 @Route("textures")
 @Tags("Textures")

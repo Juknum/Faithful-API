@@ -1,6 +1,7 @@
 import { ID_FIELD, WriteConfirmation } from "firestorm-db";
 import { AxiosError } from "axios";
 import { APIUser } from "discord-api-types/v10";
+import { NotFoundError } from "@common/tools/errors";
 import { users, contributions, addons } from "../firestorm";
 import {
 	Addons,
@@ -13,7 +14,6 @@ import {
 	Username,
 	UserProfile,
 } from "../interfaces";
-import { NotFoundError } from "../tools/errors";
 
 const mapUser = (user: Partial<User>): User => ({
 	// falsy checking

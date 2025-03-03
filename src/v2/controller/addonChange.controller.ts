@@ -14,7 +14,12 @@ import {
 	Tags,
 } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
-import { File, MulterFile } from "../interfaces/files";
+import { PermissionError, BadRequestError } from "@common/tools/errors";
+import { MulterFile } from "@common/types";
+import * as cache from "@common/tools/cache";
+import { ExRequestWithAuth } from "@common/tools/authentication";
+
+import { File } from "../interfaces/files";
 import {
 	AddonReview,
 	Addon,
@@ -22,11 +27,8 @@ import {
 	AddonReviewBody,
 	AddonUpdateParam,
 } from "../interfaces/addons";
-import { PermissionError, BadRequestError } from "../tools/errors";
 import UserService from "../service/user.service";
 import AddonService from "../service/addon.service";
-import * as cache from "../tools/cache";
-import { ExRequestWithAuth } from "../tools/authentication";
 
 @Route("addons")
 @Tags("Add-on Submissions")

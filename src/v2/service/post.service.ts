@@ -1,4 +1,5 @@
 import { WriteConfirmation } from "firestorm-db";
+import { NotFoundError } from "@common/tools/errors";
 import {
 	PostDownload,
 	PostChangelog,
@@ -6,7 +7,6 @@ import {
 	CreateWebsitePost,
 	WebsitePosts,
 } from "../interfaces";
-import { NotFoundError } from "../tools/errors";
 import PostFirestormRepository from "../repository/posts.repository";
 
 export default class PostService {

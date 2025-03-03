@@ -2,9 +2,10 @@ import { Controller, Swagger } from "tsoa";
 import multer from "multer";
 import { Application, NextFunction, Response as ExResponse, Request as ExRequest } from "express";
 import { readFileSync } from "fs";
-import { MulterFile } from "v2/interfaces";
-import { ModsController } from "../controller/mods.controller";
-import { AddonChangeController } from "../controller/addonChange.controller";
+
+import { MulterFile } from "@common/types";
+import { AddonChangeController } from "@v2/controller/addonChange.controller";
+
 import { expressAuthentication, ExRequestWithAuth } from "./authentication";
 import { BadRequestError } from "./errors";
 
@@ -51,7 +52,7 @@ function returnHandler(
 	else response.status(statusCode || 204).end();
 }
 
-function promiseHandler(
+async function promiseHandler(
 	controllerObj: Controller,
 	promise: any,
 	response: ExResponse,
@@ -182,6 +183,7 @@ export function formHandler(
 	return swaggerDoc;
 }
 
+// TODO: find a better way than a hardcoded path
 export default function formatSwaggerDoc(app: Application, path: string) {
 	// don't pass it in directly so the object reference isn't mutated
 	let swaggerDoc: Swagger.Spec3 = JSON.parse(readFileSync(path, { encoding: "utf8" }));
@@ -219,21 +221,6 @@ export default function formatSwaggerDoc(app: Application, path: string) {
 		},
 	);
 	swaggerDoc.paths["/addons/{id_or_slug}/screenshots/{index}"] = screenDelete;
-
-	// -- ModsController
-	const modsController = new ModsController();
-	const modsUpload = swaggerDoc.paths["/mods/upload"];
-	delete swaggerDoc.paths["/mods/upload"];
-
-	swaggerDoc = formHandler(app, "/v2/mods/upload", modsController, modsController.uploadMod, swaggerDoc, {
-		prefix: "/v2",
-		operationId: "UploadMod",
-		security: {
-			discord: ["Administrator", "Developer"],
-		},
-		description: "Upload mod file",
-	});
-	swaggerDoc.paths["/mods/upload"] = modsUpload;
 
 	return swaggerDoc;
 }
