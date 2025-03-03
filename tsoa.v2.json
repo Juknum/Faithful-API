@@ -2,13 +2,13 @@
 	"entryFile": "src/index.ts",
 	"noImplicitAdditionalProperties": "throw-on-extras",
 	"controllerPathGlobs": [
-		"./src/**/*",
-		"src/**/*controller.ts"
+		"./src/v2/**/*",
+		"src/v2/**/*controller.ts"
 	],
 	"spec": {
 		"name": "Faithful API",
 		"basePath": "v2",
-		"outputDirectory": "public",
+		"outputDirectory": "public/v2",
 		"specVersion": 3,
 		"specMerging": "recursive",
 		"securityDefinitions": {
@@ -48,7 +48,15 @@
 	},
 	"routes": {
 		"basePath": "v2",
-		"routesDir": "build",
-		"authenticationModule": "src/v2/tools/authentication.ts"
+		"routesDir": "build/v2",
+		"authenticationModule": "src/common/tools/authentication.ts"
+	},
+	"compilerOptions": {
+		"baseUrl": "src",
+		"paths": {
+			"@common/*": ["common/*"],
+			"@v1/*": ["v1/*"],
+			"@v2/*": ["v2/*"]
+		}
 	}
 }

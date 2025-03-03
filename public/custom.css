@@ -15,13 +15,15 @@ html, body {
 	min-width: 12em !important;
 }
 
-/* hide hideous swagger topbar menu */
-.swagger-ui .topbar,
-.swagger-ui .topbar * {
-	padding: 0px !important;
-	height: 0px;
-	visibility: hidden;
+/* hide swagger logo but keep the definition select */
+.swagger-ui .topbar {
 	background-color: transparent !important;
+}
+.swagger-ui .topbar .topbar-wrapper a {
+	visibility: hidden;
+}
+.download-url-wrapper {
+	z-index: 1;
 }
 
 .swagger-ui .info {
@@ -93,8 +95,24 @@ html > body > div#swagger-ui > section.swagger-ui.swagger-container > div.swagge
 }
 
 .swagger-ui > div > .information-container {
-	padding: 0 60px !important;
-	min-width: 100% !important;
+	position: absolute;
+	top: 0;
+	padding: 0 15px !important;
+	left: calc(15px + 120px);
+	min-width: calc(100% - 120px - 15px) !important;
+}
+
+.swagger-ui > div > .information-container::before {
+	content: ' ';
+	position: absolute;
+	top: 15px;
+	left: -120px;
+	width: 120px;
+	height: 120px;
+	display: block;
+	background-image: url("https://database.faithfulpack.net/images/branding/logos/transparent/hd/dev_logo.png");
+	background-repeat: no-repeat;
+	background-size: 100%;
 }
 
 .modal-ux-content > div > form > div > div:nth-child(2) {

@@ -1,0 +1,45 @@
+{
+	"entryFile": "src/index.ts",
+	"noImplicitAdditionalProperties": "throw-on-extras",
+	"controllerPathGlobs": [
+		"./src/v3/**/*",
+		"src/v3/**/*controller.ts"
+	],
+	"spec": {
+		"name": "Faithful API",
+		"basePath": "v3",
+		"outputDirectory": "public/v3",
+		"specVersion": 3,
+		"specMerging": "recursive",
+		"securityDefinitions": {
+			"bot": {
+				"type": "apiKey",
+				"name": "bot",
+				"in": "header"
+			},
+			"discord": {
+				"type": "apiKey",
+				"name": "discord",
+				"in": "header"
+			},
+			"cloudflare": {
+				"type": "apiKey",
+				"name": "cloudflare",
+				"in": "header"
+			}
+		}
+	},
+	"routes": {
+		"basePath": "v3",
+		"routesDir": "build/v3",
+		"authenticationModule": "src/common/tools/authentication.ts"
+	},
+	"compilerOptions": {
+		"baseUrl": "src",
+		"paths": {
+			"@common/*": ["common/*"],
+			"@v1/*": ["v1/*"],
+			"@v2/*": ["v2/*"]
+		}
+	}
+}
