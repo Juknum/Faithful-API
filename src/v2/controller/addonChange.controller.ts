@@ -12,12 +12,14 @@ import {
 	Security,
 	SuccessResponse,
 	Tags,
+	UploadedFile,
 } from "tsoa";
 import { WriteConfirmation } from "firestorm-db";
 import { PermissionError, BadRequestError } from "@common/tools/errors";
 import { MulterFile } from "@common/types";
 import * as cache from "@common/tools/cache";
 import { ExRequestWithAuth } from "@common/tools/authentication";
+import { HandleFile } from "@common/decorators/handleFile";
 
 import { File } from "../interfaces/files";
 import {
@@ -39,7 +41,7 @@ export class AddonChangeController extends Controller {
 	 * Create an add-on
 	 * @param body Add-on data
 	 */
-	@Post("")
+	@Post()
 	@SuccessResponse(201, "Addon created")
 	@Security("discord", [])
 	public addonCreate(
@@ -118,23 +120,28 @@ export class AddonChangeController extends Controller {
 		this.service.delete(addonID);
 	}
 
-	// no routes, exported to use with formHandler later
-
 	/**
-	 * Add or change a header image to an add-on
+	 * Post header file for addon
 	 * @param id_or_slug Add-on to add header image to
 	 * @param file File to post
 	 */
-	public postHeader(id_or_slug: string, file: MulterFile): Promise<File | void> {
+	@Post("{id_or_slug}/header")
+	@Security("discord", ["addon:own"])
+	@HandleFile({ allowedMimeTypes: ["image/png", "image/jpeg", "image/jpg", "image/gif"], maxSize: 3000000 })
+	public postHeader(@Path() id_or_slug: string, @UploadedFile() file: MulterFile): Promise<File | void> {
 		return this.service.postHeader(id_or_slug, file.originalname, file);
 	}
 
 	/**
-	 * Add a screenshot to an add-on
+	 * Post screenshot file for addon
 	 * @param id_or_slug Add-on to add screenshot to
 	 * @param file File to post
 	 */
-	public addonAddScreenshot(id_or_slug: string, file: MulterFile): Promise<File | void> {
+	@Post("{id_or_slug}/screenshots")
+	@Security("discord", ["addon:own"])
+	@HandleFile({ allowedMimeTypes: ["image/png", "image/jpeg", "image/jpg", "image/gif"], maxSize: 3000000 })
+	public addonAddScreenshot(@Path() id_or_slug: string, @UploadedFile() file: MulterFile): Promise<File | void> {
+		console.log(file);
 		return this.service.postScreenshot(id_or_slug, file.originalname, file);
 	}
 

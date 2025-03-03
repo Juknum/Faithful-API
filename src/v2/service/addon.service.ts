@@ -343,7 +343,7 @@ export default class AddonService {
 		addon.approval = {
 			status: "pending",
 			author: null,
-			reason: null,
+			reason: "Header image must be approved",
 		};
 
 		await this.saveUpdate(addonID, addon, before);
@@ -392,7 +392,7 @@ export default class AddonService {
 		addon.approval = {
 			status: "pending",
 			author: null,
-			reason: null,
+			reason: "Screenshot must be approved",
 		};
 		await this.saveUpdate(addonID, addon, before);
 

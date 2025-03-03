@@ -86,7 +86,7 @@ export class AddonController extends Controller {
 	 * Get all add-ons matching the given status
 	 * @param status Add-on status
 	 */
-	public getAddonsByStatus(status: AddonStatus): Promise<Addons> {
+	private getAddonsByStatus(status: AddonStatus): Promise<Addons> {
 		return this.service.getAddonByStatus(status);
 	}
 
