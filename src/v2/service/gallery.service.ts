@@ -152,7 +152,7 @@ export default class GalleryService {
 				pathID,
 				name: String(t.name),
 				tags: t.tags,
-				mcmeta: animations[t.id] ?? null, // unused currently
+				mcmeta: animations[t.id] ?? null,
 				url: urls[i],
 			};
 		});

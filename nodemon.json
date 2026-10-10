@@ -1,9 +1,5 @@
 {
 	"exec": "pnpm run exec",
-	"watch": [
-		"src",
-		"public/custom*",
-		".env"
-	],
+	"watch": ["src", "public/custom*", ".env"],
 	"ext": "ts, css, json"
 }
