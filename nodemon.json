@@ -1,5 +1,5 @@
 {
-	"exec": "pnpm run exec",
+	"exec": "pnpm run nodemon-exec",
 	"watch": ["src", "public/custom*", ".env"],
 	"ext": "ts, css, json"
 }
