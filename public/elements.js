@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					href="https://tsoa-community.github.io/docs/"
 					target="_blank"
 					rel="noopener noreferrer"
-				>tsoa</a> framework. View the source
+				>tsoa</a> framework. View the source code
 				<a
 					href="https://github.com/Faithful-Resource-Pack/API"
 					target="_blank"
