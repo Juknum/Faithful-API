@@ -1,4 +1,4 @@
-import { CreationFile, File, MulterFile } from "../interfaces";
+import { Addon, CreationFile, File, MulterFile } from "../interfaces";
 import { BadRequestError, NotFoundError } from "../tools/errorTypes";
 import FileService from "./file.service";
 import { WriteConfirmation } from "firestorm-db";
@@ -18,6 +18,11 @@ export default class AddonFileService {
 			);
 	}
 
+	private isNewAddon(addon: Addon) {
+		// used to suppress image notifications if an add-on would be pending anyways
+		return addon.approval.status === "pending" && addon.approval.reason === "Created add-on";
+	}
+
 	public async postHeader(
 		idOrSlug: string,
 		filename: string,
@@ -35,14 +40,16 @@ export default class AddonFileService {
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${slug}/header.${extension}`;
 
-		// reput pending addon
-		addon.approval = {
-			status: "pending",
-			author: null,
-			reason: "Added or updated header image",
-		};
+		if (!this.isNewAddon(addon)) {
+			// reput pending addon
+			addon.approval = {
+				status: "pending",
+				author: null,
+				reason: "Added or updated header image",
+			};
 
-		await this.addonService.saveUpdate(addonID, addon);
+			await this.addonService.saveUpdate(addonID, addon);
+		}
 
 		// upload file
 		await this.fileService.upload(uploadLocation, filename, buffer, true);
@@ -80,14 +87,16 @@ export default class AddonFileService {
 		const extension = filename.split(".").pop();
 		const uploadLocation = `/images/addons/${addon.slug}/${newName}.${extension}`;
 
-		// reput pending addon
-		addon.approval = {
-			status: "pending",
-			author: null,
-			reason: `Added screenshot "${filename}"`,
-		};
+		if (!this.isNewAddon(addon)) {
+			// reput pending addon
+			addon.approval = {
+				status: "pending",
+				author: null,
+				reason: `Added screenshot "${filename}"`,
+			};
 
-		await this.addonService.saveUpdate(addonID, addon);
+			await this.addonService.saveUpdate(addonID, addon);
+		}
 
 		// upload file
 		await this.fileService.upload(uploadLocation, filename, buffer, true);
