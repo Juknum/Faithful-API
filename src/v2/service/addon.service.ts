@@ -251,7 +251,7 @@ export default class AddonService {
 		await this.fileService.addFiles(files);
 		// wait for all files to be added
 
-		await this.notifyAddonChange(addonCreated).catch(console.error);
+		this.notifyAddonChange(addonCreated).catch(console.error);
 		return addonCreated;
 	}
 
@@ -351,7 +351,7 @@ export default class AddonService {
 
 	public async saveUpdate(id: string | number, addon: Addon, notify = true): Promise<Addon> {
 		const a = await this.addonRepo.update(id, addon);
-		if (notify) await this.notifyAddonChange(a).catch(console.error);
+		if (notify) this.notifyAddonChange(a);
 		return a;
 	}
 
