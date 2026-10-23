@@ -33,11 +33,12 @@ const toSlug = (value: string) =>
 		.join("");
 
 const STATUS_TO_EMBED_COLOR = {
-	generic: 0x76c945,
 	pending: 0x5865f2,
 	approved: 0x4caf50,
 	denied: 0xf44336,
 	archived: 0x9e9e9e,
+	// not a status but used in the update hook
+	deleted: 0xf44336,
 };
 
 export default class AddonService {
@@ -251,7 +252,7 @@ export default class AddonService {
 		await this.fileService.addFiles(files);
 		// wait for all files to be added
 
-		this.notifyAddonChange(addonCreated).catch(console.error);
+		this.notifyAddonChange(addonCreated, addonCreated.approval.status).catch(console.error);
 		return addonCreated;
 	}
 
@@ -328,19 +329,26 @@ export default class AddonService {
 
 		const files = await this.getFiles(Number(id));
 
-		const realFiles = files
+		const imageDeleteProms = files
 			.filter((f) => ["header", "screenshot"].includes(f.use))
 			.map((f) => f.source.replace(/^http[s]?:\/\/.+?\//, ""))
 			.map((s) => this.fileService.removeFileByPath(s));
 
-		// remove addon
-		// remove addon links
-		// remove real files
-		return Promise.all([
+		// get details one last time before deleting for webhook
+		const addon = await this.getAddon(Number(id));
+
+		const res = await Promise.all([
+			// remove addon
 			this.addonRepo.remove(id),
+			// remove addon links
 			this.fileService.removeFilesByParent(parent),
-			...realFiles,
+			// remove files from server
+			...imageDeleteProms,
 		]);
+		// wait for deletion to go through
+
+		this.notifyAddonChange(addon, "deleted");
+		return res;
 	}
 
 	async review(id: number, review: AddonReview): Promise<void> {
@@ -351,49 +359,63 @@ export default class AddonService {
 
 	public async saveUpdate(id: string | number, addon: Addon, notify = true): Promise<Addon> {
 		const a = await this.addonRepo.update(id, addon);
-		if (notify) this.notifyAddonChange(a);
+		if (notify) this.notifyAddonChange(a, a.approval.status);
 		return a;
 	}
 
-	private async notifyAddonChange(addon: Addon) {
-		const { status, author } = addon.approval;
+	private async notifyAddonChange(addon: Addon, status: AddonStatus | "deleted") {
+		const { id, name, approval } = addon;
 
 		// webhook not set up or status hasn't changed
 		if (!process.env.WEBHOOK_URL) return;
 
 		let title: string;
-		let name: string;
-		if (status === "pending") {
-			title = `${addon.name} is pending approval!`;
-			name = "Add-on Update";
-		} else {
-			let username = "an unknown user";
-			if (author) {
-				const user = await this.userService.getUserById(author).catch(() => null);
-				if (user) username = user.username;
-			}
+		let type: string;
 
-			title = `${addon.name} was ${status} by ${username}!`;
-			name = "Add-on Review";
+		switch (status) {
+			case "pending": {
+				type = "Add-on Update";
+				title = `${name} is pending approval!`;
+				break;
+			}
+			case "deleted": {
+				type = "Add-on Deletion";
+				title = `${name} was deleted!`;
+				break;
+			}
+			default: {
+				type = "Add-on Review";
+
+				let username = "an unknown user";
+				if (approval.author) {
+					const user = await this.userService.getUserById(approval.author).catch(() => null);
+					if (user) username = user.username;
+				}
+
+				title = `${name} was ${status} by ${username}!`;
+				break;
+			}
 		}
 
 		const embed: APIEmbed = {
-			title,
-			url: `https://studio.faithfulpack.net/addons/review?status=${status}&id=${addon.id}`,
 			author: {
-				name,
+				name: type,
 				icon_url:
 					"https://raw.githubusercontent.com/Faithful-Resource-Pack/Branding/main/role_icons/contributor/add_on_maker.png",
 			},
-			color: status ? STATUS_TO_EMBED_COLOR[status] : STATUS_TO_EMBED_COLOR.generic,
-			footer: { text: `Add-on ID: ${addon.id}` },
+			title,
+			color: STATUS_TO_EMBED_COLOR[status],
+			footer: { text: `Add-on ID: ${id}` },
 		};
 
-		if (status !== "approved")
+		if (status !== "deleted")
+			embed.url = `https://studio.faithfulpack.net/addons/review?status=${status}&id=${id}`;
+
+		if (!["approved", "deleted"].includes(status))
 			embed.fields = [
 				{
 					name: "Reason",
-					value: addon.approval.reason ?? "*No reason provided*",
+					value: approval.reason ?? "*No reason provided*",
 				},
 			];
 
