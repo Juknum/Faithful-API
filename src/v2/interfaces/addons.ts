@@ -16,8 +16,11 @@ export type AddonStatus = (typeof AddonStatusValues)[number];
 export type AddonProperty = "files" | "all";
 
 export interface AddonReviewBody {
-	status: null | AddonStatus;
-	reason: null | string; // either update reason or denial/archival reason
+	status: AddonStatus;
+	// when pending => update reason
+	// when denied/archived => deny reason
+	// when approved => null
+	reason: string | null;
 }
 
 export interface AddonReview extends AddonReviewBody {
