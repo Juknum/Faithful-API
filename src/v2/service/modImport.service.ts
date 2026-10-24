@@ -13,6 +13,7 @@ import {
 import { BadRequestError } from "../tools/errorTypes";
 import { JarTexture, extractJarTextures, jarPath, pngSize } from "../tools/jar";
 import { PlatformFile, PlatformProject, PlatformSearchResult, platforms } from "../tools/platforms";
+import { hashesOf } from "../tools/modTexture";
 import { enqueue } from "../tools/queue";
 import { DEFAULT_VERSION_VALIDATOR, MOD_LOADERS, SAFE_VERSION } from "../tools/semver";
 import ModContributionService from "./modContribution.service";
@@ -215,11 +216,9 @@ export default class ModImportService {
 
 			// the original textures are stored in the default pack's repository, the gallery reads them
 			// from there, so nothing is registered before they are pushed
-			await this.contributionService.pushDefaultTextures(
-				await this.modsService.getById(version.mod_id),
-				version,
-				entries,
-			);
+			const mod = await this.modsService.getById(version.mod_id);
+			await this.contributionService.pushDefaultTextures(mod, version, entries);
+			await this.contributionService.createBranches(mod);
 			await this.registerTextures(entries, version.id);
 			await setState({ status: "extracted" });
 
@@ -263,7 +262,8 @@ export default class ModImportService {
 	 */
 	private async registerTextures(entries: JarTexture[], versionId: string): Promise<void> {
 		const known = new Map<string, ModTexture>();
-		for (const t of Object.values(await this.modsService.getAllTextures())) known.set(t.hash, t);
+		for (const t of Object.values(await this.modsService.getAllTextures()))
+			for (const hash of hashesOf(t)) known.set(hash, t);
 
 		// one texture per image, whatever the number of paths using it
 		const touched = new Map<string, ModTexture>();
