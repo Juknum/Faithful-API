@@ -129,6 +129,13 @@ export interface PickableMod {
 	versions: PickableModVersion[];
 }
 
+export interface ModBuildBody {
+	pack: string;
+	minecraft: string;
+	// one version per mod, they all have to support the minecraft version
+	mod_version_ids: string[];
+}
+
 export type ModContributionSearch = Partial<{
 	pack: string;
 	texture_id: string;
